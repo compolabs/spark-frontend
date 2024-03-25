@@ -106,7 +106,7 @@ class SpotOrderbookVM {
 
   calcSize = (isMobile: boolean) => {
     const orderbookHeight = isMobile ? 380 : window.innerHeight - 210;
-    const rowHeight = 17;
+    const rowHeight = 17.5;
     this.setAmountOfOrders(Math.floor((orderbookHeight - 24) / rowHeight));
   };
 
@@ -124,7 +124,7 @@ class SpotOrderbookVM {
     if (!this.rootStore.initialized || !market) return;
 
     const bcNetwork = blockchainStore.currentInstance;
-    const limit = 20;
+    const limit = 100;
 
     this.isOrderBookLoading = true;
 
