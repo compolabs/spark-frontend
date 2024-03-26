@@ -5,16 +5,14 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
-import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
-import MintButtons from "@screens/Faucet/MintButtons";
-import { Row } from "@src/components/Flex";
 import { SmartFlex } from "@src/components/SmartFlex";
 import Table from "@src/components/Table";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
-import { Token } from "@src/entity";
+import { PerpOrder, Token } from "@src/entity";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
+import { MODAL_TYPE } from "@src/stores/ModalStore";
 import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
@@ -53,7 +51,17 @@ interface PositionColumnParams {
   onTooltipVisibleChange: (isVisible: boolean) => void;
 }
 
+interface OrderColumnParams {
+  vm: ReturnType<typeof usePerpTableVMProvider>;
+  theme: Theme;
+}
+
+interface BalanceColumnParams {
+  openDepositModal: () => void;
+}
+
 const positionColumnHelper = createColumnHelper<PerpMarketTrade>();
+const orderColumnHelper = createColumnHelper<PerpOrder>();
 const balanceColumnHelper = createColumnHelper<{ asset: Token; balance: string; assetId: string }>();
 
 const POSITIONS_COLUMNS = (params: PositionColumnParams) => [
@@ -154,16 +162,57 @@ const POSITIONS_COLUMNS = (params: PositionColumnParams) => [
   }),
 ];
 
-const BALANCE_COLUMNS = [
+const ORDER_COLUMNS = (params: OrderColumnParams) => [
+  orderColumnHelper.accessor("baseToken", {
+    header: "Trading Pair",
+    cell: (props) => (
+      <SmartFlex center="y" gap="4px">
+        <TokenIcon alt={props.row.original.symbol} height={16} src={TOKEN_LOGOS[props.getValue().symbol]} width={16} />
+        <Text>{props.row.original.symbol}</Text>
+      </SmartFlex>
+    ),
+  }),
+  orderColumnHelper.accessor("baseSize", {
+    header: "Size / Value",
+    cell: (props) => (
+      <SmartFlex column>
+        <SmartFlex center="y" gap="4px">
+          <Text primary>{props.row.original.baseSizeFormatted}</Text>
+          <TokenBadge>
+            <Text>{props.row.original.baseToken.symbol}</Text>
+          </TokenBadge>
+        </SmartFlex>
+        <Text primary>{props.row.original.baseSizeValueFormatted}</Text>
+      </SmartFlex>
+    ),
+  }),
+  orderColumnHelper.accessor("orderPrice", {
+    header: "Price",
+    cell: (props) => (
+      <SmartFlex center="y" column>
+        <Text primary>{props.row.original.orderPriceFormatted}</Text>
+      </SmartFlex>
+    ),
+  }),
+  orderColumnHelper.accessor("id", {
+    header: "",
+    cell: (props) => (
+      <CancelButton onClick={() => params.vm.cancelOrder(props.getValue())}>
+        {params.vm.cancelingOrderId === props.getValue() ? "Loading..." : "Cancel"}
+      </CancelButton>
+    ),
+  }),
+];
+
+const BALANCE_COLUMNS = (params: BalanceColumnParams) => [
   balanceColumnHelper.accessor("asset", {
     header: "Asset",
     cell: (props) => {
       return (
-        <Row alignItems="center">
+        <SmartFlex center="y" gap="4px">
           <TokenIcon alt="market-icon" src={props.getValue().logo} />
-          <SizedBox width={4} />
           {props.getValue().symbol}
-        </Row>
+        </SmartFlex>
       );
     },
   }),
@@ -172,13 +221,17 @@ const BALANCE_COLUMNS = [
   }),
   balanceColumnHelper.accessor("assetId", {
     header: "",
-    cell: (props) => <MintButtons assetId={props.getValue()} />,
+    cell: () => (
+      <SmartFlex center>
+        <CancelButton onClick={params.openDepositModal}>Deposit</CancelButton>
+      </SmartFlex>
+    ),
   }),
 ];
 
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const PerpTableImpl: React.FC = observer(() => {
-  const { balanceStore, faucetStore, blockchainStore } = useStores();
+  const { faucetStore, blockchainStore, collateralStore, modalStore } = useStores();
   const bcNetwork = blockchainStore.currentInstance;
 
   const vm = usePerpTableVMProvider();
@@ -190,13 +243,19 @@ const PerpTableImpl: React.FC = observer(() => {
 
   const [tabIndex, setTabIndex] = useState(0);
   const columns = [
-    POSITIONS_COLUMNS({ vm, theme, isTooltipVisible: isTpSlTooltipOpen, onTooltipVisibleChange: setIsTpSlTooltipOpen }),
-    BALANCE_COLUMNS,
+    POSITIONS_COLUMNS({
+      vm,
+      theme,
+      isTooltipVisible: isTpSlTooltipOpen,
+      onTooltipVisibleChange: setIsTpSlTooltipOpen,
+    }),
+    ORDER_COLUMNS({ vm, theme }),
+    BALANCE_COLUMNS({ openDepositModal: () => modalStore.open(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL) }),
   ];
 
   const [isTpSlActive, setTpSlActive] = useState(false);
 
-  const balanceData = Array.from(balanceStore.balances)
+  const balanceData = Array.from(collateralStore.balances)
     .filter(([, balance]) => balance && balance.gt(0))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
@@ -209,8 +268,8 @@ const PerpTableImpl: React.FC = observer(() => {
 
   const tabs = [
     { title: "POSITIONS", disabled: false, rowCount: vm.myPositions.length },
+    { title: "ORDERS", disabled: false, rowCount: vm.myOrders.length },
     { title: "BALANCES", disabled: false, rowCount: balanceData.length },
-    // { title: "ORDERS", disabled: true },
     // { title: "TRADES", disabled: true },
     // { title: "UNSETTLED P&L", disabled: true },
     // { title: "HISTORY", disabled: true },
@@ -221,7 +280,7 @@ const PerpTableImpl: React.FC = observer(() => {
   };
 
   const renderMobileRows = () => {
-    const orderData = vm.myPositions.map((ord, i) => (
+    const positionData = vm.myPositions.map((ord, i) => (
       <MobileTablePositionRow key={i + "mobile-row"}>
         <SmartFlex gap="1px" column>
           <SmartFlex center="y" gap="8px">
@@ -290,7 +349,38 @@ const PerpTableImpl: React.FC = observer(() => {
       </MobileTablePositionRow>
     ));
 
-    const balanceData = Array.from(balanceStore.balances)
+    const orderData = vm.myOrders.map((ord, i) => (
+      <MobileTablePositionRow key={i + "mobile-row"}>
+        <SmartFlex gap="1px" column>
+          <SmartFlex center="y" gap="4px">
+            <TokenIcon alt="ETH-USDC" src={TOKEN_LOGOS[ord.baseToken.symbol]} />
+            <Text primary>{ord.symbol}</Text>
+          </SmartFlex>
+          <SmartFlex center="y" gap="4px">
+            <Text>Size:</Text>
+            <Text primary>{ord.baseSizeFormatted}</Text>
+            <TokenBadge>
+              <Text>{ord.baseToken.symbol}</Text>
+            </TokenBadge>
+          </SmartFlex>
+          <SmartFlex center="y" gap="4px">
+            <Text>Value:</Text>
+            <Text primary>{ord.baseSizeValueFormatted}</Text>
+          </SmartFlex>
+        </SmartFlex>
+        <SmartFlex alignItems="flex-end" gap="2px" margin="0 0 0 8px" column>
+          <SmartFlex center="y">
+            <CancelButton onClick={() => vm.cancelOrder(ord.id)}>Close</CancelButton>
+          </SmartFlex>
+          <SmartFlex center="y" gap="4px">
+            <Text>Entry Price:</Text>
+            <Text primary>{ord.orderPriceFormatted}</Text>
+          </SmartFlex>
+        </SmartFlex>
+      </MobileTablePositionRow>
+    ));
+
+    const balanceData = Array.from(collateralStore.balances)
       .filter(([, balance]) => balance && balance.gt(0))
       .map(([assetId, balance], i) => {
         const token = bcNetwork!.getTokenByAssetId(assetId);
@@ -318,7 +408,7 @@ const PerpTableImpl: React.FC = observer(() => {
         );
       });
 
-    const tabToData = [orderData, balanceData];
+    const tabToData = [positionData, orderData, balanceData];
 
     return (
       <SmartFlex width="100%" column>
@@ -327,7 +417,7 @@ const PerpTableImpl: React.FC = observer(() => {
     );
   };
 
-  const tabToData = [vm.myPositions, balanceData];
+  const tabToData = [vm.myPositions, vm.myOrders, balanceData];
   const data = tabToData[tabIndex];
 
   const renderTable = () => {

@@ -15,6 +15,7 @@ import { MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
 import ConnectWalletDialog from "@src/screens/ConnectWallet";
+import { MODAL_TYPE } from "@src/stores/ModalStore";
 import { media } from "@src/themes/breakpoints";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
 import { useStores } from "@stores";
@@ -30,7 +31,7 @@ import NetworkSelect from "./NetworkSelect";
 interface IProps {}
 
 const Header: React.FC<IProps> = observer(() => {
-  const { accountStore, blockchainStore } = useStores();
+  const { accountStore, blockchainStore, modalStore } = useStores();
   const location = useLocation();
   const media = useMedia();
 
@@ -38,7 +39,6 @@ const Header: React.FC<IProps> = observer(() => {
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
-  const [isDepositWithdrawDialogVisible, openDepositWithdrawDialog, closeDepositWithdrawDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
   const [isNetworkSelectOpen, openNetworkSelect, closeNetworkSelect] = useFlag();
 
@@ -81,7 +81,11 @@ const Header: React.FC<IProps> = observer(() => {
   };
 
   const renderDepositButton = () => {
-    return;
+    return (
+      <Button fitContent onClick={() => modalStore.open(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)}>
+        DEPOSIT / WITHDRAW
+      </Button>
+    );
   };
 
   const renderMobile = () => {
@@ -143,9 +147,7 @@ const Header: React.FC<IProps> = observer(() => {
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
-          <Button fitContent onClick={openDepositWithdrawDialog}>
-            DEPOSIT / WITHDRAW
-          </Button>
+          {renderDepositButton()}
           {renderWallet()}
           {!accountStore.address && <NetworkSelect isSmall />}
         </SmartFlex>
@@ -161,14 +163,14 @@ const Header: React.FC<IProps> = observer(() => {
         isOpen={isMobileMenuOpen}
         onAccountClick={openAccountInfo}
         onClose={closeMobileMenu}
-        onDepositWithdrawClick={openDepositWithdrawDialog}
+        onDepositWithdrawClick={() => modalStore.open(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)}
         onNetworkSelect={openNetworkSelect}
         onWalletConnect={openConnectDialog}
       />
       <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
       <AccountInfoSheet isOpen={isAccountInfoSheetOpen} onClose={closeAccountInfo} />
       <NetworkSelectSheet isOpen={isNetworkSelectOpen} onClose={closeNetworkSelect} />
-      <DepositWithdrawModal visible={isDepositWithdrawDialogVisible} onClose={closeDepositWithdrawDialog} />
+      <DepositWithdrawModal visible={modalStore.isOpen(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)} onClose={modalStore.close} />
     </Root>
   );
 });

@@ -87,7 +87,6 @@ export class CollateralStore {
 
     try {
       const updateData = await oracleStore.getPriceFeedUpdateData(token.priceFeed);
-      console.log(updateData, token, amount);
       await bcNetwork!.withdrawPerpCollateral(token.assetId, amount.toString(), updateData);
       notificationStore.toast("Success withdraw", { type: "success" });
     } catch (error) {
