@@ -5,16 +5,29 @@ import { Nullable } from "tsdef";
 import BN from "@src/utils/BN";
 import RootStore from "@stores/RootStore";
 
+const PYTH_URL = "https://hermes.pyth.network";
+
 class OracleStore {
   public rootStore: RootStore;
 
-  pythClient: Nullable<EvmPriceServiceConnection> = null;
+  priceServiceConnection: EvmPriceServiceConnection;
   prices: Nullable<Record<string, Price>> = null;
   initialized: boolean = false;
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
+
+    this.priceServiceConnection = new EvmPriceServiceConnection(PYTH_URL, {
+      logger: {
+        error: console.error,
+        warn: console.warn,
+        info: () => undefined,
+        debug: () => undefined,
+        trace: () => undefined,
+      },
+    });
+
     this.initAndGetPythPrices().then(() => this.setInitialized(true));
   }
 
@@ -27,18 +40,7 @@ class OracleStore {
     return this.getTokenIndexPrice(token?.priceFeed);
   }
 
-  initAndGetPythPrices = async () => {
-    const pythURL = "https://hermes.pyth.network";
-    const connection = new EvmPriceServiceConnection(pythURL, {
-      logger: {
-        error: console.error,
-        warn: console.warn,
-        info: () => undefined,
-        debug: () => undefined,
-        trace: () => undefined,
-      },
-    });
-    this.setPythClient(connection);
+  private initAndGetPythPrices = async () => {
     // You can find the ids of prices at https://pyth.network/developers/price-feed-ids
 
     const { blockchainStore } = this.rootStore;
@@ -49,7 +51,7 @@ class OracleStore {
       .filter((t) => t.priceFeed)
       .map((t) => t.priceFeed);
 
-    const res = await connection.getLatestPriceFeeds(priceIds);
+    const res = await this.priceServiceConnection.getLatestPriceFeeds(priceIds);
 
     const initPrices = res?.reduce((acc, priceFeed) => {
       const price = priceFeed.getPriceUnchecked();
@@ -57,13 +59,13 @@ class OracleStore {
     }, {} as any);
     this.setPrices(initPrices);
 
-    await connection.subscribePriceFeedUpdates(priceIds, (priceFeed: PriceFeed) => {
+    await this.priceServiceConnection.subscribePriceFeedUpdates(priceIds, (priceFeed: PriceFeed) => {
       const price = priceFeed.getPriceUnchecked();
       this.setPrices({ ...this.prices, [`0x${priceFeed.id}`]: price });
     });
   };
 
-  getTokenIndexPrice(priceFeed: string): BN {
+  getTokenIndexPrice = (priceFeed: string): BN => {
     if (!this.prices) return BN.ZERO;
 
     const feed = this.prices[priceFeed];
@@ -74,9 +76,11 @@ class OracleStore {
 
     // Нам нужно докидывать 1 decimal, потому что decimals,
     return BN.parseUnits(price, 1);
-  }
+  };
 
-  private setPythClient = (l: any) => (this.pythClient = l);
+  getPriceFeedUpdateData = async (feedIds: string | string[]): Promise<string[]> => {
+    return this.priceServiceConnection.getPriceFeedsUpdateData([feedIds].flat());
+  };
 
   private setPrices = (v: Record<string, Price>) => (this.prices = v);
 

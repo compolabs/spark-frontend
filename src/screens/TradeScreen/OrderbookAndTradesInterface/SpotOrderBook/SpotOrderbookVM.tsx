@@ -129,8 +129,8 @@ class SpotOrderbookVM {
     this.isOrderBookLoading = true;
 
     const [buy, sell] = await Promise.all([
-      bcNetwork!.fetchOrders({ baseToken: market.baseToken.assetId, type: "BUY", limit }),
-      bcNetwork!.fetchOrders({ baseToken: market.baseToken.assetId, type: "SELL", limit }),
+      bcNetwork!.fetchSpotOrders({ baseToken: market.baseToken.assetId, type: "BUY", limit }),
+      bcNetwork!.fetchSpotOrders({ baseToken: market.baseToken.assetId, type: "SELL", limit }),
     ]);
 
     //bid = max of buy

@@ -73,7 +73,7 @@ class SpotTableVM {
     }
 
     try {
-      await bcNetwork?.cancelOrder(orderId);
+      await bcNetwork?.cancelSpotOrder(orderId);
       notificationStore.toast("Order canceled!", { type: "success" });
     } catch (error) {
       handleEvmErrors(notificationStore, error, "We were unable to cancel your order at this time");
@@ -96,13 +96,13 @@ class SpotTableVM {
 
     try {
       const [ordersData, ordersHistoryData] = await Promise.all([
-        bcNetwork!.fetchOrders({
+        bcNetwork!.fetchSpotOrders({
           baseToken: market.baseToken.assetId,
           limit: 100,
           trader: accountStore.address,
           isActive: true,
         }),
-        bcNetwork!.fetchTrades({
+        bcNetwork!.fetchSpotTrades({
           baseToken: market.baseToken.assetId,
           limit: 100,
           trader: accountStore.address,

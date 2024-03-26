@@ -41,7 +41,7 @@ class SpotTradesVM {
     if (!initialized || !market) return;
 
     try {
-      this.trades = await bcNetwork!.fetchTrades({
+      this.trades = await bcNetwork!.fetchSpotTrades({
         baseToken: market.baseToken.assetId,
         limit: 40,
         trader: accountStore.address!,

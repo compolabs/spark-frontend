@@ -2,7 +2,7 @@ import { Provider, Wallet } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { PerpMarket, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
 import BN from "@src/utils/BN";
 
 import { BlockchainNetwork } from "../abstract/BlockchainNetwork";
@@ -73,7 +73,7 @@ export class FuelNetwork extends BlockchainNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createOrder = async (assetAddress: string, size: string, price: string): Promise<string> => {
+  createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<string> => {
     if (!this.walletManager.wallet) {
       throw new Error("Wallet does not exist");
     }
@@ -81,15 +81,15 @@ export class FuelNetwork extends BlockchainNetwork {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const quoteToken = this.getTokenBySymbol("USDC");
 
-    return this.api.createOrder(baseToken, quoteToken, size, price, this.walletManager.wallet);
+    return this.api.createSpotOrder(baseToken, quoteToken, size, price, this.walletManager.wallet);
   };
 
-  cancelOrder = async (orderId: string): Promise<void> => {
+  cancelSpotOrder = async (orderId: string): Promise<void> => {
     if (!this.walletManager.wallet) {
       throw new Error("Wallet does not exist");
     }
 
-    await this.api.cancelOrder(orderId, this.walletManager.wallet);
+    await this.api.cancelSpotOrder(orderId, this.walletManager.wallet);
   };
 
   mintToken = async (assetAddress: string): Promise<void> => {
@@ -106,35 +106,100 @@ export class FuelNetwork extends BlockchainNetwork {
     return "9999999999999999";
   };
 
-  fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
+  depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
+    if (!this.walletManager.wallet) {
+      throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
+    }
+
+    await this.api.depositPerpCollateral(assetAddress, amount, this.walletManager.wallet);
+  };
+
+  withdrawPerpCollateral = async (assetAddress: string, amount: string, oracleUpdateData: string[]): Promise<void> => {
+    if (!this.walletManager.wallet) {
+      throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
+    }
+
+    await this.api.withdrawPerpCollateral(assetAddress, amount, oracleUpdateData, this.walletManager.wallet);
+  };
+
+  openPerpOrder = async (
+    assetAddress: string,
+    amount: string,
+    price: string,
+    updateData: string[],
+  ): Promise<string> => {
+    if (!this.walletManager.wallet) {
+      throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
+    }
+
+    return this.api.openPerpOrder(assetAddress, amount, price, updateData, this.walletManager.wallet);
+  };
+
+  removePerpOrder = async (assetId: string): Promise<void> => {
+    if (!this.walletManager.wallet) {
+      throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
+    }
+
+    await this.api.removePerpOrder(assetId, this.walletManager.wallet);
+  };
+
+  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
     const tokens = [this.getTokenBySymbol("BTC")];
     const providerWallet = await this.getProviderWallet();
 
-    return this.api.fetch.fetchMarkets(limit, tokens, providerWallet);
+    return this.api.fetch.fetchSpotMarkets(limit, tokens, providerWallet);
   };
 
-  fetchMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
-    return this.api.fetch.fetchMarketPrice(baseTokenAddress);
+  fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
+    return this.api.fetch.fetchSpotMarketPrice(baseTokenAddress);
   };
 
-  fetchOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
+  fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
     const providerWallet = await this.getProviderWallet();
 
-    return this.api.fetch.fetchOrders(params, providerWallet);
+    return this.api.fetch.fetchSpotOrders(params, providerWallet);
   };
 
-  fetchTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
-    return this.api.fetch.fetchTrades(params);
+  fetchSpotTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
+    return this.api.fetch.fetchSpotTrades(params);
   };
 
-  fetchVolume = async (): Promise<SpotMarketVolume> => {
-    return this.api.fetch.fetchVolume();
+  fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
+    return this.api.fetch.fetchSpotVolume();
+  };
+
+  fetchPerpCollateralBalance = async (accountAddress: string, assetAddress: string): Promise<BN> => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpCollateralBalance(accountAddress, assetAddress, providerWallet);
+  };
+
+  fetchPerpAllTraderPositions = async (accountAddress: string): Promise<PerpPosition[]> => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpAllTraderPositions(accountAddress, providerWallet);
+  };
+
+  fetchPerpIsAllowedCollateral = async (assetAddress: string): Promise<boolean> => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpIsAllowedCollateral(assetAddress, providerWallet);
+  };
+
+  fetchPerpTraderOrders = async (accountAddress: string, assetAddress: string) => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpTraderOrders(accountAddress, assetAddress, providerWallet);
+  };
+
+  fetchPerpAllMarkets = async (): Promise<PerpMarket[]> => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpAllMarkets(providerWallet);
   };
 
   private getProviderWallet = async () => {
-    return Wallet.fromAddress(
-      "0xdd8ce029ad3f4f78c0891513dcfa72914d9c7b8fe44faf2e1a9a9b33b5ee5b94",
-      await this.providerPromise,
-    );
+    const provider = await this.providerPromise;
+    return Wallet.generate({ provider });
   };
 }

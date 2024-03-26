@@ -1,6 +1,6 @@
 import { Nullable } from "tsdef";
 
-import { SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
 import BN from "@src/utils/BN";
 
 import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, NETWORK, SpotMarketVolume } from "../types";
@@ -24,17 +24,30 @@ export abstract class BlockchainNetwork {
   abstract disconnectWallet(): void;
   abstract addAssetToWallet(assetId: string): Promise<void>;
 
-  // Api Contract
-  abstract createOrder(assetAddress: string, size: string, price: string): Promise<string>;
-  abstract cancelOrder(orderId: string): Promise<void>;
+  // Api Contract Orderbook
+  abstract createSpotOrder(assetAddress: string, size: string, price: string): Promise<string>;
+  abstract cancelSpotOrder(orderId: string): Promise<void>;
   abstract mintToken(assetAddress: string): Promise<void>;
   abstract approve(assetAddress: string, amount: string): Promise<void>;
   abstract allowance(assetAddress: string): Promise<string>;
 
-  // Api Fetch
-  abstract fetchMarkets(limit: number): Promise<MarketCreateEvent[]>;
-  abstract fetchMarketPrice(baseTokenAddress: string): Promise<BN>;
-  abstract fetchOrders(params: FetchOrdersParams): Promise<SpotMarketOrder[]>;
-  abstract fetchTrades(params: FetchTradesParams): Promise<SpotMarketTrade[]>;
-  abstract fetchVolume(): Promise<SpotMarketVolume>;
+  // Api Contract Vault
+  abstract depositPerpCollateral(assetAddress: string, amount: string): Promise<void>;
+  abstract withdrawPerpCollateral(assetAddress: string, amount: string, oracleUpdateData: string[]): Promise<void>;
+  abstract openPerpOrder(assetAddress: string, amount: string, price: string, updateData: string[]): Promise<string>;
+  abstract removePerpOrder(orderId: string): Promise<void>;
+
+  // Api Fetch Orderbook
+  abstract fetchSpotMarkets(limit: number): Promise<MarketCreateEvent[]>;
+  abstract fetchSpotMarketPrice(baseTokenAddress: string): Promise<BN>;
+  abstract fetchSpotOrders(params: FetchOrdersParams): Promise<SpotMarketOrder[]>;
+  abstract fetchSpotTrades(params: FetchTradesParams): Promise<SpotMarketTrade[]>;
+  abstract fetchSpotVolume(): Promise<SpotMarketVolume>;
+
+  // Api Fetch Vault
+  abstract fetchPerpCollateralBalance(accountAddress: string, assetAddress: string): Promise<BN>;
+  abstract fetchPerpAllTraderPositions(accountAddress: string): Promise<PerpPosition[]>;
+  abstract fetchPerpIsAllowedCollateral(assetAddress: string): Promise<boolean>;
+  abstract fetchPerpTraderOrders(accountAddress: string, assetAddress: string): Promise<PerpOrder[]>;
+  abstract fetchPerpAllMarkets(): Promise<PerpMarket[]>;
 }

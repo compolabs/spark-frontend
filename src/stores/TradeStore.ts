@@ -45,7 +45,7 @@ class TradeStore {
       favMarkets && this.setFavMarkets(favMarkets);
     }
 
-    this.init();
+    this.initMarket();
 
     const { blockchainStore } = this.rootStore;
 
@@ -53,7 +53,8 @@ class TradeStore {
       () => blockchainStore.currentInstance?.NETWORK_TYPE,
       async () => {
         this.setSpotMarkets([]);
-        this.init();
+        this.setPerpMarkets([]);
+        this.initMarket();
       },
     );
 
@@ -91,7 +92,7 @@ class TradeStore {
 
     const bcNetwork = blockchainStore.currentInstance;
 
-    this.marketInfo = await bcNetwork!.fetchVolume();
+    this.marketInfo = await bcNetwork!.fetchSpotVolume();
   };
 
   updateMarketPrices = async () => {
@@ -100,7 +101,7 @@ class TradeStore {
     const bcNetwork = blockchainStore.currentInstance;
 
     const spotMarketPriceUpdates = this.spotMarkets.map((market) =>
-      bcNetwork!.fetchMarketPrice(market.baseToken.assetId),
+      bcNetwork!.fetchSpotMarketPrice(market.baseToken.assetId),
     );
 
     await Promise.all(spotMarketPriceUpdates);
@@ -110,30 +111,42 @@ class TradeStore {
     favMarkets: this.favMarkets.join(","),
   });
 
-  private init = async () => {
-    this.loading = true;
+  private initMarket = async () => {
+    this._setLoading(true);
 
+    await Promise.all([this.initSpotMarket(), this.initPerpMarket()]).catch(console.error);
+
+    this._setLoading(false);
+    this.setInitialized(true);
+  };
+
+  private initSpotMarket = async () => {
     const { blockchainStore } = this.rootStore;
     const bcNetwork = blockchainStore.currentInstance;
 
     try {
-      const markets = await bcNetwork!.fetchMarkets(100);
+      const markets = await bcNetwork!.fetchSpotMarkets(100);
       const spotMarkets = markets
         .filter((market) => bcNetwork!.getTokenByAssetId(market.assetId) !== undefined)
         .map((market) => new SpotMarket(market.assetId, bcNetwork!.getTokenBySymbol("USDC").assetId));
 
       this.setSpotMarkets(spotMarkets);
-      this.setPerpMarkets([
-        new PerpMarket(bcNetwork!.getTokenBySymbol("BTC").assetId, bcNetwork!.getTokenBySymbol("USDC").assetId),
-      ]);
-
       await this.updateMarketPrices();
     } catch (error) {
-      console.error("Error with init of trade store", error);
+      console.error("[PERP] Error init spot market", error);
     }
+  };
 
-    this._setLoading(false);
-    this.setInitialized(true);
+  private initPerpMarket = async () => {
+    const { blockchainStore } = this.rootStore;
+    const bcNetwork = blockchainStore.currentInstance;
+
+    try {
+      const markets = await bcNetwork!.fetchPerpAllMarkets();
+      this.setPerpMarkets(markets);
+    } catch (error) {
+      console.error("[PERP] Error init perp market", error);
+    }
   };
 
   private setFavMarkets = (v: string[]) => (this.favMarkets = v);

@@ -40,7 +40,7 @@ const ORDER_OPTIONS = [
 const LEVERAGE_OPTIONS = [5, 10, 20];
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore, collateralStore } = useStores();
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
   const isPerp = tradeStore.isPerp;
@@ -227,6 +227,20 @@ const CreateOrder: React.FC = observer(() => {
     );
   };
 
+  const getAvailableAmount = () => {
+    if (isPerp) {
+      return collateralStore.getFormatBalance(
+        vm.isSell ? baseToken.assetId : quoteToken.assetId,
+        vm.isSell ? baseToken.decimals : quoteToken.decimals,
+      );
+    }
+
+    return balanceStore.getFormatBalance(
+      vm.isSell ? baseToken.assetId : quoteToken.assetId,
+      vm.isSell ? baseToken.decimals : quoteToken.decimals,
+    );
+  };
+
   return (
     <Root column>
       <ButtonGroup>
@@ -294,10 +308,7 @@ const CreateOrder: React.FC = observer(() => {
         <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
         <Row alignItems="center" mainAxisSize="fit-content">
           <Text type={TEXT_TYPES.BODY} primary>
-            {balanceStore.getFormatBalance(
-              vm.isSell ? baseToken.assetId : quoteToken.assetId,
-              vm.isSell ? baseToken.decimals : quoteToken.decimals,
-            )}
+            {getAvailableAmount()}
           </Text>
           <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
         </Row>

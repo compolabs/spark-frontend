@@ -2,6 +2,7 @@ import React, { PropsWithChildren, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
+import { Undefinable } from "tsdef";
 
 import Toast from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
@@ -286,7 +287,7 @@ class CreateOrderVM {
   };
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, blockchainStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, blockchainStore, oracleStore } = this.rootStore;
     const { market } = tradeStore;
     const bcNetwork = blockchainStore.currentInstance;
 
@@ -301,7 +302,18 @@ class CreateOrderVM {
       const baseToken = market.baseToken;
       const baseSize = this.isSell ? this.inputAmount.times(-1) : this.inputAmount;
 
-      const hash = await bcNetwork?.createOrder(baseToken.assetId, baseSize.toString(), this.inputPrice.toString());
+      let hash: Undefinable<string> = "";
+      if (tradeStore.isPerp) {
+        const updateData = await oracleStore.getPriceFeedUpdateData(baseToken.priceFeed);
+        hash = await bcNetwork?.openPerpOrder(
+          baseToken.assetId,
+          baseSize.toString(),
+          this.inputPrice.toString(),
+          updateData,
+        );
+      } else {
+        hash = await bcNetwork?.createSpotOrder(baseToken.assetId, baseSize.toString(), this.inputPrice.toString());
+      }
 
       notificationStore.toast(<Toast hash={hash} networkType={bcNetwork!.NETWORK_TYPE} text="Order Created" />);
 
