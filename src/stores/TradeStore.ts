@@ -1,6 +1,6 @@
 import { makeAutoObservable, reaction } from "mobx";
 
-import { SpotMarketVolume } from "@src/blockchain/types";
+import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -27,10 +27,17 @@ class TradeStore {
   isPerp = false;
   setIsPerp = (value: boolean) => (this.isPerp = value);
 
-  marketInfo: SpotMarketVolume = {
+  spotMarketInfo: SpotMarketVolume = {
     volume: BN.ZERO,
     high: BN.ZERO,
     low: BN.ZERO,
+  };
+
+  perpMarketInfo: PerpMarketVolume = {
+    predictedFundingRate: BN.ZERO,
+    averageFunding24h: BN.ZERO,
+    openInterest: BN.ZERO,
+    volume24h: BN.ZERO,
   };
 
   private marketInfoUpdater: IntervalUpdater;
@@ -60,6 +67,13 @@ class TradeStore {
 
     this.marketInfoUpdater = new IntervalUpdater(this.updateMarketInfo, MARKET_INFO_UPDATE_INTERVAL);
     this.marketPricesUpdater = new IntervalUpdater(this.updateMarketPrices, MARKET_PRICES_UPDATE_INTERVAL);
+
+    reaction(
+      () => this.market,
+      () => {
+        this.updateMarketInfo();
+      },
+    );
 
     this.marketInfoUpdater.run(true);
     this.marketPricesUpdater.run();
@@ -92,7 +106,16 @@ class TradeStore {
 
     const bcNetwork = blockchainStore.currentInstance;
 
-    this.marketInfo = await bcNetwork!.fetchSpotVolume();
+    this.spotMarketInfo = await bcNetwork!.fetchSpotVolume();
+
+    if (!this.market) return;
+
+    const predictedFundingRate = await bcNetwork!.fetchPerpFundingRate(this.market.baseToken.assetId);
+
+    this.perpMarketInfo = {
+      ...this.perpMarketInfo,
+      predictedFundingRate,
+    };
   };
 
   updateMarketPrices = async () => {

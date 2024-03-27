@@ -3,7 +3,13 @@ import { Address, Bech32Address, WalletLocked, WalletUnlocked } from "fuels";
 import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
 import BN from "@src/utils/BN";
 
-import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, SpotMarketVolume } from "../types";
+import {
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  PerpMaxAbsPositionSize,
+  SpotMarketVolume,
+} from "../types";
 
 import { AccountBalanceAbi__factory } from "./types/account-balance";
 import { AddressInput, AssetIdInput } from "./types/account-balance/AccountBalanceAbi";
@@ -299,5 +305,28 @@ export class Fetch {
     );
 
     return orders;
+  };
+
+  fetchPerpMaxAbsPositionSize = async (
+    accountAddress: string,
+    assetAddress: string,
+    wallet: WalletLocked | WalletUnlocked,
+  ): Promise<PerpMaxAbsPositionSize> => {
+    const clearingHouseFactory = ClearingHouseAbi__factory.connect(CONTRACT_ADDRESSES.clearingHouse, wallet);
+
+    const addressInput: AddressInput = {
+      value: new Address(accountAddress as any).toB256(),
+    };
+
+    const assetIdInput: AssetIdInput = {
+      value: assetAddress,
+    };
+
+    const result = await clearingHouseFactory.functions.get_max_abs_position_size(addressInput, assetIdInput).get();
+
+    const shortSize = new BN(result.value[0].toString());
+    const longSize = new BN(result.value[0].toString());
+
+    return { shortSize, longSize };
   };
 }

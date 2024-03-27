@@ -7,7 +7,14 @@ import BN from "@src/utils/BN";
 
 import { BlockchainNetwork } from "../abstract/BlockchainNetwork";
 import { NETWORK_ERROR, NetworkError } from "../NetworkError";
-import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, NETWORK, SpotMarketVolume } from "../types";
+import {
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  NETWORK,
+  PerpMaxAbsPositionSize,
+  SpotMarketVolume,
+} from "../types";
 
 import { ERC20_ABI } from "./abi";
 import { Api } from "./Api";
@@ -141,6 +148,9 @@ export class EVMNetwork extends BlockchainNetwork {
   removePerpOrder = async (orderId: string): Promise<void> => {
     return;
   };
+  fulfillPerpOrder = async (orderId: string, amount: string, oracleUpdateData: string[]): Promise<void> => {
+    return;
+  };
 
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
     return this.api.fetch.fetchMarkets(limit);
@@ -172,5 +182,11 @@ export class EVMNetwork extends BlockchainNetwork {
   };
   fetchPerpAllMarkets = async (): Promise<PerpMarket[]> => {
     return [];
+  };
+  fetchPerpFundingRate = async (): Promise<BN> => {
+    return BN.ZERO;
+  };
+  fetchPerpMaxAbsPositionSize = async (): Promise<PerpMaxAbsPositionSize> => {
+    return { shortSize: BN.ZERO, longSize: BN.ZERO };
   };
 }

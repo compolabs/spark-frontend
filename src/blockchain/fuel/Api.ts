@@ -193,4 +193,40 @@ export class Api {
       ])
       .call();
   };
+
+  fulfillPerpOrder = async (
+    orderId: string,
+    amount: string,
+    updateData: string[],
+    wallet: WalletLocked | WalletUnlocked,
+  ) => {
+    const clearingHouseFactory = ClearingHouseAbi__factory.connect(CONTRACT_ADDRESSES.clearingHouse, wallet);
+
+    const eth = TOKENS_BY_SYMBOL["ETH"];
+
+    const isNegative = amount.includes("-");
+    const absSize = amount.replace("-", "");
+    const baseSize: I64Input = { value: absSize, negative: isNegative };
+
+    const parsedUpdateData = updateData.map((v) => Array.from(arrayify(v)));
+
+    const forward: CoinQuantityLike = {
+      amount: "10",
+      assetId: eth.assetId,
+    };
+
+    await clearingHouseFactory.functions
+      .fulfill_order(baseSize, orderId, parsedUpdateData)
+      .callParams({ forward })
+      .txParams({ gasPrice: 1, gasLimit: GAS_LIMIT })
+      .addContracts([
+        ProxyAbi__factory.connect(CONTRACT_ADDRESSES.proxy, wallet),
+        PerpMarketAbi__factory.connect(CONTRACT_ADDRESSES.perpMarket, wallet),
+        AccountBalanceAbi__factory.connect(CONTRACT_ADDRESSES.accountBalance, wallet),
+        ClearingHouseAbi__factory.connect(CONTRACT_ADDRESSES.clearingHouse, wallet),
+        VaultAbi__factory.connect(CONTRACT_ADDRESSES.vault, wallet),
+        PythContractAbi__factory.connect(CONTRACT_ADDRESSES.pyth, wallet),
+      ])
+      .call();
+  };
 }

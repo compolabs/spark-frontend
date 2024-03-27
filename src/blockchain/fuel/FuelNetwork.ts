@@ -7,7 +7,14 @@ import BN from "@src/utils/BN";
 
 import { BlockchainNetwork } from "../abstract/BlockchainNetwork";
 import { NETWORK_ERROR, NetworkError } from "../NetworkError";
-import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, NETWORK, SpotMarketVolume } from "../types";
+import {
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  NETWORK,
+  PerpMaxAbsPositionSize,
+  SpotMarketVolume,
+} from "../types";
 
 import { Api } from "./Api";
 import { NETWORKS, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
@@ -143,6 +150,14 @@ export class FuelNetwork extends BlockchainNetwork {
     await this.api.removePerpOrder(assetId, this.walletManager.wallet);
   };
 
+  fulfillPerpOrder = async (orderId: string, amount: string, updateData: string[]): Promise<void> => {
+    if (!this.walletManager.wallet) {
+      throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
+    }
+
+    return this.api.fulfillPerpOrder(orderId, amount, updateData, this.walletManager.wallet);
+  };
+
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
     const tokens = [this.getTokenBySymbol("BTC")];
     const providerWallet = await this.getProviderWallet();
@@ -196,6 +211,21 @@ export class FuelNetwork extends BlockchainNetwork {
     const providerWallet = await this.getProviderWallet();
 
     return this.api.fetch.fetchPerpAllMarkets(providerWallet);
+  };
+
+  fetchPerpFundingRate = async (assetAddress: string): Promise<BN> => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpFundingRate(assetAddress, providerWallet);
+  };
+
+  fetchPerpMaxAbsPositionSize = async (
+    accountAddress: string,
+    assetAddress: string,
+  ): Promise<PerpMaxAbsPositionSize> => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpMaxAbsPositionSize(accountAddress, assetAddress, providerWallet);
   };
 
   private getProviderWallet = async () => {
