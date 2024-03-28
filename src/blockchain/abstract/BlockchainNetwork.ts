@@ -3,13 +3,21 @@ import { Nullable } from "tsdef";
 import { SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
 import BN from "@src/utils/BN";
 
-import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, NETWORK, SpotMarketVolume } from "../types";
+import {
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  NETWORK,
+  SpotMarketVolume,
+  WalletType,
+} from "../types";
 
 export abstract class BlockchainNetwork {
   abstract NETWORK_TYPE: NETWORK;
 
   abstract getBalance(accountAddress: string, assetAddress: string): Promise<string>;
   abstract getAddress(): Nullable<string>;
+  abstract getWalletType(): Nullable<WalletType>;
   abstract getPrivateKey(): Nullable<string>;
   abstract getIsExternalWallet(): boolean;
 
@@ -19,7 +27,7 @@ export abstract class BlockchainNetwork {
   abstract getTokenByAssetId(assetId: string): Token;
 
   // Wallet
-  abstract connectWallet(): Promise<void>;
+  abstract connectWallet(wallet?: WalletType): Promise<void>;
   abstract connectWalletByPrivateKey(privateKey: string): Promise<void>;
   abstract disconnectWallet(): void;
   abstract addAssetToWallet(assetId: string): Promise<void>;

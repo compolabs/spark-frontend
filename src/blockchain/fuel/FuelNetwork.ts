@@ -7,7 +7,14 @@ import BN from "@src/utils/BN";
 
 import { BlockchainNetwork } from "../abstract/BlockchainNetwork";
 import { NETWORK_ERROR, NetworkError } from "../NetworkError";
-import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, NETWORK, SpotMarketVolume } from "../types";
+import {
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  NETWORK,
+  SpotMarketVolume,
+  WalletType,
+} from "../types";
 
 import { Api } from "./Api";
 import { NETWORKS, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
@@ -57,8 +64,12 @@ export class FuelNetwork extends BlockchainNetwork {
     return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
-  connectWallet = async (): Promise<void> => {
-    await this.walletManager.connect();
+  getWalletType = (): Nullable<any> => {
+    return this.walletManager.walletType;
+  };
+
+  connectWallet = async (wallet: WalletType): Promise<void> => {
+    await this.walletManager.connect(wallet);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {

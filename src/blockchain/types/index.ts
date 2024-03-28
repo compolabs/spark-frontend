@@ -52,3 +52,10 @@ export const AVAILABLE_NETWORKS = [
     type: NETWORK.FUEL,
   },
 ];
+
+export enum CONNECTOR_NAME {
+  FUEL = "Fuel Wallet",
+  EVM = "EVM wallet connector",
+}
+
+export type WalletType = "metamask" | "fuel";

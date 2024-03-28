@@ -68,6 +68,10 @@ export class EVMNetwork extends BlockchainNetwork {
     return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
+  getWalletType = (): Nullable<any> => {
+    return null;
+  };
+
   connectWallet = async (): Promise<void> => {
     await this.walletManager.connect(this.network);
   };

@@ -5,16 +5,19 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { NETWORK_ERROR, NetworkError } from "../NetworkError";
+import { CONNECTOR_NAME, WalletType } from "../types";
 
+import { EVMWalletConnector } from "./packages/wallet-connector-evm";
 import { TOKENS_BY_ASSET_ID } from "./constants";
 
 export class WalletManager {
   public address: Nullable<string> = null;
   public wallet: Nullable<FuelWalletLocked> = null;
   public privateKey: Nullable<string> = null;
+  public walletType: Nullable<WalletType> = null;
 
   private fuel = new Fuel({
-    connectors: [new FuelWalletConnector()],
+    connectors: [new FuelWalletConnector(CONNECTOR_NAME.FUEL), new EVMWalletConnector()],
   });
 
   constructor() {
@@ -23,18 +26,25 @@ export class WalletManager {
     this.fuel.on(this.fuel.events.currentAccount, this.onCurrentAccountChange);
   }
 
-  connect = async (): Promise<void> => {
+  connect = async (wallet: WalletType): Promise<void> => {
+    if (wallet === "metamask") {
+      await this.fuel.selectConnector(CONNECTOR_NAME.EVM);
+    } else {
+      await this.fuel.selectConnector(CONNECTOR_NAME.FUEL);
+    }
     const hasConnector = await this.fuel.hasConnector();
 
     if (!hasConnector) {
       throw new NetworkError(NETWORK_ERROR.NOT_CONNECTED);
     }
-    const isApproved = await this.fuel.connect();
-
-    if (!isApproved) {
+    try {
+      const isApproved = await this.fuel.connect();
+      if (!isApproved) {
+        return;
+      }
+    } catch {
       return;
     }
-
     let account = null;
     try {
       account = await this.fuel.currentAccount();
@@ -104,6 +114,8 @@ export class WalletManager {
   disconnect = () => {
     this.address = null;
     this.privateKey = null;
+    this.wallet = null;
+    this.walletType = null;
 
     void this.fuel.disconnect();
   };
@@ -111,7 +123,7 @@ export class WalletManager {
   private onCurrentAccountChange = async (account: Nullable<string>) => {
     if (account === null) {
       try {
-        await this.connect();
+        await this.connect("fuel");
       } catch (error) {
         if (error instanceof NetworkError) {
           if (error.code === NETWORK_ERROR.UNKNOWN_ACCOUNT) {

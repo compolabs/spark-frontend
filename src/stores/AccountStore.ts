@@ -2,13 +2,14 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { NETWORK_ERROR, NetworkError } from "@src/blockchain/NetworkError";
-import { NETWORK } from "@src/blockchain/types";
+import { NETWORK, WalletType } from "@src/blockchain/types";
 
 import RootStore from "./RootStore";
 
 export interface ISerializedAccountStore {
   privateKey: Nullable<string>;
   address: Nullable<string>;
+  wallet: Nullable<WalletType>;
 }
 
 class AccountStore {
@@ -26,7 +27,7 @@ class AccountStore {
       if (initState.privateKey) {
         this.connectWalletByPrivateKey(initState.privateKey);
       } else if (initState.address && blockchainStore.currentInstance?.NETWORK_TYPE === NETWORK.FUEL) {
-        this.connectWallet(blockchainStore.currentInstance.NETWORK_TYPE);
+        this.connectWallet(blockchainStore.currentInstance.NETWORK_TYPE, initState.wallet);
       }
     }
 
@@ -37,13 +38,13 @@ class AccountStore {
     this.initialized = true;
   };
 
-  connectWallet = async (network: NETWORK) => {
+  connectWallet = async (network: NETWORK, wallet: Nullable<WalletType>) => {
     const { blockchainStore, notificationStore } = this.rootStore;
 
     const bcNetwork = blockchainStore.connectTo(network);
 
     try {
-      await bcNetwork?.connectWallet();
+      await bcNetwork?.connectWallet(wallet ?? undefined);
     } catch (error: any) {
       console.error("Error connecting to wallet:", error);
 
@@ -111,6 +112,7 @@ class AccountStore {
     return {
       privateKey: bcNetwork?.getPrivateKey() ?? null,
       address: bcNetwork?.getAddress() ?? null,
+      wallet: bcNetwork?.getWalletType() ?? null,
     };
   };
 }
