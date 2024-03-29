@@ -64,3 +64,8 @@ export type PerpMaxAbsPositionSize = {
   shortSize: BN;
   longSize: BN;
 };
+
+export type PerpPendingFundingPayment = {
+  fundingPayment: BN;
+  fundingGrowthPayment: BN;
+};

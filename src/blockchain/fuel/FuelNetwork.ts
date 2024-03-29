@@ -13,6 +13,7 @@ import {
   MarketCreateEvent,
   NETWORK,
   PerpMaxAbsPositionSize,
+  PerpPendingFundingPayment,
   SpotMarketVolume,
 } from "../types";
 
@@ -226,6 +227,21 @@ export class FuelNetwork extends BlockchainNetwork {
     const providerWallet = await this.getProviderWallet();
 
     return this.api.fetch.fetchPerpMaxAbsPositionSize(accountAddress, assetAddress, providerWallet);
+  };
+
+  fetchPerpPendingFundingPayment = async (
+    accountAddress: string,
+    assetAddress: string,
+  ): Promise<PerpPendingFundingPayment> => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpPendingFundingPayment(accountAddress, assetAddress, providerWallet);
+  };
+
+  fetchPerpMarkPrice = async (assetAddress: string): Promise<BN> => {
+    const providerWallet = await this.getProviderWallet();
+
+    return this.api.fetch.fetchPerpMarkPrice(assetAddress, providerWallet);
   };
 
   private getProviderWallet = async () => {

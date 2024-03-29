@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { PerpOrder, PerpPosition } from "@src/entity";
+import { PerpMarket, PerpOrder, PerpPosition } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { handleEvmErrors } from "@src/utils/handleEvmErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -43,15 +43,27 @@ class PerpTableVM {
     const { accountStore, tradeStore, blockchainStore } = this.rootStore;
     const bcNetwork = blockchainStore.currentInstance;
 
-    if (!tradeStore.market || !accountStore.address) return;
+    if (!tradeStore.isPerp || !tradeStore.market || !accountStore.address) return;
 
-    const { market } = tradeStore;
+    const market = tradeStore.market as PerpMarket;
 
     try {
       const [ordersData, positionsData] = await Promise.all([
         bcNetwork!.fetchPerpTraderOrders(accountStore.address, market.baseToken.assetId),
         bcNetwork!.fetchPerpAllTraderPositions(accountStore.address),
       ]);
+
+      for (const pos of positionsData) {
+        pos.setImRatio(market.imRatio);
+
+        const [markPrice, pendingFundingPayment] = await Promise.all([
+          bcNetwork!.fetchPerpMarkPrice(pos.baseToken.assetId),
+          bcNetwork!.fetchPerpPendingFundingPayment(accountStore.address, pos.baseToken.assetId),
+        ]);
+
+        pos.setMarkPrice(markPrice);
+        pos.setPendingFundingPayment(pendingFundingPayment.fundingPayment);
+      }
 
       this.setMyOrders(ordersData);
       this.setMyPositions(positionsData);

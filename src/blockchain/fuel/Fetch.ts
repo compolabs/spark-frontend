@@ -8,6 +8,7 @@ import {
   FetchTradesParams,
   MarketCreateEvent,
   PerpMaxAbsPositionSize,
+  PerpPendingFundingPayment,
   SpotMarketVolume,
 } from "../types";
 
@@ -242,7 +243,7 @@ export class Fetch {
     accountAddress: string,
     assetAddress: string,
     wallet: WalletLocked | WalletUnlocked,
-  ): Promise<{ fundingPayment: BN; fundingGrowthPayment: BN }> => {
+  ): Promise<PerpPendingFundingPayment> => {
     const accountBalanceFactory = AccountBalanceAbi__factory.connect(CONTRACT_ADDRESSES.accountBalance, wallet);
 
     const addressInput: AddressInput = {
@@ -328,5 +329,19 @@ export class Fetch {
     const longSize = new BN(result.value[0].toString());
 
     return { shortSize, longSize };
+  };
+
+  fetchPerpMarkPrice = async (assetAddress: string, wallet: WalletLocked | WalletUnlocked): Promise<BN> => {
+    const vaultFactory = PerpMarketAbi__factory.connect(CONTRACT_ADDRESSES.perpMarket, wallet);
+
+    const assetIdInput: AssetIdInput = {
+      value: assetAddress,
+    };
+
+    const result = await vaultFactory.functions.get_mark_price(assetIdInput).get();
+
+    const markPrice = new BN(result.value.toString());
+
+    return markPrice;
   };
 }

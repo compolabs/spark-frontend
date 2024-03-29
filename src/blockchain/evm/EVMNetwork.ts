@@ -13,6 +13,7 @@ import {
   MarketCreateEvent,
   NETWORK,
   PerpMaxAbsPositionSize,
+  PerpPendingFundingPayment,
   SpotMarketVolume,
 } from "../types";
 
@@ -188,5 +189,11 @@ export class EVMNetwork extends BlockchainNetwork {
   };
   fetchPerpMaxAbsPositionSize = async (): Promise<PerpMaxAbsPositionSize> => {
     return { shortSize: BN.ZERO, longSize: BN.ZERO };
+  };
+  fetchPerpPendingFundingPayment = async (): Promise<PerpPendingFundingPayment> => {
+    return { fundingGrowthPayment: BN.ZERO, fundingPayment: BN.ZERO };
+  };
+  fetchPerpMarkPrice = async (): Promise<BN> => {
+    return BN.ZERO;
   };
 }
