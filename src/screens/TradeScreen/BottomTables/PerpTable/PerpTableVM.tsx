@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { PerpOrder } from "@src/entity";
+import { PerpOrder, PerpPosition } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { handleEvmErrors } from "@src/utils/handleEvmErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -21,28 +21,7 @@ export const usePerpTableVMProvider = () => useVM(ctx);
 const ORDERS_UPDATE_INTERVAL = 10 * 1000; // 10 sec
 
 class PerpTableVM {
-  myPositions: any[] = [
-    {
-      id: "1",
-      pair: "ETH-USDC",
-      type: "LONG",
-      leverage: "20",
-      baseToken: "ETH",
-      quoteToken: "USDC",
-      size: "0.89",
-      value: "1719.21",
-      margin: "75.6255",
-      entry: "1720.33",
-      mark: "1789.33",
-      liqPrice: "1720.23",
-      unrealizedPnl: "64.1677",
-      unrealizedPnlPercent: "85.25%",
-      fundingPayment: "78.1233",
-      isTpSlActive: true,
-      takeProfit: "0.0001",
-      stopLoss: "0.0002",
-    },
-  ];
+  myPositions: PerpPosition[] = [];
   myOrders: PerpOrder[] = [];
 
   cancelingOrderId: Nullable<string> = null;
@@ -69,17 +48,21 @@ class PerpTableVM {
     const { market } = tradeStore;
 
     try {
-      const [ordersData] = await Promise.all([
+      const [ordersData, positionsData] = await Promise.all([
         bcNetwork!.fetchPerpTraderOrders(accountStore.address, market.baseToken.assetId),
+        bcNetwork!.fetchPerpAllTraderPositions(accountStore.address),
       ]);
 
       this.setMyOrders(ordersData);
+      this.setMyPositions(positionsData);
     } catch (error) {
       console.error(error);
     }
   };
 
   private setMyOrders = (myOrders: PerpOrder[]) => (this.myOrders = myOrders);
+
+  private setMyPositions = (myPositions: PerpPosition[]) => (this.myPositions = myPositions);
 
   cancelOrder = async (orderId: string) => {
     const { accountStore, tradeStore, blockchainStore, notificationStore } = this.rootStore;
@@ -100,5 +83,9 @@ class PerpTableVM {
     }
 
     this.cancelingOrderId = null;
+  };
+
+  cancelPosition = async () => {
+    console.warn("NOT IMPLEMENTED");
   };
 }

@@ -179,7 +179,7 @@ const CreateOrder: React.FC = observer(() => {
         >
           <SmartFlex gap="8px" column>
             <Slider
-              max={20}
+              max={100}
               min={0}
               percent={vm.inputLeverage.toNumber()}
               symbol="x"
