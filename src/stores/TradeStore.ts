@@ -114,7 +114,7 @@ class TradeStore {
 
     this.perpMarketInfo = {
       ...this.perpMarketInfo,
-      predictedFundingRate,
+      predictedFundingRate: BN.formatUnits(predictedFundingRate, this.market.quoteToken.decimals),
     };
   };
 

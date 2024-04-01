@@ -19,14 +19,14 @@ export class PerpPosition {
   readonly takerOpenNational: BN;
   readonly takerPositionSize: BN;
 
-  markPrice = BN.ZERO;
-  setMarkPrice = (price: BN) => (this.markPrice = price);
+  private _markPrice = BN.ZERO;
+  setMarkPrice = (price: BN) => (this._markPrice = price);
 
-  imRatio = BN.ZERO;
-  setImRatio = (ratio: BN) => (this.imRatio = ratio);
+  private _imRatio = BN.ZERO;
+  setImRatio = (ratio: BN) => (this._imRatio = ratio);
 
-  pendingFundingPayment = BN.ZERO;
-  setPendingFundingPayment = (payment: BN) => (this.pendingFundingPayment = payment);
+  _pendingFundingPayment = BN.ZERO;
+  setPendingFundingPayment = (payment: BN) => (this._pendingFundingPayment = payment);
 
   constructor(params: PerpPositionParams) {
     const bcNetwork = BlockchainNetworkFactory.getInstance().currentInstance!;
@@ -35,8 +35,8 @@ export class PerpPosition {
     this.quoteToken = bcNetwork.getTokenBySymbol("USDC");
 
     this.lastTwPremiumGrowthGlobal = params.lastTwPremiumGrowthGlobal;
-    this.takerOpenNational = params.takerOpenNational;
-    this.takerPositionSize = params.takerPositionSize;
+    this.takerOpenNational = BN.formatUnits(params.takerOpenNational, this.baseToken.decimals);
+    this.takerPositionSize = BN.formatUnits(params.takerPositionSize, this.baseToken.decimals);
 
     makeAutoObservable(this);
   }
@@ -47,6 +47,18 @@ export class PerpPosition {
 
   get entrySizeValue() {
     return this.takerPositionSize.multipliedBy(this.markPrice);
+  }
+
+  get markPrice() {
+    return BN.formatUnits(this._markPrice, this.quoteToken.decimals);
+  }
+
+  get imRatio() {
+    return BN.formatUnits(this._imRatio, this.quoteToken.decimals);
+  }
+
+  get pendingFundingPayment() {
+    return BN.formatUnits(this._pendingFundingPayment, this.quoteToken.decimals);
   }
 
   get margin() {
@@ -62,7 +74,7 @@ export class PerpPosition {
   }
 
   get unrealizedPnl() {
-    return this.takerOpenNational.multipliedBy(this.takerPositionSize).multipliedBy(this.markPrice);
+    return this.takerPositionSize.multipliedBy(this.markPrice).plus(this.takerOpenNational);
   }
 
   get unrealizedPnlPercent() {

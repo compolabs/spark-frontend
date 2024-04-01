@@ -35,6 +35,7 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
   const USDC = bcNetwork!.getTokenBySymbol("USDC");
 
   const USDCBalance = balanceStore.getBalance(USDC.assetId);
+  const USDCBalanceFormatted = balanceStore.getFormatBalance(USDC.assetId, USDC.decimals);
 
   const handleMaxClick = () => {
     if (isDeposit) {
@@ -159,7 +160,7 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
             <Text type={TEXT_TYPES.SUPPORTING}>{isDeposit ? "Wallet balance" : "Available to withdraw"}</Text>
             <SmartFlex center="y" gap="4px">
               <Text color={theme.colors.textPrimary} type={TEXT_TYPES.SUPPORTING}>
-                {isDeposit ? USDCBalance.toSignificant(2) : collateralUSDCBalance}
+                {isDeposit ? USDCBalanceFormatted : collateralUSDCBalance}
               </Text>
               <Text type={TEXT_TYPES.SUPPORTING}>USDC</Text>
             </SmartFlex>
