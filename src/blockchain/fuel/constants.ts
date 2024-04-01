@@ -6,12 +6,12 @@ import TOKENS_JSON from "./tokens.json";
 export const CONTRACT_ADDRESSES = {
   spotMarket: "0x09888861682fb900a7ea36806fb66074ffc3a69fc4f05ed17730b0bc417a0fe0",
   tokenFactory: "0x6bd9643c9279204b474a778dea7f923226060cb94a4c61c5aae015cf96b5aad2",
-  vault: "0xba7e8d20c93fb776a369ddba3b76c0716f7fd9a71ee99afd4a45a2c2c5cdba34",
-  accountBalance: "0x5dcab75350f40f3f77ad85dea4b8d4e191b00a9e4e0373405772f90e97e38258",
-  clearingHouse: "0x4a023ae9417e2be14cf8548857046cd44759f1716dc9fee96f472f6862d2a0ac",
-  perpMarket: "0x3fc41126bb79d32f61cddce43b96c6db28d37b6ed592e42d5e64d78bdf5e0e6c",
+  vault: "0xe8beef1c4c94e8732b89c5e783c80e9fb7f80fd43ad0c594ba380e4b5556106a",
+  accountBalance: "0xa842702d600b43a3c7be0e36a0e08452b3d6fc36f0d4015fb6a06cb056cd312d",
+  clearingHouse: "0xa4801149d4faa6e8421f130708bcd228780353241e2b35697e4e08d0b3672b20",
+  perpMarket: "0xd628033650475290e0e8696266d0a0318364ff9c980f9ee5f4a4bb56ee85664a",
   pyth: "0xe67badf5987def9b0cd8661cb2d8ae4290b60b189be7b8c3d12c064610095888",
-  proxy: "0xc26bd3ee8bbc60584c3a10df2aacb924a374e4ba4e5014248b78e829e558b29b",
+  proxy: "0x24c43c6cb3f0898ab46142fefa94a77414d7a6bb2619c41cd8725b161ac50c9d",
 };
 
 export interface Network {
