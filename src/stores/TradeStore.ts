@@ -1,6 +1,6 @@
 import { makeAutoObservable, reaction } from "mobx";
 
-import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
+import { NETWORK, PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -86,6 +86,14 @@ class TradeStore {
     return this.spotMarkets.find((market) => market.symbol === this.marketSymbol);
   }
 
+  get isPerpAvailable() {
+    const { blockchainStore } = this.rootStore;
+
+    const bcNetwork = blockchainStore.currentInstance;
+
+    return bcNetwork?.NETWORK_TYPE === NETWORK.FUEL;
+  }
+
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
 
   addToFav = (marketId: string) => {
@@ -108,7 +116,7 @@ class TradeStore {
 
     this.spotMarketInfo = await bcNetwork!.fetchSpotVolume();
 
-    if (!this.market) return;
+    if (!this.market || this.market instanceof PerpMarket) return;
 
     const predictedFundingRate = await bcNetwork!.fetchPerpFundingRate(this.market.baseToken.assetId);
 
@@ -135,6 +143,7 @@ class TradeStore {
   });
 
   private initMarket = async () => {
+    this.setInitialized(false);
     this._setLoading(true);
 
     await Promise.all([this.initSpotMarket(), this.initPerpMarket()]).catch(console.error);

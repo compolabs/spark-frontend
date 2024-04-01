@@ -193,13 +193,13 @@ class CreateOrderVM {
   };
 
   getMaxPositionSize = async () => {
-    const { tradeStore, blockchainStore } = this.rootStore;
+    const { tradeStore, blockchainStore, accountStore } = this.rootStore;
     const bcNetwork = blockchainStore.currentInstance;
 
-    if (!tradeStore.market) return;
+    if (!tradeStore.market || !accountStore.isConnected) return;
 
     this.maxPositionSize = await bcNetwork!.fetchPerpMaxAbsPositionSize(
-      bcNetwork!.getAddress()!,
+      accountStore.address!,
       tradeStore.market.baseToken.assetId,
     );
   };

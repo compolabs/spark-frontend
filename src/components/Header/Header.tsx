@@ -31,7 +31,7 @@ import NetworkSelect from "./NetworkSelect";
 interface IProps {}
 
 const Header: React.FC<IProps> = observer(() => {
-  const { accountStore, blockchainStore, modalStore } = useStores();
+  const { tradeStore, accountStore, blockchainStore, modalStore } = useStores();
   const location = useLocation();
   const media = useMedia();
 
@@ -81,6 +81,8 @@ const Header: React.FC<IProps> = observer(() => {
   };
 
   const renderDepositButton = () => {
+    if (!tradeStore.isPerpAvailable) return;
+
     return (
       <Button fitContent onClick={() => modalStore.open(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)}>
         DEPOSIT / WITHDRAW
