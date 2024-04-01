@@ -142,45 +142,51 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
         />
         {renderSettingsIcons()}
       </SettingsContainer>
-      <OrderBookHeader>
-        <Text type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</Text>
-        <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
-        <Text type={TEXT_TYPES.SUPPORTING}>{`Total ${market?.quoteToken.symbol}`}</Text>
-      </OrderBookHeader>
-      <Container fitContent={vm.orderFilter === 1 || vm.orderFilter === 2} reverse={vm.orderFilter === 1}>
-        {vm.orderFilter === 0 && (
-          <Plug length={vm.sellOrders.length < +vm.oneSizeOrders ? +vm.oneSizeOrders - 1 - vm.sellOrders.length : 0} />
-        )}
-        {vm.orderFilter === 1 && (
-          <Plug
-            length={vm.sellOrders.length < +vm.amountOfOrders ? +vm.amountOfOrders - 1 - vm.sellOrders.length : 0}
-          />
-        )}
+      <OrderbookContainer>
+        <OrderBookHeader>
+          <Text type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</Text>
+          <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
+          <Text type={TEXT_TYPES.SUPPORTING}>{`Total ${market?.quoteToken.symbol}`}</Text>
+        </OrderBookHeader>
+        <Container fitContent={vm.orderFilter === 1 || vm.orderFilter === 2} reverse={vm.orderFilter === 1}>
+          {vm.orderFilter === 0 && (
+            <Plug
+              length={vm.sellOrders.length < +vm.oneSizeOrders ? +vm.oneSizeOrders - 1 - vm.sellOrders.length : 0}
+            />
+          )}
+          {vm.orderFilter === 1 && (
+            <Plug
+              length={vm.sellOrders.length < +vm.amountOfOrders ? +vm.amountOfOrders - 1 - vm.sellOrders.length : 0}
+            />
+          )}
 
-        {vm.orderFilter !== 2 && renderOrders(vm.sellOrders, "sell")}
+          {vm.orderFilter !== 2 && renderOrders(vm.sellOrders, "sell")}
 
-        {vm.orderFilter === 0 && renderSpread()}
+          {vm.orderFilter === 0 && renderSpread()}
 
-        {vm.orderFilter !== 1 && renderOrders(vm.buyOrders, "buy")}
+          {vm.orderFilter !== 1 && renderOrders(vm.buyOrders, "buy")}
 
-        {vm.orderFilter === 2 && (
-          <Plug length={vm.buyOrders.length < +vm.amountOfOrders ? +vm.amountOfOrders - 1 - vm.buyOrders.length : 0} />
-        )}
-        {vm.orderFilter === 0 && (
-          <Plug length={vm.buyOrders.length < +vm.oneSizeOrders ? +vm.oneSizeOrders - 1 - vm.buyOrders.length : 0} />
-        )}
-      </Container>
+          {vm.orderFilter === 2 && (
+            <Plug
+              length={vm.buyOrders.length < +vm.amountOfOrders ? +vm.amountOfOrders - 1 - vm.buyOrders.length : 0}
+            />
+          )}
+          {vm.orderFilter === 0 && (
+            <Plug length={vm.buyOrders.length < +vm.oneSizeOrders ? +vm.oneSizeOrders - 1 - vm.buyOrders.length : 0} />
+          )}
+        </Container>
 
-      <SpotOrderSettingsSheet
-        decimals={SPOT_DECIMAL_OPTIONS}
-        filterIcons={SPOT_SETTINGS_ICONS}
-        isOpen={isSettingsOpen}
-        selectedDecimal={vm.decimalKey}
-        selectedFilter={vm.orderFilter}
-        onClose={closeSettings}
-        onDecimalSelect={vm.setDecimalKey}
-        onFilterSelect={vm.setOrderFilter}
-      />
+        <SpotOrderSettingsSheet
+          decimals={SPOT_DECIMAL_OPTIONS}
+          filterIcons={SPOT_SETTINGS_ICONS}
+          isOpen={isSettingsOpen}
+          selectedDecimal={vm.decimalKey}
+          selectedFilter={vm.orderFilter}
+          onClose={closeSettings}
+          onDecimalSelect={vm.setDecimalKey}
+          onFilterSelect={vm.setOrderFilter}
+        />
+      </OrderbookContainer>
     </Root>
   );
 });
@@ -276,6 +282,8 @@ const OrderBookHeader = styled.div`
   width: 100%;
   padding: 0 12px;
   text-align: center;
+  height: 16px;
+  align-items: center;
 
   ${Text} {
     text-align: start;
@@ -333,17 +341,25 @@ const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
   }
 `;
 
-const Container = styled.div<{
+const OrderbookContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+`;
+
+const Container = styled(OrderbookContainer)<{
   fitContent?: boolean;
   reverse?: boolean;
 }>`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
   ${({ fitContent }) => !fitContent && "height: 100%;"};
   ${({ reverse }) => reverse && "flex-direction: column-reverse;"};
+  ${({ reverse }) => (reverse ? "justify-content: flex-end;" : "justify-content: flex-start;")};
   height: 100%;
+
+  ${media.mobile} {
+    justify-content: center;
+  }
 `;
 
 const SpreadContainer = styled(SmartFlex)`
