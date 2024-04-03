@@ -1,10 +1,11 @@
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { Token } from "@src/entity/Token";
 
+import { IndexerApi } from "./IndexerApi";
 import TOKENS_JSON from "./tokens.json";
 
 export const CONTRACT_ADDRESSES = {
-  spotMarket: "0x09888861682fb900a7ea36806fb66074ffc3a69fc4f05ed17730b0bc417a0fe0",
+  spotMarket: "0x858e9d0d9ebef5000c7ddb1b709b1abd78f59dfae1335ce49b146c6889b84427",
   tokenFactory: "0x6bd9643c9279204b474a778dea7f923226060cb94a4c61c5aae015cf96b5aad2",
   vault: "0xe8beef1c4c94e8732b89c5e783c80e9fb7f80fd43ad0c594ba380e4b5556106a",
   accountBalance: "0xa842702d600b43a3c7be0e36a0e08452b3d6fc36f0d4015fb6a06cb056cd312d",
@@ -47,3 +48,7 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
 );
 
 export const GAS_LIMIT = 20000000;
+
+const INDEXER_URL = "http://localhost:5001";
+
+export const indexerApi = new IndexerApi(INDEXER_URL);

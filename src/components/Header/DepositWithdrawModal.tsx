@@ -32,10 +32,14 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
 
   const bcNetwork = blockchainStore.currentInstance;
 
+  const shouldBeDisabled = isDeposit ? depositAmount.lte(BN.ZERO) : withdrawAmount.lte(BN.ZERO);
+
   const USDC = bcNetwork!.getTokenBySymbol("USDC");
 
   const USDCBalance = balanceStore.getBalance(USDC.assetId);
   const USDCBalanceFormatted = balanceStore.getFormatBalance(USDC.assetId, USDC.decimals);
+  const collateralUSDCBalance = collateralStore.getBalance(USDC.assetId);
+  const collateralUSDCBalanceFormatted = collateralStore.getFormatBalance(USDC.assetId, USDC.decimals);
 
   const handleMaxClick = () => {
     if (isDeposit) {
@@ -43,7 +47,7 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
       return;
     }
 
-    setWithdrawAmount(BN.ZERO);
+    setWithdrawAmount(collateralUSDCBalance);
   };
 
   const handleAmountChange = (v: BN) => {
@@ -63,8 +67,6 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
     }
   };
 
-  const collateralUSDCBalance = collateralStore.getFormatBalance(USDC.assetId, USDC.decimals);
-
   const renderTitle = () => {
     return (
       <DialogTitleStyled center="y" gap="10px" margin="12px 12px 0" padding="8px 0">
@@ -83,7 +85,7 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
           <Text type={TEXT_TYPES.BODY}>Asset Balance</Text>
           <SmartFlex center="y" gap="4px">
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-              {collateralUSDCBalance}
+              {collateralUSDCBalanceFormatted}
             </Text>
             <Text type={TEXT_TYPES.SUPPORTING}>USDC</Text>
           </SmartFlex>
@@ -91,7 +93,7 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
         <BorderBottomBox center="y" justifyContent="space-between">
           <Text type={TEXT_TYPES.BODY}>Net Account Balance (USD)</Text>
           <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-            ${collateralUSDCBalance}
+            ${collateralUSDCBalanceFormatted}
           </Text>
         </BorderBottomBox>
       </SmartFlex>
@@ -160,7 +162,7 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
             <Text type={TEXT_TYPES.SUPPORTING}>{isDeposit ? "Wallet balance" : "Available to withdraw"}</Text>
             <SmartFlex center="y" gap="4px">
               <Text color={theme.colors.textPrimary} type={TEXT_TYPES.SUPPORTING}>
-                {isDeposit ? USDCBalanceFormatted : collateralUSDCBalance}
+                {isDeposit ? USDCBalanceFormatted : collateralUSDCBalanceFormatted}
               </Text>
               <Text type={TEXT_TYPES.SUPPORTING}>USDC</Text>
             </SmartFlex>
@@ -168,7 +170,7 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
           {isDeposit ? renderDepositContent() : renderWithdrawContent()}
         </SmartFlex>
         <SmartFlex alignItems="flex-end">
-          <Button disabled={collateralStore.isLoading} green onClick={onSubmit}>
+          <Button disabled={shouldBeDisabled || collateralStore.isLoading} green onClick={onSubmit}>
             {collateralStore.isLoading ? "Loading..." : "Confirm"}
           </Button>
         </SmartFlex>

@@ -176,6 +176,7 @@ const CreateOrder: React.FC = observer(() => {
               </Row>
             </Row>
           }
+          hideBottomBorder
         >
           <SmartFlex gap="8px" column>
             <Slider

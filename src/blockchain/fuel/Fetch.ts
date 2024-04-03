@@ -1,6 +1,6 @@
-import { Address, Bech32Address, WalletLocked, WalletUnlocked } from "fuels";
+import { Address, WalletLocked, WalletUnlocked } from "fuels";
 
-import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade } from "@src/entity";
 import BN from "@src/utils/BN";
 
 import {
@@ -15,34 +15,19 @@ import {
 import { AccountBalanceAbi__factory } from "./types/account-balance";
 import { AddressInput, AssetIdInput } from "./types/account-balance/AccountBalanceAbi";
 import { ClearingHouseAbi__factory } from "./types/clearing-house";
-import { OrderbookAbi__factory } from "./types/orderbook";
 import { PerpMarketAbi__factory } from "./types/perp-market";
 import { VaultAbi__factory } from "./types/vault";
-import { CONTRACT_ADDRESSES, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
+import { CONTRACT_ADDRESSES, indexerApi, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
 import { convertI64ToBn } from "./utils";
 
 export class Fetch {
-  fetchSpotMarkets = async (
-    limit: number,
-    tokens: Token[],
-    wallet: WalletLocked | WalletUnlocked,
-  ): Promise<MarketCreateEvent[]> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(CONTRACT_ADDRESSES.spotMarket, wallet);
-
-    const getMarketByIdPromises = tokens.map((t) =>
-      orderbookFactory.functions
-        .get_market_by_id({
-          value: t.assetId,
-        })
-        .get(),
-    );
-
-    const data = await Promise.all(getMarketByIdPromises);
+  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
+    const data = await indexerApi.getSpotMarketCreateEvents();
 
     const markets = data.map((market) => ({
-      id: market.value.asset_id.value,
-      assetId: market.value.asset_id.value,
-      decimal: market.value.asset_decimals,
+      id: market.asset_id,
+      assetId: market.asset_id,
+      decimal: Number(market.asset_decimals),
     }));
 
     return markets;
@@ -53,43 +38,31 @@ export class Fetch {
     return BN.ZERO;
   };
 
-  fetchSpotOrders = async (
-    { baseToken, type, limit, trader, isActive }: FetchOrdersParams,
-    wallet: WalletLocked | WalletUnlocked,
-  ): Promise<SpotMarketOrder[]> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(CONTRACT_ADDRESSES.spotMarket, wallet);
-
-    // TODO: Should be fixed. Can't get all trades, only for trader.
-    if (!trader) return [];
-
-    const ordersId = await orderbookFactory.functions
-      .orders_by_trader({
-        value: new Address(trader as Bech32Address).toB256(),
-      })
-      .get();
-
-    const ordersPromises = ordersId.value.map((order) => orderbookFactory.functions.order_by_id(order).get());
-
-    const data = await Promise.all(ordersPromises);
-
-    const dataFiltered = data.filter(({ value }) => {
-      if (value?.base_token.value !== baseToken) return false;
-      if (value?.base_size.negative && type && type !== "SELL") return false;
-
-      return true;
+  fetchSpotOrders = async ({
+    baseToken,
+    type,
+    limit,
+    trader,
+    isActive,
+  }: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
+    const data = await indexerApi.getSpotOrders({
+      baseToken,
+      orderType: type,
+      limit,
+      trader,
+      isOpened: isActive,
     });
 
-    const orders = dataFiltered.map(({ value }) => {
-      const baseSizeBn = new BN(value!.base_size.value.toString());
-      const baseSize = value!.base_size.negative ? baseSizeBn.times(-1) : baseSizeBn;
+    const orders = data.map((order) => {
+      const baseSize = new BN(order.base_size);
+      const basePrice = new BN(order.base_price);
       return new SpotMarketOrder({
-        id: value!.id,
-        baseToken: value!.base_token.value,
-        trader: value!.trader.value,
+        id: String(order.id),
+        baseToken: order.base_token,
+        trader: order.trader,
         baseSize: baseSize.toNumber(),
-        orderPrice: value!.base_price.toNumber(),
-        // TODO: Fetch date somehow
-        blockTimestamp: Date.now(),
+        orderPrice: basePrice.toNumber(),
+        blockTimestamp: Number(order.timestamp),
       });
     });
 
@@ -97,8 +70,22 @@ export class Fetch {
   };
 
   fetchSpotTrades = async ({ baseToken, limit, trader }: FetchTradesParams): Promise<SpotMarketTrade[]> => {
-    console.warn("[fetchTrades] NOT IMPLEMENTED FOR FUEL");
-    return [];
+    const data = await indexerApi.getSpotTradeEvents({ limit, trader, baseToken });
+
+    return data.map(
+      (trade) =>
+        new SpotMarketTrade({
+          baseToken: trade.base_token,
+          buyer: trade.buyer,
+          id: String(trade.id),
+          matcher: trade.order_matcher,
+          seller: trade.seller,
+          tradeAmount: new BN(trade.trade_size),
+          price: new BN(trade.trade_price),
+          timestamp: Number(trade.timestamp),
+          userAddress: trader,
+        }),
+    );
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {

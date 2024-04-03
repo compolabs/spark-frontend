@@ -65,11 +65,6 @@ const _abi = {
           "typeArguments": null
         },
         {
-          "name": "FreeCollateralMoreThanZero",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
           "name": "NoOrdersFound",
           "type": 0,
           "typeArguments": null
@@ -81,11 +76,6 @@ const _abi = {
         },
         {
           "name": "OrdersCantBeMatched",
-          "type": 0,
-          "typeArguments": null
-        },
-        {
-          "name": "NoMarketPriceForMarket",
           "type": 0,
           "typeArguments": null
         },
@@ -348,6 +338,16 @@ const _abi = {
           "typeArguments": null
         },
         {
+          "name": "seller",
+          "type": 9,
+          "typeArguments": null
+        },
+        {
+          "name": "buyer",
+          "type": 9,
+          "typeArguments": null
+        },
+        {
           "name": "trade_size",
           "type": 20,
           "typeArguments": null
@@ -355,6 +355,16 @@ const _abi = {
         {
           "name": "trade_price",
           "type": 20,
+          "typeArguments": null
+        },
+        {
+          "name": "sell_order_id",
+          "type": 2,
+          "typeArguments": null
+        },
+        {
+          "name": "buy_order_id",
+          "type": 2,
           "typeArguments": null
         },
         {
@@ -563,20 +573,20 @@ const _abi = {
       "name": "open_order",
       "output": {
         "name": "",
-        "type": 0,
+        "type": 2,
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "payable",
+          "arguments": []
+        },
         {
           "name": "storage",
           "arguments": [
             "read",
             "write"
           ]
-        },
-        {
-          "name": "payable",
-          "arguments": []
         }
       ]
     },
@@ -740,7 +750,7 @@ const _abi = {
       "logId": 12,
       "loggedType": {
         "name": "",
-        "type": 17,
+        "type": 15,
         "typeArguments": []
       }
     },
@@ -748,7 +758,7 @@ const _abi = {
       "logId": 13,
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 15,
         "typeArguments": []
       }
     },
@@ -756,7 +766,7 @@ const _abi = {
       "logId": 14,
       "loggedType": {
         "name": "",
-        "type": 4,
+        "type": 17,
         "typeArguments": []
       }
     },
@@ -764,7 +774,7 @@ const _abi = {
       "logId": 15,
       "loggedType": {
         "name": "",
-        "type": 4,
+        "type": 6,
         "typeArguments": []
       }
     },
@@ -804,6 +814,22 @@ const _abi = {
       "logId": 20,
       "loggedType": {
         "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 21,
+      "loggedType": {
+        "name": "",
+        "type": 4,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": 22,
+      "loggedType": {
+        "name": "",
         "type": 15,
         "typeArguments": []
       }
@@ -818,7 +844,7 @@ const _abi = {
         "type": 10,
         "typeArguments": []
       },
-      "offset": 70948
+      "offset": 74404
     },
     {
       "name": "QUOTE_TOKEN_DECIMALS",
@@ -827,7 +853,7 @@ const _abi = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 70884
+      "offset": 74340
     },
     {
       "name": "PRICE_DECIMALS",
@@ -836,7 +862,7 @@ const _abi = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 70868
+      "offset": 74324
     }
   ]
 };

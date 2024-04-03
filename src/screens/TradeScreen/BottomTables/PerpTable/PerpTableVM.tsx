@@ -18,7 +18,7 @@ export const PerpTableVMProvider: React.FC<PropsWithChildren> = ({ children }) =
 
 export const usePerpTableVMProvider = () => useVM(ctx);
 
-const ORDERS_UPDATE_INTERVAL = 10 * 1000; // 10 sec
+const ORDERS_UPDATE_INTERVAL = 5 * 1000; // 5 sec
 
 class PerpTableVM {
   myPositions: PerpPosition[] = [];

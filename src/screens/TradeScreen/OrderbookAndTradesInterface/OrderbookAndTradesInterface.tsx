@@ -3,25 +3,10 @@ import styled from "@emotion/styled";
 
 import Button, { ButtonGroup } from "@components/Button";
 import SizedBox from "@components/SizedBox";
-import { OrderbookAndTradesInterfaceVMProvider } from "@screens/TradeScreen/OrderbookAndTradesInterface/OrderbookAndTradesInterfaceVM";
 import SpotOrderBook from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotOrderBook";
 import SpotTrades from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotTrades";
 
-interface IProps {}
-
-const Root = styled.div`
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  padding: 12px 0;
-  flex: 2;
-  max-width: 280px;
-  height: 100%;
-  border-radius: 10px;
-  background: ${({ theme }) => theme.colors.bgSecondary};
-`;
-
-const OrderbookAndTradesInterfaceImpl: React.FC<IProps> = () => {
+const OrderbookAndTradesInterface: React.FC = () => {
   const [isOrderbook, setIsOrderbook] = useState(true);
   return (
     <Root>
@@ -39,10 +24,16 @@ const OrderbookAndTradesInterfaceImpl: React.FC<IProps> = () => {
   );
 };
 
-const OrderbookAndTradesInterface: React.FC<IProps> = () => (
-  <OrderbookAndTradesInterfaceVMProvider>
-    <OrderbookAndTradesInterfaceImpl />
-  </OrderbookAndTradesInterfaceVMProvider>
-);
-
 export default OrderbookAndTradesInterface;
+
+const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 12px 0;
+  flex: 2;
+  max-width: 280px;
+  height: 100%;
+  border-radius: 10px;
+  background: ${({ theme }) => theme.colors.bgSecondary};
+`;

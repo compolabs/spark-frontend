@@ -46,8 +46,6 @@ const TradeScreen: React.FC = observer(() => {
         ? marketId
         : tradeStore.defaultMarketSymbol;
 
-  console.log(selectedMarket);
-
   tradeStore.setIsPerp(isPerp && tradeStore.isPerpAvailable);
   tradeStore.setMarketSymbol(selectedMarket);
 

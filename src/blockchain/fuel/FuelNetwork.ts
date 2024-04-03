@@ -160,10 +160,7 @@ export class FuelNetwork extends BlockchainNetwork {
   };
 
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    const tokens = [this.getTokenBySymbol("BTC")];
-    const providerWallet = await this.getProviderWallet();
-
-    return this.api.fetch.fetchSpotMarkets(limit, tokens, providerWallet);
+    return this.api.fetch.fetchSpotMarkets(limit);
   };
 
   fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
@@ -171,9 +168,7 @@ export class FuelNetwork extends BlockchainNetwork {
   };
 
   fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
-    const providerWallet = await this.getProviderWallet();
-
-    return this.api.fetch.fetchSpotOrders(params, providerWallet);
+    return this.api.fetch.fetchSpotOrders(params);
   };
 
   fetchSpotTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {

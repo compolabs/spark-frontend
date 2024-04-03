@@ -1,6 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 import { Nullable } from "tsdef";
 
+import { BlockchainNetworkFactory } from "@src/blockchain/BlockchainNetworkFactory";
 import { TOKENS_BY_SYMBOL } from "@src/blockchain/evm/constants";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
@@ -9,7 +10,7 @@ import { Token } from "./Token";
 
 interface SpotMarketTradeParams {
   id: string;
-  baseToken: Token;
+  baseToken: string;
   matcher: string;
   seller: string;
   buyer: string;
@@ -26,7 +27,7 @@ const getType = (userAddress: string, buyer: string, seller: string) => {
 
 export class SpotMarketTrade {
   readonly id: SpotMarketTradeParams["id"];
-  readonly baseToken: SpotMarketTradeParams["baseToken"];
+  readonly baseToken: Token;
   readonly matcher: SpotMarketTradeParams["matcher"];
   readonly seller: SpotMarketTradeParams["seller"];
   readonly buyer: SpotMarketTradeParams["buyer"];
@@ -37,8 +38,11 @@ export class SpotMarketTrade {
   readonly type: Nullable<"SELL" | "BUY"> = null;
 
   constructor(params: SpotMarketTradeParams) {
+    const bcNetwork = BlockchainNetworkFactory.getInstance().currentInstance!;
+    const baseToken = bcNetwork.getTokenByAssetId(params.baseToken);
+
     this.id = params.id;
-    this.baseToken = params.baseToken;
+    this.baseToken = baseToken;
     this.matcher = params.matcher;
     this.seller = params.seller;
     this.buyer = params.buyer;

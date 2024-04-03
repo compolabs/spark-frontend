@@ -23,6 +23,9 @@ class SpotTradesVM {
 
   private tradesUpdater: IntervalUpdater;
 
+  amountOfOrders: number = 0;
+  setAmountOfOrders = (value: number) => (this.amountOfOrders = value);
+
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
     this.updateTrades().then();
@@ -31,6 +34,12 @@ class SpotTradesVM {
 
     this.tradesUpdater.run();
   }
+
+  calcSize = (isMobile: boolean) => {
+    const orderbookHeight = isMobile ? 380 : window.innerHeight - 210;
+    const rowHeight = 17;
+    this.setAmountOfOrders(Math.floor((orderbookHeight - 24) / rowHeight));
+  };
 
   updateTrades = async () => {
     const { accountStore, tradeStore, initialized, blockchainStore } = this.rootStore;
