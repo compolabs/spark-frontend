@@ -2,6 +2,7 @@ import { Address, WalletLocked, WalletUnlocked } from "fuels";
 
 import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade } from "@src/entity";
 import BN from "@src/utils/BN";
+import getUnixTime from "@src/utils/getUnixTime";
 
 import {
   FetchOrdersParams,
@@ -45,11 +46,13 @@ export class Fetch {
     trader,
     isActive,
   }: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
+    const traderAddress = trader ? new Address(trader as any).toB256() : undefined;
+
     const data = await indexerApi.getSpotOrders({
       baseToken,
       orderType: type,
       limit,
-      trader,
+      trader: traderAddress,
       isOpened: isActive,
     });
 
@@ -57,12 +60,12 @@ export class Fetch {
       const baseSize = new BN(order.base_size);
       const basePrice = new BN(order.base_price);
       return new SpotMarketOrder({
-        id: String(order.id),
+        id: order.order_id,
         baseToken: order.base_token,
         trader: order.trader,
         baseSize: baseSize.toNumber(),
         orderPrice: basePrice.toNumber(),
-        blockTimestamp: Number(order.timestamp),
+        blockTimestamp: getUnixTime(order.createdAt),
       });
     });
 
@@ -70,7 +73,9 @@ export class Fetch {
   };
 
   fetchSpotTrades = async ({ baseToken, limit, trader }: FetchTradesParams): Promise<SpotMarketTrade[]> => {
-    const data = await indexerApi.getSpotTradeEvents({ limit, trader, baseToken });
+    const traderAddress = trader ? new Address(trader as any).toB256() : undefined;
+
+    const data = await indexerApi.getSpotTradeEvents({ limit, trader: traderAddress, baseToken });
 
     return data.map(
       (trade) =>
@@ -82,7 +87,7 @@ export class Fetch {
           seller: trade.seller,
           tradeAmount: new BN(trade.trade_size),
           price: new BN(trade.trade_price),
-          timestamp: Number(trade.timestamp),
+          timestamp: getUnixTime(trade.createdAt),
           userAddress: trader,
         }),
     );
