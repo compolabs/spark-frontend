@@ -1,6 +1,8 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { media } from "@src/themes/breakpoints";
+
 /*
     Fonts:
 
@@ -16,6 +18,7 @@ export enum TEXT_TYPES {
   BUTTON = 3,
   BUTTON_SECONDARY = 4,
   SUPPORTING = 5,
+  SUPPORTING_NUMBERS = 6,
 }
 
 interface IProps {
@@ -30,48 +33,84 @@ interface IProps {
 
 export const hStyle = `
 font-family: JetBrains Mono;
-font-size: 14px;
+font-size: 18px;
 font-style: normal;
 font-weight: 500;
-line-height: 16px;
+line-height: 18px;
+${media.mobile} {
+  font-size: 14px;
+  line-height: 16px;
+}
 `;
+
 export const bodyStyle = `
 font-family: JetBrains Mono;
-font-size: 10px;
+font-size: 12px;
 font-style: normal;
 font-weight: 400;
 line-height: 14px;
 letter-spacing: 0.2px;
+${media.mobile} {
+  font-size: 10px;
+}
 `;
+
 export const buttonStyle = `
+font-family: Space Grotesk;
+font-size: 14px;
+font-style: normal;
+font-weight: 500;
+line-height: 16px;
+${media.mobile} {
+  font-size: 12px;
+}
+`;
+
+export const buttonSecondaryStyle = `
 font-family: Space Grotesk;
 font-size: 12px;
 font-style: normal;
 font-weight: 500;
-line-height: 16px;
-`;
-export const buttonSecondaryStyle = `
-font-family: Space Grotesk;
-font-size: 10px;
-font-style: normal;
-font-weight: 500;
 line-height: 16px; 
 text-transform: uppercase;
+${media.mobile} {
+  font-size: 10px;
+}
 `;
+
 export const supportStyle = `
 font-family: Space Grotesk;
-font-size: 10px;
+font-size: 12px;
 font-style: normal;
 font-weight: 400;
-line-height: 10px; 
+line-height: 12px; 
 letter-spacing: 0.2px;
+${media.mobile} {
+  font-size: 10px;
+  line-height: 10px;
+}
 `;
+
+export const supportNumbersStyle = `
+font-family: Space Grotesk;
+font-size: 11px;
+font-style: normal;
+font-weight: 400;
+line-height: 11px; 
+letter-spacing: 0.2px;
+${media.mobile} {
+  font-size: 9px;
+  line-height: 9px;
+}
+`;
+
 export const TEXT_TYPES_MAP = {
   [TEXT_TYPES.H]: hStyle,
   [TEXT_TYPES.BODY]: bodyStyle,
   [TEXT_TYPES.BUTTON]: buttonStyle,
   [TEXT_TYPES.BUTTON_SECONDARY]: buttonSecondaryStyle,
   [TEXT_TYPES.SUPPORTING]: supportStyle,
+  [TEXT_TYPES.SUPPORTING_NUMBERS]: supportNumbersStyle,
 };
 
 const Text = styled.div<IProps>`

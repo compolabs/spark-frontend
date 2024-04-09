@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 
 import Button, { ButtonGroup } from "@components/Button";
 import SizedBox from "@components/SizedBox";
+import Text, { TEXT_TYPES } from "@components/Text";
 import { OrderbookAndTradesInterfaceVMProvider } from "@screens/TradeScreen/OrderbookAndTradesInterface/OrderbookAndTradesInterfaceVM";
 import SpotOrderBook from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotOrderBook";
 import SpotTrades from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotTrades";
@@ -15,7 +16,7 @@ const Root = styled.div`
   box-sizing: border-box;
   padding: 12px 0;
   flex: 2;
-  max-width: 280px;
+  max-width: 273px;
   height: 100%;
   border-radius: 10px;
   background: ${({ theme }) => theme.colors.bgSecondary};
@@ -27,10 +28,14 @@ const OrderbookAndTradesInterfaceImpl: React.FC<IProps> = () => {
     <Root>
       <ButtonGroup style={{ padding: "0 12px" }}>
         <Button active={isOrderbook} onClick={() => setIsOrderbook(true)}>
-          Orderbook
+          <Text primary={isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
+            orderbook
+          </Text>
         </Button>
         <Button active={!isOrderbook} onClick={() => setIsOrderbook(false)}>
-          Trades
+          <Text primary={!isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
+            trades
+          </Text>
         </Button>
       </ButtonGroup>
       <SizedBox height={8} />

@@ -9,6 +9,7 @@ interface IProps {
 
 const Tab = styled(Text)<IProps>`
   display: flex;
+  height: 34px;
   align-items: center;
   justify-content: center;
   white-space: nowrap;

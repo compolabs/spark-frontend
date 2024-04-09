@@ -89,7 +89,7 @@ const Root = styled.div`
   grid-column-gap: 0px;
   grid-row-gap: 0px;
 
-  height: 50px;
+  height: 48px;
   width: 100%;
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
@@ -120,9 +120,13 @@ const MarketSelect = styled.div<{
   justify-content: space-between;
   padding: 0 12px;
   max-width: 280px;
-  height: 100%;
+  height: 48px;
   gap: 4px;
   cursor: pointer;
+
+  ${media.mobile} {
+    height: 40px;
+  }
 
   ${({ focused }) =>
     focused && {

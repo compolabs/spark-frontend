@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
 
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { media } from "@src/themes/breakpoints";
 
 const Chip = styled(Text)`
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  height: 18px;
+  height: 20px;
+  min-height: 18px;
   border-radius: 4px;
   color: ${({ theme }) => theme.colors.textSecondary};
   background: ${({ theme }) => theme.colors.bgSecondary};
@@ -15,6 +17,10 @@ const Chip = styled(Text)`
   max-width: fit-content;
   box-sizing: border-box;
   ${TEXT_TYPES_MAP[TEXT_TYPES.SUPPORTING]};
+
+  ${media.mobile} {
+    height: 18px;
+  }
 `;
 
 export default Chip;

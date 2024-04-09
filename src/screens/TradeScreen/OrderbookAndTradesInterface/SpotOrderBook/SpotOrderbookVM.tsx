@@ -106,7 +106,7 @@ class SpotOrderbookVM {
 
   calcSize = (isMobile: boolean) => {
     const orderbookHeight = isMobile ? 380 : window.innerHeight - 210;
-    const rowHeight = 17.5;
+    const rowHeight = 19;
     this.setAmountOfOrders(Math.floor((orderbookHeight - 24) / rowHeight));
   };
 

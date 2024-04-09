@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 
 import Loader from "@src/components/Loader";
 import { useMedia } from "@src/hooks/useMedia";
-import { CreateOrderVMProvider } from "@src/screens/TradeScreen/LeftBlock/CreateOrder/CreateOrderVM";
+import { CreateOrderVMProvider } from "@src/screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
 import { useStores } from "@stores";
 
 import TradeScreenDesktop from "./TradeScreenDesktop";
@@ -40,7 +40,7 @@ const TradeScreen: React.FC = observer(() => {
   );
 
   return (
-    //я оборачиваю весь TradeScreenImpl в CreateOrderSpotVMProvider потому что при нажатии на трейд в OrderbookAndTradesInterface должно меняться значение в LeftBlock
+    //я оборачиваю весь TradeScreenImpl в CreateOrderSpotVMProvider потому что при нажатии на трейд в OrderbookAndTradesInterface должно меняться значение в RightBlock
     <CreateOrderVMProvider>
       <TradeScreenImpl />
     </CreateOrderVMProvider>

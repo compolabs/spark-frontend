@@ -40,6 +40,7 @@ const Root = styled(SmartFlex)<{
 }>`
   background: transparent;
   padding: 4px 8px;
+  height: 40px;
   color: ${({ theme }) => theme.colors.textPrimary};
   ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]};
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary};

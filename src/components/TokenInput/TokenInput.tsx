@@ -4,9 +4,9 @@ import _ from "lodash";
 import { observer } from "mobx-react-lite";
 
 import Chip from "@components/Chip";
-import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import { useStores } from "@src/stores";
+import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 
 import AmountInput from "./AmountInput";
@@ -57,7 +57,6 @@ const TokenInput: React.FC<IProps> = observer((props) => {
       {props.label && (
         <>
           <Text>{props.label}</Text>
-          <SizedBox height={2} />
         </>
       )}
       <InputContainer error={props.error} focused={focused} readOnly={!props.setAmount}>
@@ -88,10 +87,8 @@ const TokenInput: React.FC<IProps> = observer((props) => {
         />
         {props.assetId && <Chip>{bcNetwork?.getTokenByAssetId(props.assetId).symbol}</Chip>}
       </InputContainer>
-      <SizedBox height={2} />
       {props.error && (
         <>
-          <SizedBox width={4} />
           <Text>{props.errorMessage}</Text>
         </>
       )}
@@ -106,6 +103,7 @@ const Root = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  gap: 2px;
 `;
 
 const InputContainer = styled.div<{
@@ -120,7 +118,7 @@ const InputContainer = styled.div<{
   justify-content: center;
   align-items: center;
   padding: 0 8px;
-  height: 32px;
+  height: 40px;
   min-height: 32px;
   width: 100%;
   cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
@@ -143,4 +141,8 @@ const InputContainer = styled.div<{
         if (focused) return theme.colors.borderAccent;
         return theme.colors.borderSecondary;
       })()};
+
+  ${media.mobile} {
+    height: 32px;
+  }
 `;

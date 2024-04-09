@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 
 import Divider from "@components/Divider";
 import { Column, Row } from "@components/Flex";
-import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 import Tooltip from "@components/Tooltip";
 import copyIcon from "@src/assets/icons/copy.svg";
@@ -60,7 +59,9 @@ const ConnectedWallet: React.FC = observer(() => {
         active && (
           <ActionRow key={title} onClick={action}>
             <Icon alt="ETH" src={icon} />
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</Text>
+            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+              {title}
+            </Text>
           </ActionRow>
         ),
     );
@@ -77,8 +78,7 @@ const ConnectedWallet: React.FC = observer(() => {
         <Column crossAxisSize="max">
           <ActionRow>
             <Icon alt="ETH" src={bcNetwork?.getTokenBySymbol("ETH").logo} />
-            <SizedBox width={8} />
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY}>{`${ethBalance} ETH`}</Text>
+            <Text type={TEXT_TYPES.H} primary>{`${ethBalance} ETH`}</Text>
           </ActionRow>
           <Divider />
           {renderActions()}

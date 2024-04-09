@@ -14,7 +14,7 @@ interface IProps {
   market: SpotMarket;
 }
 
-const PerpMarketRow: React.FC<IProps> = observer(({ market }) => {
+const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
   const { tradeStore } = useStores();
   const navigate = useNavigate();
 
@@ -58,13 +58,13 @@ const PerpMarketRow: React.FC<IProps> = observer(({ market }) => {
   );
 });
 
-export default PerpMarketRow;
+export default SpotMarketRow;
 
 const Root = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 12px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   box-sizing: border-box;
   cursor: pointer;

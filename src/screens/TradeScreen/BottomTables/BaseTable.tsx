@@ -48,12 +48,13 @@ export const BaseTable: React.FC<Props> = observer(({ tabs, activeTab, onTabClic
               key={title + index}
               active={activeTab === index}
               disabled={disabled}
+              type={TEXT_TYPES.BUTTON_SECONDARY}
               onClick={() => !disabled && onTabClick(index)}
             >
               {title}
               {rowCount > 0 && (
                 <Badge>
-                  <Text style={{ lineHeight: "10px" }} primary>
+                  <Text type={TEXT_TYPES.SUPPORTING} primary>
                     {rowCount}
                   </Text>
                 </Badge>
@@ -124,12 +125,11 @@ const Root = styled(SmartFlex)<{ size: TRADE_TABLE_SIZE }>`
 
 const TabContainer = styled(Row)`
   align-items: center;
-  padding: 0 12px;
-  height: 32px;
+  padding: 2px 12px;
   position: relative;
 
   ${Tab} {
-    margin: 0 12px;
+    margin: 0 16px;
   }
 `;
 
