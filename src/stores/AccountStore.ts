@@ -3,6 +3,7 @@ import { Nullable } from "tsdef";
 
 import { NETWORK_ERROR, NetworkError } from "@src/blockchain/NetworkError";
 import { NETWORK } from "@src/blockchain/types";
+import { createToast } from "@src/components/Toast";
 
 import RootStore from "./RootStore";
 
@@ -49,12 +50,14 @@ class AccountStore {
 
       if (error instanceof NetworkError) {
         if (error.code === NETWORK_ERROR.UNKNOWN_ACCOUNT) {
-          notificationStore.toast("Please authorize the wallet account when connecting.", { type: "info" });
+          notificationStore.toast(createToast({ text: "Please authorize the wallet account when connecting." }), {
+            type: "info",
+          });
           return;
         }
       }
 
-      notificationStore.toast("Unexpected error. Please try again.", { type: "error" });
+      notificationStore.toast(createToast({ text: "Unexpected error. Please try again." }), { type: "error" });
 
       try {
         bcNetwork?.disconnectWallet();
@@ -71,7 +74,7 @@ class AccountStore {
     try {
       await bcNetwork?.connectWalletByPrivateKey(privateKey);
     } catch (error: any) {
-      notificationStore.toast("Unexpected error. Please try again.", { type: "error" });
+      notificationStore.toast(createToast({ text: "Unexpected error. Please try again." }), { type: "error" });
     }
   };
 
@@ -82,7 +85,7 @@ class AccountStore {
     try {
       await bcNetwork!.addAssetToWallet(assetId);
     } catch (error: any) {
-      notificationStore.toast(error, { type: "error" });
+      notificationStore.toast(createToast({ text: error }), { type: "error" });
     }
   };
 

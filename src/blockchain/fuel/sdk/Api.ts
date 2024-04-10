@@ -1,27 +1,26 @@
-import { CoinQuantityLike, hashMessage, WalletLocked, WalletUnlocked } from "fuels";
+import { CoinQuantityLike, hashMessage } from "fuels";
 
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { Token } from "@src/entity";
 import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
 import BN from "@src/utils/BN";
 
-import { AssetIdInput, I64Input } from "./types/OrderbookAbi";
-import { IdentityInput } from "./types/TokenAbi";
-import { CONTRACT_ADDRESSES, TOKENS_BY_ASSET_ID } from "./constants";
-import { Fetch } from "./Fetch";
-import { OrderbookAbi__factory, TokenAbi__factory } from "./types";
+import { TOKENS_BY_ASSET_ID } from "../constants";
+import { OrderbookAbi__factory, TokenAbi__factory } from "../sdk/types";
+import { AssetIdInput, I64Input } from "../sdk/types/OrderbookAbi";
+import { IdentityInput } from "../sdk/types/TokenAbi";
+
+import { IOptions } from "./interface";
 
 export class Api {
-  public fetch = new Fetch();
-
   createOrder = async (
     baseToken: Token,
     quoteToken: Token,
     size: string,
     price: string,
-    wallet: WalletLocked | WalletUnlocked,
+    options: IOptions,
   ): Promise<string> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(CONTRACT_ADDRESSES.spotMarket, wallet);
+    const orderbookFactory = OrderbookAbi__factory.connect(options.contractAddresses.spotMarket, options.wallet);
 
     const assetId: AssetIdInput = { value: baseToken.assetId };
     const isNegative = size.includes("-");
@@ -46,22 +45,22 @@ export class Api {
     return tx.transactionId;
   };
 
-  cancelOrder = async (orderId: string, wallet: WalletLocked | WalletUnlocked): Promise<void> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(CONTRACT_ADDRESSES.spotMarket, wallet);
+  cancelOrder = async (orderId: string, options: IOptions): Promise<void> => {
+    const orderbookFactory = OrderbookAbi__factory.connect(options.contractAddresses.spotMarket, options.wallet);
 
     await orderbookFactory.functions.cancel_order(orderId).txParams({ gasPrice: 1 }).call();
   };
 
-  mintToken = async (assetAddress: string, wallet: WalletLocked | WalletUnlocked): Promise<void> => {
-    const tokenFactory = CONTRACT_ADDRESSES.tokenFactory;
-    const tokenFactoryContract = TokenAbi__factory.connect(tokenFactory, wallet);
+  mintToken = async (assetAddress: string, options: IOptions): Promise<void> => {
+    const tokenFactory = options.contractAddresses.tokenFactory;
+    const tokenFactoryContract = TokenAbi__factory.connect(tokenFactory, options.wallet);
 
     const token = TOKENS_BY_ASSET_ID[assetAddress];
     const amount = BN.parseUnits(FAUCET_AMOUNTS[token.symbol].toString(), token.decimals);
     const hash = hashMessage(token.symbol);
     const identity: IdentityInput = {
       Address: {
-        value: wallet.address.toB256(),
+        value: options.wallet.address.toB256(),
       },
     };
 
