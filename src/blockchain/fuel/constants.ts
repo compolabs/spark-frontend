@@ -1,7 +1,6 @@
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { Token } from "@src/entity/Token";
 
-import { IndexerApi } from "./IndexerApi";
 import TOKENS_JSON from "./tokens.json";
 
 export const CONTRACT_ADDRESSES = {
@@ -47,8 +46,4 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
   {},
 );
 
-export const GAS_LIMIT = 20000000;
-
-const INDEXER_URL = "https://orderbook-indexer.spark-defi.com";
-
-export const indexerApi = new IndexerApi(INDEXER_URL);
+export const INDEXER_URL = "https://orderbook-indexer.spark-defi.com";

@@ -1,8 +1,7 @@
-import { Address, WalletLocked, WalletUnlocked } from "fuels";
+import { Address } from "fuels";
 
 import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade } from "@src/entity";
 import BN from "@src/utils/BN";
-import getUnixTime from "@src/utils/getUnixTime";
 
 import {
   FetchOrdersParams,
@@ -11,19 +10,28 @@ import {
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
   SpotMarketVolume,
-} from "../types";
+} from "../../types";
+import { TOKENS_BY_SYMBOL, TOKENS_LIST } from "../constants";
+import { convertI64ToBn } from "../utils";
 
 import { AccountBalanceAbi__factory } from "./types/account-balance";
 import { AddressInput, AssetIdInput } from "./types/account-balance/AccountBalanceAbi";
 import { ClearingHouseAbi__factory } from "./types/clearing-house";
 import { PerpMarketAbi__factory } from "./types/perp-market";
 import { VaultAbi__factory } from "./types/vault";
-import { CONTRACT_ADDRESSES, indexerApi, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
-import { convertI64ToBn } from "./utils";
+import getUnixTime from "./utils/getUnixTime";
+import { IndexerApi } from "./IndexerApi";
+import { IOptions } from "./interface";
 
 export class Fetch {
+  private indexerApi: IndexerApi;
+
+  constructor(url: string) {
+    this.indexerApi = new IndexerApi(url);
+  }
+
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    const data = await indexerApi.getSpotMarketCreateEvents();
+    const data = await this.indexerApi.getSpotMarketCreateEvents();
 
     const markets = data.map((market) => ({
       id: market.asset_id,
@@ -48,7 +56,7 @@ export class Fetch {
   }: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
     const traderAddress = trader ? new Address(trader as any).toB256() : undefined;
 
-    const data = await indexerApi.getSpotOrders({
+    const data = await this.indexerApi.getSpotOrders({
       baseToken,
       orderType: type,
       limit,
@@ -75,7 +83,7 @@ export class Fetch {
   fetchSpotTrades = async ({ baseToken, limit, trader }: FetchTradesParams): Promise<SpotMarketTrade[]> => {
     const traderAddress = trader ? new Address(trader as any).toB256() : undefined;
 
-    const data = await indexerApi.getSpotTradeEvents({ limit, trader: traderAddress, baseToken });
+    const data = await this.indexerApi.getSpotTradeEvents({ limit, trader: traderAddress, baseToken });
 
     return data.map(
       (trade) =>
@@ -98,12 +106,8 @@ export class Fetch {
     return { volume: BN.ZERO, high: BN.ZERO, low: BN.ZERO };
   };
 
-  fetchPerpCollateralBalance = async (
-    accountAddress: string,
-    assetAddress: string,
-    wallet: WalletLocked | WalletUnlocked,
-  ): Promise<BN> => {
-    const vaultFactory = VaultAbi__factory.connect(CONTRACT_ADDRESSES.vault, wallet);
+  fetchPerpCollateralBalance = async (accountAddress: string, assetAddress: string, options: IOptions): Promise<BN> => {
+    const vaultFactory = VaultAbi__factory.connect(options.contractAddresses.vault, options.wallet);
 
     const addressInput: AddressInput = {
       value: new Address(accountAddress as any).toB256(),
@@ -120,11 +124,11 @@ export class Fetch {
     return collateralBalance;
   };
 
-  fetchPerpAllTraderPositions = async (
-    accountAddress: string,
-    wallet: WalletLocked | WalletUnlocked,
-  ): Promise<PerpPosition[]> => {
-    const accountBalanceFactory = AccountBalanceAbi__factory.connect(CONTRACT_ADDRESSES.accountBalance, wallet);
+  fetchPerpAllTraderPositions = async (accountAddress: string, options: IOptions): Promise<PerpPosition[]> => {
+    const accountBalanceFactory = AccountBalanceAbi__factory.connect(
+      options.contractAddresses.accountBalance,
+      options.wallet,
+    );
 
     const addressInput: AddressInput = {
       value: new Address(accountAddress as any).toB256(),
@@ -145,8 +149,8 @@ export class Fetch {
     return positions;
   };
 
-  fetchPerpMarketPrice = async (assetAddress: string, wallet: WalletLocked | WalletUnlocked): Promise<BN> => {
-    const perpMarketFactory = PerpMarketAbi__factory.connect(CONTRACT_ADDRESSES.perpMarket, wallet);
+  fetchPerpMarketPrice = async (assetAddress: string, options: IOptions): Promise<BN> => {
+    const perpMarketFactory = PerpMarketAbi__factory.connect(options.contractAddresses.perpMarket, options.wallet);
 
     const assetIdInput: AssetIdInput = {
       value: assetAddress,
@@ -159,8 +163,11 @@ export class Fetch {
     return marketPrice;
   };
 
-  fetchPerpFundingRate = async (assetAddress: string, wallet: WalletLocked | WalletUnlocked): Promise<BN> => {
-    const accountBalanceFactory = AccountBalanceAbi__factory.connect(CONTRACT_ADDRESSES.accountBalance, wallet);
+  fetchPerpFundingRate = async (assetAddress: string, options: IOptions): Promise<BN> => {
+    const accountBalanceFactory = AccountBalanceAbi__factory.connect(
+      options.contractAddresses.accountBalance,
+      options.wallet,
+    );
 
     const assetIdInput: AssetIdInput = {
       value: assetAddress,
@@ -173,8 +180,8 @@ export class Fetch {
     return fundingRate;
   };
 
-  fetchPerpFreeCollateral = async (accountAddress: string, wallet: WalletLocked | WalletUnlocked): Promise<any> => {
-    const vaultFactory = VaultAbi__factory.connect(CONTRACT_ADDRESSES.vault, wallet);
+  fetchPerpFreeCollateral = async (accountAddress: string, options: IOptions): Promise<any> => {
+    const vaultFactory = VaultAbi__factory.connect(options.contractAddresses.vault, options.wallet);
 
     const addressInput: AddressInput = {
       value: new Address(accountAddress as any).toB256(),
@@ -187,8 +194,11 @@ export class Fetch {
     return freeCollateral;
   };
 
-  fetchPerpMarket = async (assetAddress: string, wallet: WalletLocked | WalletUnlocked): Promise<PerpMarket> => {
-    const clearingHouseFactory = ClearingHouseAbi__factory.connect(CONTRACT_ADDRESSES.clearingHouse, wallet);
+  fetchPerpMarket = async (assetAddress: string, options: IOptions): Promise<PerpMarket> => {
+    const clearingHouseFactory = ClearingHouseAbi__factory.connect(
+      options.contractAddresses.clearingHouse,
+      options.wallet,
+    );
 
     const assetIdInput: AssetIdInput = {
       value: assetAddress,
@@ -216,12 +226,12 @@ export class Fetch {
     return perpMarket;
   };
 
-  fetchPerpAllMarkets = async (wallet: WalletLocked | WalletUnlocked): Promise<PerpMarket[]> => {
+  fetchPerpAllMarkets = async (options: IOptions): Promise<PerpMarket[]> => {
     const markets: PerpMarket[] = [];
 
     for (const token of TOKENS_LIST) {
       try {
-        const market = await this.fetchPerpMarket(token.assetId, wallet);
+        const market = await this.fetchPerpMarket(token.assetId, options);
         markets.push(market);
       } catch {
         /* empty */
@@ -234,9 +244,12 @@ export class Fetch {
   fetchPerpPendingFundingPayment = async (
     accountAddress: string,
     assetAddress: string,
-    wallet: WalletLocked | WalletUnlocked,
+    options: IOptions,
   ): Promise<PerpPendingFundingPayment> => {
-    const accountBalanceFactory = AccountBalanceAbi__factory.connect(CONTRACT_ADDRESSES.accountBalance, wallet);
+    const accountBalanceFactory = AccountBalanceAbi__factory.connect(
+      options.contractAddresses.accountBalance,
+      options.wallet,
+    );
 
     const addressInput: AddressInput = {
       value: new Address(accountAddress as any).toB256(),
@@ -254,11 +267,8 @@ export class Fetch {
     return { fundingPayment, fundingGrowthPayment };
   };
 
-  fetchPerpIsAllowedCollateral = async (
-    assetAddress: string,
-    wallet: WalletLocked | WalletUnlocked,
-  ): Promise<boolean> => {
-    const vaultFactory = VaultAbi__factory.connect(CONTRACT_ADDRESSES.vault, wallet);
+  fetchPerpIsAllowedCollateral = async (assetAddress: string, options: IOptions): Promise<boolean> => {
+    const vaultFactory = VaultAbi__factory.connect(options.contractAddresses.vault, options.wallet);
 
     const assetIdInput: AssetIdInput = {
       value: assetAddress,
@@ -272,9 +282,9 @@ export class Fetch {
   fetchPerpTraderOrders = async (
     accountAddress: string,
     assetAddress: string,
-    wallet: WalletLocked | WalletUnlocked,
+    options: IOptions,
   ): Promise<PerpOrder[]> => {
-    const vaultFactory = PerpMarketAbi__factory.connect(CONTRACT_ADDRESSES.perpMarket, wallet);
+    const vaultFactory = PerpMarketAbi__factory.connect(options.contractAddresses.perpMarket, options.wallet);
 
     const addressInput: AddressInput = {
       value: new Address(accountAddress as any).toB256(),
@@ -303,9 +313,12 @@ export class Fetch {
   fetchPerpMaxAbsPositionSize = async (
     accountAddress: string,
     assetAddress: string,
-    wallet: WalletLocked | WalletUnlocked,
+    options: IOptions,
   ): Promise<PerpMaxAbsPositionSize> => {
-    const clearingHouseFactory = ClearingHouseAbi__factory.connect(CONTRACT_ADDRESSES.clearingHouse, wallet);
+    const clearingHouseFactory = ClearingHouseAbi__factory.connect(
+      options.contractAddresses.clearingHouse,
+      options.wallet,
+    );
 
     const addressInput: AddressInput = {
       value: new Address(accountAddress as any).toB256(),
@@ -323,8 +336,8 @@ export class Fetch {
     return { shortSize, longSize };
   };
 
-  fetchPerpMarkPrice = async (assetAddress: string, wallet: WalletLocked | WalletUnlocked): Promise<BN> => {
-    const vaultFactory = PerpMarketAbi__factory.connect(CONTRACT_ADDRESSES.perpMarket, wallet);
+  fetchPerpMarkPrice = async (assetAddress: string, options: IOptions): Promise<BN> => {
+    const vaultFactory = PerpMarketAbi__factory.connect(options.contractAddresses.perpMarket, options.wallet);
 
     const assetIdInput: AssetIdInput = {
       value: assetAddress,

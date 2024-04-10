@@ -1,11 +1,11 @@
 import axios from "axios";
 
-import { INDEXER_URL, INDEXER_URLS } from "@src/constants";
 import { SpotMarketOrder, SpotMarketTrade } from "@src/entity";
 import BN from "@src/utils/BN";
 
 import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, SpotMarketVolume } from "../types";
 
+import { INDEXER_URL, INDEXER_URLS } from "./constants";
 import { EvmAddress } from "./types";
 
 type OrderResponse = {
