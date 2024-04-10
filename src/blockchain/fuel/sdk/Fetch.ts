@@ -1,20 +1,16 @@
-import { Address, Bech32Address, WalletLocked, WalletUnlocked } from "fuels";
+import { Address, Bech32Address } from "fuels";
 
 import { SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
 import BN from "@src/utils/BN";
 
-import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, SpotMarketVolume } from "../types";
+import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, SpotMarketVolume } from "../../types";
+import { OrderbookAbi__factory } from "../sdk/types";
 
-import { CONTRACT_ADDRESSES } from "./constants";
-import { OrderbookAbi__factory } from "./types";
+import { IOptions } from "./interface";
 
 export class Fetch {
-  fetchMarkets = async (
-    limit: number,
-    tokens: Token[],
-    wallet: WalletLocked | WalletUnlocked,
-  ): Promise<MarketCreateEvent[]> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(CONTRACT_ADDRESSES.spotMarket, wallet);
+  fetchMarkets = async (limit: number, tokens: Token[], options: IOptions): Promise<MarketCreateEvent[]> => {
+    const orderbookFactory = OrderbookAbi__factory.connect(options.contractAddresses.spotMarket, options.wallet);
 
     const getMarketByIdPromises = tokens.map((t) =>
       orderbookFactory.functions
@@ -42,9 +38,9 @@ export class Fetch {
 
   fetchOrders = async (
     { baseToken, type, limit, trader, isActive }: FetchOrdersParams,
-    wallet: WalletLocked | WalletUnlocked,
+    options: IOptions,
   ): Promise<SpotMarketOrder[]> => {
-    const orderbookFactory = OrderbookAbi__factory.connect(CONTRACT_ADDRESSES.spotMarket, wallet);
+    const orderbookFactory = OrderbookAbi__factory.connect(options.contractAddresses.spotMarket, options.wallet);
 
     // TODO: Should be fixed. Can't get all trades, only for trader.
     if (!trader) return [];
