@@ -13,7 +13,7 @@ import Divider from "../Divider";
 import Sheet from "../Sheet";
 import { SmartFlex } from "../SmartFlex";
 import Text, { TEXT_TYPES } from "../Text";
-import Toast from "../Toast";
+import { createToast } from "../Toast";
 
 interface Props {
   isOpen: boolean;
@@ -32,7 +32,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const handleAddressCopy = () => {
     accountStore.address && copy(accountStore.address);
-    notificationStore.toast(<Toast text="Your address was copied" />, { type: "info" });
+    notificationStore.toast(createToast({ text: "Your address was copied" }), { type: "info" });
     onClose();
   };
 

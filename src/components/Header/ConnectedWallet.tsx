@@ -15,7 +15,7 @@ import BN from "@src/utils/BN";
 import { getExplorerLinkByAddress } from "@src/utils/getExplorerLink";
 import { useStores } from "@stores";
 
-import Toast from "../Toast";
+import { createToast } from "../Toast";
 
 import ConnectedWalletButton from "./ConnectedWalletButton";
 
@@ -32,7 +32,7 @@ const ConnectedWallet: React.FC = observer(() => {
 
   const handleAddressCopy = () => {
     accountStore.address && copy(accountStore.address);
-    notificationStore.toast(<Toast text="Your address was copied" />, { type: "info" });
+    notificationStore.toast(createToast({ text: "Your address was copied" }), { type: "info" });
   };
 
   const actions = [

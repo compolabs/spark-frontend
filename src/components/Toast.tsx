@@ -37,4 +37,8 @@ const Toast: React.FC<IProps> = ({ text, linkText = "Open In Explorer", hash, ad
   );
 };
 
+export function createToast(props: IProps) {
+  return <Toast {...props} />;
+}
+
 export default Toast;

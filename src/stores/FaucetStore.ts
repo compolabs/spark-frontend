@@ -2,6 +2,7 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { NETWORK } from "@src/blockchain/types";
+import { createToast } from "@src/components/Toast";
 import { ARBITRUM_SEPOLIA_FAUCET, FUEL_FAUCET } from "@src/constants";
 import BN from "@src/utils/BN";
 import { handleEvmErrors } from "@src/utils/handleEvmErrors";
@@ -56,12 +57,12 @@ class FaucetStore {
     this.setActionTokenAssetId(assetId);
     this.setLoading(true);
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast("Please, confirm operation in your wallet", { type: "info" });
+      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
     }
 
     try {
       await bcNetwork?.mintToken(assetId);
-      notificationStore.toast("Minting successful!", { type: "success" });
+      notificationStore.toast(createToast({ text: "Minting successful!" }), { type: "success" });
       await accountStore.addAsset(assetId);
     } catch (error: any) {
       handleEvmErrors(notificationStore, error, "We were unable to mint tokens at this time");
