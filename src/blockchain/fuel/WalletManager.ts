@@ -4,6 +4,8 @@ import { Provider, Wallet } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
+import { createToast } from "@src/components/Toast";
+
 import { NETWORK_ERROR, NetworkError } from "../NetworkError";
 
 import { TOKENS_BY_ASSET_ID } from "./constants";
@@ -115,7 +117,7 @@ export class WalletManager {
       } catch (error) {
         if (error instanceof NetworkError) {
           if (error.code === NETWORK_ERROR.UNKNOWN_ACCOUNT) {
-            toast("Please authorize the wallet account when connecting.", { type: "info" });
+            toast(createToast({ text: "Please authorize the wallet account when connecting." }), { type: "info" });
             return;
           }
         }
