@@ -5,7 +5,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
 
 import { PerpMaxAbsPositionSize } from "@src/blockchain/types";
-import Toast from "@src/components/Toast";
+import { createToast } from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import useVM from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
@@ -343,7 +343,7 @@ class CreateOrderVM {
       await bcNetwork?.approve(activeToken.assetId, approveAmount.toString());
       await this.loadAllowance();
 
-      notificationStore.toast(`${activeToken.symbol} approved!`, { type: "success" });
+      notificationStore.toast(createToast({ text: `${activeToken.symbol} approved!` }), { type: "success" });
     } catch (error) {
       console.error(error);
       handleEvmErrors(notificationStore, error, `Something goes wrong with ${activeToken.symbol} approve`);
@@ -383,7 +383,7 @@ class CreateOrderVM {
 
     this.setLoading(true);
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast("Please, confirm operation in your wallet", { type: "info" });
+      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
     }
 
     try {
@@ -403,7 +403,12 @@ class CreateOrderVM {
         hash = await bcNetwork?.createSpotOrder(baseToken.assetId, baseSize.toString(), this.inputPrice.toString());
       }
 
-      notificationStore.toast(<Toast hash={hash} networkType={bcNetwork!.NETWORK_TYPE} text="Order Created" />);
+      notificationStore.toast(
+        createToast({ text: "Order Created", hash: hash, networkType: bcNetwork!.NETWORK_TYPE }),
+        {
+          type: "success",
+        },
+      );
 
       await this.loadAllowance();
     } catch (error: any) {

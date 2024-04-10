@@ -3,6 +3,7 @@ import { Dayjs } from "dayjs";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { Nullable } from "tsdef";
 
+import { createToast } from "@src/components/Toast";
 import { SpotMarketOrder, SpotMarketTrade } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { handleEvmErrors } from "@src/utils/handleEvmErrors";
@@ -69,12 +70,12 @@ class SpotTableVM {
     this.isOrderCancelling = true;
     this.cancelingOrderId = orderId;
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast("Please, confirm operation in your wallet", { type: "info" });
+      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
     }
 
     try {
       await bcNetwork?.cancelSpotOrder(orderId);
-      notificationStore.toast("Order canceled!", { type: "success" });
+      notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
     } catch (error) {
       handleEvmErrors(notificationStore, error, "We were unable to cancel your order at this time");
     }

@@ -118,10 +118,12 @@ export class FuelNetwork extends BlockchainNetwork {
     await this.sdk.mintToken(token, amount);
   };
 
-  approve = async (assetAddress: string, amount: string): Promise<void> => {};
+  approve = async (assetAddress: string, amount: string): Promise<void> => {
+    await this.sdk.approve(assetAddress, amount);
+  };
 
   allowance = async (assetAddress: string): Promise<string> => {
-    return "9999999999999999";
+    return this.sdk.allowance(assetAddress);
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
