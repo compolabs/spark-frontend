@@ -7,12 +7,12 @@ import AccordionItem from "@components/AccordionItem";
 import { Column, Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
 import Select from "@components/Select";
-import SizedBox from "@components/SizedBox";
 import Slider from "@components/Slider";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import Button, { ButtonGroup } from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
+import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
@@ -22,7 +22,8 @@ import {
   ORDER_MODE,
   ORDER_TYPE,
   useCreateOrderVM,
-} from "@src/screens/TradeScreen/LeftBlock/CreateOrder/CreateOrderVM";
+} from "@src/screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
+import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
@@ -100,7 +101,9 @@ const CreateOrder: React.FC = observer(() => {
 
     return (
       <CreateOrderButton disabled={isButtonDisabled} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
-        {vm.loading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
+        <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
+          {vm.loading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
+        </Text>
       </CreateOrderButton>
     );
   };
@@ -138,7 +141,6 @@ const CreateOrder: React.FC = observer(() => {
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
-          <SizedBox height={8} />
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
@@ -146,7 +148,6 @@ const CreateOrder: React.FC = observer(() => {
               <Text>&nbsp;ETH</Text>
             </Row>
           </Row>
-          <SizedBox height={8} />
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Total amount</Text>
             <Row alignItems="center" justifyContent="flex-end">
@@ -247,93 +248,89 @@ const CreateOrder: React.FC = observer(() => {
     <Root column>
       <ButtonGroup>
         <Button active={!vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.BUY)}>
-          BUY
+          <Text primary={!vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
+            buy
+          </Text>
         </Button>
         <Button active={vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.SELL)}>
-          SELL
+          <Text primary={vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
+            sell
+          </Text>
         </Button>
       </ButtonGroup>
-      <SizedBox height={16} />
-      <Row>
-        <Column crossAxisSize="max">
-          <Select
-            label="Order type"
-            options={ORDER_OPTIONS}
-            selected={settingsStore.orderType}
-            onSelect={({ key }) => handleSetOrderType(key)}
-          />
-          <SizedBox height={2} />
-          {renderOrderTooltip()}
-        </Column>
-        <SizedBox width={8} />
-        <TokenInput
-          amount={vm.inputPrice}
-          decimals={DEFAULT_DECIMALS}
-          disabled={isInputPriceDisabled}
-          label="Price"
-          setAmount={handleSetPrice}
-          onBlur={vm.setActiveInput}
-          onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Price)}
-        />
-      </Row>
-      <SizedBox height={2} />
-      <Row alignItems="flex-end">
-        <TokenInput
-          amount={vm.inputAmount}
-          assetId={baseToken.assetId}
-          decimals={baseToken.decimals}
-          error={vm.isSell ? vm.isInputError : undefined}
-          label="Order size"
-          setAmount={(v) => vm.setInputAmount(v, true)}
-          onBlur={vm.setActiveInput}
-          onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
-        />
-        <SizedBox width={8} />
-        <Column alignItems="flex-end" crossAxisSize="max">
-          <MaxButton fitContent onClick={vm.onMaxClick}>
-            MAX
-          </MaxButton>
-          <SizedBox height={4} />
+      <ParamsContainer>
+        <StyledRow>
+          <StyledColumn crossAxisSize="max">
+            <Select
+              label="Order type"
+              options={ORDER_OPTIONS}
+              selected={settingsStore.orderType}
+              onSelect={({ key }) => handleSetOrderType(key)}
+            />
+            {renderOrderTooltip()}
+          </StyledColumn>
           <TokenInput
-            amount={vm.inputTotal}
-            assetId={quoteToken.assetId}
-            decimals={quoteToken.decimals}
-            error={vm.isSell ? undefined : vm.isInputError}
-            setAmount={(v) => vm.setInputTotal(v, true)}
+            amount={vm.inputPrice}
+            decimals={DEFAULT_DECIMALS}
+            disabled={isInputPriceDisabled}
+            label="Price"
+            setAmount={handleSetPrice}
             onBlur={vm.setActiveInput}
-            onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
+            onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Price)}
           />
-        </Column>
-      </Row>
-      <SizedBox height={4} />
-      <Row alignItems="center" justifyContent="space-between">
-        <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
-        <Row alignItems="center" mainAxisSize="fit-content">
-          <Text type={TEXT_TYPES.BODY} primary>
-            {getAvailableAmount()}
-          </Text>
-          <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+        </StyledRow>
+        <StyledRow alignItems="flex-end">
+          <TokenInput
+            amount={vm.inputAmount}
+            assetId={baseToken.assetId}
+            decimals={baseToken.decimals}
+            error={vm.isSell ? vm.isInputError : undefined}
+            label="Order size"
+            setAmount={(v) => vm.setInputAmount(v, true)}
+            onBlur={vm.setActiveInput}
+            onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
+          />
+          <StyledColumn alignItems="flex-end" crossAxisSize="max">
+            <StyledMaxButton fitContent onClick={vm.onMaxClick}>
+              MAX
+            </StyledMaxButton>
+            <SizedBox height={14} />
+            <TokenInput
+              amount={vm.inputTotal}
+              assetId={quoteToken.assetId}
+              decimals={quoteToken.decimals}
+              error={vm.isSell ? undefined : vm.isInputError}
+              setAmount={(v) => vm.setInputTotal(v, true)}
+              onBlur={vm.setActiveInput}
+              onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
+            />
+          </StyledColumn>
+        </StyledRow>
+        <Row alignItems="center" justifyContent="space-between">
+          <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
+          <Row alignItems="center" mainAxisSize="fit-content">
+            <Text type={TEXT_TYPES.BODY} primary>
+              {getAvailableAmount()}
+            </Text>
+            <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+          </Row>
         </Row>
-      </Row>
-      {isPerp && <SizedBox height={8} />}
-      {!isPerp && (
-        <>
-          <SizedBox height={media.desktop ? 28 : 8} />
-          <Slider
-            max={100}
-            min={0}
-            percent={vm.inputPercent.toNumber()}
-            step={1}
-            value={vm.inputPercent.toNumber()}
-            onChange={(v) => handlePercentChange(v as number)}
-          />
-          <SizedBox height={media.desktop ? 28 : 8} />
-        </>
-      )}
-      {renderLeverageContent()}
-      {renderTpSlContent()}
-      {renderOrderDetails()}
-      <SizedBox height={16} />
+        {!isPerp && (
+          <SliderContainer>
+            <Slider
+              max={100}
+              min={0}
+              percent={vm.inputPercent.toNumber()}
+              step={1}
+              value={vm.inputPercent.toNumber()}
+              onChange={(v) => handlePercentChange(v as number)}
+            />
+          </SliderContainer>
+        )}
+        {renderLeverageContent()}
+        {renderTpSlContent()}
+        {renderOrderDetails()}
+      </ParamsContainer>
       {renderButton()}
 
       <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
@@ -346,6 +343,8 @@ const Root = styled(SmartFlex)`
   padding: 12px;
   width: 100%;
   min-height: 418px;
+  display: flex;
+  gap: 16px;
 `;
 
 const LeverageButton = styled(Button)`
@@ -366,4 +365,35 @@ const TpSlContentContainer = styled(SmartFlex)<{ isOpen: boolean }>`
 
 const CreateOrderButton = styled(Button)`
   margin: auto 0 0;
+`;
+
+const ParamsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const StyledRow = styled(Row)`
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+`;
+
+const StyledColumn = styled(Column)`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const StyledMaxButton = styled(MaxButton)`
+  position: absolute;
+  transform: translateY(-4px);
+`;
+
+const SliderContainer = styled.div`
+  padding: 15px 0;
+
+  ${media.mobile} {
+    padding: 8px 0;
+  }
 `;

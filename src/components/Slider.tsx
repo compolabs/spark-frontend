@@ -4,6 +4,7 @@ import RCSlider, { SliderProps } from "rc-slider";
 
 import { Row } from "@components/Flex";
 import { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { media } from "@src/themes/breakpoints";
 
 import "rc-slider/assets/index.css";
 
@@ -36,7 +37,7 @@ const Dot = styled.div`
 
 const Root = styled.div`
   background: ${({ theme }) => theme.colors.bgPrimary};
-  height: 24px;
+  height: 32px;
   box-sizing: border-box;
   padding: 0 23px 0 25px;
   border-radius: 32px;
@@ -49,15 +50,22 @@ const Root = styled.div`
     top: 2px;
     bottom: 2px;
     content: "";
-    -webkit-appearance: none;
     display: flex;
-    height: 20px;
+    height: 28px;
     box-sizing: border-box;
-    width: 35px;
+    width: 30px;
     cursor: pointer;
-    border-radius: 32px;
+    border-radius: 32px 0 0 32px;
     border: 1px solid ${({ theme }) => theme.colors.borderAccent};
     background: ${({ theme }) => theme.colors.bgSecondary};
+
+    ${media.mobile} {
+      height: 20px;
+    }
+  }
+
+  ${media.mobile} {
+    height: 24px;
   }
 `;
 
@@ -66,51 +74,66 @@ const StyledSlider = styled(RCSlider)<IProps>`
 
   .rc-slider-rail {
     width: 100%;
-    height: 24px;
+    height: 32px;
     border-radius: 32px;
     outline: 0;
     background: ${({ theme }) => theme.colors.bgPrimary};
     z-index: 0;
+
+    ${media.mobile} {
+      height: 24px;
+    }
   }
 
   .rc-slider-track {
-    -webkit-appearance: none;
-    height: 20px;
+    height: 28px;
     cursor: pointer;
     top: 2px;
     border: 1px solid ${({ theme }) => theme.colors.borderAccent};
     border-left: none;
-    border-radius: 0 32px 32px 0;
+    border-radius: 0;
     background: ${({ theme }) => theme.colors.bgSecondary};
     z-index: 2;
+
+    ${media.mobile} {
+      height: 20px;
+    }
   }
 
   .rc-slider-handle {
     z-index: 2;
     border: 1px solid ${({ theme }) => theme.colors.borderAccent};
-    //border: 1px solid red;
+    color: ${({ theme }) => theme.colors.textSecondary};
     border-left: none;
     border-radius: 0 32px 32px 0;
-    //border-radius: 32px;
+    justify-content: center;
 
     background: transparent;
     background: ${({ theme }) => theme.colors.bgSecondary};
 
     opacity: 1;
-    -webkit-appearance: none;
-    height: 20px;
-    width: 35px;
+    height: 28px;
+    width: 30px;
     cursor: pointer;
     top: 7px;
     margin-left: 4px;
+
+    ${media.mobile} {
+      height: 20px;
+    }
 
     &-dragging {
       border: 1px solid ${({ theme }) => theme.colors.borderAccent} !important;
       border-left: none !important;
       box-shadow: none !important;
+      margin-left: 4px;
     }
 
     &:focus-visible {
+      box-shadow: none !important;
+    }
+
+    &:active {
       box-shadow: none !important;
     }
 
@@ -119,12 +142,17 @@ const StyledSlider = styled(RCSlider)<IProps>`
         `${percent !== 0 ? "<" : ""} ${percent?.toFixed(!fixSize || percent === 0 ? 0 : fixSize)}${symbol ?? "%"} ${
           percent !== 100 ? ">" : " "
         } `}";
-      height: 20px;
+      height: 28px;
       position: absolute;
-      top: 2px;
+      top: 6px;
       right: 4px;
       white-space: nowrap;
       ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]};
+
+      ${media.mobile} {
+        height: 20px;
+        top: 2px;
+      }
     }
   }
 `;
@@ -137,7 +165,11 @@ const DotsContainer = styled(Row)`
   right: 0;
 
   width: 100%;
-  height: 24px;
+  height: 32px;
   align-items: center;
   justify-content: space-around;
+
+  ${media.mobile} {
+    height: 24px;
+  }
 `;

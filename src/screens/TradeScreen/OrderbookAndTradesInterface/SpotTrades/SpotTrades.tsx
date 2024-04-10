@@ -79,12 +79,13 @@ const Root = styled(Column)`
 `;
 
 const Header = styled.div`
-  width: 100%;
-  box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  width: 100%;
   padding: 0 12px;
-  text-align: start;
+  text-align: center;
+  height: 26px;
+  align-items: center;
 
   ${Text}:last-of-type {
     text-align: end;

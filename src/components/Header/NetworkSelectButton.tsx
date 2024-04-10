@@ -54,6 +54,7 @@ const Root = styled(SmartFlex)<{
   ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]};
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary};
   border-radius: 32px;
+  height: 40px;
 
   ${media.mobile} {
     padding: 8px 8px;

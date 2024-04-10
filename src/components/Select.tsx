@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 
 import SizedBox from "@components/SizedBox";
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
+import { media } from "@src/themes/breakpoints";
 
 import { Column } from "./Flex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "./Text";
@@ -76,7 +77,7 @@ const Root = styled.div<{
   disabled?: boolean;
 }>`
   display: flex;
-  height: 32px;
+  height: 40px;
   padding: 0 8px;
   box-sizing: border-box;
   border-radius: 4px;
@@ -88,8 +89,12 @@ const Root = styled.div<{
   align-items: center;
   justify-content: space-between;
   white-space: nowrap;
-}
+
+  ${media.mobile} {
+    height: 32px;
+  }
 `;
+
 export const Option = styled.div<{
   active?: boolean;
   disabled?: boolean;

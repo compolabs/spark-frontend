@@ -9,7 +9,8 @@ import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { SmartFlex } from "@src/components/SmartFlex";
-import SpotMarketRow from "@src/screens/TradeScreen/LeftBlock/MarketSelection/SpotMarketRow";
+import SpotMarketRow from "@src/screens/TradeScreen/RightBlock/MarketSelection/SpotMarketRow";
+import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 
 import PerpMarketRow from "./PerpMarketRow";
@@ -111,7 +112,19 @@ export default MarketSelection;
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 280px;
+  height: 100%;
+  position: absolute;
+  z-index: 2;
+  background: ${({ theme }) => theme.colors.bgSecondary};
+  border-radius: 10px;
+  box-shadow: 0px 4px 20px 0px #00000080;
+
+  ${media.mobile} {
+    position: relative;
+    margin-top: 8px;
+    width: 100%;
+  }
 `;
 
 const SearchContainer = styled.div`

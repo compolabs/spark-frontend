@@ -82,7 +82,7 @@ const Root = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 12px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   box-sizing: border-box;
   cursor: pointer;

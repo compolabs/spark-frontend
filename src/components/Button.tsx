@@ -30,7 +30,7 @@ const Button = styled.button<{
 
   ${media.desktop} {
     padding: 0 12px;
-    height: 32px;
+    height: 40px;
   }
 
   ${({ green, red, text, theme, active }) =>
@@ -125,8 +125,12 @@ export const ButtonGroup = styled.div`
   box-sizing: border-box;
 
   & > button {
-    height: 32px;
+    height: 40px;
     border-radius: 0;
+
+    ${media.mobile} {
+      height: 32px;
+    }
 
     ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]}
     :hover {

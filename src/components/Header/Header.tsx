@@ -182,13 +182,13 @@ export default Header;
 const Root = styled(SmartFlex)`
   justify-content: space-between;
   width: 100%;
-  height: 48px;
+  height: 56px;
   min-height: 48px;
   padding: 0 12px;
 
   ${media.mobile} {
-    height: 42px;
-    min-height: 42px;
+    height: 40px;
+    min-height: 40px;
     padding: 0 8px;
     margin: 4px 0;
   }

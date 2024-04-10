@@ -22,7 +22,7 @@ import BN from "@src/utils/BN";
 import hexToRgba from "@src/utils/hexToRgb";
 import { useStores } from "@stores";
 
-import { ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "../../LeftBlock/CreateOrder/CreateOrderVM";
+import { ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
 
 import { useSpotOrderbookVM } from "./SpotOrderbookVM";
 
@@ -274,6 +274,7 @@ const SettingIcon = styled.img<{ selected?: boolean }>`
 
 const StyledSelect = styled(Select<string>)`
   min-width: 84px;
+  height: 40px;
 `;
 
 const OrderBookHeader = styled.div`
@@ -282,7 +283,7 @@ const OrderBookHeader = styled.div`
   width: 100%;
   padding: 0 12px;
   text-align: center;
-  height: 16px;
+  height: 26px;
   align-items: center;
 
   ${Text} {
