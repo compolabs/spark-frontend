@@ -316,18 +316,16 @@ const CreateOrder: React.FC = observer(() => {
           </Row>
         </Row>
         {!isPerp && (
-          <>
-            <SliderContainer>
-              <Slider
-                max={100}
-                min={0}
-                percent={vm.inputPercent.toNumber()}
-                step={1}
-                value={vm.inputPercent.toNumber()}
-                onChange={(v) => handlePercentChange(v as number)}
-              />
-            </SliderContainer>
-          </>
+          <SliderContainer>
+            <Slider
+              max={100}
+              min={0}
+              percent={vm.inputPercent.toNumber()}
+              step={1}
+              value={vm.inputPercent.toNumber()}
+              onChange={(v) => handlePercentChange(v as number)}
+            />
+          </SliderContainer>
         )}
         {renderLeverageContent()}
         {renderTpSlContent()}
