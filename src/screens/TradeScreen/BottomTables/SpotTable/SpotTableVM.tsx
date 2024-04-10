@@ -52,7 +52,7 @@ class SpotTableVM {
       () => [accountStore.isConnected, accountStore.address],
       ([isConnected]) => {
         if (!isConnected) {
-          this.setMySpotOrders([]);
+          this.setMyOrders([]);
           return;
         }
 
@@ -74,7 +74,7 @@ class SpotTableVM {
     }
 
     try {
-      await bcNetwork?.cancelOrder(orderId);
+      await bcNetwork?.cancelSpotOrder(orderId);
       notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
     } catch (error) {
       handleEvmErrors(notificationStore, error, "We were unable to cancel your order at this time");
@@ -97,13 +97,13 @@ class SpotTableVM {
 
     try {
       const [ordersData, ordersHistoryData] = await Promise.all([
-        bcNetwork!.fetchOrders({
+        bcNetwork!.fetchSpotOrders({
           baseToken: market.baseToken.assetId,
           limit: 100,
           trader: accountStore.address,
           isActive: true,
         }),
-        bcNetwork!.fetchTrades({
+        bcNetwork!.fetchSpotTrades({
           baseToken: market.baseToken.assetId,
           limit: 100,
           trader: accountStore.address,
@@ -113,16 +113,16 @@ class SpotTableVM {
       const sortedOrder = ordersData.sort(sortDesc);
       const sortedOrdersHistory = ordersHistoryData.sort(sortDesc);
 
-      this.setMySpotOrders(sortedOrder);
-      this.setMySpotOrdersHistory(sortedOrdersHistory);
+      this.setMyOrders(sortedOrder);
+      this.setMyOrdersHistory(sortedOrdersHistory);
     } catch (error) {
       console.error(error);
     }
   };
 
-  private setMySpotOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
+  private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
 
-  private setMySpotOrdersHistory = (myOrdersHistory: SpotMarketTrade[]) => (this.myOrdersHistory = myOrdersHistory);
+  private setMyOrdersHistory = (myOrdersHistory: SpotMarketTrade[]) => (this.myOrdersHistory = myOrdersHistory);
 
   private setInitialized = (l: boolean) => (this.initialized = l);
 }

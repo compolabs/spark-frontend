@@ -22,8 +22,8 @@ import type {
 
 import type { Option, Enum, Vec } from "./common";
 
-export enum ErrorInput { AccessDenied = 'AccessDenied', FreeCollateralMoreThanZero = 'FreeCollateralMoreThanZero', NoOrdersFound = 'NoOrdersFound', NoMarketFound = 'NoMarketFound', OrdersCantBeMatched = 'OrdersCantBeMatched', NoMarketPriceForMarket = 'NoMarketPriceForMarket', FirstArgumentShouldBeOrderSellSecondOrderBuy = 'FirstArgumentShouldBeOrderSellSecondOrderBuy', ZeroAssetAmountToSend = 'ZeroAssetAmountToSend', MarketAlreadyExists = 'MarketAlreadyExists', BadAsset = 'BadAsset', BadValue = 'BadValue', BadPrice = 'BadPrice' };
-export enum ErrorOutput { AccessDenied = 'AccessDenied', FreeCollateralMoreThanZero = 'FreeCollateralMoreThanZero', NoOrdersFound = 'NoOrdersFound', NoMarketFound = 'NoMarketFound', OrdersCantBeMatched = 'OrdersCantBeMatched', NoMarketPriceForMarket = 'NoMarketPriceForMarket', FirstArgumentShouldBeOrderSellSecondOrderBuy = 'FirstArgumentShouldBeOrderSellSecondOrderBuy', ZeroAssetAmountToSend = 'ZeroAssetAmountToSend', MarketAlreadyExists = 'MarketAlreadyExists', BadAsset = 'BadAsset', BadValue = 'BadValue', BadPrice = 'BadPrice' };
+export enum ErrorInput { AccessDenied = 'AccessDenied', NoOrdersFound = 'NoOrdersFound', NoMarketFound = 'NoMarketFound', OrdersCantBeMatched = 'OrdersCantBeMatched', FirstArgumentShouldBeOrderSellSecondOrderBuy = 'FirstArgumentShouldBeOrderSellSecondOrderBuy', ZeroAssetAmountToSend = 'ZeroAssetAmountToSend', MarketAlreadyExists = 'MarketAlreadyExists', BadAsset = 'BadAsset', BadValue = 'BadValue', BadPrice = 'BadPrice' };
+export enum ErrorOutput { AccessDenied = 'AccessDenied', NoOrdersFound = 'NoOrdersFound', NoMarketFound = 'NoMarketFound', OrdersCantBeMatched = 'OrdersCantBeMatched', FirstArgumentShouldBeOrderSellSecondOrderBuy = 'FirstArgumentShouldBeOrderSellSecondOrderBuy', ZeroAssetAmountToSend = 'ZeroAssetAmountToSend', MarketAlreadyExists = 'MarketAlreadyExists', BadAsset = 'BadAsset', BadValue = 'BadValue', BadPrice = 'BadPrice' };
 export enum ReentrancyErrorInput { NonReentrant = 'NonReentrant' };
 export enum ReentrancyErrorOutput { NonReentrant = 'NonReentrant' };
 
@@ -41,8 +41,8 @@ export type OrderInput = { id: string, trader: AddressInput, base_token: AssetId
 export type OrderOutput = { id: string, trader: AddressOutput, base_token: AssetIdOutput, base_size: I64Output, base_price: BN };
 export type OrderChangeEventInput = { order_id: string, trader: AddressInput, base_token: AssetIdInput, base_size_change: I64Input, base_price: BigNumberish, timestamp: BigNumberish };
 export type OrderChangeEventOutput = { order_id: string, trader: AddressOutput, base_token: AssetIdOutput, base_size_change: I64Output, base_price: BN, timestamp: BN };
-export type TradeEventInput = { base_token: AssetIdInput, order_matcher: AddressInput, trade_size: BigNumberish, trade_price: BigNumberish, timestamp: BigNumberish };
-export type TradeEventOutput = { base_token: AssetIdOutput, order_matcher: AddressOutput, trade_size: BN, trade_price: BN, timestamp: BN };
+export type TradeEventInput = { base_token: AssetIdInput, order_matcher: AddressInput, seller: AddressInput, buyer: AddressInput, trade_size: BigNumberish, trade_price: BigNumberish, sell_order_id: string, buy_order_id: string, timestamp: BigNumberish };
+export type TradeEventOutput = { base_token: AssetIdOutput, order_matcher: AddressOutput, seller: AddressOutput, buyer: AddressOutput, trade_size: BN, trade_price: BN, sell_order_id: string, buy_order_id: string, timestamp: BN };
 
 export type OrderbookAbiConfigurables = {
   QUOTE_TOKEN: AssetIdInput;
@@ -93,7 +93,7 @@ export class OrderbookAbi extends Contract {
     get_market_by_id: InvokeFunction<[asset_id: AssetIdInput], MarketOutput>;
     market_exists: InvokeFunction<[asset_id: AssetIdInput], boolean>;
     match_orders: InvokeFunction<[order_sell_id: string, order_buy_id: string], void>;
-    open_order: InvokeFunction<[base_token: AssetIdInput, base_size: I64Input, base_price: BigNumberish], void>;
+    open_order: InvokeFunction<[base_token: AssetIdInput, base_size: I64Input, base_price: BigNumberish], string>;
     order_by_id: InvokeFunction<[order: string], Option<OrderOutput>>;
     orders_by_trader: InvokeFunction<[trader: AddressInput], Vec<string>>;
   };

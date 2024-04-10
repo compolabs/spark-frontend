@@ -3,6 +3,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { observer } from "mobx-react";
 
 import Loader from "@src/components/Loader";
+import { PerpMarket, SpotMarket } from "@src/entity";
 import { useMedia } from "@src/hooks/useMedia";
 import { CreateOrderVMProvider } from "@src/screens/TradeScreen/LeftBlock/CreateOrder/CreateOrderVM";
 import { useStores } from "@stores";
@@ -27,17 +28,26 @@ const TradeScreen: React.FC = observer(() => {
   const { marketId } = useParams<{ marketId: string }>();
 
   const isPerp = location.pathname.includes("PERP");
-  const spotMarketExists = tradeStore.spotMarkets.some((market) => market.symbol === marketId);
-  const perpMarketExists = tradeStore.perpMarkets.some((market) => market.symbol === marketId);
 
-  if (tradeStore.spotMarkets.length === 0 || (isPerp && tradeStore.perpMarkets.length === 0)) {
+  const isMarketExists = (markets: SpotMarket[] | PerpMarket[]) => markets.some((market) => market.symbol === marketId);
+
+  const spotMarketExists = isMarketExists(tradeStore.spotMarkets);
+  const perpMarketExists = isMarketExists(tradeStore.perpMarkets);
+
+  if (!tradeStore.initialized) {
     return <Loader />;
   }
 
-  tradeStore.setIsPerp(isPerp);
-  tradeStore.setMarketSymbol(
-    !marketId || (!spotMarketExists && !perpMarketExists) ? tradeStore.defaultMarketSymbol : marketId,
-  );
+  const selectedMarket = !marketId
+    ? tradeStore.defaultMarketSymbol
+    : spotMarketExists
+      ? marketId
+      : perpMarketExists
+        ? marketId
+        : tradeStore.defaultMarketSymbol;
+
+  tradeStore.setIsPerp(isPerp && tradeStore.isPerpAvailable);
+  tradeStore.setMarketSymbol(selectedMarket);
 
   return (
     //я оборачиваю весь TradeScreenImpl в CreateOrderSpotVMProvider потому что при нажатии на трейд в OrderbookAndTradesInterface должно меняться значение в LeftBlock

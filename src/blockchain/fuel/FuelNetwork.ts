@@ -1,21 +1,34 @@
-import { Provider } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { PerpMarket, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
 import BN from "@src/utils/BN";
 
 import { BlockchainNetwork } from "../abstract/BlockchainNetwork";
-import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, NETWORK, SpotMarketVolume } from "../types";
+import {
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  NETWORK,
+  PerpMaxAbsPositionSize,
+  PerpPendingFundingPayment,
+  SpotMarketVolume,
+} from "../types";
 
-import { CONTRACT_ADDRESSES, NETWORKS, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
+import {
+  CONTRACT_ADDRESSES,
+  INDEXER_URL,
+  NETWORKS,
+  TOKENS_BY_ASSET_ID,
+  TOKENS_BY_SYMBOL,
+  TOKENS_LIST,
+} from "./constants";
 import { Spark } from "./sdk";
 import { WalletManager } from "./WalletManager";
 
 export class FuelNetwork extends BlockchainNetwork {
   NETWORK_TYPE = NETWORK.FUEL;
-
-  private providerPromise: Promise<Provider>;
 
   private walletManager = new WalletManager();
   private sdk: Spark;
@@ -27,8 +40,11 @@ export class FuelNetwork extends BlockchainNetwork {
 
     makeObservable(this.walletManager);
 
-    this.providerPromise = Provider.create(NETWORKS[0].url);
-    this.sdk = new Spark(CONTRACT_ADDRESSES, this.walletManager.wallet ?? undefined);
+    this.sdk = new Spark({
+      networkUrl: NETWORKS[0].url,
+      contractAddresses: CONTRACT_ADDRESSES,
+      indexerApiUrl: INDEXER_URL,
+    });
   }
 
   getAddress = (): Nullable<string> => {
@@ -59,30 +75,47 @@ export class FuelNetwork extends BlockchainNetwork {
 
   connectWallet = async (): Promise<void> => {
     await this.walletManager.connect();
+    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {
-    await this.walletManager.connectByPrivateKey(privateKey, await this.providerPromise);
+    await this.walletManager.connectByPrivateKey(privateKey, await this.sdk.getProvider());
+    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 
   disconnectWallet = (): void => {
     this.walletManager.disconnect();
+    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 
   addAssetToWallet = async (assetId: string): Promise<void> => {
     await this.walletManager.addAsset(assetId);
   };
 
-  createOrder = async (assetAddress: string, size: string, price: string): Promise<string> => {
-    return this.sdk.createOrder(assetAddress, size, price);
+  createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<string> => {
+    if (!this.walletManager.wallet) {
+      throw new Error("Wallet does not exist");
+    }
+
+    const baseToken = this.getTokenByAssetId(assetAddress);
+    const quoteToken = this.getTokenBySymbol("USDC");
+
+    return this.sdk.createSpotOrder(baseToken, quoteToken, size, price);
   };
 
-  cancelOrder = async (orderId: string): Promise<void> => {
-    await this.sdk.cancelOrder(orderId);
+  cancelSpotOrder = async (orderId: string): Promise<void> => {
+    if (!this.walletManager.wallet) {
+      throw new Error("Wallet does not exist");
+    }
+
+    await this.sdk.cancelSpotOrder(orderId);
   };
 
   mintToken = async (assetAddress: string): Promise<void> => {
-    await this.sdk.mintToken(assetAddress);
+    const token = this.getTokenByAssetId(assetAddress);
+    const amount = FAUCET_AMOUNTS[token.symbol].toString();
+
+    await this.sdk.mintToken(token, amount);
   };
 
   approve = async (assetAddress: string, amount: string): Promise<void> => {
@@ -93,23 +126,98 @@ export class FuelNetwork extends BlockchainNetwork {
     return this.sdk.allowance(assetAddress);
   };
 
-  fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.sdk.fetchMarkets(limit);
+  depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
+    await this.sdk.depositPerpCollateral(assetAddress, amount);
   };
 
-  fetchMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
-    return this.sdk.fetchMarketPrice(baseTokenAddress);
+  withdrawPerpCollateral = async (assetAddress: string, amount: string, oracleUpdateData: string[]): Promise<void> => {
+    const baseToken = this.getTokenByAssetId(assetAddress);
+    const gasToken = this.getTokenBySymbol("ETH");
+
+    await this.sdk.withdrawPerpCollateral(baseToken, gasToken, amount, oracleUpdateData);
   };
 
-  fetchOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
-    return this.sdk.fetchOrders(params);
+  openPerpOrder = async (
+    assetAddress: string,
+    amount: string,
+    price: string,
+    updateData: string[],
+  ): Promise<string> => {
+    const baseToken = this.getTokenByAssetId(assetAddress);
+    const gasToken = this.getTokenBySymbol("ETH");
+
+    return this.sdk.openPerpOrder(baseToken, gasToken, amount, price, updateData);
   };
 
-  fetchTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
-    return this.sdk.fetchTrades(params);
+  removePerpOrder = async (assetId: string): Promise<void> => {
+    await this.sdk.removePerpOrder(assetId);
   };
 
-  fetchVolume = async (): Promise<SpotMarketVolume> => {
-    return this.sdk.fetchVolume();
+  fulfillPerpOrder = async (orderId: string, amount: string, updateData: string[]): Promise<void> => {
+    const gasToken = this.getTokenBySymbol("ETH");
+
+    return this.sdk.fulfillPerpOrder(gasToken, orderId, amount, updateData);
+  };
+
+  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
+    return this.sdk.fetchSpotMarkets(limit);
+  };
+
+  fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
+    return this.sdk.fetchSpotMarketPrice(baseTokenAddress);
+  };
+
+  fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
+    return this.sdk.fetchSpotOrders(params);
+  };
+
+  fetchSpotTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
+    return this.sdk.fetchSpotTrades(params);
+  };
+
+  fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
+    return this.sdk.fetchSpotVolume();
+  };
+
+  fetchPerpCollateralBalance = async (accountAddress: string, assetAddress: string): Promise<BN> => {
+    return this.sdk.fetchPerpCollateralBalance(accountAddress, assetAddress);
+  };
+
+  fetchPerpAllTraderPositions = async (accountAddress: string): Promise<PerpPosition[]> => {
+    return this.sdk.fetchPerpAllTraderPositions(accountAddress);
+  };
+
+  fetchPerpIsAllowedCollateral = async (assetAddress: string): Promise<boolean> => {
+    return this.sdk.fetchPerpIsAllowedCollateral(assetAddress);
+  };
+
+  fetchPerpTraderOrders = async (accountAddress: string, assetAddress: string) => {
+    return this.sdk.fetchPerpTraderOrders(accountAddress, assetAddress);
+  };
+
+  fetchPerpAllMarkets = async (): Promise<PerpMarket[]> => {
+    return this.sdk.fetchPerpAllMarkets();
+  };
+
+  fetchPerpFundingRate = async (assetAddress: string): Promise<BN> => {
+    return this.sdk.fetchPerpFundingRate(assetAddress);
+  };
+
+  fetchPerpMaxAbsPositionSize = async (
+    accountAddress: string,
+    assetAddress: string,
+  ): Promise<PerpMaxAbsPositionSize> => {
+    return this.sdk.fetchPerpMaxAbsPositionSize(accountAddress, assetAddress);
+  };
+
+  fetchPerpPendingFundingPayment = async (
+    accountAddress: string,
+    assetAddress: string,
+  ): Promise<PerpPendingFundingPayment> => {
+    return this.sdk.fetchPerpPendingFundingPayment(accountAddress, assetAddress);
+  };
+
+  fetchPerpMarkPrice = async (assetAddress: string): Promise<BN> => {
+    return this.sdk.fetchPerpMarkPrice(assetAddress);
   };
 }

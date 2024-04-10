@@ -2,12 +2,20 @@ import { Contract, JsonRpcProvider } from "ethers";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
 import BN from "@src/utils/BN";
 
 import { BlockchainNetwork } from "../abstract/BlockchainNetwork";
 import { NETWORK_ERROR, NetworkError } from "../NetworkError";
-import { FetchOrdersParams, FetchTradesParams, MarketCreateEvent, NETWORK, SpotMarketVolume } from "../types";
+import {
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  NETWORK,
+  PerpMaxAbsPositionSize,
+  PerpPendingFundingPayment,
+  SpotMarketVolume,
+} from "../types";
 
 import { ERC20_ABI } from "./abi";
 import { Api } from "./Api";
@@ -84,7 +92,7 @@ export class EVMNetwork extends BlockchainNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createOrder = async (assetAddress: EvmAddress, size: string, price: string): Promise<string> => {
+  createSpotOrder = async (assetAddress: EvmAddress, size: string, price: string): Promise<string> => {
     if (!this.walletManager.signer) {
       throw new NetworkError(NETWORK_ERROR.UNKNOWN_SIGNER);
     }
@@ -92,7 +100,7 @@ export class EVMNetwork extends BlockchainNetwork {
     return this.api.createOrder(assetAddress, size, price, this.walletManager.signer);
   };
 
-  cancelOrder = async (orderId: string): Promise<void> => {
+  cancelSpotOrder = async (orderId: string): Promise<void> => {
     if (!this.walletManager.signer) {
       throw new NetworkError(NETWORK_ERROR.UNKNOWN_SIGNER);
     }
@@ -124,19 +132,68 @@ export class EVMNetwork extends BlockchainNetwork {
     return this.api.allowance(assetAddress, this.walletManager.signer);
   };
 
-  fetchMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
+  depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
+    return;
+  };
+  withdrawPerpCollateral = async (assetAddress: string, amount: string, oracleUpdateData: string[]): Promise<void> => {
+    return;
+  };
+  openPerpOrder = async (
+    assetAddress: string,
+    amount: string,
+    price: string,
+    updateData: string[],
+  ): Promise<string> => {
+    return "";
+  };
+  removePerpOrder = async (orderId: string): Promise<void> => {
+    return;
+  };
+  fulfillPerpOrder = async (orderId: string, amount: string, oracleUpdateData: string[]): Promise<void> => {
+    return;
+  };
+
+  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
     return this.api.fetch.fetchMarkets(limit);
   };
-  fetchMarketPrice = async (baseTokenAddress: EvmAddress): Promise<BN> => {
+  fetchSpotMarketPrice = async (baseTokenAddress: EvmAddress): Promise<BN> => {
     return this.api.fetch.fetchMarketPrice(baseTokenAddress);
   };
-  fetchOrders = async (params: FetchOrdersParams<EvmAddress>): Promise<SpotMarketOrder[]> => {
+  fetchSpotOrders = async (params: FetchOrdersParams<EvmAddress>): Promise<SpotMarketOrder[]> => {
     return this.api.fetch.fetchOrders(params);
   };
-  fetchTrades = async (params: FetchTradesParams<EvmAddress>): Promise<SpotMarketTrade[]> => {
+  fetchSpotTrades = async (params: FetchTradesParams<EvmAddress>): Promise<SpotMarketTrade[]> => {
     return this.api.fetch.fetchTrades(params);
   };
-  fetchVolume = async (): Promise<SpotMarketVolume> => {
+  fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
     return this.api.fetch.fetchVolume();
+  };
+
+  fetchPerpCollateralBalance = async (accountAddress: string, assetAddress: string): Promise<BN> => {
+    return BN.ZERO;
+  };
+  fetchPerpAllTraderPositions = async (accountAddress: string): Promise<PerpPosition[]> => {
+    return [];
+  };
+  fetchPerpIsAllowedCollateral = async (assetAddress: string): Promise<boolean> => {
+    return false;
+  };
+  fetchPerpTraderOrders = async (accountAddress: string, assetAddress: string): Promise<PerpOrder[]> => {
+    return [];
+  };
+  fetchPerpAllMarkets = async (): Promise<PerpMarket[]> => {
+    return [];
+  };
+  fetchPerpFundingRate = async (): Promise<BN> => {
+    return BN.ZERO;
+  };
+  fetchPerpMaxAbsPositionSize = async (): Promise<PerpMaxAbsPositionSize> => {
+    return { shortSize: BN.ZERO, longSize: BN.ZERO };
+  };
+  fetchPerpPendingFundingPayment = async (): Promise<PerpPendingFundingPayment> => {
+    return { fundingGrowthPayment: BN.ZERO, fundingPayment: BN.ZERO };
+  };
+  fetchPerpMarkPrice = async (): Promise<BN> => {
+    return BN.ZERO;
   };
 }

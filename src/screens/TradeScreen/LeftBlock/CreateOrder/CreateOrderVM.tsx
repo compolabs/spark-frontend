@@ -2,7 +2,9 @@ import React, { PropsWithChildren, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
+import { Undefinable } from "tsdef";
 
+import { PerpMaxAbsPositionSize } from "@src/blockchain/types";
 import { createToast } from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import useVM from "@src/hooks/useVM";
@@ -58,6 +60,14 @@ class CreateOrderVM {
   inputPercent: BN = BN.ZERO;
   inputTotal: BN = BN.ZERO;
 
+  inputLeverage: BN = BN.ZERO;
+  inputLeveragePercent: BN = BN.ZERO;
+
+  maxPositionSize: PerpMaxAbsPositionSize = {
+    shortSize: BN.ZERO,
+    longSize: BN.ZERO,
+  };
+
   allowance: BN = BN.ZERO;
 
   private allowanceUpdater: IntervalUpdater;
@@ -65,7 +75,7 @@ class CreateOrderVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
-    const { tradeStore, oracleStore, settingsStore } = this.rootStore;
+    const { tradeStore, oracleStore, settingsStore, accountStore } = this.rootStore;
 
     reaction(
       () => oracleStore.prices,
@@ -86,6 +96,13 @@ class CreateOrderVM {
       },
     );
 
+    reaction(
+      () => [tradeStore.market, accountStore.address],
+      async () => {
+        await this.getMaxPositionSize();
+      },
+    );
+
     this.allowanceUpdater = new IntervalUpdater(this.loadAllowance, UPDATE_ALLOWANCE_INTERVAL);
 
     this.allowanceUpdater.run(true);
@@ -96,6 +113,19 @@ class CreateOrderVM {
   }
 
   get isInputError(): boolean {
+    const { tradeStore } = this.rootStore;
+
+    if (tradeStore.isPerp) return this.isPerpInputError;
+
+    return this.isSpotInputError;
+  }
+
+  get isPerpInputError(): boolean {
+    const maxSize = this.isSell ? this.maxPositionSize.shortSize : this.maxPositionSize.longSize;
+    return this.inputAmount.gt(maxSize);
+  }
+
+  get isSpotInputError(): boolean {
     const { tradeStore, balanceStore } = this.rootStore;
     const { market } = tradeStore;
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
@@ -116,6 +146,17 @@ class CreateOrderVM {
   setOrderMode = (mode: ORDER_MODE) => (this.mode = mode);
 
   onMaxClick = () => {
+    const { tradeStore } = this.rootStore;
+
+    if (tradeStore.isPerp) {
+      this.onPerpMaxClick();
+      return;
+    }
+
+    this.onSpotMaxClick();
+  };
+
+  private onSpotMaxClick = () => {
     const { tradeStore, balanceStore, blockchainStore } = this.rootStore;
     const bcNetwork = blockchainStore.currentInstance;
 
@@ -134,6 +175,33 @@ class CreateOrderVM {
     }
 
     this.setInputTotal(balance, true);
+  };
+
+  private onPerpMaxClick = async () => {
+    const { tradeStore } = this.rootStore;
+
+    if (!tradeStore.market) return;
+
+    const leverageAmount = this.isSell ? this.maxPositionSize.shortSize : this.maxPositionSize.longSize;
+
+    if (this.isSell) {
+      this.setInputAmount(leverageAmount, true);
+      return;
+    }
+
+    this.setInputAmount(leverageAmount, true);
+  };
+
+  getMaxPositionSize = async () => {
+    const { tradeStore, blockchainStore, accountStore } = this.rootStore;
+    const bcNetwork = blockchainStore.currentInstance;
+
+    if (!tradeStore.market || !accountStore.isConnected) return;
+
+    this.maxPositionSize = await bcNetwork!.fetchPerpMaxAbsPositionSize(
+      accountStore.address!,
+      tradeStore.market.baseToken.assetId,
+    );
   };
 
   setInputPrice = (price: BN, sync?: boolean) => {
@@ -197,6 +265,8 @@ class CreateOrderVM {
 
     const inputPercent = percentageOfTotal.gt(100) ? 100 : percentageOfTotal.toDecimalPlaces(0).toNumber();
     this.setInputPercent(inputPercent);
+
+    this.calculateLeverage();
   };
 
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
@@ -233,6 +303,25 @@ class CreateOrderVM {
 
     const inputPercent = percentageOfTotal.gt(100) ? 100 : percentageOfTotal.toDecimalPlaces(0).toNumber();
     this.setInputPercent(inputPercent);
+
+    this.calculateLeverage();
+  };
+
+  setInputLeverage = (value: BN) => (this.inputLeverage = value);
+  setInputLeveragePercent = (value: BN | number | number[]) => (this.inputLeveragePercent = new BN(value.toString()));
+
+  calculateLeverage = () => {
+    let percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.longSize);
+
+    if (this.isSell) {
+      percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.shortSize);
+    }
+
+    const leverage = percentageLeverageOfMaxPosition.toDecimalPlaces(0);
+    const inputPercent = percentageLeverageOfMaxPosition.gt(100) ? 100 : leverage;
+
+    this.setInputLeverage(leverage);
+    this.setInputLeveragePercent(inputPercent);
   };
 
   approve = async () => {
@@ -286,7 +375,7 @@ class CreateOrderVM {
   };
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, blockchainStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, blockchainStore, oracleStore } = this.rootStore;
     const { market } = tradeStore;
     const bcNetwork = blockchainStore.currentInstance;
 
@@ -301,7 +390,18 @@ class CreateOrderVM {
       const baseToken = market.baseToken;
       const baseSize = this.isSell ? this.inputAmount.times(-1) : this.inputAmount;
 
-      const hash = await bcNetwork?.createOrder(baseToken.assetId, baseSize.toString(), this.inputPrice.toString());
+      let hash: Undefinable<string> = "";
+      if (tradeStore.isPerp) {
+        const updateData = await oracleStore.getPriceFeedUpdateData(baseToken.priceFeed);
+        hash = await bcNetwork?.openPerpOrder(
+          baseToken.assetId,
+          baseSize.toString(),
+          this.inputPrice.toString(),
+          updateData,
+        );
+      } else {
+        hash = await bcNetwork?.createSpotOrder(baseToken.assetId, baseSize.toString(), this.inputPrice.toString());
+      }
 
       notificationStore.toast(
         createToast({ text: "Order Created", hash: hash, networkType: bcNetwork!.NETWORK_TYPE }),

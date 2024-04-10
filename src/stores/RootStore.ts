@@ -9,6 +9,8 @@ import TradeStore, { ISerializedTradeStore } from "@stores/TradeStore";
 
 import { BalanceStore } from "./BalanceStore";
 import BlockchainStore, { ISerializedBlockchainStore } from "./BlockchainStore";
+import { CollateralStore } from "./CollateralStore";
+import { ModalStore } from "./ModalStore";
 import OracleStore from "./OracleStore";
 
 export interface ISerializedRootStore {
@@ -28,6 +30,8 @@ export default class RootStore {
   tradeStore: TradeStore;
   balanceStore: BalanceStore;
   oracleStore: OracleStore;
+  collateralStore: CollateralStore;
+  modalStore: ModalStore;
 
   private constructor(initState?: ISerializedRootStore) {
     this.notificationStore = new NotificationStore(this);
@@ -38,6 +42,8 @@ export default class RootStore {
     this.tradeStore = new TradeStore(this, initState?.tradeStore);
     this.balanceStore = new BalanceStore(this);
     this.oracleStore = new OracleStore(this);
+    this.collateralStore = new CollateralStore(this);
+    this.modalStore = new ModalStore(this);
 
     makeAutoObservable(this);
 

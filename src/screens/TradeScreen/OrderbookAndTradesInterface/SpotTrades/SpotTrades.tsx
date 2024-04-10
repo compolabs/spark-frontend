@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -12,26 +12,24 @@ import {
 } from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
 import { SmartFlex } from "@src/components/SmartFlex";
 import { useEventListener } from "@src/hooks/useEventListener";
-import BN from "@src/utils/BN";
+import { useMedia } from "@src/hooks/useMedia";
 
-//todo отрефакторить и перенесть часть логики в вью модель (amountOfOrders и calcSize, например)
-//todo добавить лоадер
-//todo починить форматирование в таблице
-interface IProps {}
-
-const SpotTradesImpl: React.FC<IProps> = observer(() => {
+const SpotTradesImpl: React.FC = observer(() => {
   const vm = useSpotTradesVM();
   const theme = useTheme();
-  const [amountOfOrders, setAmountOfOrders] = useState(0);
+  const media = useMedia();
 
-  const calcSize = () => setAmountOfOrders(+new BN(window.innerHeight - 194).div(17).toFixed(0));
+  useEffect(() => {
+    vm.calcSize(media.mobile);
+  }, [media.mobile]);
 
-  useEffect(calcSize, []);
-  const handleResize = useCallback(calcSize, []);
+  const handleCalcSize = useCallback(() => {
+    vm.calcSize(media.mobile);
+  }, [media.mobile]);
 
-  useEventListener("resize", handleResize);
+  useEventListener("resize", handleCalcSize);
 
-  const trades = vm.trades.slice(-amountOfOrders);
+  const trades = vm.trades.slice(-vm.amountOfOrders);
   if (trades.length === 0)
     return (
       <Root alignItems="center" justifyContent="center" mainAxisSize="stretch">
