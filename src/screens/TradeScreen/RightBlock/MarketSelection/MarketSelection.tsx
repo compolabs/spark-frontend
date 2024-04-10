@@ -79,15 +79,19 @@ const MarketSelection: React.FC<IProps> = observer(() => {
   return (
     <Root ref={rootRef}>
       <SearchContainer>
-        <ButtonGroup>
-          <Button active={isSpotMarket} onClick={() => setSpotMarket(true)}>
-            SPOT
-          </Button>
-          <Button active={!isSpotMarket} onClick={() => setSpotMarket(false)}>
-            PERP
-          </Button>
-        </ButtonGroup>
-        <SizedBox height={16} />
+        {tradeStore.isPerpAvailable && (
+          <>
+            <ButtonGroup>
+              <Button active={isSpotMarket} onClick={() => setSpotMarket(true)}>
+                SPOT
+              </Button>
+              <Button active={!isSpotMarket} onClick={() => setSpotMarket(false)}>
+                PERP
+              </Button>
+            </ButtonGroup>
+            <SizedBox height={16} />
+          </>
+        )}
         <SearchInput value={searchValue} onChange={setSearchValue} />
       </SearchContainer>
       <SizedBox height={24} />

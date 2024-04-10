@@ -6,8 +6,33 @@ import { AccordionItemProps } from "@szhsin/react-accordion/types/components/Acc
 import { ReactComponent as ArrowIcon } from "@src/assets/icons/arrowUp.svg";
 import { media } from "@src/themes/breakpoints";
 
-const AccordionItemRoot = styled(RawAccordionItem)`
-  border-bottom: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+type Props = {
+  hideBottomBorder?: boolean;
+} & AccordionItemProps;
+
+const AccordionItem: React.FC<Props> = ({ header, ...rest }) => (
+  <AccordionItemRoot
+    {...rest}
+    buttonProps={{
+      className: ({ isEnter }) => `itemBtn ${isEnter && "itemBtnExpanded"}`,
+    }}
+    className="item"
+    contentProps={{ className: "itemContent" }}
+    header={
+      <>
+        {header}
+        <ArrowIcon className="arrow" />
+      </>
+    }
+    panelProps={{ className: "itemPanel" }}
+  />
+);
+
+export default AccordionItem;
+
+const AccordionItemRoot = styled(RawAccordionItem)<{ hideBottomBorder?: boolean }>`
+  ${({ hideBottomBorder, theme }) =>
+    hideBottomBorder ? "" : `border-bottom: 1px solid ${theme.colors.borderSecondary}`};
   padding: 12px 0;
 
   ${media.mobile} {
@@ -55,23 +80,3 @@ const AccordionItemRoot = styled(RawAccordionItem)`
     transform: rotate(-180deg) !important;
   }
 `;
-
-const AccordionItem: React.FC<AccordionItemProps> = ({ header, ...rest }) => (
-  <AccordionItemRoot
-    {...rest}
-    buttonProps={{
-      className: ({ isEnter }) => `itemBtn ${isEnter && "itemBtnExpanded"}`,
-    }}
-    className="item"
-    contentProps={{ className: "itemContent" }}
-    header={
-      <>
-        {header}
-        <ArrowIcon className="arrow" />
-      </>
-    }
-    panelProps={{ className: "itemPanel" }}
-  />
-);
-
-export default AccordionItem;

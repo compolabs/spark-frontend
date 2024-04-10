@@ -2,12 +2,9 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { useStores } from "@stores";
-
 import CreateOrder from "./CreateOrder";
 
 const RightBlock: React.FC = observer(() => {
-  const { tradeStore } = useStores();
   return (
     <Root>
       <CreateOrder />

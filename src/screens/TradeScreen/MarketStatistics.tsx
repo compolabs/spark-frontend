@@ -26,9 +26,9 @@ const MarketStatistics: React.FC = observer(() => {
     ? BN.formatUnits(oracleStore.getTokenIndexPrice(baseToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
     : BN.ZERO.toString();
   const indexPrice = toCurrency(indexPriceBn);
-  const volume24h = toCurrency(BN.formatUnits(tradeStore.marketInfo.volume, quoteToken?.decimals).toSignificant(2));
-  const high24h = toCurrency(BN.formatUnits(tradeStore.marketInfo.high, DEFAULT_DECIMALS).toSignificant(2));
-  const low24h = toCurrency(BN.formatUnits(tradeStore.marketInfo.low, DEFAULT_DECIMALS).toSignificant(2));
+  const volume24h = toCurrency(BN.formatUnits(tradeStore.spotMarketInfo.volume, quoteToken?.decimals).toSignificant(2));
+  const high24h = toCurrency(BN.formatUnits(tradeStore.spotMarketInfo.high, DEFAULT_DECIMALS).toSignificant(2));
+  const low24h = toCurrency(BN.formatUnits(tradeStore.spotMarketInfo.low, DEFAULT_DECIMALS).toSignificant(2));
 
   const spotStatsArr = [
     { title: "24h volume", value: volume24h },
@@ -37,11 +37,14 @@ const MarketStatistics: React.FC = observer(() => {
   ];
 
   const perpStatsArr = [
-    ...(media.mobile ? [] : [{ title: "Index Price", value: BN.ZERO.toSignificant(2) }]),
-    { title: media.mobile ? "Pred. funding rate" : "Predicted funding rate", value: BN.ZERO.toSignificant(2) },
-    { title: "24H AVG. funding", value: BN.ZERO.toSignificant(2) },
-    { title: "Open interest", value: BN.ZERO.toSignificant(2) },
-    { title: "24H volume", value: volume24h },
+    ...(media.mobile ? [] : [{ title: "Index Price", value: indexPrice }]),
+    {
+      title: media.mobile ? "Pred. funding rate" : "Predicted funding rate",
+      value: tradeStore.perpMarketInfo.predictedFundingRate.toSignificant(2),
+    },
+    // { title: "24H AVG. funding", value: BN.ZERO.toSignificant(2) },
+    // { title: "Open interest", value: BN.ZERO.toSignificant(2) },
+    // { title: "24H volume", value: volume24h },
   ];
 
   const activeDataArr = tradeStore.isPerp ? perpStatsArr : spotStatsArr;

@@ -40,8 +40,10 @@ const ORDER_OPTIONS = [
 
 const LEVERAGE_OPTIONS = [5, 10, 20];
 
+const IS_TP_SL_FEATURE_DISABLED = true;
+
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore, collateralStore } = useStores();
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
   const isPerp = tradeStore.isPerp;
@@ -53,7 +55,6 @@ const CreateOrder: React.FC = observer(() => {
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
 
   const [isTpSlActive, setIsTpSlActive] = useState(false);
-  const [leverageValue, setLeverageValue] = useState(BN.ZERO);
 
   if (!market) return null;
 
@@ -171,25 +172,26 @@ const CreateOrder: React.FC = observer(() => {
                 LEVERAGE
               </Text>
               <Row alignItems="center" justifyContent="flex-end">
-                <Text primary>{leverageValue.toString()}</Text>
+                <Text primary>{vm.inputLeveragePercent.toSignificant(2)}</Text>
                 <Text>&nbsp;%</Text>
               </Row>
             </Row>
           }
+          hideBottomBorder
         >
           <SmartFlex gap="8px" column>
             <Slider
-              max={20}
+              max={100}
               min={0}
-              percent={leverageValue.toNumber()}
+              percent={vm.inputLeverage.toNumber()}
               symbol="x"
-              value={leverageValue.toNumber()}
-              onChange={(v) => setLeverageValue(new BN(v as number))}
+              value={vm.inputLeveragePercent.toNumber()}
+              onChange={(v) => vm.setInputLeveragePercent(v as number)}
             />
             <SmartFlex gap="8px">
-              <TokenInput amount={leverageValue} decimals={0} setAmount={setLeverageValue} />
+              <TokenInput amount={vm.inputLeverage} decimals={0} setAmount={vm.setInputLeverage} />
               {LEVERAGE_OPTIONS.map((option) => (
-                <LeverageButton key={option} onClick={() => setLeverageValue(new BN(option))}>
+                <LeverageButton key={option} onClick={() => vm.setInputLeverage(new BN(option))}>
                   {option}x
                 </LeverageButton>
               ))}
@@ -201,7 +203,7 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const renderTpSlContent = () => {
-    if (!isPerp) return;
+    if (!isPerp || IS_TP_SL_FEATURE_DISABLED) return;
 
     return (
       <SmartFlex alignItems="flex-start" gap="8px" margin="8px 0" column>
@@ -225,6 +227,20 @@ const CreateOrder: React.FC = observer(() => {
           />
         </TpSlContentContainer>
       </SmartFlex>
+    );
+  };
+
+  const getAvailableAmount = () => {
+    if (isPerp) {
+      return collateralStore.getFormatBalance(
+        vm.isSell ? baseToken.assetId : quoteToken.assetId,
+        vm.isSell ? baseToken.decimals : quoteToken.decimals,
+      );
+    }
+
+    return balanceStore.getFormatBalance(
+      vm.isSell ? baseToken.assetId : quoteToken.assetId,
+      vm.isSell ? baseToken.decimals : quoteToken.decimals,
     );
   };
 
@@ -294,10 +310,7 @@ const CreateOrder: React.FC = observer(() => {
           <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
           <Row alignItems="center" mainAxisSize="fit-content">
             <Text type={TEXT_TYPES.BODY} primary>
-              {balanceStore.getFormatBalance(
-                vm.isSell ? baseToken.assetId : quoteToken.assetId,
-                vm.isSell ? baseToken.decimals : quoteToken.decimals,
-              )}
+              {getAvailableAmount()}
             </Text>
             <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
           </Row>

@@ -49,7 +49,7 @@ const TokenInput: React.FC<IProps> = observer((props) => {
     _.debounce((value: BN) => {
       props.setAmount && props.setAmount(value);
     }, 500),
-    [],
+    [props.setAmount],
   );
 
   return (
