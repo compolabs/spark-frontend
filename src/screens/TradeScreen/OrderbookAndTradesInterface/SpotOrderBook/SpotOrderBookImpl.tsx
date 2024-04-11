@@ -258,6 +258,8 @@ const SettingsContainer = styled(Row)`
 
   ${media.mobile} {
     order: 3;
+    padding: 0 8px;
+    flex-direction: row-reverse;
   }
 `;
 
@@ -347,6 +349,9 @@ const OrderbookContainer = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
+  ${media.mobile} {
+    height: fit-content;
+  }
 `;
 
 const Container = styled(OrderbookContainer)<{
@@ -359,7 +364,7 @@ const Container = styled(OrderbookContainer)<{
   height: 100%;
 
   ${media.mobile} {
-    justify-content: center;
+    justify-content: flex-start;
   }
 `;
 

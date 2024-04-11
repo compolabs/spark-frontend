@@ -345,6 +345,10 @@ const Root = styled(SmartFlex)`
   min-height: 418px;
   display: flex;
   gap: 16px;
+
+  ${media.mobile} {
+    min-height: fit-content;
+  }
 `;
 
 const LeverageButton = styled(Button)`
@@ -365,6 +369,10 @@ const TpSlContentContainer = styled(SmartFlex)<{ isOpen: boolean }>`
 
 const CreateOrderButton = styled(Button)`
   margin: auto 0 0;
+
+  ${media.mobile} {
+    margin: 0;
+  }
 `;
 
 const ParamsContainer = styled.div`
