@@ -90,7 +90,7 @@ const MobileContent = styled.div`
   grid-template-columns: 140px 1fr;
   gap: 8px;
   width: 100%;
-  min-height: 404px;
+  height: fit-content;
 `;
 
 const ContentWrapper = styled(SmartFlex)`

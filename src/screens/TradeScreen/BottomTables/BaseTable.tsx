@@ -119,7 +119,7 @@ const Root = styled(SmartFlex)<{ size: TRADE_TABLE_SIZE }>`
   transition: height 200ms;
 
   ${media.mobile} {
-    height: fit-content;
+    height: 100%;
   }
 `;
 
