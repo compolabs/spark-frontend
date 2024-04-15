@@ -15,6 +15,11 @@ export interface Contracts {
   proxy: string;
 }
 
+export interface Asset {
+  address: string;
+  decimals: number;
+}
+
 interface IBaseOptions {
   contractAddresses: Contracts;
   gasPrice: string;
