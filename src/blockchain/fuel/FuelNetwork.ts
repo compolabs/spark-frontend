@@ -1,7 +1,7 @@
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { PerpMarket, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
 import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
 import BN from "@src/utils/BN";
 
@@ -100,7 +100,7 @@ export class FuelNetwork extends BlockchainNetwork {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const quoteToken = this.getTokenBySymbol("USDC");
 
-    return this.sdk.createSpotOrder(baseToken, quoteToken, size, price);
+    return this.sdk.createSpotOrder(baseToken.assetId, quoteToken.assetId, size, price);
   };
 
   cancelSpotOrder = async (orderId: string): Promise<void> => {
@@ -115,15 +115,13 @@ export class FuelNetwork extends BlockchainNetwork {
     const token = this.getTokenByAssetId(assetAddress);
     const amount = FAUCET_AMOUNTS[token.symbol].toString();
 
-    await this.sdk.mintToken(token, amount);
+    await this.sdk.mintToken(token.assetId, amount);
   };
 
-  approve = async (assetAddress: string, amount: string): Promise<void> => {
-    await this.sdk.approve(assetAddress, amount);
-  };
+  approve = async (assetAddress: string, amount: string): Promise<void> => {};
 
   allowance = async (assetAddress: string): Promise<string> => {
-    return this.sdk.allowance(assetAddress);
+    return "999999999999999999";
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
@@ -134,7 +132,7 @@ export class FuelNetwork extends BlockchainNetwork {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const gasToken = this.getTokenBySymbol("ETH");
 
-    await this.sdk.withdrawPerpCollateral(baseToken, gasToken, amount, oracleUpdateData);
+    await this.sdk.withdrawPerpCollateral(baseToken.assetId, gasToken.assetId, amount, oracleUpdateData);
   };
 
   openPerpOrder = async (
@@ -146,7 +144,7 @@ export class FuelNetwork extends BlockchainNetwork {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const gasToken = this.getTokenBySymbol("ETH");
 
-    return this.sdk.openPerpOrder(baseToken, gasToken, amount, price, updateData);
+    return this.sdk.openPerpOrder(baseToken.assetId, gasToken.assetId, amount, price, updateData);
   };
 
   removePerpOrder = async (assetId: string): Promise<void> => {
@@ -156,7 +154,7 @@ export class FuelNetwork extends BlockchainNetwork {
   fulfillPerpOrder = async (orderId: string, amount: string, updateData: string[]): Promise<void> => {
     const gasToken = this.getTokenBySymbol("ETH");
 
-    return this.sdk.fulfillPerpOrder(gasToken, orderId, amount, updateData);
+    return this.sdk.fulfillPerpOrder(gasToken.assetId, orderId, amount, updateData);
   };
 
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
@@ -168,11 +166,15 @@ export class FuelNetwork extends BlockchainNetwork {
   };
 
   fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
-    return this.sdk.fetchSpotOrders(params);
+    const orders = await this.sdk.fetchSpotOrders(params);
+
+    return orders.map((obj) => new SpotMarketOrder(obj));
   };
 
   fetchSpotTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
-    return this.sdk.fetchSpotTrades(params);
+    const trades = await this.sdk.fetchSpotTrades(params);
+
+    return trades.map((obj) => new SpotMarketTrade(obj));
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
@@ -184,19 +186,25 @@ export class FuelNetwork extends BlockchainNetwork {
   };
 
   fetchPerpAllTraderPositions = async (accountAddress: string): Promise<PerpPosition[]> => {
-    return this.sdk.fetchPerpAllTraderPositions(accountAddress);
+    const positions = await this.sdk.fetchPerpAllTraderPositions(accountAddress);
+
+    return positions.map((obj) => new PerpPosition(obj));
   };
 
   fetchPerpIsAllowedCollateral = async (assetAddress: string): Promise<boolean> => {
     return this.sdk.fetchPerpIsAllowedCollateral(assetAddress);
   };
 
-  fetchPerpTraderOrders = async (accountAddress: string, assetAddress: string) => {
-    return this.sdk.fetchPerpTraderOrders(accountAddress, assetAddress);
+  fetchPerpTraderOrders = async (accountAddress: string, assetAddress: string): Promise<PerpOrder[]> => {
+    const orders = await this.sdk.fetchPerpTraderOrders(accountAddress, assetAddress);
+
+    return orders.map((obj) => new PerpOrder(obj));
   };
 
   fetchPerpAllMarkets = async (): Promise<PerpMarket[]> => {
-    return this.sdk.fetchPerpAllMarkets();
+    const markets = await this.sdk.fetchPerpAllMarkets();
+
+    return markets.map((obj) => new PerpMarket(obj));
   };
 
   fetchPerpFundingRate = async (assetAddress: string): Promise<BN> => {

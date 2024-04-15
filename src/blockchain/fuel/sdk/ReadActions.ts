@@ -1,6 +1,5 @@
 import { Address } from "fuels";
 
-import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade } from "@src/entity";
 import BN from "@src/utils/BN";
 
 import {
@@ -21,9 +20,9 @@ import { PerpMarketAbi__factory } from "./types/perp-market";
 import { VaultAbi__factory } from "./types/vault";
 import getUnixTime from "./utils/getUnixTime";
 import { IndexerApi } from "./IndexerApi";
-import { IOptions } from "./interface";
+import { IOptions, PerpAllTraderPosition, PerpMarket, PerpTraderOrder, SpotOrder, SpotTrades } from "./interface";
 
-export class Fetch {
+export class ReadActions {
   private indexerApi: IndexerApi;
 
   constructor(url: string) {
@@ -47,13 +46,7 @@ export class Fetch {
     return BN.ZERO;
   };
 
-  fetchSpotOrders = async ({
-    baseToken,
-    type,
-    limit,
-    trader,
-    isActive,
-  }: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
+  fetchSpotOrders = async ({ baseToken, type, limit, trader, isActive }: FetchOrdersParams): Promise<SpotOrder[]> => {
     const traderAddress = trader ? new Address(trader as any).toB256() : undefined;
 
     const data = await this.indexerApi.getSpotOrders({
@@ -67,38 +60,35 @@ export class Fetch {
     const orders = data.map((order) => {
       const baseSize = new BN(order.base_size);
       const basePrice = new BN(order.base_price);
-      return new SpotMarketOrder({
+      return {
         id: order.order_id,
         baseToken: order.base_token,
         trader: order.trader,
         baseSize: baseSize.toNumber(),
         orderPrice: basePrice.toNumber(),
         blockTimestamp: getUnixTime(order.createdAt),
-      });
+      };
     });
 
     return orders;
   };
 
-  fetchSpotTrades = async ({ baseToken, limit, trader }: FetchTradesParams): Promise<SpotMarketTrade[]> => {
+  fetchSpotTrades = async ({ baseToken, limit, trader }: FetchTradesParams): Promise<SpotTrades[]> => {
     const traderAddress = trader ? new Address(trader as any).toB256() : undefined;
 
     const data = await this.indexerApi.getSpotTradeEvents({ limit, trader: traderAddress, baseToken });
 
-    return data.map(
-      (trade) =>
-        new SpotMarketTrade({
-          baseToken: trade.base_token,
-          buyer: trade.buyer,
-          id: String(trade.id),
-          matcher: trade.order_matcher,
-          seller: trade.seller,
-          tradeAmount: new BN(trade.trade_size),
-          price: new BN(trade.trade_price),
-          timestamp: getUnixTime(trade.createdAt),
-          userAddress: trader,
-        }),
-    );
+    return data.map((trade) => ({
+      baseToken: trade.base_token,
+      buyer: trade.buyer,
+      id: String(trade.id),
+      matcher: trade.order_matcher,
+      seller: trade.seller,
+      tradeAmount: new BN(trade.trade_size),
+      price: new BN(trade.trade_price),
+      timestamp: getUnixTime(trade.createdAt),
+      userAddress: trader,
+    }));
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
@@ -124,7 +114,7 @@ export class Fetch {
     return collateralBalance;
   };
 
-  fetchPerpAllTraderPositions = async (accountAddress: string, options: IOptions): Promise<PerpPosition[]> => {
+  fetchPerpAllTraderPositions = async (accountAddress: string, options: IOptions): Promise<PerpAllTraderPosition[]> => {
     const accountBalanceFactory = AccountBalanceAbi__factory.connect(
       options.contractAddresses.accountBalance,
       options.wallet,
@@ -136,15 +126,12 @@ export class Fetch {
 
     const result = await accountBalanceFactory.functions.get_all_trader_positions(addressInput).get();
 
-    const positions = result.value.map(
-      ([assetAddress, accountBalance]) =>
-        new PerpPosition({
-          baseTokenAddress: assetAddress.value,
-          lastTwPremiumGrowthGlobal: convertI64ToBn(accountBalance.last_tw_premium_growth_global),
-          takerOpenNational: convertI64ToBn(accountBalance.taker_open_notional),
-          takerPositionSize: convertI64ToBn(accountBalance.taker_position_size),
-        }),
-    );
+    const positions = result.value.map(([assetAddress, accountBalance]) => ({
+      baseTokenAddress: assetAddress.value,
+      lastTwPremiumGrowthGlobal: convertI64ToBn(accountBalance.last_tw_premium_growth_global),
+      takerOpenNational: convertI64ToBn(accountBalance.taker_open_notional),
+      takerPositionSize: convertI64ToBn(accountBalance.taker_position_size),
+    }));
 
     return positions;
   };
@@ -180,7 +167,7 @@ export class Fetch {
     return fundingRate;
   };
 
-  fetchPerpFreeCollateral = async (accountAddress: string, options: IOptions): Promise<any> => {
+  fetchPerpFreeCollateral = async (accountAddress: string, options: IOptions): Promise<BN> => {
     const vaultFactory = VaultAbi__factory.connect(options.contractAddresses.vault, options.wallet);
 
     const addressInput: AddressInput = {
@@ -212,7 +199,7 @@ export class Fetch {
     const pausedTimestamp = result.value.paused_timestamp ? result.value.paused_timestamp.toNumber() : undefined;
     const closedPrice = result.value.closed_price ? new BN(result.value.closed_price.toString()) : undefined;
 
-    const perpMarket = new PerpMarket({
+    const perpMarket = {
       baseTokenAddress: result.value.asset_id.value,
       quoteTokenAddress: TOKENS_BY_SYMBOL["USDC"].assetId,
       imRatio: new BN(result.value.im_ratio.toString()),
@@ -221,7 +208,7 @@ export class Fetch {
       pausedIndexPrice,
       pausedTimestamp,
       closedPrice,
-    });
+    };
 
     return perpMarket;
   };
@@ -283,7 +270,7 @@ export class Fetch {
     accountAddress: string,
     assetAddress: string,
     options: IOptions,
-  ): Promise<PerpOrder[]> => {
+  ): Promise<PerpTraderOrder[]> => {
     const vaultFactory = PerpMarketAbi__factory.connect(options.contractAddresses.perpMarket, options.wallet);
 
     const addressInput: AddressInput = {
@@ -296,16 +283,13 @@ export class Fetch {
 
     const result = await vaultFactory.functions.get_trader_orders(addressInput, assetIdInput).get();
 
-    const orders = result.value.map(
-      (order) =>
-        new PerpOrder({
-          id: order.id,
-          baseSize: convertI64ToBn(order.base_size),
-          baseTokenAddress: order.base_token.value,
-          orderPrice: new BN(order.order_price.toString()),
-          trader: order.trader.value,
-        }),
-    );
+    const orders = result.value.map((order) => ({
+      id: order.id,
+      baseSize: convertI64ToBn(order.base_size),
+      baseTokenAddress: order.base_token.value,
+      orderPrice: new BN(order.order_price.toString()),
+      trader: order.trader.value,
+    }));
 
     return orders;
   };

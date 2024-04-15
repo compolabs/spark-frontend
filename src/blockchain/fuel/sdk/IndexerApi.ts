@@ -1,4 +1,4 @@
-import { Fetch } from "@src/blockchain/fuel/sdk/utils/Fetch";
+import { Fetch } from "./utils/Fetch";
 
 export class IndexerApi extends Fetch {
   getSpotMarketCreateEvents = async (): Promise<SpotMarketCreateEvent[]> => {

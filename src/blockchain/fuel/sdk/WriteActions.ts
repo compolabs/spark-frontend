@@ -1,7 +1,7 @@
 import { arrayify, CoinQuantityLike, hashMessage } from "fuels";
 
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { Token } from "@src/entity";
+// import { DEFAULT_DECIMALS } from "@src/constants";
+// import { Token } from "@src/entity";
 import BN from "@src/utils/BN";
 
 import { AccountBalanceAbi__factory } from "./types/account-balance";
@@ -14,30 +14,31 @@ import { PythContractAbi__factory } from "./types/pyth";
 import { TokenAbi__factory } from "./types/src-20";
 import { AssetIdInput, IdentityInput } from "./types/src-20/TokenAbi";
 import { VaultAbi__factory } from "./types/vault";
+import { DEFAULT_DECIMALS } from "./constants";
 import { IOptions } from "./interface";
 
-export class Api {
+export class WriteActions {
   createSpotOrder = async (
-    baseToken: Token,
-    quoteToken: Token,
+    baseTokenAddress: string,
+    quoteTokenAddress: string,
     size: string,
     price: string,
     options: IOptions,
   ): Promise<string> => {
     const orderbookFactory = OrderbookAbi__factory.connect(options.contractAddresses.spotMarket, options.wallet);
 
-    const assetId: AssetIdInput = { value: baseToken.assetId };
+    const assetId: AssetIdInput = { value: baseTokenAddress };
     const isNegative = size.includes("-");
     const absSize = size.replace("-", "");
     const baseSize: I64Input = { value: absSize, negative: isNegative };
 
     const amountToSend = new BN(absSize)
       .times(price)
-      .dividedToIntegerBy(new BN(10).pow(DEFAULT_DECIMALS + baseToken.decimals - quoteToken.decimals));
+      .dividedToIntegerBy(new BN(10).pow(DEFAULT_DECIMALS + Number(baseTokenAddress) - Number(quoteTokenAddress)));
 
     const forward: CoinQuantityLike = {
       amount: isNegative ? absSize : amountToSend.toString(),
-      assetId: isNegative ? baseToken.assetId : quoteToken.assetId,
+      assetId: isNegative ? baseTokenAddress : quoteTokenAddress,
     };
 
     const tx = await orderbookFactory.functions
@@ -58,12 +59,12 @@ export class Api {
       .call();
   };
 
-  mintToken = async (token: Token, amount: string, options: IOptions): Promise<void> => {
+  mintToken = async (tokenAddress: string, amount: string, options: IOptions): Promise<void> => {
     const tokenFactory = options.contractAddresses.tokenFactory;
     const tokenFactoryContract = TokenAbi__factory.connect(tokenFactory, options.wallet);
 
-    const mintAmount = BN.parseUnits(amount, token.decimals);
-    const hash = hashMessage(token.symbol);
+    const mintAmount = BN.parseUnits(amount, Number(tokenAddress));
+    const hash = hashMessage(tokenAddress);
     const identity: IdentityInput = {
       Address: {
         value: options.wallet.address.toB256(),
@@ -102,8 +103,8 @@ export class Api {
   };
 
   withdrawPerpCollateral = async (
-    baseToken: Token,
-    gasToken: Token,
+    baseTokenAddress: string,
+    gasTokenAddress: string,
     amount: string,
     updateData: string[],
     options: IOptions,
@@ -111,14 +112,14 @@ export class Api {
     const vaultFactory = VaultAbi__factory.connect(options.contractAddresses.vault, options.wallet);
 
     const assetIdInput: AssetIdInput = {
-      value: baseToken.assetId,
+      value: baseTokenAddress,
     };
 
     const parsedUpdateData = updateData.map((v) => Array.from(arrayify(v)));
 
     const forward: CoinQuantityLike = {
       amount: "10",
-      assetId: gasToken.assetId,
+      assetId: gasTokenAddress,
     };
 
     await vaultFactory.functions
@@ -137,8 +138,8 @@ export class Api {
   };
 
   openPerpOrder = async (
-    baseToken: Token,
-    gasToken: Token,
+    baseTokenAddress: string,
+    gasTokenAddress: string,
     amount: string,
     price: string,
     updateData: string[],
@@ -150,7 +151,7 @@ export class Api {
     );
 
     const assetIdInput: AssetIdInput = {
-      value: baseToken.assetId,
+      value: baseTokenAddress,
     };
 
     const isNegative = amount.includes("-");
@@ -161,7 +162,7 @@ export class Api {
 
     const forward: CoinQuantityLike = {
       amount: "10",
-      assetId: gasToken.assetId,
+      assetId: gasTokenAddress,
     };
 
     const tx = await clearingHouseFactory.functions
@@ -197,7 +198,7 @@ export class Api {
   };
 
   fulfillPerpOrder = async (
-    gasToken: Token,
+    gasTokenAddress: string,
     orderId: string,
     amount: string,
     updateData: string[],
@@ -216,7 +217,7 @@ export class Api {
 
     const forward: CoinQuantityLike = {
       amount: "10",
-      assetId: gasToken.assetId,
+      assetId: gasTokenAddress,
     };
 
     await clearingHouseFactory.functions
