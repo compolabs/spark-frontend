@@ -1,15 +1,14 @@
-import React, { useMemo } from "react";
-import { useTheme } from "@emotion/react";
+import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
-import { AVAILABLE_NETWORKS } from "@src/blockchain/types";
 import { media } from "@src/themes/breakpoints";
-import { useStores } from "@stores";
 
 import { SmartFlex } from "../SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
+import { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
+
+import { ActiveNetwork } from "./ActiveNetwork";
 
 interface Props {
   isSmall?: boolean;
@@ -19,21 +18,9 @@ interface Props {
 }
 
 const NetworkSelectButton: React.FC<Props> = observer(({ isSmall, isFocused, className, onClick }) => {
-  const { blockchainStore } = useStores();
-  const theme = useTheme();
-
-  const activeNetwork = useMemo(() => {
-    return AVAILABLE_NETWORKS.find(({ type }) => type === blockchainStore.currentInstance?.NETWORK_TYPE);
-  }, [blockchainStore.currentInstance?.NETWORK_TYPE]);
-
   return (
     <Root className={className} gap={isSmall ? "0" : "8px"} isFocused={isFocused} center onClick={onClick}>
-      <img alt={activeNetwork?.title} src={activeNetwork?.icon} />
-      {!isSmall && (
-        <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
-          {activeNetwork?.title}
-        </Text>
-      )}
+      <ActiveNetwork hasTitle={!isSmall} />
       <ArrowIconStyled alt="Arrow Icon" src={arrowIcon} />
     </Root>
   );
