@@ -1,4 +1,5 @@
 import { makeObservable } from "mobx";
+import Spark from "spark-ts-sdk";
 import { Nullable } from "tsdef";
 
 import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
@@ -24,7 +25,6 @@ import {
   TOKENS_BY_SYMBOL,
   TOKENS_LIST,
 } from "./constants";
-import { Spark } from "./sdk";
 import { WalletManager } from "./WalletManager";
 
 export class FuelNetwork extends BlockchainNetwork {
@@ -225,7 +225,10 @@ export class FuelNetwork extends BlockchainNetwork {
   };
 
   fetchPerpAllMarkets = async (): Promise<PerpMarket[]> => {
-    const markets = await this.sdk.fetchPerpAllMarkets();
+    const assets = this.getTokenList().map((token) => ({ address: token.assetId, decimals: token.decimals }));
+    const usdc = this.getTokenBySymbol("USDC");
+    const quoteToken = { address: usdc.assetId, decimals: usdc.decimals };
+    const markets = await this.sdk.fetchPerpAllMarkets(assets, quoteToken);
 
     return markets.map((obj) => new PerpMarket(obj));
   };

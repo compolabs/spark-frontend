@@ -43,7 +43,7 @@
     "file-loader": "^6.2.0",
     "framer-motion": "^11.0.3",
     "fs-extra": "^10.0.0",
-    "fuels": "^0.77.0",
+    "fuels": "^0.79.0",
     "gh-pages": "^6.1.1",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
@@ -88,7 +88,8 @@
     "webpack": "^5.64.4",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1"
+    "workbox-webpack-plugin": "^6.4.1",
+    "spark-ts-sdk": "git+https://github.com/compolabs/spark-ts-sdk#main"
   },
   "scripts": {
     "start": "node scripts/start.js",
