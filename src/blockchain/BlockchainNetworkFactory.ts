@@ -8,7 +8,7 @@ import { BlockchainNetwork, EVMNetwork, FuelNetwork } from ".";
 export class BlockchainNetworkFactory {
   private static instance: Nullable<BlockchainNetworkFactory> = null;
   private instances: Map<string, BlockchainNetwork> = new Map();
-  private _currentInstance: Nullable<BlockchainNetwork> = new EVMNetwork();
+  private _currentInstance: Nullable<BlockchainNetwork> = new FuelNetwork();
 
   private constructor() {
     makeAutoObservable(this);
