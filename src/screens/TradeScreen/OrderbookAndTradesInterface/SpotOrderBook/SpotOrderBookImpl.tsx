@@ -28,8 +28,19 @@ import { useSpotOrderbookVM } from "./SpotOrderbookVM";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
+export enum SPOT_ORDER_FILTER {
+  SELL_AND_BUY = 0,
+  SELL = 1,
+  BUY = 2,
+}
+
 export const SPOT_DECIMAL_OPTIONS = [2, 3, 4, 5];
-export const SPOT_SETTINGS_ICONS = [sellAndBuyIcon, sellIcon, buyIcon];
+
+export const SPOT_SETTINGS_ICONS = {
+  [SPOT_ORDER_FILTER.SELL_AND_BUY]: sellAndBuyIcon,
+  [SPOT_ORDER_FILTER.SELL]: sellIcon,
+  [SPOT_ORDER_FILTER.BUY]: buyIcon,
+};
 
 const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
   const vm = useSpotOrderbookVM();
@@ -70,12 +81,12 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
       return <SettingIcon alt="filter" src={sellAndBuyIcon} onClick={openSettings} />;
     }
 
-    return SPOT_SETTINGS_ICONS.map((image, index) => (
+    return Object.entries(SPOT_SETTINGS_ICONS).map(([key, value], index) => (
       <SettingIcon
         key={index}
         alt="filter"
         selected={vm.orderFilter === index}
-        src={image}
+        src={value}
         onClick={() => vm.setOrderFilter(index)}
       />
     ));
@@ -124,7 +135,7 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
         <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
         <Text primary>{o.baseSizeUnits.toSignificant(decimals)}</Text>
         <Text color={color}>{BN.formatUnits(o.price, 9).toFormat(decimals)}</Text>
-        <Text primary>{numeral(o.quoteSizeUnits).format(`0.${"0".repeat(decimals)} a`)}</Text>
+        <Text primary>{numeral(o.quoteSizeUnits).format(`0.${"0".repeat(decimals)}a`)}</Text>
       </OrderRow>
     ));
   };
@@ -148,37 +159,40 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
           <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
           <Text type={TEXT_TYPES.SUPPORTING}>{`Total ${market?.quoteToken.symbol}`}</Text>
         </OrderBookHeader>
-        <Container fitContent={vm.orderFilter === 1 || vm.orderFilter === 2} reverse={vm.orderFilter === 1}>
-          {vm.orderFilter === 0 && (
+        <Container
+          fitContent={vm.orderFilter === SPOT_ORDER_FILTER.SELL || vm.orderFilter === SPOT_ORDER_FILTER.BUY}
+          reverse={vm.orderFilter === SPOT_ORDER_FILTER.SELL}
+        >
+          {vm.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
             <Plug
               length={vm.sellOrders.length < +vm.oneSizeOrders ? +vm.oneSizeOrders - 1 - vm.sellOrders.length : 0}
             />
           )}
-          {vm.orderFilter === 1 && (
+          {vm.orderFilter === SPOT_ORDER_FILTER.SELL && (
             <Plug
               length={vm.sellOrders.length < +vm.amountOfOrders ? +vm.amountOfOrders - 1 - vm.sellOrders.length : 0}
             />
           )}
 
-          {vm.orderFilter !== 2 && renderOrders(vm.sellOrders, "sell")}
+          {vm.orderFilter !== SPOT_ORDER_FILTER.BUY && renderOrders(vm.sellOrders, "sell")}
 
-          {vm.orderFilter === 0 && renderSpread()}
+          {vm.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && renderSpread()}
 
-          {vm.orderFilter !== 1 && renderOrders(vm.buyOrders, "buy")}
+          {vm.orderFilter !== SPOT_ORDER_FILTER.SELL && renderOrders(vm.buyOrders, "buy")}
 
-          {vm.orderFilter === 2 && (
+          {vm.orderFilter === SPOT_ORDER_FILTER.BUY && (
             <Plug
               length={vm.buyOrders.length < +vm.amountOfOrders ? +vm.amountOfOrders - 1 - vm.buyOrders.length : 0}
             />
           )}
-          {vm.orderFilter === 0 && (
+          {vm.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
             <Plug length={vm.buyOrders.length < +vm.oneSizeOrders ? +vm.oneSizeOrders - 1 - vm.buyOrders.length : 0} />
           )}
         </Container>
 
         <SpotOrderSettingsSheet
           decimals={SPOT_DECIMAL_OPTIONS}
-          filterIcons={SPOT_SETTINGS_ICONS}
+          filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([key, value]) => value)}
           isOpen={isSettingsOpen}
           selectedDecimal={vm.decimalKey}
           selectedFilter={vm.orderFilter}
@@ -287,13 +301,10 @@ const OrderBookHeader = styled.div`
   text-align: center;
   height: 26px;
   align-items: center;
+  gap: 10px;
 
   ${Text} {
     text-align: start;
-  }
-
-  ${Text}:last-of-type {
-    text-align: end;
   }
 
   ${media.mobile} {
@@ -318,6 +329,7 @@ const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
   padding: 0 12px;
   background: transparent;
   transition: 0.4s;
+  gap: 10px;
 
   &:hover {
     background: ${({ type, theme }) =>
@@ -334,7 +346,7 @@ const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
   }
 
   & > ${Text}:nth-of-type(3) {
-    text-align: right;
+    text-align: left;
   }
 
   & > div {
