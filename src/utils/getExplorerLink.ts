@@ -14,5 +14,5 @@ export const getExplorerLinkByHash = (hash: string, network: NETWORK) => {
 };
 
 export const getExplorerLinkByAddress = (address: string, network: NETWORK) => {
-  return `${getExplorerUrlByNetwork(network)}/address/${address}`;
+  return `${getExplorerUrlByNetwork(network)}/account/${address}`;
 };

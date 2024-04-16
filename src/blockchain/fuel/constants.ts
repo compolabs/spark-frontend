@@ -26,7 +26,7 @@ export const NETWORKS: Network[] = [
   },
 ];
 
-export const EXPLORER_URL = "https://fuellabs.github.io/block-explorer-v2/beta-5";
+export const EXPLORER_URL = "https://app.fuel.network/";
 
 export const TOKENS_LIST: Token[] = Object.values(TOKENS_JSON).map(({ name, symbol, decimals, assetId, priceFeed }) => {
   return new Token({
