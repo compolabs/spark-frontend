@@ -8,6 +8,8 @@ import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
+import { SPOT_ORDER_FILTER } from "./SpotOrderBookImpl";
+
 const ctx = React.createContext<SpotOrderbookVM | null>(null);
 
 interface IProps {
@@ -41,7 +43,7 @@ class SpotOrderbookVM {
     spreadPrice: "",
   };
   decimalKey: string = "0";
-  orderFilter: number = 0;
+  orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
   amountOfOrders: number = 0;
 
   isOrderBookLoading = false;
@@ -80,7 +82,7 @@ class SpotOrderbookVM {
         return a.price.lt(b.price) ? 1 : -1;
       })
       .reverse()
-      .slice(this.orderFilter === 0 ? -this.oneSizeOrders : -this.amountOfOrders)
+      .slice(this.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY ? -this.oneSizeOrders : -this.amountOfOrders)
       .reverse();
   }
 
@@ -93,7 +95,7 @@ class SpotOrderbookVM {
         if (a.price === null && b.price === null) return -1;
         return a.price.lt(b.price) ? 1 : -1;
       })
-      .slice(this.orderFilter === 0 ? -this.oneSizeOrders : -this.amountOfOrders);
+      .slice(this.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY ? -this.oneSizeOrders : -this.amountOfOrders);
   }
 
   get totalBuy() {
@@ -114,7 +116,7 @@ class SpotOrderbookVM {
 
   setDecimalKey = (value: string) => (this.decimalKey = value);
 
-  setOrderFilter = (value: number) => (this.orderFilter = value);
+  setOrderFilter = (value: SPOT_ORDER_FILTER) => (this.orderFilter = value);
 
   updateOrderBook = async () => {
     const { tradeStore, blockchainStore } = this.rootStore;
