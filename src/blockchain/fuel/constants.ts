@@ -4,7 +4,7 @@ import { Token } from "@src/entity/Token";
 import TOKENS_JSON from "./tokens.json";
 
 export const CONTRACT_ADDRESSES = {
-  spotMarket: "0x1fdc9849457604cc8af9103c5d3cc339da2ce29df8b6e46d358f7c330918cd79",
+  spotMarket: "0x7134802bdefd097f1c9d8ad86ef27081ae609b84de0afc87b58bd4e04afc6a23",
   tokenFactory: "0x6bd9643c9279204b474a778dea7f923226060cb94a4c61c5aae015cf96b5aad2",
   vault: "0xe8beef1c4c94e8732b89c5e783c80e9fb7f80fd43ad0c594ba380e4b5556106a",
   accountBalance: "0xa842702d600b43a3c7be0e36a0e08452b3d6fc36f0d4015fb6a06cb056cd312d",

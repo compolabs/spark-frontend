@@ -39,8 +39,8 @@ export type MarketCreateEventInput = { asset_id: AssetIdInput, asset_decimals: B
 export type MarketCreateEventOutput = { asset_id: AssetIdOutput, asset_decimals: number, timestamp: BN };
 export type OrderInput = { id: string, trader: AddressInput, base_token: AssetIdInput, base_size: I64Input, base_price: BigNumberish };
 export type OrderOutput = { id: string, trader: AddressOutput, base_token: AssetIdOutput, base_size: I64Output, base_price: BN };
-export type OrderChangeEventInput = { order_id: string, trader: AddressInput, base_token: AssetIdInput, base_size_change: I64Input, base_price: BigNumberish, timestamp: BigNumberish };
-export type OrderChangeEventOutput = { order_id: string, trader: AddressOutput, base_token: AssetIdOutput, base_size_change: I64Output, base_price: BN, timestamp: BN };
+export type OrderChangeEventInput = { order_id: string, timestamp: BigNumberish, order: Option<OrderInput> };
+export type OrderChangeEventOutput = { order_id: string, timestamp: BN, order: Option<OrderOutput> };
 export type TradeEventInput = { base_token: AssetIdInput, order_matcher: AddressInput, seller: AddressInput, buyer: AddressInput, trade_size: BigNumberish, trade_price: BigNumberish, sell_order_id: string, buy_order_id: string, timestamp: BigNumberish };
 export type TradeEventOutput = { base_token: AssetIdOutput, order_matcher: AddressOutput, seller: AddressOutput, buyer: AddressOutput, trade_size: BN, trade_price: BN, sell_order_id: string, buy_order_id: string, timestamp: BN };
 

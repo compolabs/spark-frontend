@@ -297,29 +297,20 @@ const _abi = {
           "typeArguments": null
         },
         {
-          "name": "trader",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "base_token",
-          "type": 10,
-          "typeArguments": null
-        },
-        {
-          "name": "base_size_change",
-          "type": 11,
-          "typeArguments": null
-        },
-        {
-          "name": "base_price",
-          "type": 20,
-          "typeArguments": null
-        },
-        {
           "name": "timestamp",
           "type": 20,
           "typeArguments": null
+        },
+        {
+          "name": "order",
+          "type": 5,
+          "typeArguments": [
+            {
+              "name": "",
+              "type": 14,
+              "typeArguments": null
+            }
+          ]
         }
       ],
       "typeParameters": null
@@ -598,15 +589,15 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "payable",
+          "arguments": []
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
             "write"
           ]
-        },
-        {
-          "name": "payable",
-          "arguments": []
         }
       ]
     },
@@ -698,7 +689,7 @@ const _abi = {
       "logId": 3,
       "loggedType": {
         "name": "",
-        "type": 15,
+        "type": 4,
         "typeArguments": []
       }
     },
@@ -738,7 +729,7 @@ const _abi = {
       "logId": 8,
       "loggedType": {
         "name": "",
-        "type": 4,
+        "type": 15,
         "typeArguments": []
       }
     },
@@ -1048,7 +1039,7 @@ const _abi = {
         "type": 10,
         "typeArguments": []
       },
-      "offset": 99744
+      "offset": 102128
     },
     {
       "name": "QUOTE_TOKEN_DECIMALS",
@@ -1057,7 +1048,7 @@ const _abi = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 99680
+      "offset": 102064
     },
     {
       "name": "PRICE_DECIMALS",
@@ -1066,7 +1057,7 @@ const _abi = {
         "type": 19,
         "typeArguments": null
       },
-      "offset": 99664
+      "offset": 102048
     }
   ]
 };
