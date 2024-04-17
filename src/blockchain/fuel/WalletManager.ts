@@ -1,5 +1,6 @@
 import { toast } from "react-toastify";
-import { Fuel, FuelWalletConnector, FuelWalletLocked } from "@fuel-wallet/sdk";
+import { Fuel, FuelWalletLocked } from "@fuel-wallet/sdk";
+import { FuelWalletConnector } from "@fuels/connectors";
 import { Provider, Wallet, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
