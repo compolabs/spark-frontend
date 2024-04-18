@@ -50,9 +50,9 @@ const Button = styled.button<{
             }
 
             &:disabled {
-              border-color: ${theme.colors.borderSecondary};
+              border-color: ${theme.colors.textDisabled};
               background: ${theme.colors.borderSecondary};
-              color: ${theme.colors.textDisabled};
+              color: ${theme.colors.textSecondary};
             }
           `;
         case red:
