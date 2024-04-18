@@ -38,11 +38,17 @@ const globalModalStyles = (theme: Theme) => css`
   .rc-dialog-content {
     border-radius: 10px;
     background: ${theme.colors.bgSecondary};
+    height: 100%;
   }
 
   .rc-dialog-body {
     padding: 0;
     box-sizing: border-box;
+    height: 100%;
+    // use direct child selector to set styles for the 3rd party library div
+    > div {
+      height: 100%;
+    }
   }
 
   .rc-dialog-header {
