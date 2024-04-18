@@ -118,11 +118,11 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) =>
         <FooterContainer>
           <Text type={TEXT_TYPES.BODY}>New to Fuel blockchain?</Text>
           <StyledLink
-            href="https://stalkerairdrop.medium.com/fuel-testnet-swaylend-db9ce8d10cb4#f93f"
+            href="https://chromewebstore.google.com/detail/fuel-wallet/dldjpboieedgcmpkchcjcbijingjcgok"
             rel="noopener noreferrer"
             target="_blank"
           >
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY}>Learn more about wallets</Text>
+            <Text type={TEXT_TYPES.BUTTON_SECONDARY}>Install Fuel Wallet</Text>
           </StyledLink>
         </FooterContainer>
       </>

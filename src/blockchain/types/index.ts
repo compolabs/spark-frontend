@@ -49,14 +49,14 @@ export const NETWORK_ICON: Record<NETWORK, string> = {
 
 export const AVAILABLE_NETWORKS = [
   {
-    title: "ARBITRUM",
-    icon: NETWORK_ICON.EVM,
-    type: NETWORK.EVM,
-  },
-  {
     title: "FUEL",
     icon: NETWORK_ICON.FUEL,
     type: NETWORK.FUEL,
+  },
+  {
+    title: "ARBITRUM",
+    icon: NETWORK_ICON.EVM,
+    type: NETWORK.EVM,
   },
 ];
 
