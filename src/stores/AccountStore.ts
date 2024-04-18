@@ -85,7 +85,7 @@ class AccountStore {
     try {
       await bcNetwork!.addAssetToWallet(assetId);
     } catch (error: any) {
-      notificationStore.toast(createToast({ text: error }), { type: "error" });
+      notificationStore.toast(createToast({ text: error.message }), { type: "error" });
     }
   };
 

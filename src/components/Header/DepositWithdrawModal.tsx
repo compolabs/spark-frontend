@@ -204,7 +204,7 @@ const TokenIcon = styled.img`
 
 const DialogStyled = styled(Dialog)`
   ${media.mobile} {
-    height: 100vh;
+    height: 100%;
     padding: 24px 0;
   }
 `;
@@ -217,8 +217,8 @@ const DialogTitleStyled = styled(SmartFlex)`
 
 const DialogContainerStyled = styled(SmartFlex)`
   ${media.mobile} {
-    height: 90vh;
-    padding-bottom: 0;
+    height: 100%;
+    padding-bottom: 30px;
   }
 `;
 
