@@ -174,8 +174,8 @@ class TradeStore {
     const bcNetwork = blockchainStore.currentInstance;
 
     try {
-      const markets = await bcNetwork!.fetchPerpAllMarkets();
-      this.setPerpMarkets(markets);
+      // const markets = await bcNetwork!.fetchPerpAllMarkets();
+      this.setPerpMarkets([]);
     } catch (error) {
       console.error("[PERP] Error init perp market", error);
     }
