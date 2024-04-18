@@ -93,10 +93,6 @@ export class FuelNetwork extends BlockchainNetwork {
   };
 
   createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<string> => {
-    if (!this.walletManager.wallet) {
-      throw new Error("Wallet does not exist");
-    }
-
     const baseToken = this.getTokenByAssetId(assetAddress);
 
     const baseAsset = { address: baseToken.assetId, decimals: baseToken.decimals };
@@ -107,10 +103,6 @@ export class FuelNetwork extends BlockchainNetwork {
   };
 
   cancelSpotOrder = async (orderId: string): Promise<void> => {
-    if (!this.walletManager.wallet) {
-      throw new Error("Wallet does not exist");
-    }
-
     await this.sdk.cancelSpotOrder(orderId);
   };
 
