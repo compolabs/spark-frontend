@@ -304,7 +304,7 @@ const SpotTableImpl: React.FC = observer(() => {
       </BaseTable>
       {!!vm.myOrders.length && tabIndex === 0 && (
         //todo здесь была кнопка cancel all orders
-        <TextGraph style={{ textAlign: "center" }}>Data provided by the Graph</TextGraph>
+        <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
       )}
     </>
   );

@@ -235,7 +235,7 @@ const PerpTableImpl: React.FC = observer(() => {
         {renderTable()}
       </BaseTable>
       {!!vm.myPositions.length && tabIndex === 0 && (
-        <TextGraph style={{ textAlign: "center" }}>Data provided by the Graph</TextGraph>
+        <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
       )}
 
       <TakeProfitStopLossSheet
