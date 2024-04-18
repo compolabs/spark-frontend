@@ -204,7 +204,7 @@ const TokenIcon = styled.img`
 
 const DialogStyled = styled(Dialog)`
   ${media.mobile} {
-    height: 100vh;
+    height: 100%;
     padding: 24px 0;
   }
 `;
