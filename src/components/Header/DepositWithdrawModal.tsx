@@ -217,8 +217,8 @@ const DialogTitleStyled = styled(SmartFlex)`
 
 const DialogContainerStyled = styled(SmartFlex)`
   ${media.mobile} {
-    height: 90vh;
-    padding-bottom: 0;
+    height: 100%;
+    padding-bottom: 30px;
   }
 `;
 
