@@ -101,7 +101,7 @@ const MobileMenu: React.FC<IProps> = ({
         </Container>
         <SizedBox height={8} />
         <FooterContainer gap="8px" column>
-          <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button>
+          {/* <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button> */}
           {renderWalletButton()}
           {!accountStore.address && <NetworkSelectButton onClick={handleNetworkSelect} />}
         </FooterContainer>
