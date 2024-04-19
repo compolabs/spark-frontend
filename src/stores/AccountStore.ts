@@ -1,3 +1,4 @@
+import { Address } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -101,6 +102,11 @@ class AccountStore {
     const bcNetwork = blockchainStore.currentInstance;
 
     return bcNetwork?.getAddress();
+  }
+
+  get address0x() {
+    const address = new Address(this.address as any).toB256();
+    return address;
   }
 
   get isConnected() {
