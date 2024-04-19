@@ -111,23 +111,7 @@ class SpotTableVM {
       ]);
 
       const sortedOrder = ordersData.sort(sortDesc);
-      const sortedOrdersHistory = ordersHistoryData.sort(sortDesc).reduce((acc, order) => {
-        if (order.buyer === accountStore.address0x) {
-          acc.push({
-            ...order,
-            type: "BUY",
-          } as SpotMarketTrade);
-        } else if (order.seller === accountStore.address0x) {
-          acc.push({
-            ...order,
-            type: "SELL",
-          } as SpotMarketTrade);
-        } else {
-          acc.push(order);
-        }
-        return acc;
-      }, [] as SpotMarketTrade[]);
-
+      const sortedOrdersHistory = ordersHistoryData.sort(sortDesc);
       this.setMyOrders(sortedOrder);
       this.setMyOrdersHistory(sortedOrdersHistory);
     } catch (error) {
