@@ -8,7 +8,6 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fuel-wallet/sdk": "^0.15.2",
-    "@fuels/connectors": "^0.2.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@pythnetwork/pyth-evm-js": "^1.33.0",
     "@svgr/webpack": "^5.5.0",

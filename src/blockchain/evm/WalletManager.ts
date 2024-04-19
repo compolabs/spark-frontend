@@ -7,7 +7,6 @@ import { NETWORK_ERROR, NetworkError } from "../NetworkError";
 
 import { Network, PROVIDERS, TOKENS_BY_ASSET_ID, web3Modal } from "./constants";
 import { EvmAddress } from "./types";
-import connector from "@fuels/connectors"
 
 export class WalletManager {
   public address: Nullable<EvmAddress> = null;
