@@ -36,6 +36,7 @@ const SpotTradesImpl: React.FC = observer(() => {
         <Text type={TEXT_TYPES.SUPPORTING}>No trades yet</Text>
       </Root>
     );
+
   return (
     <Root>
       <SizedBox height={8} />

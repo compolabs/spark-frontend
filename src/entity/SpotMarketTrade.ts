@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
+import { Address, isBech32 } from "fuels";
 import { Nullable } from "tsdef";
 
 import { BlockchainNetworkFactory } from "@src/blockchain/BlockchainNetworkFactory";
@@ -21,8 +22,12 @@ interface SpotMarketTradeParams {
 }
 
 const getType = (userAddress: string, buyer: string, seller: string) => {
-  const address = userAddress.toLowerCase();
-  return address === seller.toLowerCase() ? "SELL" : address === buyer.toLowerCase() ? "BUY" : null;
+  const address = isBech32(userAddress) ? new Address(userAddress as `fuel${string}`).toB256() : userAddress;
+  return address.toLowerCase() === seller.toLowerCase()
+    ? "SELL"
+    : address.toLowerCase() === buyer.toLowerCase()
+      ? "BUY"
+      : null;
 };
 
 export class SpotMarketTrade {
