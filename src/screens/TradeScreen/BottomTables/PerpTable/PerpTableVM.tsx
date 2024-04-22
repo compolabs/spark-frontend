@@ -4,7 +4,7 @@ import { Nullable } from "tsdef";
 
 import { PerpMarket, PerpOrder, PerpPosition } from "@src/entity";
 import useVM from "@src/hooks/useVM";
-import { handleEvmErrors } from "@src/utils/handleEvmErrors";
+import { hanldeWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
@@ -91,7 +91,7 @@ class PerpTableVM {
       await bcNetwork?.removePerpOrder(orderId);
       notificationStore.toast("Order canceled!", { type: "success" });
     } catch (error) {
-      handleEvmErrors(notificationStore, error, "We were unable to cancel your order at this time");
+      hanldeWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
     }
 
     this.cancelingOrderId = null;

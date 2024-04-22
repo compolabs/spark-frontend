@@ -5,7 +5,7 @@ import { NETWORK } from "@src/blockchain/types";
 import { createToast } from "@src/components/Toast";
 import { ARBITRUM_SEPOLIA_FAUCET, FUEL_FAUCET } from "@src/constants";
 import BN from "@src/utils/BN";
-import { handleEvmErrors } from "@src/utils/handleEvmErrors";
+import { hanldeWalletErrors } from "@src/utils/handleWalletErrors";
 import RootStore from "@stores/RootStore";
 
 export const FAUCET_AMOUNTS: Record<string, number> = {
@@ -65,7 +65,7 @@ class FaucetStore {
       notificationStore.toast(createToast({ text: "Minting successful!" }), { type: "success" });
       await accountStore.addAsset(assetId);
     } catch (error: any) {
-      handleEvmErrors(notificationStore, error, "We were unable to mint tokens at this time");
+      hanldeWalletErrors(notificationStore, error, "We were unable to mint tokens at this time");
     } finally {
       this.setLoading(false);
       await balanceStore.update();

@@ -6,7 +6,7 @@ import { Nullable } from "tsdef";
 import { createToast } from "@src/components/Toast";
 import { SpotMarketOrder, SpotMarketTrade } from "@src/entity";
 import useVM from "@src/hooks/useVM";
-import { handleEvmErrors } from "@src/utils/handleEvmErrors";
+import { hanldeWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
@@ -77,7 +77,7 @@ class SpotTableVM {
       await bcNetwork?.cancelSpotOrder(orderId);
       notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
     } catch (error) {
-      handleEvmErrors(notificationStore, error, "We were unable to cancel your order at this time");
+      hanldeWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
     }
 
     this.isOrderCancelling = false;
