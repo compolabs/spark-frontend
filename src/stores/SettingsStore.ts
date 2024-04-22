@@ -27,7 +27,7 @@ class SettingsStore {
     if (initState) {
       this.setIsUserAgreedWithTerms(initState.isUserAgreedWithTerms ?? false);
       this.setTradeTableSize(initState.tradeTableSize ?? TRADE_TABLE_SIZE.S);
-      this.setOrderType(initState.orderType ?? ORDER_TYPE.Market);
+      this.setOrderType(initState.orderType ?? ORDER_TYPE.Limit);
     }
   }
 

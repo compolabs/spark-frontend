@@ -6,12 +6,13 @@ import { observer } from "mobx-react";
 import AccordionItem from "@components/AccordionItem";
 import { Column, Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
-import Select from "@components/Select";
+// import Select from "@components/Select";
 import Slider from "@components/Slider";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import Button, { ButtonGroup } from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
+import Input from "@src/components/Input";
 import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
 import { DEFAULT_DECIMALS } from "@src/constants";
@@ -261,12 +262,15 @@ const CreateOrder: React.FC = observer(() => {
       <ParamsContainer>
         <StyledRow>
           <StyledColumn crossAxisSize="max">
-            <Select
+            <Text>Order type</Text>
+            <StyledInput name="order-type" value="Limit" disabled />
+            {/* <Select
+              disabled={true}
               label="Order type"
               options={ORDER_OPTIONS}
               selected={settingsStore.orderType}
               onSelect={({ key }) => handleSetOrderType(key)}
-            />
+            /> */}
             {renderOrderTooltip()}
           </StyledColumn>
           <TokenInput
@@ -404,4 +408,24 @@ const SliderContainer = styled.div`
   ${media.mobile} {
     padding: 8px 0;
   }
+`;
+
+const StyledInput = styled(Input)`
+  padding: 0;
+  align-items: center;
+  padding: 0 8px;
+  height: 40px;
+  min-height: 32px;
+  width: 100%;
+  cursor: unset;
+  box-sizing: border-box;
+  background: #050505;
+  border-radius: 4px;
+  border: 1px solid #1b1b1b;
+  font-family: JetBrains Mono;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0.2px;
 `;
