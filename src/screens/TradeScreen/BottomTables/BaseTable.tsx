@@ -147,6 +147,10 @@ const TableContainer = styled(SmartFlex)`
   width: 100%;
   height: 100%;
   overflow-y: scroll;
+
+  ${media.mobile} {
+    max-height: 160px; // max height of the two rows
+  }
 `;
 
 const TableSize = styled.div<{ active?: boolean }>`
