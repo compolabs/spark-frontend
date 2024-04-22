@@ -5,7 +5,7 @@ import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
 import RootStore from "./RootStore";
 
-const UPDATE_INTERVAL = 10 * 1000;
+const UPDATE_INTERVAL = 5 * 1000;
 
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();

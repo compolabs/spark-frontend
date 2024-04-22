@@ -9,7 +9,7 @@ import { createToast } from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import useVM from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
-import { handleEvmErrors } from "@src/utils/handleEvmErrors";
+import { hanldeWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
@@ -346,7 +346,7 @@ class CreateOrderVM {
       notificationStore.toast(createToast({ text: `${activeToken.symbol} approved!` }), { type: "success" });
     } catch (error) {
       console.error(error);
-      handleEvmErrors(notificationStore, error, `Something goes wrong with ${activeToken.symbol} approve`);
+      hanldeWalletErrors(notificationStore, error, `Something goes wrong with ${activeToken.symbol} approve`);
     }
 
     this.setLoading(false);
@@ -413,7 +413,7 @@ class CreateOrderVM {
       await this.loadAllowance();
     } catch (error: any) {
       console.error(error);
-      handleEvmErrors(notificationStore, error, "We were unable to process your order at this time");
+      hanldeWalletErrors(notificationStore, error, "We were unable to process your order at this time");
     }
 
     await balanceStore.update();

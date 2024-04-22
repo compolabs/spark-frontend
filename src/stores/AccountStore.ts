@@ -80,14 +80,10 @@ class AccountStore {
   };
 
   addAsset = async (assetId: string) => {
-    const { notificationStore, blockchainStore } = this.rootStore;
+    const { blockchainStore } = this.rootStore;
     const bcNetwork = blockchainStore.currentInstance;
 
-    try {
-      await bcNetwork!.addAssetToWallet(assetId);
-    } catch (error: any) {
-      notificationStore.toast(createToast({ text: error.message }), { type: "error" });
-    }
+    await bcNetwork!.addAssetToWallet(assetId);
   };
 
   disconnect = () => {
