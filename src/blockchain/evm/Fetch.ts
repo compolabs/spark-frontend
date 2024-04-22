@@ -12,8 +12,8 @@ type OrderResponse = {
   id: string;
   baseToken: EvmAddress;
   trader: EvmAddress;
-  baseSize: number;
-  orderPrice: number;
+  baseSize: string;
+  orderPrice: string;
   blockTimestamp: number;
 };
 
@@ -85,7 +85,14 @@ export class Fetch {
     `;
     try {
       const response = await fetchIndexer(query);
-      return response.data.data.orders.map((order: OrderResponse) => new SpotMarketOrder(order));
+      return response.data.data.orders.map(
+        (order: OrderResponse) =>
+          new SpotMarketOrder({
+            ...order,
+            baseSize: new BN(order.baseSize),
+            orderPrice: new BN(order.orderPrice),
+          }),
+      );
     } catch (error) {
       console.error("Error during Orders request:", error);
       return [];

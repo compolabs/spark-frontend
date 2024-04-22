@@ -55,8 +55,8 @@ export class WalletManager {
   connectByPrivateKey = async (privateKey: string, provider: Provider): Promise<void> => {
     const wallet = Wallet.fromPrivateKey(privateKey, provider);
 
-    this.address = wallet.address.toString();
     this.privateKey = privateKey;
+    this.address = wallet.address.toString();
     this.wallet = wallet;
   };
 
