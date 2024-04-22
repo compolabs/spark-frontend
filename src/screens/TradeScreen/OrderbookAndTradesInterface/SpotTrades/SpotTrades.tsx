@@ -107,7 +107,7 @@ const Container = styled.div<{
   box-sizing: border-box;
   padding: 0 12px;
   overflow-y: auto;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 245px);
 
   gap: 2px;
 `;
