@@ -36,6 +36,8 @@ const SpotTradesImpl: React.FC = observer(() => {
         <Text type={TEXT_TYPES.SUPPORTING}>No trades yet</Text>
       </Root>
     );
+
+  const sortedTrades = trades.sort((a, b) => b.timestamp.valueOf() - a.timestamp.valueOf());
   return (
     <Root>
       <SizedBox height={8} />
@@ -48,7 +50,7 @@ const SpotTradesImpl: React.FC = observer(() => {
       <SizedBox height={8} />
 
       <Container className="better-scroll">
-        {trades.map((trade) => (
+        {sortedTrades.map((trade) => (
           <Row key={"trade" + trade.id} alignItems="center" justifyContent="space-between" style={{ marginBottom: 2 }}>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
               {trade.formatPrice}
