@@ -112,7 +112,6 @@ class SpotTableVM {
 
       const sortedOrder = ordersData.sort(sortDesc);
       const sortedOrdersHistory = ordersHistoryData.sort(sortDesc);
-
       this.setMyOrders(sortedOrder);
       this.setMyOrdersHistory(sortedOrdersHistory);
     } catch (error) {
