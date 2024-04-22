@@ -62,8 +62,8 @@ class FaucetStore {
 
     try {
       await bcNetwork?.mintToken(assetId);
-      await accountStore.addAsset(assetId);
       notificationStore.toast(createToast({ text: "Minting successful!" }), { type: "success" });
+      await accountStore.addAsset(assetId);
     } catch (error: any) {
       handleEvmErrors(notificationStore, error, "We were unable to mint tokens at this time");
     } finally {
