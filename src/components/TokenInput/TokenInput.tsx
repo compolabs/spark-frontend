@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import _ from "lodash";
 import { observer } from "mobx-react-lite";
 
 import Chip from "@components/Chip";
@@ -41,16 +40,7 @@ const TokenInput: React.FC<IProps> = observer((props) => {
   const handleChangeAmount = (v: BN) => {
     if (props.disabled) return;
     setAmount(v);
-    debounce(v);
   };
-
-  //eslint-disable-next-line react-hooks/exhaustive-deps
-  const debounce = useCallback(
-    _.debounce((value: BN) => {
-      props.setAmount && props.setAmount(value);
-    }, 500),
-    [props.setAmount],
-  );
 
   return (
     <Root>
