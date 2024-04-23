@@ -378,6 +378,12 @@ class CreateOrderVM {
     const { tradeStore, notificationStore, balanceStore, blockchainStore, oracleStore } = this.rootStore;
     const { market } = tradeStore;
     const bcNetwork = blockchainStore.currentInstance;
+    const ethBalance = balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId);
+
+    if (ethBalance.isZero()) {
+      notificationStore.toast(createToast({ text: "You have insufficient ETH balance" }), { type: "error" });
+      return;
+    }
 
     if (!market) return;
 
