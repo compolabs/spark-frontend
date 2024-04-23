@@ -20,8 +20,8 @@ const TradeScreenDesktop: React.FC = observer(() => {
   return (
     <Root>
       <MarketStatisticsBar />
+      {tradeStore.marketSelectionOpened && <MarketSelection />}
       <ContentContainer>
-        {tradeStore.marketSelectionOpened && <MarketSelection />}
         <Column crossAxisSize="max" mainAxisSize="stretch" style={{ flex: 5 }}>
           <Chart />
           <BottomTables />
