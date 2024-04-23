@@ -10,6 +10,8 @@ import { SmartFlex } from "@src/components/SmartFlex";
 import { SpotMarket } from "@src/entity";
 import { useStores } from "@stores";
 
+import { MarketTitle } from "./MarketTitle";
+
 interface IProps {
   market: SpotMarket;
 }
@@ -29,8 +31,11 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
     action(market.symbol);
   };
 
+  const isActive = tradeStore.market?.symbol === market.symbol;
+
   return (
     <Root
+      isActive={isActive}
       onClick={() => {
         tradeStore.setMarketSelectionOpened(false);
         tradeStore.setIsPerp(false);
@@ -39,15 +44,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
     >
       <SmartFlex gap="4px" width="100%" column>
         <Icon alt="Add to Favorite" src={isFavorite ? filledStarIcon : outlineStarIcon} onClick={handleFavoriteClick} />
-        <SmartFlex>
-          <SmartFlex>
-            <Icon alt="logo" src={market.baseToken?.logo} />
-            <StyleIcon alt="logo" src={market.quoteToken?.logo} />
-          </SmartFlex>
-          <Text color="primary" type={TEXT_TYPES.H}>
-            {market.symbol}
-          </Text>
-        </SmartFlex>
+        <MarketTitle market={market} />
       </SmartFlex>
       <SmartFlex alignSelf="flex-end" justifyContent="flex-end" width="100%">
         <Text color="primary" type={TEXT_TYPES.H} nowrap>
@@ -60,7 +57,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
 
 export default SpotMarketRow;
 
-const Root = styled.div`
+const Root = styled.div<{ isActive: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,6 +65,7 @@ const Root = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   box-sizing: border-box;
   cursor: pointer;
+  background: ${({ isActive, theme }) => (isActive ? theme.colors.greenDark : "transparent")};
 
   :hover {
     background: ${({ theme }) => theme.colors.borderSecondary};

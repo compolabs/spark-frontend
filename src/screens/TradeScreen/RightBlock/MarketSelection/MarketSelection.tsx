@@ -15,6 +15,7 @@ import SpotMarketRow from "@src/screens/TradeScreen/RightBlock/MarketSelection/S
 import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 
+import { MarketTitle } from "./MarketTitle";
 import PerpMarketRow from "./PerpMarketRow";
 
 interface IProps {}
@@ -86,6 +87,11 @@ const MarketSelection: React.FC<IProps> = observer(() => {
     <Container ref={rootRef}>
       {media.desktop ? <CloseIcon onClick={() => tradeStore.setMarketSelectionOpened(false)} /> : null}
       <Root>
+        {tradeStore.market && media.desktop ? (
+          <TitleContainer>
+            <MarketTitle iconSize={24} market={tradeStore.market} />
+          </TitleContainer>
+        ) : null}
         <SearchContainer>
           {tradeStore.isPerpAvailable && (
             <>
@@ -122,12 +128,15 @@ const Container = styled.div`
   position: absolute;
   z-index: 2;
   background: ${({ theme }) => theme.colors.bgSecondary};
-  padding-top: 52px;
   height: 100%;
   ${media.mobile} {
     right: 0;
     left: 0;
   }
+`;
+
+const TitleContainer = styled.div`
+  padding: 12px;
 `;
 
 const CloseIcon = styled.div`
