@@ -86,12 +86,12 @@ const MarketSelection: React.FC<IProps> = observer(() => {
   return (
     <Container ref={rootRef}>
       {media.desktop ? <CloseIcon onClick={() => tradeStore.setMarketSelectionOpened(false)} /> : null}
+      {tradeStore.market && media.desktop ? (
+        <TitleContainer>
+          <MarketTitle iconSize={24} market={tradeStore.market} />
+        </TitleContainer>
+      ) : null}
       <Root>
-        {tradeStore.market && media.desktop ? (
-          <TitleContainer>
-            <MarketTitle iconSize={24} market={tradeStore.market} />
-          </TitleContainer>
-        ) : null}
         <SearchContainer>
           {tradeStore.isPerpAvailable && (
             <>
@@ -108,12 +108,11 @@ const MarketSelection: React.FC<IProps> = observer(() => {
           )}
           <SearchInput value={searchValue} onChange={setSearchValue} />
         </SearchContainer>
-        <SizedBox height={24} />
-        <SmartFlex justifyContent="space-between" padding="0 12px">
+
+        <SmartFlex justifyContent="space-between" margin="24px 0 12px 0" padding="0 12px">
           <Text type={TEXT_TYPES.BODY}>MARKET</Text>
           <Text type={TEXT_TYPES.BODY}>PRICE</Text>
         </SmartFlex>
-        <SizedBox height={12} />
         <Divider />
         {renderSpotMarketList()}
         {renderPerpMarketList()}
@@ -127,8 +126,9 @@ export default MarketSelection;
 const Container = styled.div`
   position: absolute;
   z-index: 2;
-  background: ${({ theme }) => theme.colors.bgSecondary};
-  height: 100%;
+  border-radius: 10px;
+  bottom: 26px;
+  top: 0;
   ${media.mobile} {
     right: 0;
     left: 0;
@@ -136,15 +136,17 @@ const Container = styled.div`
 `;
 
 const TitleContainer = styled.div`
+  margin-bottom: 4px;
   padding: 12px;
+  background: ${({ theme }) => theme.colors.bgSecondary};
 `;
 
 const CloseIcon = styled.div`
   position: absolute;
   right: 15px;
-  top: 12px;
-  width: 18px;
-  height: 18px;
+  top: 15px;
+  width: 14px;
+  height: 14px;
   cursor: pointer;
 
   &:hover::before,
@@ -157,8 +159,8 @@ const CloseIcon = styled.div`
     position: absolute;
     left: 15px;
     content: " ";
-    height: 18px;
-    width: 2px;
+    height: 14px;
+    width: 1px;
     background-color: ${({ theme }) => theme.colors.textSecondary};
     transition: all 0.2s;
   }
@@ -175,7 +177,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   width: 280px;
-  height: 100%;
+  height: calc(100% - 57px);
   z-index: 2;
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
@@ -185,6 +187,7 @@ const Root = styled.div`
     position: relative;
     margin-top: 8px;
     width: 100%;
+    height: 100%;
   }
 `;
 

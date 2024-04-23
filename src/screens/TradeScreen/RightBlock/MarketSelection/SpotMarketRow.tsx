@@ -65,7 +65,7 @@ const Root = styled.div<{ isActive: boolean }>`
   border-bottom: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   box-sizing: border-box;
   cursor: pointer;
-  background: ${({ isActive, theme }) => (isActive ? theme.colors.greenDark : "transparent")};
+  background: ${({ isActive, theme }) => (isActive ? theme.colors.borderSecondary : "transparent")};
 
   :hover {
     background: ${({ theme }) => theme.colors.borderSecondary};

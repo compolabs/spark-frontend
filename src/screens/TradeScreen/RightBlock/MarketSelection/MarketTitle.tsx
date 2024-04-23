@@ -12,8 +12,8 @@ interface IProps {
 
 export const MarketTitle = ({ market, iconSize = 16 }: IProps) => {
   return (
-    <SmartFlex>
-      <SmartFlex alignItems="center">
+    <SmartFlex alignItems="center">
+      <SmartFlex>
         <Icon alt="logo" size={iconSize} src={market.baseToken?.logo} />
         <StyleIcon alt="logo" size={iconSize} src={market.quoteToken?.logo} />
       </SmartFlex>
