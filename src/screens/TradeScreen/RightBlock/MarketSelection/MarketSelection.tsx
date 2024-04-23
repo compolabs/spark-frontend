@@ -9,6 +9,8 @@ import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { SmartFlex } from "@src/components/SmartFlex";
+import { useMedia } from "@src/hooks/useMedia";
+import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
 import SpotMarketRow from "@src/screens/TradeScreen/RightBlock/MarketSelection/SpotMarketRow";
 import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
@@ -19,12 +21,16 @@ interface IProps {}
 
 const MarketSelection: React.FC<IProps> = observer(() => {
   const { tradeStore } = useStores();
+  const media = useMedia();
   const [searchValue, setSearchValue] = useState("");
   const [isSpotMarket, setSpotMarket] = useState(true);
-  const rootRef = useRef(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
-  // todo: Придумать решение, предыдущий фикс не помог. Проблема в том что одновременно срабатывает useOnClickOutside и наоборот открытие.
-  // useOnClickOutside(rootRef, () => tradeStore.setMarketSelectionOpened(false));
+  useOnClickOutside(rootRef, () => {
+    if (media.desktop) {
+      tradeStore.setMarketSelectionOpened(false);
+    }
+  });
 
   const spotMarketsFiltered = useMemo(
     () =>
@@ -77,44 +83,90 @@ const MarketSelection: React.FC<IProps> = observer(() => {
   };
 
   return (
-    <Root ref={rootRef}>
-      <SearchContainer>
-        {tradeStore.isPerpAvailable && (
-          <>
-            <ButtonGroup>
-              <Button active={isSpotMarket} onClick={() => setSpotMarket(true)}>
-                SPOT
-              </Button>
-              <Button active={!isSpotMarket} onClick={() => setSpotMarket(false)}>
-                PERP
-              </Button>
-            </ButtonGroup>
-            <SizedBox height={16} />
-          </>
-        )}
-        <SearchInput value={searchValue} onChange={setSearchValue} />
-      </SearchContainer>
-      <SizedBox height={24} />
-      <SmartFlex justifyContent="space-between" padding="0 12px">
-        <Text type={TEXT_TYPES.BODY}>MARKET</Text>
-        <Text type={TEXT_TYPES.BODY}>PRICE</Text>
-      </SmartFlex>
-      <SizedBox height={12} />
-      <Divider />
-      {renderSpotMarketList()}
-      {renderPerpMarketList()}
-    </Root>
+    <Container ref={rootRef}>
+      {media.desktop ? <CloseIcon onClick={() => tradeStore.setMarketSelectionOpened(false)} /> : null}
+      <Root>
+        <SearchContainer>
+          {tradeStore.isPerpAvailable && (
+            <>
+              <ButtonGroup>
+                <Button active={isSpotMarket} onClick={() => setSpotMarket(true)}>
+                  SPOT
+                </Button>
+                <Button active={!isSpotMarket} onClick={() => setSpotMarket(false)}>
+                  PERP
+                </Button>
+              </ButtonGroup>
+              <SizedBox height={16} />
+            </>
+          )}
+          <SearchInput value={searchValue} onChange={setSearchValue} />
+        </SearchContainer>
+        <SizedBox height={24} />
+        <SmartFlex justifyContent="space-between" padding="0 12px">
+          <Text type={TEXT_TYPES.BODY}>MARKET</Text>
+          <Text type={TEXT_TYPES.BODY}>PRICE</Text>
+        </SmartFlex>
+        <SizedBox height={12} />
+        <Divider />
+        {renderSpotMarketList()}
+        {renderPerpMarketList()}
+      </Root>
+    </Container>
   );
 });
 
 export default MarketSelection;
+
+const Container = styled.div`
+  position: absolute;
+  z-index: 2;
+  background: ${({ theme }) => theme.colors.bgSecondary};
+  padding-top: 52px;
+  height: 100%;
+  ${media.mobile} {
+    right: 0;
+    left: 0;
+  }
+`;
+
+const CloseIcon = styled.div`
+  position: absolute;
+  right: 15px;
+  top: 12px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+
+  &:hover::before,
+  &:hover::after {
+    background-color: ${({ theme }) => theme.colors.textPrimary};
+  }
+
+  &:before,
+  &:after {
+    position: absolute;
+    left: 15px;
+    content: " ";
+    height: 18px;
+    width: 2px;
+    background-color: ${({ theme }) => theme.colors.textSecondary};
+    transition: all 0.2s;
+  }
+
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+`;
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
   width: 280px;
   height: 100%;
-  position: absolute;
   z-index: 2;
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
