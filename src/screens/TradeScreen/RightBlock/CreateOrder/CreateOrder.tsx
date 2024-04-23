@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import AccordionItem from "@components/AccordionItem";
 import { Column, Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
-// import Select from "@components/Select";
+import Select from "@components/Select";
 import Slider from "@components/Slider";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import TokenInput from "@components/TokenInput";
@@ -31,7 +31,7 @@ import { useStores } from "@stores";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [
-  { title: "Market", key: ORDER_TYPE.Market },
+  { title: "Market", key: ORDER_TYPE.Market, disabled: true },
   { title: "Limit", key: ORDER_TYPE.Limit },
   // { title: "Stop Market", key: ORDER_TYPE.StopMarket, disabled: true },
   // { title: "Stop Limit", key: ORDER_TYPE.StopLimit, disabled: true },
@@ -262,15 +262,12 @@ const CreateOrder: React.FC = observer(() => {
       <ParamsContainer>
         <StyledRow>
           <StyledColumn crossAxisSize="max">
-            <Text>Order type</Text>
-            <StyledInput name="order-type" value="Limit" disabled />
-            {/* <Select
-              disabled={true}
+            <Select
               label="Order type"
               options={ORDER_OPTIONS}
               selected={settingsStore.orderType}
               onSelect={({ key }) => handleSetOrderType(key)}
-            /> */}
+            />
             {renderOrderTooltip()}
           </StyledColumn>
           <TokenInput
