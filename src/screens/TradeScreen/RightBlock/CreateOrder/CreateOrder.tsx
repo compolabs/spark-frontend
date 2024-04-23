@@ -406,23 +406,3 @@ const SliderContainer = styled.div`
     padding: 8px 0;
   }
 `;
-
-const StyledInput = styled(Input)`
-  padding: 0;
-  align-items: center;
-  padding: 0 8px;
-  height: 40px;
-  min-height: 32px;
-  width: 100%;
-  cursor: unset;
-  box-sizing: border-box;
-  background: #050505;
-  border-radius: 4px;
-  border: 1px solid #1b1b1b;
-  font-family: JetBrains Mono;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 14px;
-  letter-spacing: 0.2px;
-`;
