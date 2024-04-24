@@ -134,7 +134,7 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
       >
         <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
         <Text primary>{o.baseSizeUnits.toSignificant(decimals)}</Text>
-        <Text color={color}>{BN.formatUnits(o.price, 9).toFormat(decimals)}</Text>
+        <TextOverflow color={color}>{BN.formatUnits(o.price, 9).toFormat(decimals)}</TextOverflow>
         <Text primary>{numeral(o.quoteSizeUnits).format(`0.${"0".repeat(decimals)}a`)}</Text>
       </OrderRow>
     ));
@@ -220,6 +220,12 @@ const Plug: React.FC<{
     ))}
   </>
 );
+
+const TextOverflow = styled(Text)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 const PlugContainer = styled(SmartFlex)`
   display: grid;
@@ -337,6 +343,7 @@ const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
   }
 
   ${media.mobile} {
+    gap: 3px;
     & > ${Text}:nth-of-type(2) {
       text-align: right;
     }

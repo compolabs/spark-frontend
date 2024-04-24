@@ -30,7 +30,7 @@ import { useStores } from "@stores";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [
-  { title: "Market", key: ORDER_TYPE.Market },
+  { title: "Market", key: ORDER_TYPE.Market, disabled: true },
   { title: "Limit", key: ORDER_TYPE.Limit },
   // { title: "Stop Market", key: ORDER_TYPE.StopMarket, disabled: true },
   // { title: "Stop Limit", key: ORDER_TYPE.StopLimit, disabled: true },
@@ -126,7 +126,7 @@ const CreateOrder: React.FC = observer(() => {
                 Order Details
               </Text>
               <Row alignItems="center" justifyContent="flex-end">
-                <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toFormat(2)}</Text>
+                <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toSignificant(4)}</Text>
                 <Text>&nbsp;{baseToken.symbol}</Text>
               </Row>
             </Row>
@@ -151,7 +151,7 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Total amount</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toFormat(2)}</Text>
+              <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toSignificant(4)}</Text>
               <Text>&nbsp;{baseToken.symbol}</Text>
             </Row>
           </Row>

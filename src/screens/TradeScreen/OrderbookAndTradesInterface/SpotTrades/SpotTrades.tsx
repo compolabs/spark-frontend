@@ -4,7 +4,6 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
-import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 import {
   SpotTradesVMProvider,
@@ -39,14 +38,12 @@ const SpotTradesImpl: React.FC = observer(() => {
 
   return (
     <Root>
-      <SizedBox height={8} />
       <Header>
         {/*todo добавить описание из tradeStore в каком токене столбец (например Price USDC | Qty BTC)*/}
         <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
         <Text type={TEXT_TYPES.SUPPORTING}>Qty</Text>
         <Text type={TEXT_TYPES.SUPPORTING}>Time</Text>
       </Header>
-      <SizedBox height={8} />
 
       <Container className="better-scroll">
         {trades.map((trade) => (
@@ -87,7 +84,7 @@ const Header = styled.div`
   text-align: center;
   height: 26px;
   align-items: center;
-
+  margin: 8px 0;
   ${Text}:last-of-type {
     text-align: end;
   }
@@ -107,7 +104,7 @@ const Container = styled.div<{
   box-sizing: border-box;
   padding: 0 12px;
   overflow-y: auto;
-  max-height: calc(100vh - 251px);
+  max-height: calc(100vh - 263px);
 
   gap: 2px;
 `;

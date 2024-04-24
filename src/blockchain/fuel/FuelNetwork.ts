@@ -236,11 +236,12 @@ export class FuelNetwork extends BlockchainNetwork {
   fetchPerpMaxAbsPositionSize = async (
     accountAddress: string,
     assetAddress: string,
+    tradePrice: string,
   ): Promise<PerpMaxAbsPositionSize> => {
     const token = this.getTokenByAssetId(assetAddress);
     const asset = this.getAssetFromToken(token);
 
-    return this.sdk.fetchPerpMaxAbsPositionSize(accountAddress, asset);
+    return this.sdk.fetchPerpMaxAbsPositionSize(accountAddress, asset, tradePrice);
   };
 
   fetchPerpPendingFundingPayment = async (

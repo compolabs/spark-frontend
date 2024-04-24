@@ -118,6 +118,10 @@ const StyledSlider = styled(RCSlider)<IProps>`
     top: 7px;
     margin-left: 4px;
 
+    &:hover {
+      border-color: ${({ theme }) => theme.colors.borderAccent};
+    }
+
     ${media.mobile} {
       height: 20px;
     }

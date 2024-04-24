@@ -50,11 +50,12 @@ class SpotTradesVM {
     if (!initialized || !market) return;
 
     try {
+      // TODO: Fix type after new indexer release (next week)
       const tradesResponse = await bcNetwork!.fetchSpotTrades({
         baseToken: market.baseToken.assetId,
         limit: 40,
-        trader: accountStore.address!,
-      });
+        trader: undefined,
+      } as any);
       this.trades = tradesResponse.sort((a, b) => b.timestamp.valueOf() - a.timestamp.valueOf());
     } catch (error) {
       console.error("Error with loading trades");

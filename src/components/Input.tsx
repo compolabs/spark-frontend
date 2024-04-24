@@ -28,11 +28,11 @@ const Root = styled.div`
   }
 `;
 
-const Input: React.FC<IProps> = ({ value, onChange, placeholder, ...rest }) => {
+const Input: React.FC<IProps> = ({ value, onChange, placeholder, disabled, ...rest }) => {
   return (
     <>
       <Root {...rest}>
-        <input placeholder={placeholder} value={value} onChange={onChange} />
+        <input disabled={disabled} placeholder={placeholder} value={value} onChange={onChange} />
       </Root>
     </>
   );

@@ -116,14 +116,15 @@ class TradeStore {
 
     this.spotMarketInfo = await bcNetwork!.fetchSpotVolume();
 
-    if (!this.market || this.market instanceof PerpMarket) return;
-
-    const predictedFundingRate = await bcNetwork!.fetchPerpFundingRate(this.market.baseToken.assetId);
-
-    this.perpMarketInfo = {
-      ...this.perpMarketInfo,
-      predictedFundingRate: BN.formatUnits(predictedFundingRate, this.market.quoteToken.decimals),
-    };
+    // fixme
+    // if (!this.market || this.market instanceof PerpMarket) return;
+    //
+    // const predictedFundingRate = await bcNetwork!.fetchPerpFundingRate(this.market.baseToken.assetId);
+    //
+    // this.perpMarketInfo = {
+    //   ...this.perpMarketInfo,
+    //   predictedFundingRate: BN.formatUnits(predictedFundingRate, this.market.quoteToken.decimals),
+    // };
   };
 
   updateMarketPrices = async () => {

@@ -256,7 +256,7 @@ const SpotTableImpl: React.FC = observer(() => {
             </MobileTableRowColumn>
             <MobileTableRowColumn>
               <Text type={TEXT_TYPES.SUPPORTING}>Balance</Text>
-              <Text color={theme.colors.textPrimary}>{BN.formatUnits(balance, token.decimals).toSignificant(2)}</Text>
+              <Text color={theme.colors.textPrimary}>{BN.formatUnits(balance, token.decimals).toFormat(2)}</Text>
             </MobileTableRowColumn>
             <MobileTableRowColumn>
               <CancelButton onClick={() => faucetStore.mintByAssetId(assetId)}>

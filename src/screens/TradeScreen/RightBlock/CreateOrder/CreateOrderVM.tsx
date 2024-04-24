@@ -196,12 +196,13 @@ class CreateOrderVM {
     const { tradeStore, blockchainStore, accountStore } = this.rootStore;
     const bcNetwork = blockchainStore.currentInstance;
 
-    if (!tradeStore.market || !accountStore.isConnected) return;
-
-    this.maxPositionSize = await bcNetwork!.fetchPerpMaxAbsPositionSize(
-      accountStore.address!,
-      tradeStore.market.baseToken.assetId,
-    );
+    if (!tradeStore.market || !accountStore.isConnected || this.inputPrice.eq(BN.ZERO)) return;
+    //fixme The script reverted with reason Unknown.
+    // this.maxPositionSize = await bcNetwork!.fetchPerpMaxAbsPositionSize(
+    //   accountStore.address!,
+    //   tradeStore.market.baseToken.assetId,
+    //   this.inputPrice.toString(),
+    // );
   };
 
   setInputPrice = (price: BN, sync?: boolean) => {
@@ -378,6 +379,12 @@ class CreateOrderVM {
     const { tradeStore, notificationStore, balanceStore, blockchainStore, oracleStore } = this.rootStore;
     const { market } = tradeStore;
     const bcNetwork = blockchainStore.currentInstance;
+    const ethBalance = balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId);
+
+    if (ethBalance.isZero()) {
+      notificationStore.toast(createToast({ text: "You have insufficient ETH balance" }), { type: "error" });
+      return;
+    }
 
     if (!market) return;
 

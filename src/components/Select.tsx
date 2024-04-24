@@ -109,6 +109,7 @@ export const Option = styled.div<{
   box-sizing: border-box;
   white-space: nowrap;
   transition: 0.4s;
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
 
   :hover {
     background: ${({ theme, active, disabled }) =>
