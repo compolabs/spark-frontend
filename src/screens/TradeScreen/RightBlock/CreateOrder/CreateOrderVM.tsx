@@ -196,12 +196,13 @@ class CreateOrderVM {
     const { tradeStore, blockchainStore, accountStore } = this.rootStore;
     const bcNetwork = blockchainStore.currentInstance;
 
-    if (!tradeStore.market || !accountStore.isConnected) return;
-
-    this.maxPositionSize = await bcNetwork!.fetchPerpMaxAbsPositionSize(
-      accountStore.address!,
-      tradeStore.market.baseToken.assetId,
-    );
+    if (!tradeStore.market || !accountStore.isConnected || this.inputPrice.eq(BN.ZERO)) return;
+    //fixme The script reverted with reason Unknown.
+    // this.maxPositionSize = await bcNetwork!.fetchPerpMaxAbsPositionSize(
+    //   accountStore.address!,
+    //   tradeStore.market.baseToken.assetId,
+    //   this.inputPrice.toString(),
+    // );
   };
 
   setInputPrice = (price: BN, sync?: boolean) => {

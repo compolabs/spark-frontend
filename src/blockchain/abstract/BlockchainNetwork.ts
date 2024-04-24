@@ -65,7 +65,11 @@ export abstract class BlockchainNetwork {
   abstract fetchPerpTraderOrders(accountAddress: string, assetAddress: string): Promise<PerpOrder[]>;
   abstract fetchPerpAllMarkets(): Promise<PerpMarket[]>;
   abstract fetchPerpFundingRate(assetAddress: string): Promise<BN>;
-  abstract fetchPerpMaxAbsPositionSize(accountAddress: string, assetAddress: string): Promise<PerpMaxAbsPositionSize>;
+  abstract fetchPerpMaxAbsPositionSize(
+    accountAddress: string,
+    assetAddress: string,
+    tradePrice: string,
+  ): Promise<PerpMaxAbsPositionSize>;
   abstract fetchPerpPendingFundingPayment(
     accountAddress: string,
     assetAddress: string,
