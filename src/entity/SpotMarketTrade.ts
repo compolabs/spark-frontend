@@ -18,10 +18,12 @@ interface SpotMarketTradeParams {
   tradeAmount: BN;
   price: BN;
   timestamp: number;
-  userAddress: string;
+  userAddress?: string;
 }
 
-const getType = (userAddress: string, buyer: string, seller: string) => {
+const getType = (buyer: string, seller: string, userAddress?: string) => {
+  if (!userAddress) return null;
+
   const address = isBech32(userAddress) ? new Address(userAddress as `fuel${string}`).toB256() : userAddress;
   return address.toLowerCase() === seller.toLowerCase()
     ? "SELL"
@@ -54,7 +56,7 @@ export class SpotMarketTrade {
     this.tradeAmount = params.tradeAmount;
     this.price = params.price;
     this.timestamp = dayjs.unix(params.timestamp);
-    this.type = getType(params.userAddress, this.buyer, this.seller);
+    this.type = getType(this.buyer, this.seller, params.userAddress);
   }
 
   get formatPrice() {

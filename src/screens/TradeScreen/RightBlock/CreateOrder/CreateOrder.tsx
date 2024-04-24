@@ -12,7 +12,6 @@ import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import Button, { ButtonGroup } from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
-import Input from "@src/components/Input";
 import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
 import { DEFAULT_DECIMALS } from "@src/constants";
