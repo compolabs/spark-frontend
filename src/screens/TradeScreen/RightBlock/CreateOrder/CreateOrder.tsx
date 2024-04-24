@@ -126,7 +126,7 @@ const CreateOrder: React.FC = observer(() => {
                 Order Details
               </Text>
               <Row alignItems="center" justifyContent="flex-end">
-                <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toString()}</Text>
+                <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toSignificant(4)}</Text>
                 <Text>&nbsp;{baseToken.symbol}</Text>
               </Row>
             </Row>
@@ -151,7 +151,7 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Total amount</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toFormat(2)}</Text>
+              <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toSignificant(4)}</Text>
               <Text>&nbsp;{baseToken.symbol}</Text>
             </Row>
           </Row>
