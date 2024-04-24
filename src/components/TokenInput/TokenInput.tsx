@@ -40,6 +40,7 @@ const TokenInput: React.FC<IProps> = observer((props) => {
   const handleChangeAmount = (v: BN) => {
     if (props.disabled) return;
     setAmount(v);
+    props.setAmount?.(v);
   };
 
   return (
