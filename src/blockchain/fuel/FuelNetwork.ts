@@ -181,7 +181,7 @@ export class FuelNetwork extends BlockchainNetwork {
   fetchSpotTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
     const trades = await this.sdk.fetchSpotTrades(params);
 
-    return trades.map((obj) => new SpotMarketTrade(obj));
+    return trades.map((obj) => new SpotMarketTrade({ ...obj, userAddress: params.trader }));
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
