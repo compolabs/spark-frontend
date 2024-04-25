@@ -80,7 +80,7 @@
     "sass-loader": "^12.3.0",
     "semver": "^7.3.5",
     "source-map-loader": "^3.0.0",
-    "spark-ts-sdk": "git+https://github.com/compolabs/spark-ts-sdk#04f18fbbe3d1632227ea76f40f181c8a7fdc6e0b",
+    "spark-ts-sdk": "git+https://github.com/compolabs/spark-ts-sdk#6904d39018735ffde8394ec85afb2bcc1886c0c2",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.0.2",
     "terser-webpack-plugin": "^5.2.5",
