@@ -99,13 +99,13 @@ class SpotTableVM {
       const [ordersData, ordersHistoryData] = await Promise.all([
         bcNetwork!.fetchSpotOrders({
           baseToken: market.baseToken.assetId,
-          limit: 100,
+          limit: 500,
           trader: accountStore.address,
           isActive: true,
         }),
         bcNetwork!.fetchSpotTrades({
           baseToken: market.baseToken.assetId,
-          limit: 100,
+          limit: 500,
           trader: accountStore.address,
         }),
       ]);
