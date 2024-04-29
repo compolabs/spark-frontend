@@ -1,5 +1,5 @@
+import Spark from "@compolabs/spark-ts-sdk";
 import { makeObservable } from "mobx";
-import Spark from "spark-ts-sdk";
 import { Nullable } from "tsdef";
 
 import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";

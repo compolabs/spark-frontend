@@ -5,6 +5,7 @@
   "homepage": "https://app.sprk.fi",
   "dependencies": {
     "@babel/core": "^7.16.0",
+    "@compolabs/spark-ts-sdk": "^0.0.4",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fuel-wallet/sdk": "^0.15.2",
@@ -80,7 +81,6 @@
     "sass-loader": "^12.3.0",
     "semver": "^7.3.5",
     "source-map-loader": "^3.0.0",
-    "spark-ts-sdk": "git+https://github.com/compolabs/spark-ts-sdk#512e940b2a544d8f0fc7d4a3ff8af01881d1e133",
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.0.2",
     "terser-webpack-plugin": "^5.2.5",
