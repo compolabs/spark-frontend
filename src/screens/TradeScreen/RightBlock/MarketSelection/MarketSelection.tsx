@@ -9,22 +9,29 @@ import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { SmartFlex } from "@src/components/SmartFlex";
+import { useMedia } from "@src/hooks/useMedia";
+import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
 import SpotMarketRow from "@src/screens/TradeScreen/RightBlock/MarketSelection/SpotMarketRow";
 import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 
+import { MarketTitle } from "./MarketTitle";
 import PerpMarketRow from "./PerpMarketRow";
 
 interface IProps {}
 
 const MarketSelection: React.FC<IProps> = observer(() => {
   const { tradeStore } = useStores();
+  const media = useMedia();
   const [searchValue, setSearchValue] = useState("");
   const [isSpotMarket, setSpotMarket] = useState(true);
-  const rootRef = useRef(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
-  // todo: Придумать решение, предыдущий фикс не помог. Проблема в том что одновременно срабатывает useOnClickOutside и наоборот открытие.
-  // useOnClickOutside(rootRef, () => tradeStore.setMarketSelectionOpened(false));
+  useOnClickOutside(rootRef, () => {
+    if (media.desktop) {
+      tradeStore.setMarketSelectionOpened(false);
+    }
+  });
 
   const spotMarketsFiltered = useMemo(
     () =>
@@ -77,44 +84,100 @@ const MarketSelection: React.FC<IProps> = observer(() => {
   };
 
   return (
-    <Root ref={rootRef}>
-      <SearchContainer>
-        {tradeStore.isPerpAvailable && (
-          <>
-            <ButtonGroup>
-              <Button active={isSpotMarket} onClick={() => setSpotMarket(true)}>
-                SPOT
-              </Button>
-              <Button active={!isSpotMarket} onClick={() => setSpotMarket(false)}>
-                PERP
-              </Button>
-            </ButtonGroup>
-            <SizedBox height={16} />
-          </>
-        )}
-        <SearchInput value={searchValue} onChange={setSearchValue} />
-      </SearchContainer>
-      <SizedBox height={24} />
-      <SmartFlex justifyContent="space-between" padding="0 12px">
-        <Text type={TEXT_TYPES.BODY}>MARKET</Text>
-        <Text type={TEXT_TYPES.BODY}>PRICE</Text>
-      </SmartFlex>
-      <SizedBox height={12} />
-      <Divider />
-      {renderSpotMarketList()}
-      {renderPerpMarketList()}
-    </Root>
+    <Container ref={rootRef}>
+      {media.desktop ? <CloseIcon onClick={() => tradeStore.setMarketSelectionOpened(false)} /> : null}
+      {tradeStore.market && media.desktop ? (
+        <TitleContainer>
+          <MarketTitle iconSize={24} market={tradeStore.market} />
+        </TitleContainer>
+      ) : null}
+      <Root>
+        <SearchContainer>
+          {tradeStore.isPerpAvailable && (
+            <>
+              <ButtonGroup>
+                <Button active={isSpotMarket} onClick={() => setSpotMarket(true)}>
+                  SPOT
+                </Button>
+                <Button active={!isSpotMarket} onClick={() => setSpotMarket(false)}>
+                  PERP
+                </Button>
+              </ButtonGroup>
+              <SizedBox height={16} />
+            </>
+          )}
+          <SearchInput value={searchValue} onChange={setSearchValue} />
+        </SearchContainer>
+
+        <SmartFlex justifyContent="space-between" margin="24px 0 12px 0" padding="0 12px">
+          <Text type={TEXT_TYPES.BODY}>MARKET</Text>
+          <Text type={TEXT_TYPES.BODY}>PRICE</Text>
+        </SmartFlex>
+        <Divider />
+        {renderSpotMarketList()}
+        {renderPerpMarketList()}
+      </Root>
+    </Container>
   );
 });
 
 export default MarketSelection;
 
+const Container = styled.div`
+  position: absolute;
+  z-index: 2;
+  border-radius: 10px;
+  bottom: 26px;
+  top: 0;
+  ${media.mobile} {
+    right: 0;
+    left: 0;
+  }
+`;
+
+const TitleContainer = styled.div`
+  margin-bottom: 4px;
+  padding: 12px;
+  background: ${({ theme }) => theme.colors.bgSecondary};
+`;
+
+const CloseIcon = styled.div`
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+
+  &:hover::before,
+  &:hover::after {
+    background-color: ${({ theme }) => theme.colors.textPrimary};
+  }
+
+  &:before,
+  &:after {
+    position: absolute;
+    left: 15px;
+    content: " ";
+    height: 14px;
+    width: 1px;
+    background-color: ${({ theme }) => theme.colors.textSecondary};
+    transition: all 0.2s;
+  }
+
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+`;
+
 const Root = styled.div`
   display: flex;
   flex-direction: column;
   width: 280px;
-  height: 100%;
-  position: absolute;
+  height: calc(100% - 57px);
   z-index: 2;
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
@@ -124,6 +187,7 @@ const Root = styled.div`
     position: relative;
     margin-top: 8px;
     width: 100%;
+    height: 100%;
   }
 `;
 
