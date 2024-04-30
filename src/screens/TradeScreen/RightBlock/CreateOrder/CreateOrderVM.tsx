@@ -103,6 +103,16 @@ class CreateOrderVM {
       },
     );
 
+    // reset input values when switch from buy to sell
+    reaction(
+      () => [this.mode],
+      () => {
+        this.setInputAmount(BN.ZERO);
+        this.setInputTotal(BN.ZERO);
+        this.setInputPercent(0);
+      },
+    );
+
     this.allowanceUpdater = new IntervalUpdater(this.loadAllowance, UPDATE_ALLOWANCE_INTERVAL);
 
     this.allowanceUpdater.run(true);
