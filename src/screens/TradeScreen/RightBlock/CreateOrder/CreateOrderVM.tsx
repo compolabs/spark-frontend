@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
+import { WriteTransactionResponse } from "@compolabs/spark-ts-sdk/dist/interface";
 import BigNumber from "bignumber.js";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
@@ -410,14 +411,19 @@ class CreateOrderVM {
       let hash: Undefinable<string> = "";
       if (tradeStore.isPerp) {
         const updateData = await oracleStore.getPriceFeedUpdateData(baseToken.priceFeed);
-        hash = await bcNetwork?.openPerpOrder(
+        const data = (await bcNetwork?.openPerpOrder(
           baseToken.assetId,
           baseSize.toString(),
           this.inputPrice.toString(),
           updateData,
-        );
+        )) as WriteTransactionResponse;
+        hash = data?.transactionId;
       } else {
-        hash = await bcNetwork?.createSpotOrder(baseToken.assetId, baseSize.toString(), this.inputPrice.toString());
+        hash = (await bcNetwork?.createSpotOrder(
+          baseToken.assetId,
+          baseSize.toString(),
+          this.inputPrice.toString(),
+        )) as string;
       }
 
       notificationStore.toast(

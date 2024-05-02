@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
-import { Fuel, FuelWalletConnector, FuelWalletLocked } from "@fuel-wallet/sdk";
-import { Provider, Wallet, WalletUnlocked } from "fuels";
+import { Fuel, FuelWalletConnector } from "@fuel-wallet/sdk";
+import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -12,7 +12,7 @@ import { TOKENS_BY_ASSET_ID } from "./constants";
 
 export class WalletManager {
   public address: Nullable<string> = null;
-  public wallet: Nullable<FuelWalletLocked | WalletUnlocked> = null;
+  public wallet: Nullable<WalletLocked | WalletUnlocked> = null;
   public privateKey: Nullable<string> = null;
 
   private fuel = new Fuel({

@@ -1,4 +1,5 @@
 import Spark from "@compolabs/spark-ts-sdk";
+import { WriteTransactionResponse } from "@compolabs/spark-ts-sdk/dist/interface";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -92,7 +93,7 @@ export class FuelNetwork extends BlockchainNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<string> => {
+  createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<WriteTransactionResponse> => {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const baseAsset = this.getAssetFromToken(baseToken);
     const quoteToken = this.getTokenBySymbol("USDC");
@@ -141,7 +142,7 @@ export class FuelNetwork extends BlockchainNetwork {
     amount: string,
     price: string,
     updateData: string[],
-  ): Promise<string> => {
+  ): Promise<WriteTransactionResponse> => {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const baseAsset = this.getAssetFromToken(baseToken);
     const gasToken = this.getTokenBySymbol("ETH");
@@ -195,8 +196,12 @@ export class FuelNetwork extends BlockchainNetwork {
     return this.sdk.fetchPerpCollateralBalance(accountAddress, asset);
   };
 
-  fetchPerpAllTraderPositions = async (accountAddress: string): Promise<PerpPosition[]> => {
-    const positions = await this.sdk.fetchPerpAllTraderPositions(accountAddress);
+  fetchPerpAllTraderPositions = async (
+    accountAddress: string,
+    assetAddress: string,
+    limit: number,
+  ): Promise<PerpPosition[]> => {
+    const positions = await this.sdk.fetchPerpAllTraderPositions(accountAddress, assetAddress, limit);
 
     return positions.map((obj) => new PerpPosition(obj));
   };
@@ -208,11 +213,16 @@ export class FuelNetwork extends BlockchainNetwork {
     return this.sdk.fetchPerpIsAllowedCollateral(asset);
   };
 
-  fetchPerpTraderOrders = async (accountAddress: string, assetAddress: string): Promise<PerpOrder[]> => {
+  fetchPerpTraderOrders = async (
+    accountAddress: string,
+    assetAddress: string,
+    isOpened?: boolean,
+    orderType?: "buy" | "sell",
+  ): Promise<PerpOrder[]> => {
     const token = this.getTokenByAssetId(assetAddress);
     const asset = this.getAssetFromToken(token);
 
-    const orders = await this.sdk.fetchPerpTraderOrders(accountAddress, asset);
+    const orders = await this.sdk.fetchPerpTraderOrders(accountAddress, asset, isOpened, orderType);
 
     return orders.map((obj) => new PerpOrder(obj));
   };
