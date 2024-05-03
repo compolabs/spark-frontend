@@ -104,9 +104,9 @@ class CreateOrderVM {
       },
     );
 
-    // reset input values when switch from buy to sell
+    // reset input values when switch from buy to sell, and from perp to spot
     reaction(
-      () => [this.mode],
+      () => [this.mode, tradeStore.market],
       () => {
         this.setInputAmount(BN.ZERO);
         this.setInputTotal(BN.ZERO);
@@ -323,7 +323,10 @@ class CreateOrderVM {
   setInputLeveragePercent = (value: BN | number | number[]) => (this.inputLeveragePercent = new BN(value.toString()));
 
   calculateLeverage = () => {
-    let percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.longSize);
+    let percentageLeverageOfMaxPosition =
+      this.inputAmount.eq(BN.ZERO) || this.maxPositionSize.longSize.eq(BN.ZERO)
+        ? BN.ZERO
+        : BN.ratioOf(this.inputAmount, this.maxPositionSize.longSize);
 
     if (this.isSell) {
       percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.shortSize);
