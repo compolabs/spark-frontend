@@ -4,6 +4,7 @@ import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { PerpMarketTrade } from "@src/entity/PerpMarketTrade";
 import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
 import BN from "@src/utils/BN";
 
@@ -187,6 +188,14 @@ export class FuelNetwork extends BlockchainNetwork {
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
     return this.sdk.fetchSpotVolume();
+  };
+
+  fetchPerpTrades = async (params: FetchTradesParams): Promise<PerpMarketTrade[]> => {
+    const trades = await this.sdk.fetchPerpTrades(params);
+
+    return trades.map(
+      (obj) => new PerpMarketTrade({ ...obj, userAddress: params.trader, timestamp: Number(obj.timestamp) }),
+    );
   };
 
   fetchPerpCollateralBalance = async (accountAddress: string, assetAddress: string): Promise<BN> => {

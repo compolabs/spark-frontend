@@ -169,6 +169,11 @@ export class EVMNetwork extends BlockchainNetwork {
     return this.api.fetch.fetchVolume();
   };
 
+  fetchPerpTrades = async (params: FetchTradesParams<EvmAddress>): Promise<SpotMarketTrade[]> => {
+    return [];
+    // return this.api.fetch.fetchTrades(params);
+  };
+
   fetchPerpCollateralBalance = async (accountAddress: string, assetAddress: string): Promise<BN> => {
     return BN.ZERO;
   };
