@@ -78,11 +78,7 @@ const TokenInput: React.FC<IProps> = observer((props) => {
         />
         {props.assetId && <Chip>{bcNetwork?.getTokenByAssetId(props.assetId).symbol}</Chip>}
       </InputContainer>
-      {props.error && (
-        <>
-          <Text>{props.errorMessage}</Text>
-        </>
-      )}
+      {props.error && props.errorMessage && <Text>{props.errorMessage}</Text>}
     </Root>
   );
 });
