@@ -160,47 +160,43 @@ const CreateOrder: React.FC = observer(() => {
     );
   };
 
-  const renderLeverageContent = () => {
-    if (!isPerp) return;
-
-    return (
-      <Accordion transitionTimeout={400} transition>
-        <AccordionItem
-          header={
-            <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
-              <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-                LEVERAGE
-              </Text>
-              <Row alignItems="center" justifyContent="flex-end">
-                <Text primary>{vm.inputLeveragePercent.toSignificant(2)}</Text>
-                <Text>&nbsp;%</Text>
-              </Row>
+  const renderLeverageContent = () => (
+    <Accordion transitionTimeout={400} transition>
+      <AccordionItem
+        header={
+          <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
+            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+              LEVERAGE
+            </Text>
+            <Row alignItems="center" justifyContent="flex-end">
+              <Text primary>{vm.inputLeveragePercent.toSignificant(2)}</Text>
+              <Text>&nbsp;%</Text>
             </Row>
-          }
-          hideBottomBorder
-        >
-          <SmartFlex gap="8px" column>
-            <Slider
-              max={100}
-              min={0}
-              percent={vm.inputLeverage.toNumber()}
-              symbol="x"
-              value={vm.inputLeveragePercent.toNumber()}
-              onChange={(v) => vm.setInputLeveragePercent(v as number)}
-            />
-            <SmartFlex gap="8px">
-              <TokenInput amount={vm.inputLeverage} decimals={0} setAmount={vm.setInputLeverage} />
-              {LEVERAGE_OPTIONS.map((option) => (
-                <LeverageButton key={option} onClick={() => vm.setInputLeverage(new BN(option))}>
-                  {option}x
-                </LeverageButton>
-              ))}
-            </SmartFlex>
+          </Row>
+        }
+        hideBottomBorder
+      >
+        <SmartFlex gap="8px" column>
+          <Slider
+            max={100}
+            min={0}
+            percent={vm.inputLeverage.toNumber()}
+            symbol="x"
+            value={vm.inputLeveragePercent.toNumber()}
+            onChange={(v) => vm.setInputLeveragePercent(v as number)}
+          />
+          <SmartFlex gap="8px">
+            <TokenInput amount={vm.inputLeverage} decimals={0} setAmount={vm.setInputLeverage} />
+            {LEVERAGE_OPTIONS.map((option) => (
+              <LeverageButton key={option} onClick={() => vm.setInputLeverage(new BN(option))}>
+                {option}x
+              </LeverageButton>
+            ))}
           </SmartFlex>
-        </AccordionItem>
-      </Accordion>
-    );
-  };
+        </SmartFlex>
+      </AccordionItem>
+    </Accordion>
+  );
 
   const renderTpSlContent = () => {
     if (!isPerp || IS_TP_SL_FEATURE_DISABLED) return;
@@ -327,7 +323,7 @@ const CreateOrder: React.FC = observer(() => {
             />
           </SliderContainer>
         )}
-        {renderLeverageContent()}
+        {isPerp ? renderLeverageContent() : null}
         {renderTpSlContent()}
         {renderOrderDetails()}
       </ParamsContainer>

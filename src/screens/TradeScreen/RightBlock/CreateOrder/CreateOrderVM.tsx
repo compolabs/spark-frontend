@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
+import { WriteTransactionResponse } from "@compolabs/spark-ts-sdk/dist/interface";
 import BigNumber from "bignumber.js";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
@@ -103,9 +104,9 @@ class CreateOrderVM {
       },
     );
 
-    // reset input values when switch from buy to sell
+    // reset input values when switch from buy to sell, and from perp to spot
     reaction(
-      () => [this.mode],
+      () => [this.mode, tradeStore.market],
       () => {
         this.setInputAmount(BN.ZERO);
         this.setInputTotal(BN.ZERO);
@@ -322,7 +323,10 @@ class CreateOrderVM {
   setInputLeveragePercent = (value: BN | number | number[]) => (this.inputLeveragePercent = new BN(value.toString()));
 
   calculateLeverage = () => {
-    let percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.longSize);
+    let percentageLeverageOfMaxPosition =
+      this.inputAmount.eq(BN.ZERO) || this.maxPositionSize.longSize.eq(BN.ZERO)
+        ? BN.ZERO
+        : BN.ratioOf(this.inputAmount, this.maxPositionSize.longSize);
 
     if (this.isSell) {
       percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.shortSize);
@@ -410,14 +414,19 @@ class CreateOrderVM {
       let hash: Undefinable<string> = "";
       if (tradeStore.isPerp) {
         const updateData = await oracleStore.getPriceFeedUpdateData(baseToken.priceFeed);
-        hash = await bcNetwork?.openPerpOrder(
+        const data = (await bcNetwork?.openPerpOrder(
           baseToken.assetId,
           baseSize.toString(),
           this.inputPrice.toString(),
           updateData,
-        );
+        )) as WriteTransactionResponse;
+        hash = data?.transactionId;
       } else {
-        hash = await bcNetwork?.createSpotOrder(baseToken.assetId, baseSize.toString(), this.inputPrice.toString());
+        hash = (await bcNetwork?.createSpotOrder(
+          baseToken.assetId,
+          baseSize.toString(),
+          this.inputPrice.toString(),
+        )) as string;
       }
 
       notificationStore.toast(
