@@ -19,14 +19,7 @@ import {
   SpotMarketVolume,
 } from "../types";
 
-import {
-  CONTRACT_ADDRESSES,
-  INDEXER_URL,
-  NETWORKS,
-  TOKENS_BY_ASSET_ID,
-  TOKENS_BY_SYMBOL,
-  TOKENS_LIST,
-} from "./constants";
+import { INDEXER_URL, NETWORKS, PYTH_URL, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
 import { WalletManager } from "./WalletManager";
 
 export class FuelNetwork extends BlockchainNetwork {
@@ -44,8 +37,9 @@ export class FuelNetwork extends BlockchainNetwork {
 
     this.sdk = new Spark({
       networkUrl: NETWORKS[0].url,
-      contractAddresses: CONTRACT_ADDRESSES,
+      // contractAddresses: CONTRACT_ADDRESSES, use default addresses from the sdk
       indexerApiUrl: INDEXER_URL,
+      pythUrl: PYTH_URL,
     });
   }
 
@@ -129,38 +123,38 @@ export class FuelNetwork extends BlockchainNetwork {
     await this.sdk.depositPerpCollateral(asset, amount);
   };
 
-  withdrawPerpCollateral = async (assetAddress: string, amount: string, oracleUpdateData: string[]): Promise<void> => {
+  withdrawPerpCollateral = async (assetAddress: string, amount: string, tokenPriceFeed: string): Promise<void> => {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const baseAsset = this.getAssetFromToken(baseToken);
     const gasToken = this.getTokenBySymbol("ETH");
     const gasAsset = this.getAssetFromToken(gasToken);
 
-    await this.sdk.withdrawPerpCollateral(baseAsset, gasAsset, amount, oracleUpdateData);
+    await this.sdk.withdrawPerpCollateral(baseAsset, gasAsset, amount, tokenPriceFeed);
   };
 
   openPerpOrder = async (
     assetAddress: string,
     amount: string,
     price: string,
-    updateData: string[],
+    tokenPriceFeed: string,
   ): Promise<WriteTransactionResponse> => {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const baseAsset = this.getAssetFromToken(baseToken);
     const gasToken = this.getTokenBySymbol("ETH");
     const gasAsset = this.getAssetFromToken(gasToken);
 
-    return this.sdk.openPerpOrder(baseAsset, gasAsset, amount, price, updateData);
+    return this.sdk.openPerpOrder(baseAsset, gasAsset, amount, price, tokenPriceFeed);
   };
 
   removePerpOrder = async (assetId: string): Promise<void> => {
     await this.sdk.removePerpOrder(assetId);
   };
 
-  fulfillPerpOrder = async (orderId: string, amount: string, updateData: string[]): Promise<void> => {
+  fulfillPerpOrder = async (orderId: string, amount: string, tokenPriceFeed: string): Promise<void> => {
     const gasToken = this.getTokenBySymbol("ETH");
     const gasAsset = this.getAssetFromToken(gasToken);
 
-    await this.sdk.fulfillPerpOrder(gasAsset, orderId, amount, updateData);
+    await this.sdk.fulfillPerpOrder(gasAsset, orderId, amount, tokenPriceFeed);
   };
 
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
@@ -188,6 +182,10 @@ export class FuelNetwork extends BlockchainNetwork {
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
     return this.sdk.fetchSpotVolume();
+  };
+
+  matchPerpOrders = async (order1: string, order2: string): Promise<unknown> => {
+    return this.sdk.matchPerpOrders(order1, order2);
   };
 
   fetchPerpTrades = async (params: FetchTradesParams): Promise<PerpMarketTrade[]> => {

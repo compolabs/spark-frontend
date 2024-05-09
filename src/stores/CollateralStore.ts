@@ -86,10 +86,10 @@ export class CollateralStore {
     this.isLoading = true;
 
     try {
-      const updateData = await oracleStore.getPriceFeedUpdateData(token.priceFeed);
-      await bcNetwork!.withdrawPerpCollateral(token.assetId, amount.toString(), updateData);
+      await bcNetwork!.withdrawPerpCollateral(token.assetId, amount.toString(), token.priceFeed);
       notificationStore.toast("Success withdraw", { type: "success" });
     } catch (error) {
+      console.log(error, "error");
       notificationStore.toast("Error with withdraw", { type: "error" });
     }
     this.isLoading = false;

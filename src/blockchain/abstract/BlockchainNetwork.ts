@@ -46,15 +46,15 @@ export abstract class BlockchainNetwork {
 
   // Api Contract Vault
   abstract depositPerpCollateral(assetAddress: string, amount: string): Promise<void>;
-  abstract withdrawPerpCollateral(assetAddress: string, amount: string, oracleUpdateData: string[]): Promise<void>;
+  abstract withdrawPerpCollateral(assetAddress: string, amount: string, tokenPriceFeed: string): Promise<void>;
   abstract openPerpOrder(
     assetAddress: string,
     amount: string,
     price: string,
-    oracleUpdateData: string[],
+    tokenPriceFeed: string,
   ): Promise<string | WriteTransactionResponse>;
   abstract removePerpOrder(orderId: string): Promise<void>;
-  abstract fulfillPerpOrder(orderId: string, amount: string, oracleUpdateData: string[]): Promise<void>;
+  abstract fulfillPerpOrder(orderId: string, amount: string, tokenPriceFeed: string): Promise<void>;
 
   // Api Fetch Orderbook
   abstract fetchSpotMarkets(limit: number): Promise<MarketCreateEvent[]>;
@@ -89,4 +89,5 @@ export abstract class BlockchainNetwork {
     assetAddress: string,
   ): Promise<PerpPendingFundingPayment>;
   abstract fetchPerpMarkPrice(assetAddress: string): Promise<BN>;
+  abstract matchPerpOrders(order1: string, order2: string): Promise<unknown>;
 }

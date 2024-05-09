@@ -390,7 +390,7 @@ class CreateOrderVM {
   };
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, blockchainStore, oracleStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, blockchainStore } = this.rootStore;
     const { market } = tradeStore;
     const bcNetwork = blockchainStore.currentInstance;
     const ethBalance = balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId);
@@ -413,12 +413,11 @@ class CreateOrderVM {
 
       let hash: Undefinable<string> = "";
       if (tradeStore.isPerp) {
-        const updateData = await oracleStore.getPriceFeedUpdateData(baseToken.priceFeed);
         const data = (await bcNetwork?.openPerpOrder(
           baseToken.assetId,
           baseSize.toString(),
           this.inputPrice.toString(),
-          updateData,
+          baseToken.priceFeed,
         )) as WriteTransactionResponse;
         hash = data?.transactionId;
       } else {

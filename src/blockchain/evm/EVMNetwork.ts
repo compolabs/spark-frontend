@@ -88,6 +88,10 @@ export class EVMNetwork extends BlockchainNetwork {
     this.walletManager.disconnect();
   };
 
+  matchPerpOrders(): Promise<unknown> {
+    throw new Error("Method not implemented.");
+  }
+
   addAssetToWallet = async (assetId: EvmAddress): Promise<void> => {
     await this.walletManager.addAsset(assetId);
   };
@@ -135,21 +139,21 @@ export class EVMNetwork extends BlockchainNetwork {
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
     return;
   };
-  withdrawPerpCollateral = async (assetAddress: string, amount: string, oracleUpdateData: string[]): Promise<void> => {
+  withdrawPerpCollateral = async (assetAddress: string, amount: string, tokenPriceFeed: string): Promise<void> => {
     return;
   };
   openPerpOrder = async (
     assetAddress: string,
     amount: string,
     price: string,
-    updateData: string[],
+    tokenPriceFeed: string,
   ): Promise<string> => {
     return "";
   };
   removePerpOrder = async (orderId: string): Promise<void> => {
     return;
   };
-  fulfillPerpOrder = async (orderId: string, amount: string, oracleUpdateData: string[]): Promise<void> => {
+  fulfillPerpOrder = async (orderId: string, amount: string, tokenPriceFeed: string): Promise<void> => {
     return;
   };
 
