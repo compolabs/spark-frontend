@@ -61,7 +61,12 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
     header: "",
     id: "action",
     cell: (props) => (
-      <CancelButton onClick={() => vm.cancelOrder(props.getValue())}>
+      <CancelButton
+        style={{
+          minWidth: "92px",
+        }}
+        onClick={() => vm.cancelOrder(props.getValue())}
+      >
         {vm.cancelingOrderId === props.getValue() ? "Loading..." : "Cancel"}
       </CancelButton>
     ),
