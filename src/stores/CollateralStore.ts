@@ -45,10 +45,6 @@ export class CollateralStore {
 
     try {
       for (const token of bcNetwork!.getTokenList()) {
-        const isAvailableToken = bcNetwork!.fetchPerpIsAllowedCollateral(token.assetId);
-
-        if (!isAvailableToken) return;
-
         const balance = await bcNetwork!.fetchPerpCollateralBalance(accountStore.address!, token.assetId);
 
         runInAction(() => {
