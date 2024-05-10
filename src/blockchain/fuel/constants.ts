@@ -15,7 +15,7 @@ export const CONTRACT_ADDRESSES: BetaContractAddresses = {
     fuel: "fuel",
   },
   pyth: {
-    base: "0x7929ef60c66db8551ebdfbee80bfd05f8945c8e292636eea089e53fc9e1d8998",
+    base: "0x3cd5005f23321c8ae0ccfa98fb07d9a5ff325c483f21d2d9540d6897007600c9",
     fuel: "fuel",
   },
   vault: {
