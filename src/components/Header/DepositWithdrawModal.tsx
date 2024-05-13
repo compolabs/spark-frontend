@@ -31,15 +31,16 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
   const [withdrawAmount, setWithdrawAmount] = useState(BN.ZERO);
 
   const bcNetwork = blockchainStore.currentInstance;
-
-  const shouldBeDisabled = isDeposit ? depositAmount.lte(BN.ZERO) : withdrawAmount.lte(BN.ZERO);
-
   const USDC = bcNetwork!.getTokenBySymbol("USDC");
 
   const USDCBalance = balanceStore.getBalance(USDC.assetId);
   const USDCBalanceFormatted = balanceStore.getFormatBalance(USDC.assetId, USDC.decimals);
   const collateralUSDCBalance = collateralStore.getBalance(USDC.assetId);
   const collateralUSDCBalanceFormatted = collateralStore.getFormatBalance(USDC.assetId, USDC.decimals);
+
+  const shouldBeDisabled = isDeposit
+    ? depositAmount.lte(BN.ZERO)
+    : withdrawAmount.lte(BN.ZERO) || collateralUSDCBalance.lte(BN.ZERO);
 
   const handleMaxClick = () => {
     if (isDeposit) {
