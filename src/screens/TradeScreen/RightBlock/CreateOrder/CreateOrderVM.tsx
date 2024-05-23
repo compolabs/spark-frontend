@@ -76,7 +76,7 @@ class CreateOrderVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
-    const { tradeStore, oracleStore, settingsStore, accountStore } = this.rootStore;
+    const { tradeStore, oracleStore, settingsStore, accountStore, collateralStore } = this.rootStore;
 
     reaction(
       () => oracleStore.prices,
@@ -98,7 +98,7 @@ class CreateOrderVM {
     );
 
     reaction(
-      () => [tradeStore.market, accountStore.address],
+      () => [tradeStore.market, accountStore.address, Array.from(collateralStore.balances)],
       async () => {
         await this.getMaxPositionSize();
       },
