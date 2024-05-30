@@ -1,13 +1,10 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
 import Header from "@components/Header";
-import Faucet from "@screens/Faucet/Faucet";
-import TradeScreen from "@screens/TradeScreen";
-import { ROUTES } from "@src/constants";
+import Text from "@components/Text";
 
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
 import { useWeb3Modal } from "./hooks/useWeb3Modal";
@@ -27,11 +24,14 @@ const App: React.FC = observer(() => {
   return (
     <Root>
       <Header />
-      <Routes>
-        <Route element={<TradeScreen />} path={ROUTES.TRADE} />
-        <Route element={<TradeScreen />} path={ROUTES.ROOT} />
-        <Route element={<Faucet />} path={ROUTES.FAUCET} />
-      </Routes>
+      <Column alignItems="center" justifyContent="center" mainAxisSize="stretch">
+        <Text>The app is under construction</Text>
+      </Column>
+      {/*<Routes>*/}
+      {/*  <Route element={<TradeScreen />} path={ROUTES.TRADE} />*/}
+      {/*  <Route element={<TradeScreen />} path={ROUTES.ROOT} />*/}
+      {/*  <Route element={<Faucet />} path={ROUTES.FAUCET} />*/}
+      {/*</Routes>*/}
     </Root>
   );
 });
