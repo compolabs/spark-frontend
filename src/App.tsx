@@ -3,7 +3,6 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
-import Header from "@components/Header";
 import Text from "@components/Text";
 
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
@@ -14,7 +13,6 @@ const Root = styled(Column)`
   align-items: center;
   background: ${({ theme }) => theme.colors.bgPrimary};
   height: 100vh;
-  height: 100dvh;
 `;
 
 const App: React.FC = observer(() => {
@@ -23,9 +21,9 @@ const App: React.FC = observer(() => {
 
   return (
     <Root>
-      <Header />
+      {/*<Header />*/}
       <Column alignItems="center" justifyContent="center" mainAxisSize="stretch">
-        <Text>The app is under construction</Text>
+        <Text>Spark is under construction</Text>
       </Column>
       {/*<Routes>*/}
       {/*  <Route element={<TradeScreen />} path={ROUTES.TRADE} />*/}
