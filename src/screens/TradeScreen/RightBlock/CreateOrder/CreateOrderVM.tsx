@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
+import { WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
 import BigNumber from "bignumber.js";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
@@ -75,7 +76,7 @@ class CreateOrderVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
-    const { tradeStore, oracleStore, settingsStore, accountStore } = this.rootStore;
+    const { tradeStore, oracleStore, settingsStore, accountStore, collateralStore } = this.rootStore;
 
     reaction(
       () => oracleStore.prices,
@@ -97,15 +98,15 @@ class CreateOrderVM {
     );
 
     reaction(
-      () => [tradeStore.market, accountStore.address],
+      () => [tradeStore.market, accountStore.address, Array.from(collateralStore.balances)],
       async () => {
         await this.getMaxPositionSize();
       },
     );
 
-    // reset input values when switch from buy to sell
+    // reset input values when switch from buy to sell, and from perp to spot
     reaction(
-      () => [this.mode],
+      () => [this.mode, tradeStore.market],
       () => {
         this.setInputAmount(BN.ZERO);
         this.setInputTotal(BN.ZERO);
@@ -322,7 +323,10 @@ class CreateOrderVM {
   setInputLeveragePercent = (value: BN | number | number[]) => (this.inputLeveragePercent = new BN(value.toString()));
 
   calculateLeverage = () => {
-    let percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.longSize);
+    let percentageLeverageOfMaxPosition =
+      this.inputAmount.eq(BN.ZERO) || this.maxPositionSize.longSize.eq(BN.ZERO)
+        ? BN.ZERO
+        : BN.ratioOf(this.inputAmount, this.maxPositionSize.longSize);
 
     if (this.isSell) {
       percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.shortSize);
@@ -386,7 +390,7 @@ class CreateOrderVM {
   };
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, blockchainStore, oracleStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, blockchainStore } = this.rootStore;
     const { market } = tradeStore;
     const bcNetwork = blockchainStore.currentInstance;
     const ethBalance = balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId);
@@ -409,15 +413,19 @@ class CreateOrderVM {
 
       let hash: Undefinable<string> = "";
       if (tradeStore.isPerp) {
-        const updateData = await oracleStore.getPriceFeedUpdateData(baseToken.priceFeed);
-        hash = await bcNetwork?.openPerpOrder(
+        const data = (await bcNetwork?.openPerpOrder(
           baseToken.assetId,
           baseSize.toString(),
           this.inputPrice.toString(),
-          updateData,
-        );
+          baseToken.priceFeed,
+        )) as WriteTransactionResponse;
+        hash = data?.transactionId;
       } else {
-        hash = await bcNetwork?.createSpotOrder(baseToken.assetId, baseSize.toString(), this.inputPrice.toString());
+        hash = (await bcNetwork?.createSpotOrder(
+          baseToken.assetId,
+          baseSize.toString(),
+          this.inputPrice.toString(),
+        )) as string;
       }
 
       notificationStore.toast(

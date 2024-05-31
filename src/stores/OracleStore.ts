@@ -2,10 +2,9 @@ import { EvmPriceServiceConnection, Price, PriceFeed } from "@pythnetwork/pyth-e
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
+import { PYTH_URL } from "@src/blockchain/fuel/constants";
 import BN from "@src/utils/BN";
 import RootStore from "@stores/RootStore";
-
-const PYTH_URL = "https://hermes.pyth.network";
 
 class OracleStore {
   public rootStore: RootStore;
