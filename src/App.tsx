@@ -1,12 +1,16 @@
 import React from "react";
+import { Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
-import Text from "@components/Text";
 
+import Header from "./components/Header";
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
 import { useWeb3Modal } from "./hooks/useWeb3Modal";
+import Faucet from "./screens/Faucet";
+import TradeScreen from "./screens/TradeScreen";
+import { ROUTES } from "./constants";
 
 const Root = styled(Column)`
   width: 100%;
@@ -21,15 +25,15 @@ const App: React.FC = observer(() => {
 
   return (
     <Root>
-      {/*<Header />*/}
-      <Column alignItems="center" justifyContent="center" mainAxisSize="stretch">
+      <Header />
+      {/* <Column alignItems="center" justifyContent="center" mainAxisSize="stretch">
         <Text>Spark is under construction</Text>
-      </Column>
-      {/*<Routes>*/}
-      {/*  <Route element={<TradeScreen />} path={ROUTES.TRADE} />*/}
-      {/*  <Route element={<TradeScreen />} path={ROUTES.ROOT} />*/}
-      {/*  <Route element={<Faucet />} path={ROUTES.FAUCET} />*/}
-      {/*</Routes>*/}
+      </Column> */}
+      <Routes>
+        <Route element={<TradeScreen />} path={ROUTES.TRADE} />
+        <Route element={<TradeScreen />} path={ROUTES.ROOT} />
+        <Route element={<Faucet />} path={ROUTES.FAUCET} />
+      </Routes>
     </Root>
   );
 });
