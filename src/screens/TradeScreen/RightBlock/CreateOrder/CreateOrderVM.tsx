@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
-import { WriteTransactionResponse } from "@compolabs/spark-ts-sdk/dist/interface";
+import { WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
 import BigNumber from "bignumber.js";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";

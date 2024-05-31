@@ -1,4 +1,4 @@
-import { WriteTransactionResponse } from "@compolabs/spark-ts-sdk/dist/interface";
+import { WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
 import { Nullable } from "tsdef";
 
 import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
