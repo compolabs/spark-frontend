@@ -149,7 +149,7 @@ const Header: React.FC<IProps> = observer(() => {
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
-          {/* {renderDepositButton()} */}
+          {renderDepositButton()}
           {renderWallet()}
           {!accountStore.address && <NetworkSelect isSmall />}
         </SmartFlex>

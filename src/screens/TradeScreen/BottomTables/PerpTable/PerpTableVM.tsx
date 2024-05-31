@@ -50,7 +50,7 @@ class PerpTableVM {
     try {
       const [ordersData, positionsData] = await Promise.all([
         bcNetwork!.fetchPerpTraderOrders(accountStore.address, market.baseToken.assetId),
-        bcNetwork!.fetchPerpAllTraderPositions(accountStore.address),
+        bcNetwork!.fetchPerpAllTraderPositions(accountStore.address, market.baseToken.assetId, 100),
       ]);
 
       for (const pos of positionsData) {

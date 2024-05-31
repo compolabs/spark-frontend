@@ -1,3 +1,4 @@
+import { WriteTransactionResponse } from "@compolabs/spark-ts-sdk/dist/interface";
 import { Nullable } from "tsdef";
 
 import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
@@ -33,7 +34,11 @@ export abstract class BlockchainNetwork {
   abstract addAssetToWallet(assetId: string): Promise<void>;
 
   // Api Contract Orderbook
-  abstract createSpotOrder(assetAddress: string, size: string, price: string): Promise<string>;
+  abstract createSpotOrder(
+    assetAddress: string,
+    size: string,
+    price: string,
+  ): Promise<WriteTransactionResponse | string>;
   abstract cancelSpotOrder(orderId: string): Promise<void>;
   abstract mintToken(assetAddress: string): Promise<void>;
   abstract approve(assetAddress: string, amount: string): Promise<void>;
@@ -41,15 +46,15 @@ export abstract class BlockchainNetwork {
 
   // Api Contract Vault
   abstract depositPerpCollateral(assetAddress: string, amount: string): Promise<void>;
-  abstract withdrawPerpCollateral(assetAddress: string, amount: string, oracleUpdateData: string[]): Promise<void>;
+  abstract withdrawPerpCollateral(assetAddress: string, amount: string, tokenPriceFeed: string): Promise<void>;
   abstract openPerpOrder(
     assetAddress: string,
     amount: string,
     price: string,
-    oracleUpdateData: string[],
-  ): Promise<string>;
+    tokenPriceFeed: string,
+  ): Promise<string | WriteTransactionResponse>;
   abstract removePerpOrder(orderId: string): Promise<void>;
-  abstract fulfillPerpOrder(orderId: string, amount: string, oracleUpdateData: string[]): Promise<void>;
+  abstract fulfillPerpOrder(orderId: string, amount: string, tokenPriceFeed: string): Promise<void>;
 
   // Api Fetch Orderbook
   abstract fetchSpotMarkets(limit: number): Promise<MarketCreateEvent[]>;
@@ -60,9 +65,18 @@ export abstract class BlockchainNetwork {
 
   // Api Fetch Vault
   abstract fetchPerpCollateralBalance(accountAddress: string, assetAddress: string): Promise<BN>;
-  abstract fetchPerpAllTraderPositions(accountAddress: string): Promise<PerpPosition[]>;
+  abstract fetchPerpAllTraderPositions(
+    accountAddress: string,
+    assetAddress: string,
+    limit: number,
+  ): Promise<PerpPosition[]>;
   abstract fetchPerpIsAllowedCollateral(assetAddress: string): Promise<boolean>;
-  abstract fetchPerpTraderOrders(accountAddress: string, assetAddress: string): Promise<PerpOrder[]>;
+  abstract fetchPerpTraderOrders(
+    accountAddress: string,
+    assetAddress: string,
+    isOpened?: boolean,
+    orderType?: "buy" | "sell",
+  ): Promise<PerpOrder[]>;
   abstract fetchPerpAllMarkets(): Promise<PerpMarket[]>;
   abstract fetchPerpFundingRate(assetAddress: string): Promise<BN>;
   abstract fetchPerpMaxAbsPositionSize(
@@ -75,4 +89,5 @@ export abstract class BlockchainNetwork {
     assetAddress: string,
   ): Promise<PerpPendingFundingPayment>;
   abstract fetchPerpMarkPrice(assetAddress: string): Promise<BN>;
+  abstract matchPerpOrders(order1: string, order2: string): Promise<unknown>;
 }
