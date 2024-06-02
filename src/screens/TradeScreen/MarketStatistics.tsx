@@ -26,18 +26,21 @@ const MarketStatistics: React.FC = observer(() => {
     ? BN.formatUnits(oracleStore.getTokenIndexPrice(baseToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
     : BN.ZERO.toString();
   const indexPrice = toCurrency(indexPriceBn);
-  const volume24h =
+  const volume24h = toCurrency(
     tradeStore.spotMarketInfo.volume && tradeStore.spotMarketInfo.volume.c === null
-      ? 0
-      : toCurrency(BN.formatUnits(tradeStore.spotMarketInfo.volume, quoteToken?.decimals).toSignificant(2));
-  const high24h =
+      ? "0"
+      : BN.formatUnits(tradeStore.spotMarketInfo.volume, quoteToken?.decimals).toSignificant(2),
+  );
+  const high24h = toCurrency(
     tradeStore.spotMarketInfo.high && tradeStore.spotMarketInfo.high.c === null
-      ? 0
-      : toCurrency(BN.formatUnits(tradeStore.spotMarketInfo.high, DEFAULT_DECIMALS).toSignificant(2));
-  const low24h =
+      ? "0"
+      : BN.formatUnits(tradeStore.spotMarketInfo.high, DEFAULT_DECIMALS).toSignificant(2),
+  );
+  const low24h = toCurrency(
     tradeStore.spotMarketInfo.low && tradeStore.spotMarketInfo.low.c === null
-      ? 0
-      : toCurrency(BN.formatUnits(tradeStore.spotMarketInfo.low, DEFAULT_DECIMALS).toSignificant(2));
+      ? "0"
+      : BN.formatUnits(tradeStore.spotMarketInfo.low, DEFAULT_DECIMALS).toSignificant(2),
+  );
 
   const spotStatsArr = [
     { title: "24h volume", value: volume24h },
