@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 
-import { BlockchainNetworkFactory } from "../blockchain/BlockchainNetworkFactory";
+import { FuelNetwork } from "@src/blockchain";
+
 import BN from "../utils/BN";
 
 import { Token } from "./Token";
@@ -29,7 +30,7 @@ export class PerpPosition {
   setPendingFundingPayment = (payment: BN) => (this._pendingFundingPayment = payment);
 
   constructor(params: PerpPositionParams) {
-    const bcNetwork = BlockchainNetworkFactory.getInstance().currentInstance!;
+    const bcNetwork = FuelNetwork.getInstance();
 
     this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
     this.quoteToken = bcNetwork.getTokenBySymbol("USDC");

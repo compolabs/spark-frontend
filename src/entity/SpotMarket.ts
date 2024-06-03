@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 
-import { BlockchainNetworkFactory } from "@src/blockchain/BlockchainNetworkFactory";
+import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 
@@ -14,7 +14,7 @@ export class SpotMarket {
   setPrice = (price: BN) => (this.price = price);
 
   constructor(baseToken: string, quoteToken: string) {
-    const bcNetwork = BlockchainNetworkFactory.getInstance().currentInstance!;
+    const bcNetwork = FuelNetwork.getInstance();
 
     this.baseToken = bcNetwork.getTokenByAssetId(baseToken);
     this.quoteToken = bcNetwork.getTokenByAssetId(quoteToken);

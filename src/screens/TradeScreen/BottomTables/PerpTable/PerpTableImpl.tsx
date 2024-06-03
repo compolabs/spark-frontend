@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { FuelNetwork } from "@src/blockchain";
 import { SmartFlex } from "@src/components/SmartFlex";
 import Table from "@src/components/Table";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
@@ -23,8 +24,8 @@ import { usePerpTableVMProvider } from "./PerpTableVM";
 
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const PerpTableImpl: React.FC = observer(() => {
-  const { faucetStore, blockchainStore, collateralStore, modalStore } = useStores();
-  const bcNetwork = blockchainStore.currentInstance;
+  const { faucetStore, collateralStore, modalStore } = useStores();
+  const bcNetwork = FuelNetwork.getInstance();
 
   const vm = usePerpTableVMProvider();
   const theme = useTheme();

@@ -8,17 +8,6 @@ import { PerpMarketTrade } from "@src/entity/PerpMarketTrade";
 import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
 import BN from "@src/utils/BN";
 
-import { BlockchainNetwork } from "../abstract/BlockchainNetwork";
-import {
-  FetchOrdersParams,
-  FetchTradesParams,
-  MarketCreateEvent,
-  NETWORK,
-  PerpMaxAbsPositionSize,
-  PerpPendingFundingPayment,
-  SpotMarketVolume,
-} from "../types";
-
 import {
   CONTRACT_ADDRESSES,
   INDEXER_URL,
@@ -28,19 +17,25 @@ import {
   TOKENS_BY_SYMBOL,
   TOKENS_LIST,
 } from "./constants";
+import {
+  FetchOrdersParams,
+  FetchTradesParams,
+  MarketCreateEvent,
+  PerpMaxAbsPositionSize,
+  PerpPendingFundingPayment,
+  SpotMarketVolume,
+} from "./types";
 import { WalletManager } from "./WalletManager";
 
-export class FuelNetwork extends BlockchainNetwork {
-  NETWORK_TYPE = NETWORK.FUEL;
+export class FuelNetwork {
+  private static instance: Nullable<FuelNetwork> = null;
 
   private walletManager = new WalletManager();
   private sdk: Spark;
 
   public network = NETWORKS[0];
 
-  constructor() {
-    super();
-
+  private constructor() {
     makeObservable(this.walletManager);
 
     this.sdk = new Spark({
@@ -49,6 +44,13 @@ export class FuelNetwork extends BlockchainNetwork {
       indexerApiUrl: INDEXER_URL,
       pythUrl: PYTH_URL,
     });
+  }
+
+  public static getInstance(): FuelNetwork {
+    if (!FuelNetwork.instance) {
+      FuelNetwork.instance = new FuelNetwork();
+    }
+    return FuelNetwork.instance;
   }
 
   getAddress = (): Nullable<string> => {
@@ -116,12 +118,6 @@ export class FuelNetwork extends BlockchainNetwork {
     const amount = FAUCET_AMOUNTS[token.symbol].toString();
 
     await this.sdk.mintToken(asset, amount);
-  };
-
-  approve = async (assetAddress: string, amount: string): Promise<void> => {};
-
-  allowance = async (assetAddress: string): Promise<string> => {
-    return "999999999999999999";
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {

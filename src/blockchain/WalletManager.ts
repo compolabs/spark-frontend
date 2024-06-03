@@ -6,9 +6,8 @@ import { Nullable } from "tsdef";
 
 import { createToast } from "@src/components/Toast";
 
-import { NETWORK_ERROR, NetworkError } from "../NetworkError";
-
 import { TOKENS_BY_ASSET_ID } from "./constants";
+import { NETWORK_ERROR, NetworkError } from "./NetworkError";
 
 export class WalletManager {
   public address: Nullable<string> = null;

@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 
-import { BlockchainNetworkFactory } from "../blockchain/BlockchainNetworkFactory";
+import { FuelNetwork } from "@src/blockchain";
+
 import { DEFAULT_DECIMALS } from "../constants";
 import BN from "../utils/BN";
 
@@ -32,7 +33,7 @@ export class PerpMarket {
   setPrice = (price: BN) => (this.price = price);
 
   constructor(params: PerpMarketParams) {
-    const bcNetwork = BlockchainNetworkFactory.getInstance().currentInstance!;
+    const bcNetwork = FuelNetwork.getInstance();
 
     this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
     this.quoteToken = bcNetwork.getTokenByAssetId(params.quoteTokenAddress);

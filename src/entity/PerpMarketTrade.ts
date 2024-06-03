@@ -2,7 +2,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { Address, isBech32 } from "fuels";
 import { Nullable } from "tsdef";
 
-import { BlockchainNetworkFactory } from "@src/blockchain/BlockchainNetworkFactory";
+import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 
@@ -45,7 +45,7 @@ export class PerpMarketTrade {
   readonly type: Nullable<"SELL" | "BUY"> = null;
 
   constructor(params: PerpMarketTradeParams) {
-    const bcNetwork = BlockchainNetworkFactory.getInstance().currentInstance!;
+    const bcNetwork = FuelNetwork.getInstance();
     const baseToken = bcNetwork.getTokenByAssetId(params.baseToken);
 
     this.id = params.id;

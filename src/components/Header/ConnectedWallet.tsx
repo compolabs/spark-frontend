@@ -10,6 +10,7 @@ import Tooltip from "@components/Tooltip";
 import copyIcon from "@src/assets/icons/copy.svg";
 import linkIcon from "@src/assets/icons/link.svg";
 import logoutIcon from "@src/assets/icons/logout.svg";
+import { FuelNetwork } from "@src/blockchain";
 import BN from "@src/utils/BN";
 import { getExplorerLinkByAddress } from "@src/utils/getExplorerLink";
 import { useStores } from "@stores";
@@ -19,10 +20,10 @@ import { createToast } from "../Toast";
 import ConnectedWalletButton from "./ConnectedWalletButton";
 
 const ConnectedWallet: React.FC = observer(() => {
-  const { accountStore, blockchainStore, notificationStore, balanceStore } = useStores();
+  const { accountStore, notificationStore, balanceStore } = useStores();
   const [isFocused, setIsFocused] = useState(false);
 
-  const bcNetwork = blockchainStore.currentInstance;
+  const bcNetwork = FuelNetwork.getInstance();
 
   const ethBalance = BN.formatUnits(
     balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
@@ -43,7 +44,7 @@ const ConnectedWallet: React.FC = observer(() => {
     },
     {
       icon: linkIcon,
-      action: () => window.open(getExplorerLinkByAddress(accountStore.address!, bcNetwork!.NETWORK_TYPE)),
+      action: () => window.open(getExplorerLinkByAddress(accountStore.address!)),
       title: "View in Explorer",
       active: true,
     },

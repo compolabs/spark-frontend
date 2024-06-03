@@ -3,10 +3,11 @@ import { Dayjs } from "dayjs";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { Nullable } from "tsdef";
 
+import { FuelNetwork } from "@src/blockchain";
 import { createToast } from "@src/components/Toast";
 import { SpotMarketOrder, SpotMarketTrade } from "@src/entity";
 import useVM from "@src/hooks/useVM";
-import { hanldeWalletErrors } from "@src/utils/handleWalletErrors";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
@@ -62,8 +63,8 @@ class SpotTableVM {
   }
 
   cancelOrder = async (orderId: string) => {
-    const { notificationStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!this.rootStore.tradeStore.market) return;
 
@@ -77,7 +78,7 @@ class SpotTableVM {
       await bcNetwork?.cancelSpotOrder(orderId);
       notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
     } catch (error) {
-      hanldeWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
+      handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
     }
 
     this.isOrderCancelling = false;
@@ -85,8 +86,8 @@ class SpotTableVM {
   };
 
   private sync = async () => {
-    const { accountStore, tradeStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore, tradeStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!tradeStore.market || !accountStore.address) return;
 

@@ -6,7 +6,6 @@ import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
 import { ReactComponent as ArrowIcon } from "@src/assets/icons/arrowUp.svg";
 import { ReactComponent as FuelWalletIcon } from "@src/assets/wallets/fuel.svg";
-import { NETWORK } from "@src/blockchain/types";
 import Button from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";
@@ -25,7 +24,6 @@ enum ActiveState {
 interface Wallet {
   name: string;
   icon: React.FC;
-  network: NETWORK;
   isActive: boolean;
 }
 
@@ -34,7 +32,6 @@ const WALLETS: Wallet[] = [
     name: "Fuel Wallet",
     isActive: true,
     icon: FuelWalletIcon,
-    network: NETWORK.FUEL,
   },
 ];
 
@@ -45,7 +42,6 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) =>
   const activeWallets = useMemo(() => WALLETS.filter((w) => w.isActive), []);
 
   const [activeState, setActiveState] = useState(ActiveState.SELECT_WALLET);
-  const [selectedNetwork, setSelectedNetwork] = useState<NETWORK>();
 
   useEffect(() => {
     if (rest.visible) return;
@@ -53,21 +49,13 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) =>
     setActiveState(ActiveState.SELECT_WALLET);
   }, [rest.visible]);
 
-  const handleWalletClick = (network?: NETWORK) => {
-    const connectWithNetwork = selectedNetwork ?? network;
-    if (!connectWithNetwork) {
-      console.error("Wrong wallet type");
-      return;
-    }
-
-    accountStore.connectWallet(connectWithNetwork).then(onClose);
+  const handleWalletClick = () => {
+    accountStore.connectWallet().then(onClose);
   };
 
-  const handleNextStateClick = (network: NETWORK) => {
-    setSelectedNetwork(network);
-
+  const handleNextStateClick = () => {
     if (settingsStore.isUserAgreedWithTerms) {
-      handleWalletClick(network);
+      handleWalletClick();
       return;
     }
 
@@ -104,8 +92,8 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) =>
     return (
       <>
         <WalletContainer>
-          {activeWallets.map(({ name, icon: WalletIcon, network }) => (
-            <WalletItem key={name} onClick={() => handleNextStateClick(network)}>
+          {activeWallets.map(({ name, icon: WalletIcon }) => (
+            <WalletItem key={name} onClick={handleNextStateClick}>
               <WalletIconContainer>
                 <WalletIcon />
               </WalletIconContainer>

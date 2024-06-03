@@ -1,6 +1,7 @@
 import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable } from "mobx";
 
+import { FuelNetwork } from "@src/blockchain";
 import { SpotMarketTrade } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -42,8 +43,8 @@ class SpotTradesVM {
   };
 
   updateTrades = async () => {
-    const { accountStore, tradeStore, initialized, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore, tradeStore, initialized } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     const market = tradeStore.market;
 

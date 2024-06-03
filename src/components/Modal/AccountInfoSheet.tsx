@@ -5,6 +5,7 @@ import copy from "copy-to-clipboard";
 import copyIcon from "@src/assets/icons/copy.svg";
 import linkIcon from "@src/assets/icons/link.svg";
 import logoutIcon from "@src/assets/icons/logout.svg";
+import { FuelNetwork } from "@src/blockchain";
 import { useStores } from "@src/stores";
 import BN from "@src/utils/BN";
 import { getExplorerLinkByAddress } from "@src/utils/getExplorerLink";
@@ -21,9 +22,9 @@ interface Props {
 }
 
 const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
-  const { accountStore, notificationStore, balanceStore, blockchainStore } = useStores();
+  const { accountStore, notificationStore, balanceStore } = useStores();
 
-  const bcNetwork = blockchainStore.currentInstance;
+  const bcNetwork = FuelNetwork.getInstance();
 
   const ethBalance = BN.formatUnits(
     balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
@@ -50,7 +51,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
     },
     {
       icon: linkIcon,
-      action: () => window.open(getExplorerLinkByAddress(accountStore.address!, bcNetwork!.NETWORK_TYPE)),
+      action: () => window.open(getExplorerLinkByAddress(accountStore.address!)),
       title: "View in Explorer",
       active: true,
     },

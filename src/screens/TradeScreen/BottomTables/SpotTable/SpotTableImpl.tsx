@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { FuelNetwork } from "@src/blockchain";
 import { Row } from "@src/components/Flex";
 import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
@@ -132,8 +133,8 @@ const BALANCE_COLUMNS = [
 
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const SpotTableImpl: React.FC = observer(() => {
-  const { balanceStore, faucetStore, blockchainStore } = useStores();
-  const bcNetwork = blockchainStore.currentInstance;
+  const { balanceStore, faucetStore } = useStores();
+  const bcNetwork = FuelNetwork.getInstance();
 
   const vm = useSpotTableVMProvider();
   const theme = useTheme();

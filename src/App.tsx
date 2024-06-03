@@ -7,7 +7,6 @@ import { Column } from "@components/Flex";
 
 import Header from "./components/Header";
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
-import { useWeb3Modal } from "./hooks/useWeb3Modal";
 import Faucet from "./screens/Faucet";
 import TradeScreen from "./screens/TradeScreen";
 import { ROUTES } from "./constants";
@@ -20,7 +19,6 @@ const Root = styled(Column)`
 `;
 
 const App: React.FC = observer(() => {
-  useWeb3Modal();
   usePrivateKeyAsAuth();
 
   return (

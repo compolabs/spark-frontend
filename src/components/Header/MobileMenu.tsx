@@ -14,26 +14,17 @@ import SizedBox from "../SizedBox";
 import { SmartFlex } from "../SmartFlex";
 
 import ConnectedWalletButton from "./ConnectedWalletButton";
-import NetworkSelectButton from "./NetworkSelectButton";
 
 interface IProps {
   isOpen: boolean;
   onAccountClick: () => void;
   onWalletConnect: () => void;
-  onNetworkSelect: () => void;
   onDepositWithdrawClick: () => void;
   onClose: () => void;
 }
 
-const MobileMenu: React.FC<IProps> = ({
-  isOpen,
-  onAccountClick,
-  onWalletConnect,
-  onClose,
-  onNetworkSelect,
-  onDepositWithdrawClick,
-}) => {
-  const { accountStore } = useStores();
+const MobileMenu: React.FC<IProps> = ({ isOpen, onAccountClick, onWalletConnect, onClose, onDepositWithdrawClick }) => {
+  const { accountStore, tradeStore } = useStores();
   const location = useLocation();
 
   const handleAccountClick = () => {
@@ -43,11 +34,6 @@ const MobileMenu: React.FC<IProps> = ({
 
   const handleConnectWallet = () => {
     onWalletConnect();
-    onClose();
-  };
-
-  const handleNetworkSelect = () => {
-    onNetworkSelect();
     onClose();
   };
 
@@ -101,9 +87,8 @@ const MobileMenu: React.FC<IProps> = ({
         </Container>
         <SizedBox height={8} />
         <FooterContainer gap="8px" column>
-          <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button>
+          {tradeStore.isPerpAvailable ? <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button> : null}
           {renderWalletButton()}
-          {!accountStore.address && <NetworkSelectButton onClick={handleNetworkSelect} />}
         </FooterContainer>
       </Body>
     </MenuOverlay>
