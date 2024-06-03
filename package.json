@@ -5,7 +5,7 @@
   "homepage": "https://app.sprk.fi",
   "dependencies": {
     "@babel/core": "^7.16.0",
-    "@compolabs/spark-orderbook-ts-sdk": "1.2.0",
+    "@compolabs/spark-orderbook-ts-sdk": "1.2.1",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fuel-wallet/sdk": "^0.16.1",
