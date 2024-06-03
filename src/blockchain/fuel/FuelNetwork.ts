@@ -19,7 +19,15 @@ import {
   SpotMarketVolume,
 } from "../types";
 
-import { INDEXER_URL, NETWORKS, PYTH_URL, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
+import {
+  CONTRACT_ADDRESSES,
+  INDEXER_URL,
+  NETWORKS,
+  PYTH_URL,
+  TOKENS_BY_ASSET_ID,
+  TOKENS_BY_SYMBOL,
+  TOKENS_LIST,
+} from "./constants";
 import { WalletManager } from "./WalletManager";
 
 export class FuelNetwork extends BlockchainNetwork {
@@ -37,7 +45,7 @@ export class FuelNetwork extends BlockchainNetwork {
 
     this.sdk = new Spark({
       networkUrl: NETWORKS[0].url,
-      // contractAddresses: CONTRACT_ADDRESSES, use default addresses from the sdk
+      contractAddresses: CONTRACT_ADDRESSES,
       indexerApiUrl: INDEXER_URL,
       pythUrl: PYTH_URL,
     });
