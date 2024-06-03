@@ -24,7 +24,7 @@ interface IProps {
 }
 
 const MobileMenu: React.FC<IProps> = ({ isOpen, onAccountClick, onWalletConnect, onClose, onDepositWithdrawClick }) => {
-  const { accountStore } = useStores();
+  const { accountStore, tradeStore } = useStores();
   const location = useLocation();
 
   const handleAccountClick = () => {
@@ -87,7 +87,7 @@ const MobileMenu: React.FC<IProps> = ({ isOpen, onAccountClick, onWalletConnect,
         </Container>
         <SizedBox height={8} />
         <FooterContainer gap="8px" column>
-          <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button>
+          {tradeStore.isPerpAvailable ? <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button> : null}
           {renderWalletButton()}
         </FooterContainer>
       </Body>
