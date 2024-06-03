@@ -421,11 +421,12 @@ class CreateOrderVM {
         )) as WriteTransactionResponse;
         hash = data?.transactionId;
       } else {
-        hash = (await bcNetwork?.createSpotOrder(
+        const response = (await bcNetwork?.createSpotOrder(
           baseToken.assetId,
           baseSize.toString(),
           this.inputPrice.toString(),
-        )) as string;
+        )) as WriteTransactionResponse;
+        hash = response?.transactionId;
       }
 
       notificationStore.toast(
