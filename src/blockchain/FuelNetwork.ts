@@ -8,7 +8,15 @@ import { PerpMarketTrade } from "@src/entity/PerpMarketTrade";
 import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
 import BN from "@src/utils/BN";
 
-import { INDEXER_URL, NETWORKS, PYTH_URL, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "./constants";
+import {
+  CONTRACT_ADDRESSES,
+  INDEXER_URL,
+  NETWORKS,
+  PYTH_URL,
+  TOKENS_BY_ASSET_ID,
+  TOKENS_BY_SYMBOL,
+  TOKENS_LIST,
+} from "./constants";
 import {
   FetchOrdersParams,
   FetchTradesParams,
@@ -32,7 +40,7 @@ export class FuelNetwork {
 
     this.sdk = new Spark({
       networkUrl: NETWORKS[0].url,
-      // contractAddresses: CONTRACT_ADDRESSES, use default addresses from the sdk
+      contractAddresses: CONTRACT_ADDRESSES,
       indexerApiUrl: INDEXER_URL,
       pythUrl: PYTH_URL,
     });
