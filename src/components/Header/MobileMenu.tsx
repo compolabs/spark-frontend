@@ -14,25 +14,16 @@ import SizedBox from "../SizedBox";
 import { SmartFlex } from "../SmartFlex";
 
 import ConnectedWalletButton from "./ConnectedWalletButton";
-import NetworkSelectButton from "./NetworkSelectButton";
 
 interface IProps {
   isOpen: boolean;
   onAccountClick: () => void;
   onWalletConnect: () => void;
-  onNetworkSelect: () => void;
   onDepositWithdrawClick: () => void;
   onClose: () => void;
 }
 
-const MobileMenu: React.FC<IProps> = ({
-  isOpen,
-  onAccountClick,
-  onWalletConnect,
-  onClose,
-  onNetworkSelect,
-  onDepositWithdrawClick,
-}) => {
+const MobileMenu: React.FC<IProps> = ({ isOpen, onAccountClick, onWalletConnect, onClose, onDepositWithdrawClick }) => {
   const { accountStore } = useStores();
   const location = useLocation();
 
@@ -43,11 +34,6 @@ const MobileMenu: React.FC<IProps> = ({
 
   const handleConnectWallet = () => {
     onWalletConnect();
-    onClose();
-  };
-
-  const handleNetworkSelect = () => {
-    onNetworkSelect();
     onClose();
   };
 
@@ -103,7 +89,6 @@ const MobileMenu: React.FC<IProps> = ({
         <FooterContainer gap="8px" column>
           <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button>
           {renderWalletButton()}
-          {!accountStore.address && <NetworkSelectButton onClick={handleNetworkSelect} />}
         </FooterContainer>
       </Body>
     </MenuOverlay>

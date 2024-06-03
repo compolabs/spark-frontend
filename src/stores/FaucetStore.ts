@@ -1,11 +1,11 @@
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { NETWORK } from "@src/blockchain/types";
+import { FuelNetwork } from "@src/blockchain";
 import { createToast } from "@src/components/Toast";
-import { ARBITRUM_SEPOLIA_FAUCET, FUEL_FAUCET } from "@src/constants";
+import { FUEL_FAUCET } from "@src/constants";
 import BN from "@src/utils/BN";
-import { hanldeWalletErrors } from "@src/utils/handleWalletErrors";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import RootStore from "@stores/RootStore";
 
 export const FAUCET_AMOUNTS: Record<string, number> = {
@@ -29,8 +29,8 @@ class FaucetStore {
   }
 
   get faucetTokens() {
-    const { balanceStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { balanceStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     return bcNetwork!.getTokenList().map((v) => {
       const balance = balanceStore.getBalance(v.assetId);
@@ -49,8 +49,8 @@ class FaucetStore {
   setActionTokenAssetId = (l: Nullable<string>) => (this.actionTokenAssetId = l);
 
   private mint = async (assetId: string) => {
-    const { accountStore, balanceStore, notificationStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore, balanceStore, notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!bcNetwork!.getTokenByAssetId(assetId) || !accountStore.address) return;
 
@@ -65,7 +65,7 @@ class FaucetStore {
       notificationStore.toast(createToast({ text: "Minting successful!" }), { type: "success" });
       await accountStore.addAsset(assetId);
     } catch (error: any) {
-      hanldeWalletErrors(notificationStore, error, "We were unable to mint tokens at this time");
+      handleWalletErrors(notificationStore, error, "We were unable to mint tokens at this time");
     } finally {
       this.setLoading(false);
       await balanceStore.update();
@@ -73,17 +73,14 @@ class FaucetStore {
   };
 
   mintByAssetId = (assetId: string) => {
-    const { accountStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
     const token = bcNetwork?.getTokenByAssetId(assetId);
 
     if (!token || !accountStore.address) return;
 
     if (token.symbol === "ETH") {
-      window.open(
-        bcNetwork?.NETWORK_TYPE === NETWORK.EVM ? ARBITRUM_SEPOLIA_FAUCET : `${FUEL_FAUCET}${accountStore.address}`,
-        "blank",
-      );
+      window.open(`${FUEL_FAUCET}${accountStore.address}`, "blank");
       return;
     }
 
@@ -91,8 +88,8 @@ class FaucetStore {
   };
 
   disabled = (assetId: string) => {
-    const { accountStore, faucetStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore, faucetStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     const token = bcNetwork?.getTokenByAssetId(assetId);
     return (

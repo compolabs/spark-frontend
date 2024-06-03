@@ -1,7 +1,7 @@
 import { createToast } from "@src/components/Toast";
 import { NotificationStore } from "@src/stores";
 
-export const hanldeWalletErrors = (notificationStore: NotificationStore, error: any, defaultMessage?: string) => {
+export const handleWalletErrors = (notificationStore: NotificationStore, error: any, defaultMessage?: string) => {
   const message = error?.message.toLowerCase();
 
   if (message.includes("user rejected action") || message.includes("user rejected the transaction")) return;

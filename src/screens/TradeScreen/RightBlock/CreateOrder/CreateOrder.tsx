@@ -91,14 +91,6 @@ const CreateOrder: React.FC = observer(() => {
   const isInputPriceDisabled = settingsStore.orderType !== ORDER_TYPE.Limit;
 
   const renderButton = () => {
-    if (!vm.tokenIsApproved) {
-      return (
-        <CreateOrderButton disabled={isButtonDisabled} green={!vm.isSell} red={vm.isSell} onClick={vm.approve}>
-          {vm.loading ? "Loading..." : `Approve ${vm.isSell ? baseToken.symbol : quoteToken.symbol}`}
-        </CreateOrderButton>
-      );
-    }
-
     return (
       <CreateOrderButton disabled={isButtonDisabled} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>

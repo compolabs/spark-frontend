@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 import { ReactComponent as LeftCaretIcon } from "src/assets/icons/arrowUp.svg";
 
+import { FuelNetwork } from "@src/blockchain";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
@@ -22,7 +23,7 @@ export interface IProps extends IDialogPropTypes {}
 const tokens = [{ title: "USDC", key: "USDC" }];
 
 const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) => {
-  const { balanceStore, blockchainStore, collateralStore } = useStores();
+  const { balanceStore, collateralStore } = useStores();
   const [isDeposit, setIsDeposit] = useState(true);
 
   const theme = useTheme();
@@ -30,7 +31,7 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ children, ...rest }) 
   const [depositAmount, setDepositAmount] = useState(BN.ZERO);
   const [withdrawAmount, setWithdrawAmount] = useState(BN.ZERO);
 
-  const bcNetwork = blockchainStore.currentInstance;
+  const bcNetwork = FuelNetwork.getInstance();
   const USDC = bcNetwork!.getTokenBySymbol("USDC");
 
   const USDCBalance = balanceStore.getBalance(USDC.assetId);

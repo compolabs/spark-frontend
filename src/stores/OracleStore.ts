@@ -2,7 +2,8 @@ import { EvmPriceServiceConnection, Price, PriceFeed } from "@pythnetwork/pyth-e
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { PYTH_URL } from "@src/blockchain/fuel/constants";
+import { FuelNetwork } from "@src/blockchain";
+import { PYTH_URL } from "@src/blockchain/constants";
 import BN from "@src/utils/BN";
 import RootStore from "@stores/RootStore";
 
@@ -42,8 +43,7 @@ class OracleStore {
   private initAndGetPythPrices = async () => {
     // You can find the ids of prices at https://pyth.network/developers/price-feed-ids
 
-    const { blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
 
     const priceIds = bcNetwork!
       .getTokenList()

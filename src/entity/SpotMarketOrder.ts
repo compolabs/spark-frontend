@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 
-import { BlockchainNetworkFactory } from "@src/blockchain/BlockchainNetworkFactory";
-import { TOKENS_BY_SYMBOL } from "@src/blockchain/evm/constants";
+import { FuelNetwork } from "@src/blockchain";
+import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 
@@ -37,7 +37,7 @@ export class SpotMarketOrder {
   constructor(order: SpotMarketOrderParams) {
     this.id = order.id;
 
-    const bcNetwork = BlockchainNetworkFactory.getInstance().currentInstance!;
+    const bcNetwork = FuelNetwork.getInstance();
     const baseToken = bcNetwork.getTokenByAssetId(order.baseToken);
 
     if (!baseToken) {

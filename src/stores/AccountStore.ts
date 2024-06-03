@@ -2,8 +2,8 @@ import { Address } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
+import { FuelNetwork } from "@src/blockchain";
 import { NETWORK_ERROR, NetworkError } from "@src/blockchain/NetworkError";
-import { NETWORK } from "@src/blockchain/types";
 import { createToast } from "@src/components/Toast";
 
 import RootStore from "./RootStore";
@@ -22,13 +22,11 @@ class AccountStore {
   ) {
     makeAutoObservable(this);
 
-    const { blockchainStore } = this.rootStore;
-
     if (initState) {
       if (initState.privateKey) {
         this.connectWalletByPrivateKey(initState.privateKey);
-      } else if (initState.address && blockchainStore.currentInstance?.NETWORK_TYPE === NETWORK.FUEL) {
-        this.connectWallet(blockchainStore.currentInstance.NETWORK_TYPE);
+      } else if (initState.address) {
+        this.connectWallet();
       }
     }
 
@@ -39,10 +37,10 @@ class AccountStore {
     this.initialized = true;
   };
 
-  connectWallet = async (network: NETWORK) => {
-    const { blockchainStore, notificationStore } = this.rootStore;
+  connectWallet = async () => {
+    const { notificationStore } = this.rootStore;
 
-    const bcNetwork = blockchainStore.connectTo(network);
+    const bcNetwork = FuelNetwork.getInstance();
 
     try {
       await bcNetwork?.connectWallet();
@@ -69,8 +67,8 @@ class AccountStore {
   };
 
   connectWalletByPrivateKey = async (privateKey: string) => {
-    const { notificationStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     try {
       await bcNetwork?.connectWalletByPrivateKey(privateKey);
@@ -80,22 +78,19 @@ class AccountStore {
   };
 
   addAsset = async (assetId: string) => {
-    const { blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
 
     await bcNetwork!.addAssetToWallet(assetId);
   };
 
   disconnect = () => {
-    const { blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
 
     bcNetwork?.disconnectWallet();
   };
 
   get address() {
-    const { blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
 
     return bcNetwork?.getAddress();
   }
@@ -110,8 +105,7 @@ class AccountStore {
   }
 
   serialize = (): ISerializedAccountStore => {
-    const { blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
 
     return {
       privateKey: bcNetwork?.getPrivateKey() ?? null,

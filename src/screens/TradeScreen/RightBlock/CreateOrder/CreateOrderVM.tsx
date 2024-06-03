@@ -1,17 +1,15 @@
 import React, { PropsWithChildren, useMemo } from "react";
-import { WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
-import BigNumber from "bignumber.js";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
 
+import { FuelNetwork } from "@src/blockchain";
 import { PerpMaxAbsPositionSize } from "@src/blockchain/types";
 import { createToast } from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import useVM from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
-import { hanldeWalletErrors } from "@src/utils/handleWalletErrors";
-import { IntervalUpdater } from "@src/utils/IntervalUpdater";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { RootStore, useStores } from "@stores";
 
 const ctx = React.createContext<CreateOrderVM | null>(null);
@@ -47,8 +45,6 @@ export enum ORDER_TYPE {
   TakeProfitLimit,
 }
 
-const UPDATE_ALLOWANCE_INTERVAL = 15 * 1000; // 15 sec;
-
 class CreateOrderVM {
   loading = false;
 
@@ -68,10 +64,6 @@ class CreateOrderVM {
     shortSize: BN.ZERO,
     longSize: BN.ZERO,
   };
-
-  allowance: BN = BN.ZERO;
-
-  private allowanceUpdater: IntervalUpdater;
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
@@ -113,10 +105,6 @@ class CreateOrderVM {
         this.setInputPercent(0);
       },
     );
-
-    this.allowanceUpdater = new IntervalUpdater(this.loadAllowance, UPDATE_ALLOWANCE_INTERVAL);
-
-    this.allowanceUpdater.run(true);
   }
 
   get canProceed() {
@@ -149,11 +137,6 @@ class CreateOrderVM {
     return this.mode === ORDER_MODE.SELL;
   }
 
-  get tokenIsApproved() {
-    const amount = this.isSell ? this.inputAmount : this.inputTotal;
-    return this.allowance.gte(amount);
-  }
-
   setOrderMode = (mode: ORDER_MODE) => (this.mode = mode);
 
   onMaxClick = () => {
@@ -168,8 +151,8 @@ class CreateOrderVM {
   };
 
   private onSpotMaxClick = () => {
-    const { tradeStore, balanceStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { tradeStore, balanceStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!tradeStore.market) return;
 
@@ -204,8 +187,8 @@ class CreateOrderVM {
   };
 
   getMaxPositionSize = async () => {
-    const { tradeStore, blockchainStore, accountStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { tradeStore, accountStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!tradeStore.market || !accountStore.isConnected || this.inputPrice.eq(BN.ZERO)) return;
 
@@ -339,61 +322,11 @@ class CreateOrderVM {
     this.setInputLeveragePercent(inputPercent);
   };
 
-  approve = async () => {
-    const { tradeStore, notificationStore, blockchainStore } = this.rootStore;
-    const { market } = tradeStore;
-    const bcNetwork = blockchainStore.currentInstance;
-
-    if (!market) return;
-
-    const baseToken = market.baseToken;
-    const quoteToken = market.quoteToken;
-
-    const activeToken = this.isSell ? baseToken : quoteToken;
-    const approveAmount = (this.isSell ? this.inputAmount : this.inputTotal).toDecimalPlaces(0, BigNumber.ROUND_UP);
-
-    this.setLoading(true);
-
-    try {
-      await bcNetwork?.approve(activeToken.assetId, approveAmount.toString());
-      await this.loadAllowance();
-
-      notificationStore.toast(createToast({ text: `${activeToken.symbol} approved!` }), { type: "success" });
-    } catch (error) {
-      console.error(error);
-      hanldeWalletErrors(notificationStore, error, `Something goes wrong with ${activeToken.symbol} approve`);
-    }
-
-    this.setLoading(false);
-  };
-
-  loadAllowance = async () => {
-    const { tradeStore, blockchainStore } = this.rootStore;
-    const { market } = tradeStore;
-    const bcNetwork = blockchainStore.currentInstance;
-
-    const baseToken = market?.baseToken;
-    const quoteToken = market?.quoteToken;
-
-    const activeToken = this.isSell ? baseToken : quoteToken;
-
-    if (!activeToken?.assetId) return;
-
-    try {
-      const allowance = await bcNetwork!.allowance(activeToken.assetId);
-
-      this.allowance = new BN(allowance);
-    } catch (error) {
-      console.error("Something wrong with allowance!");
-      this.allowance = BN.ZERO;
-    }
-  };
-
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, blockchainStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore } = this.rootStore;
     const { market } = tradeStore;
-    const bcNetwork = blockchainStore.currentInstance;
-    const ethBalance = balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId);
+    const bcNetwork = FuelNetwork.getInstance();
+    const ethBalance = balanceStore.getBalance(bcNetwork.getTokenBySymbol("ETH").assetId);
 
     if (ethBalance.isZero()) {
       notificationStore.toast(createToast({ text: "You have insufficient ETH balance" }), { type: "error" });
@@ -403,7 +336,7 @@ class CreateOrderVM {
     if (!market) return;
 
     this.setLoading(true);
-    if (bcNetwork?.getIsExternalWallet()) {
+    if (bcNetwork.getIsExternalWallet()) {
       notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
     }
 
@@ -413,32 +346,29 @@ class CreateOrderVM {
 
       let hash: Undefinable<string> = "";
       if (tradeStore.isPerp) {
-        const data = (await bcNetwork?.openPerpOrder(
-          baseToken.assetId,
-          baseSize.toString(),
-          this.inputPrice.toString(),
-          baseToken.priceFeed,
-        )) as WriteTransactionResponse;
-        hash = data?.transactionId;
+        console.log("[PERP] Not implemented");
+        // const data = (await bcNetwork?.openPerpOrder(
+        //   baseToken.assetId,
+        //   baseSize.toString(),
+        //   this.inputPrice.toString(),
+        //   baseToken.priceFeed,
+        // )) as WriteTransactionResponse;
+        // hash = data?.transactionId;
       } else {
-        hash = (await bcNetwork?.createSpotOrder(
+        const data = await bcNetwork.createSpotOrder(
           baseToken.assetId,
           baseSize.toString(),
           this.inputPrice.toString(),
-        )) as string;
+        );
+        hash = data.transactionId;
       }
 
-      notificationStore.toast(
-        createToast({ text: "Order Created", hash: hash, networkType: bcNetwork!.NETWORK_TYPE }),
-        {
-          type: "success",
-        },
-      );
-
-      await this.loadAllowance();
+      notificationStore.toast(createToast({ text: "Order Created", hash: hash }), {
+        type: "success",
+      });
     } catch (error: any) {
       console.error(error);
-      hanldeWalletErrors(notificationStore, error, "We were unable to process your order at this time");
+      handleWalletErrors(notificationStore, error, "We were unable to process your order at this time");
     }
 
     await balanceStore.update();

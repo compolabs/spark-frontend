@@ -1,5 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
+import { FuelNetwork } from "@src/blockchain";
 import { Token } from "@src/entity";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -38,8 +39,8 @@ export class CollateralStore {
   }
 
   update = async () => {
-    const { accountStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!accountStore.isConnected) return;
 
@@ -57,8 +58,8 @@ export class CollateralStore {
   };
 
   deposit = async (token: Token, amount: BN) => {
-    const { accountStore, blockchainStore, notificationStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore, notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!accountStore.isConnected) return;
 
@@ -74,8 +75,8 @@ export class CollateralStore {
   };
 
   withdraw = async (token: Token, amount: BN) => {
-    const { accountStore, blockchainStore, notificationStore, oracleStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore, notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!accountStore.isConnected) return;
 

@@ -1,6 +1,7 @@
 import { makeAutoObservable, reaction } from "mobx";
 
-import { NETWORK, PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
+import { FuelNetwork } from "@src/blockchain";
+import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -54,17 +55,6 @@ class TradeStore {
 
     this.initMarket();
 
-    const { blockchainStore } = this.rootStore;
-
-    reaction(
-      () => blockchainStore.currentInstance?.NETWORK_TYPE,
-      async () => {
-        this.setSpotMarkets([]);
-        this.setPerpMarkets([]);
-        this.initMarket();
-      },
-    );
-
     this.marketInfoUpdater = new IntervalUpdater(this.updateMarketInfo, MARKET_INFO_UPDATE_INTERVAL);
     this.marketPricesUpdater = new IntervalUpdater(this.updateMarketPrices, MARKET_PRICES_UPDATE_INTERVAL);
 
@@ -87,11 +77,7 @@ class TradeStore {
   }
 
   get isPerpAvailable() {
-    const { blockchainStore } = this.rootStore;
-
-    const bcNetwork = blockchainStore.currentInstance;
-
-    return bcNetwork?.NETWORK_TYPE === NETWORK.FUEL;
+    return false;
   }
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
@@ -110,11 +96,7 @@ class TradeStore {
   setMarketSelectionOpened = (s: boolean) => (this.marketSelectionOpened = s);
 
   updateMarketInfo = async () => {
-    const { blockchainStore } = this.rootStore;
-
-    const bcNetwork = blockchainStore.currentInstance;
-
-    this.spotMarketInfo = await bcNetwork!.fetchSpotVolume();
+    this.spotMarketInfo = await FuelNetwork.getInstance().fetchSpotVolume();
 
     // fixme
     // if (!this.market || this.market instanceof PerpMarket) return;
@@ -128,9 +110,7 @@ class TradeStore {
   };
 
   updateMarketPrices = async () => {
-    const { blockchainStore } = this.rootStore;
-
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
 
     const spotMarketPriceUpdates = this.spotMarkets.map((market) =>
       bcNetwork!.fetchSpotMarketPrice(market.baseToken.assetId),
@@ -154,8 +134,7 @@ class TradeStore {
   };
 
   private initSpotMarket = async () => {
-    const { blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
 
     try {
       const markets = await bcNetwork!.fetchSpotMarkets(100);
@@ -171,8 +150,7 @@ class TradeStore {
   };
 
   private initPerpMarket = async () => {
-    const { blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
 
     try {
       const markets = await bcNetwork!.fetchPerpAllMarkets();

@@ -1,5 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
+import { FuelNetwork } from "@src/blockchain";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
@@ -46,8 +47,8 @@ export class BalanceStore {
   }
 
   update = async () => {
-    const { accountStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!accountStore.isConnected) return;
 
@@ -72,8 +73,8 @@ export class BalanceStore {
   };
 
   private fetchBalance = async (assetId: string): Promise<string> => {
-    const { accountStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!accountStore.isConnected) return "0";
 

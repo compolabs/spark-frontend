@@ -9,8 +9,6 @@ import centerEllipsis from "@src/utils/centerEllipsis";
 import { SmartFlex } from "../SmartFlex";
 import { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
 
-import { ActiveNetwork } from "./ActiveNetwork";
-
 interface Props {
   isFocused?: boolean;
   className?: string;
@@ -22,7 +20,6 @@ const ConnectedWalletButton: React.FC<Props> = observer(({ isFocused, className,
 
   return (
     <Root className={className} gap="8px" isFocused={isFocused} center onClick={onClick}>
-      <ActiveNetwork />
       {centerEllipsis(accountStore.address ?? "", 10)}
       <ArrowIconStyled alt="Arrow Icon" src={arrowIcon} />
     </Root>

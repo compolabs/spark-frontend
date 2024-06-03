@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 
 import Chip from "@components/Chip";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
-import { useStores } from "@src/stores";
+import { FuelNetwork } from "@src/blockchain";
 import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 
@@ -27,8 +27,7 @@ interface IProps {
 }
 
 const TokenInput: React.FC<IProps> = observer((props) => {
-  const { blockchainStore } = useStores();
-  const bcNetwork = blockchainStore.currentInstance;
+  const bcNetwork = FuelNetwork.getInstance();
 
   const [focused, setFocused] = useState(false);
   const [amount, setAmount] = useState<BN>(props.amount);

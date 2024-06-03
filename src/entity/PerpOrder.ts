@@ -1,9 +1,9 @@
 import { makeAutoObservable } from "mobx";
 
+import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { toCurrency } from "@src/utils/toCurrency";
 
-import { BlockchainNetworkFactory } from "../blockchain/BlockchainNetworkFactory";
 import BN from "../utils/BN";
 
 import { Token } from "./Token";
@@ -24,7 +24,7 @@ export class PerpOrder {
   readonly trader: string;
 
   constructor(params: PerpOrderParams) {
-    const bcNetwork = BlockchainNetworkFactory.getInstance().currentInstance!;
+    const bcNetwork = FuelNetwork.getInstance();
 
     this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
 

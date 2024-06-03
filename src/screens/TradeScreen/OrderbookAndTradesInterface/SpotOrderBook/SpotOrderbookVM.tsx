@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 
+import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
@@ -119,13 +120,13 @@ class SpotOrderbookVM {
   setOrderFilter = (value: SPOT_ORDER_FILTER) => (this.orderFilter = value);
 
   updateOrderBook = async () => {
-    const { tradeStore, blockchainStore } = this.rootStore;
+    const { tradeStore } = this.rootStore;
 
     const market = tradeStore.market;
 
     if (!this.rootStore.initialized || !market) return;
 
-    const bcNetwork = blockchainStore.currentInstance;
+    const bcNetwork = FuelNetwork.getInstance();
     const limit = 100;
 
     this.isOrderBookLoading = true;

@@ -2,9 +2,10 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
+import { FuelNetwork } from "@src/blockchain";
 import { PerpMarket, PerpOrder, PerpPosition } from "@src/entity";
 import useVM from "@src/hooks/useVM";
-import { hanldeWalletErrors } from "@src/utils/handleWalletErrors";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
@@ -40,8 +41,8 @@ class PerpTableVM {
   }
 
   private sync = async () => {
-    const { accountStore, tradeStore, blockchainStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore, tradeStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!tradeStore.isPerp || !tradeStore.market || !accountStore.address) return;
 
@@ -77,8 +78,8 @@ class PerpTableVM {
   private setMyPositions = (myPositions: PerpPosition[]) => (this.myPositions = myPositions);
 
   cancelOrder = async (orderId: string) => {
-    const { accountStore, tradeStore, blockchainStore, notificationStore } = this.rootStore;
-    const bcNetwork = blockchainStore.currentInstance;
+    const { accountStore, tradeStore, notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!tradeStore.market || !accountStore.address) return;
 
@@ -91,7 +92,7 @@ class PerpTableVM {
       await bcNetwork?.removePerpOrder(orderId);
       notificationStore.toast("Order canceled!", { type: "success" });
     } catch (error) {
-      hanldeWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
+      handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
     }
 
     this.cancelingOrderId = null;

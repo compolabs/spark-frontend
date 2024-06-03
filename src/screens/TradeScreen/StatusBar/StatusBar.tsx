@@ -4,21 +4,15 @@ import { observer } from "mobx-react";
 
 import { Row } from "@components/Flex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { EVMNetwork } from "@src/blockchain";
-import { useStores } from "@stores";
 
 import tweets from "./tweets";
 
-interface IProps {}
-
-const StatusBar: React.FC<IProps> = observer(() => {
-  const { blockchainStore } = useStores();
+const StatusBar: React.FC = observer(() => {
   const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     tweets[Math.floor(Math.random() * tweets.length)],
   )}`;
 
-  const bcNetwork = blockchainStore.currentInstance;
-  const networkName = bcNetwork instanceof EVMNetwork ? bcNetwork.network.name : "";
+  // const networkName = "FUEL";
 
   return (
     <Root>
