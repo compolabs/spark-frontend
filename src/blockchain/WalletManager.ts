@@ -123,6 +123,8 @@ export class WalletManager {
       }
       return;
     }
+
+    this.wallet = await this.fuel.getWallet(account);
     this.address = account;
   };
 }

@@ -92,7 +92,7 @@ class AccountStore {
   get address() {
     const bcNetwork = FuelNetwork.getInstance();
 
-    return bcNetwork?.getAddress();
+    return bcNetwork.getAddress();
   }
 
   get address0x() {
