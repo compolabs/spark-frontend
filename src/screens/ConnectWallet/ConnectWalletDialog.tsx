@@ -12,6 +12,7 @@ import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useStores } from "@src/stores";
+import { AppWallet } from "@src/stores/SettingsStore";
 
 type IProps = Omit<IDialogPropTypes, "onClose"> & {
   onClose: () => void;
@@ -23,7 +24,7 @@ enum ActiveState {
 }
 
 interface Wallet {
-  name: string;
+  name: AppWallet;
   icon: React.FC;
   isActive: boolean;
 }
@@ -56,11 +57,11 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) =>
   }, [rest.visible]);
 
   const handleWalletClick = () => {
-    // accountStore.
     accountStore.connectWallet().then(onClose);
   };
 
-  const handleNextStateClick = () => {
+  const handleNextStateClick = (wallet: AppWallet) => {
+    settingsStore.setSelectedWallet(wallet);
     if (settingsStore.isUserAgreedWithTerms) {
       handleWalletClick();
       return;
@@ -100,7 +101,7 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) =>
       <>
         <WalletContainer>
           {activeWallets.map(({ name, icon: WalletIcon }) => (
-            <WalletItem key={name} onClick={handleNextStateClick}>
+            <WalletItem key={name} onClick={() => handleNextStateClick(name)}>
               <WalletIconContainer>
                 <WalletIcon />
               </WalletIconContainer>

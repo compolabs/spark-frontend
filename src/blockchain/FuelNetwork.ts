@@ -32,7 +32,6 @@ export class FuelNetwork {
 
   private walletManager = new WalletManager();
   private sdk: Spark;
-  private wallet: string = "Fuel Wallet";
 
   public network = NETWORKS[0];
 
@@ -80,14 +79,13 @@ export class FuelNetwork {
     return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
-  connectWallet = async (): Promise<void> => {
+  connectWallet = async (wallet: string): Promise<void> => {
+    const isWalletSet = await this.walletManager.setWallet(wallet);
+    if (!isWalletSet) {
+      return;
+    }
     await this.walletManager.connect();
     this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
-  };
-
-  setWallet = async (wallet: string): Promise<void> => {
-    // this.wallet = wallet;
-    await this.walletManager.setSelected(wallet);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {

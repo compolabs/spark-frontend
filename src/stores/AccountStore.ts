@@ -38,12 +38,12 @@ class AccountStore {
   };
 
   connectWallet = async () => {
-    const { notificationStore } = this.rootStore;
+    const { notificationStore, settingsStore } = this.rootStore;
 
     const bcNetwork = FuelNetwork.getInstance();
 
     try {
-      await bcNetwork?.connectWallet();
+      await bcNetwork?.connectWallet(settingsStore.selectedWallet);
     } catch (error: any) {
       console.error("Error connecting to wallet:", error);
 

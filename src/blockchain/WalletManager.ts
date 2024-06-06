@@ -24,16 +24,20 @@ export class WalletManager {
     this.fuel.on(this.fuel.events.currentAccount, this.onCurrentAccountChange);
   }
 
-  setSelected = async (wallet: string) => {
-    console.log(wallet);
-    try {
-      await this.fuel.selectConnector(wallet);
-    } catch (error) {
+  setWallet = async (wallet: string) => {
+    const isSelected = await this.fuel.selectConnector(wallet);
+    console.log(isSelected, wallet);
+    if (!isSelected) {
       toast(
-        createToast({ text: `${wallet} is not installed. Please go to https://fuelet.app/download/. and install it` }),
+        createToast({
+          text: `${wallet} is not installed. Please go to https://fuelet.app/download/. and install it`,
+          address: "https://fuelet.app/download/",
+        }),
         { type: "error" },
       );
+      return false;
     }
+    return true;
   };
 
   connect = async (): Promise<void> => {
