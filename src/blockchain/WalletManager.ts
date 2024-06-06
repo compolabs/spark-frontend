@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { Fuel, FuelWalletConnector } from "@fuel-wallet/sdk";
+import { Fuel, FueletWalletConnector, FuelWalletConnector } from "@fuel-wallet/sdk";
 import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
@@ -15,7 +15,7 @@ export class WalletManager {
   public privateKey: Nullable<string> = null;
 
   private fuel = new Fuel({
-    connectors: [new FuelWalletConnector()],
+    connectors: [new FuelWalletConnector(), new FueletWalletConnector()],
   });
 
   constructor() {
@@ -23,6 +23,18 @@ export class WalletManager {
 
     this.fuel.on(this.fuel.events.currentAccount, this.onCurrentAccountChange);
   }
+
+  setSelected = async (wallet: string) => {
+    console.log(wallet);
+    try {
+      await this.fuel.selectConnector(wallet);
+    } catch (error) {
+      toast(
+        createToast({ text: `${wallet} is not installed. Please go to https://fuelet.app/download/. and install it` }),
+        { type: "error" },
+      );
+    }
+  };
 
   connect = async (): Promise<void> => {
     const hasConnector = await this.fuel.hasConnector();

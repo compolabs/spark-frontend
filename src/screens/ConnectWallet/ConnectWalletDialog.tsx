@@ -6,6 +6,7 @@ import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
 import { ReactComponent as ArrowIcon } from "@src/assets/icons/arrowUp.svg";
 import { ReactComponent as FuelWalletIcon } from "@src/assets/wallets/fuel.svg";
+import { ReactComponent as FueletWalletIcon } from "@src/assets/wallets/fuelet.svg";
 import Button from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";
@@ -33,6 +34,11 @@ const WALLETS: Wallet[] = [
     isActive: true,
     icon: FuelWalletIcon,
   },
+  {
+    name: "Fuelet Wallet",
+    isActive: true,
+    icon: FueletWalletIcon,
+  },
 ];
 
 const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) => {
@@ -50,6 +56,7 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) =>
   }, [rest.visible]);
 
   const handleWalletClick = () => {
+    // accountStore.
     accountStore.connectWallet().then(onClose);
   };
 
