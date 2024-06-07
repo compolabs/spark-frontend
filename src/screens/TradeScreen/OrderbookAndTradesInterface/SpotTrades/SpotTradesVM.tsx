@@ -17,7 +17,7 @@ export const SpotTradesVMProvider: React.FC<PropsWithChildren> = ({ children }) 
 
 export const useSpotTradesVM = () => useVM(ctx);
 
-const UPDATE_TRADES_INTERVAL = 10 * 1000;
+const UPDATE_TRADES_INTERVAL = 2 * 1000;
 
 class SpotTradesVM {
   public trades: Array<SpotMarketTrade> = [];
@@ -51,13 +51,11 @@ class SpotTradesVM {
     if (!initialized || !market) return;
 
     try {
-      // TODO: Fix type after new indexer release (next week)
       const tradesResponse = await bcNetwork!.fetchSpotTrades({
         baseToken: market.baseToken.assetId,
-        limit: 40,
-        trader: undefined,
-      } as any);
-      this.trades = tradesResponse.sort((a, b) => b.timestamp.valueOf() - a.timestamp.valueOf());
+        limit: 50,
+      });
+      this.trades = tradesResponse;
     } catch (error) {
       console.error("Error with loading trades");
     }
