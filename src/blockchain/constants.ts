@@ -1,7 +1,10 @@
 import { OrderbookContracts } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
 
+import { ReactComponent as FuelWalletIcon } from "@src/assets/wallets/fuel.svg";
+import { ReactComponent as FueletWalletIcon } from "@src/assets/wallets/fuelet.svg";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { Token } from "@src/entity/Token";
+import { AppWallet } from "@src/stores/SettingsStore";
 
 import TOKENS_JSON from "./tokens.json";
 
@@ -45,3 +48,25 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
 export const INDEXER_URL = "https://indexer.bigdevenergy.link/67b693c/v1/graphql";
 
 export const PYTH_URL = "https://hermes.pyth.network";
+
+interface Wallet {
+  name: AppWallet;
+  icon: React.FC;
+  isActive: boolean;
+  url: string;
+}
+
+export const WALLETS: Wallet[] = [
+  {
+    name: "Fuel Wallet",
+    isActive: true,
+    icon: FuelWalletIcon,
+    url: "https://wallet.fuel.network/docs/install/",
+  },
+  {
+    name: "Fuelet Wallet",
+    isActive: true,
+    icon: FueletWalletIcon,
+    url: "https://fuelet.app/",
+  },
+];

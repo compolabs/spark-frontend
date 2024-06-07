@@ -6,7 +6,7 @@ import { Nullable } from "tsdef";
 
 import { createToast } from "@src/components/Toast";
 
-import { TOKENS_BY_ASSET_ID } from "./constants";
+import { TOKENS_BY_ASSET_ID, WALLETS } from "./constants";
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
 
 export class WalletManager {
@@ -30,8 +30,9 @@ export class WalletManager {
     if (!isSelected) {
       toast(
         createToast({
-          text: `${wallet} is not installed. Please go to https://fuelet.app/download/. and install it`,
-          address: "https://fuelet.app/download/",
+          text: `${wallet} is not installed. Please install it to continue.`,
+          linkText: "Download",
+          url: WALLETS.filter((w) => w.name === wallet)[0].url,
         }),
         { type: "error" },
       );

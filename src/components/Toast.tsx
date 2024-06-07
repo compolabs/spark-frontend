@@ -10,10 +10,18 @@ interface IProps {
   linkText?: string;
   hash?: string;
   address?: string;
+  url?: string;
 }
 
-const Toast: React.FC<IProps> = ({ text, linkText = "Open In Explorer", hash, address }) => {
-  const link = hash ? getExplorerLinkByHash(hash) : address ? getExplorerLinkByAddress(address) : undefined;
+const Toast: React.FC<IProps> = ({ text, linkText = "Open In Explorer", hash, address, url }) => {
+  let link;
+  if (hash) {
+    link = getExplorerLinkByHash(hash);
+  } else if (address) {
+    link = getExplorerLinkByAddress(address);
+  } else if (url) {
+    link = url;
+  }
 
   return (
     <SmartFlex gap="8px" column>

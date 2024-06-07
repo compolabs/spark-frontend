@@ -80,6 +80,7 @@ export class FuelNetwork {
   };
 
   connectWallet = async (wallet: string): Promise<void> => {
+    // TODO: refactor this method
     const isWalletSet = await this.walletManager.setWallet(wallet);
     if (!isWalletSet) {
       return;

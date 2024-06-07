@@ -5,8 +5,7 @@ import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
 import { ReactComponent as ArrowIcon } from "@src/assets/icons/arrowUp.svg";
-import { ReactComponent as FuelWalletIcon } from "@src/assets/wallets/fuel.svg";
-import { ReactComponent as FueletWalletIcon } from "@src/assets/wallets/fuelet.svg";
+import { WALLETS } from "@src/blockchain/constants";
 import Button from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";
@@ -22,25 +21,6 @@ enum ActiveState {
   SELECT_WALLET,
   USER_AGREEMENT,
 }
-
-interface Wallet {
-  name: AppWallet;
-  icon: React.FC;
-  isActive: boolean;
-}
-
-const WALLETS: Wallet[] = [
-  {
-    name: "Fuel Wallet",
-    isActive: true,
-    icon: FuelWalletIcon,
-  },
-  {
-    name: "Fuelet Wallet",
-    isActive: true,
-    icon: FueletWalletIcon,
-  },
-];
 
 const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) => {
   const { accountStore, settingsStore } = useStores();
