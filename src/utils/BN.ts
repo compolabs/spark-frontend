@@ -125,7 +125,7 @@ class BN extends BigNumber {
     roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
     format?: BigNumber.Format,
   ): string => {
-    return this.gte(1) || significantDigits === 0
+    return this.abs().gte(1) || significantDigits === 0
       ? this.toFormat(significantDigits, roundingMode, format).replace(/(\.[0-9]*[1-9])0+$|\.0+$/, "$1")
       : super.precision(significantDigits, roundingMode).toString();
   };
