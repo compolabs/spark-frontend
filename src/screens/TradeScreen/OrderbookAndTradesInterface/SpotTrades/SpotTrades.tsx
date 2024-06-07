@@ -45,7 +45,12 @@ const SpotTradesImpl: React.FC = observer(() => {
         <Text type={TEXT_TYPES.SUPPORTING}>Time</Text>
       </Header>
 
-      <Container className="better-scroll">
+      <Container
+        className="better-scroll"
+        style={{
+          paddingTop: "54px", // header height
+        }}
+      >
         {trades.map((trade) => (
           <Row key={"trade" + trade.id} alignItems="center" justifyContent="space-between" style={{ marginBottom: 2 }}>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
