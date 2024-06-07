@@ -102,10 +102,9 @@ const Container = styled.div<{
   ${({ reverse }) => reverse && "flex-direction: column-reverse;"};
   height: 100%;
   box-sizing: border-box;
-  padding: 0 12px;
+  padding: 54px 12px 0;
   overflow-y: auto;
   max-height: calc(100vh - 263px);
-
   gap: 2px;
 `;
 
