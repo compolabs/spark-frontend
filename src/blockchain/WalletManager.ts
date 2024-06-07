@@ -32,7 +32,7 @@ export class WalletManager {
         createToast({
           text: `${wallet} is not installed. Please install it to continue.`,
           linkText: "Download",
-          url: WALLETS.filter((w) => w.name === wallet)[0].url,
+          url: WALLETS.find((w) => w.name === wallet)?.url,
         }),
         { type: "error" },
       );
