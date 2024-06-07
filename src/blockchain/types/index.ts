@@ -11,7 +11,7 @@ export type FetchOrdersParams<T = string> = {
 export type FetchTradesParams<T = string> = {
   baseToken: T;
   limit: number;
-  trader: T;
+  trader?: T;
 };
 
 export type MarketCreateEvent = {

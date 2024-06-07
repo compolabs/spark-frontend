@@ -32,7 +32,7 @@ type TOrderbookData = {
   spreadPrice: string;
 };
 
-const UPDATE_INTERVAL = 10 * 1000;
+const UPDATE_INTERVAL = 2 * 1000;
 
 class SpotOrderbookVM {
   rootStore: RootStore;

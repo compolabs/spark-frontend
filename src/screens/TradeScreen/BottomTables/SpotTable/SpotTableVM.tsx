@@ -21,7 +21,7 @@ export const SpotTableVMProvider: React.FC<PropsWithChildren> = ({ children }) =
 
 export const useSpotTableVMProvider = () => useVM(ctx);
 
-const ORDERS_UPDATE_INTERVAL = 10 * 1000; // 10 sec
+const ORDERS_UPDATE_INTERVAL = 5 * 1000; // 5 sec
 
 class SpotTableVM {
   myOrders: SpotMarketOrder[] = [];

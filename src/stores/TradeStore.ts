@@ -2,6 +2,7 @@ import { makeAutoObservable, reaction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
 import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
+import { DEFAULT_DECIMALS } from "@src/constants";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -11,7 +12,7 @@ export interface ISerializedTradeStore {
   favMarkets: string | null;
 }
 
-const MARKET_INFO_UPDATE_INTERVAL = 5 * 60 * 1000; // 5 min
+const MARKET_INFO_UPDATE_INTERVAL = 1 * 60 * 1000; // 1 min
 const MARKET_PRICES_UPDATE_INTERVAL = 10 * 1000; // 10 sec
 
 class TradeStore {
@@ -96,7 +97,19 @@ class TradeStore {
   setMarketSelectionOpened = (s: boolean) => (this.marketSelectionOpened = s);
 
   updateMarketInfo = async () => {
-    this.spotMarketInfo = await FuelNetwork.getInstance().fetchSpotVolume();
+    const { oracleStore } = this.rootStore;
+
+    if (!this.market) return;
+
+    const info = await FuelNetwork.getInstance().fetchSpotVolume();
+    const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
+    const price = BN.formatUnits(oracleStore.getTokenIndexPrice(this.market.baseToken.priceFeed), DEFAULT_DECIMALS);
+    const volume = BN.parseUnits(baseTokenAmount.multipliedBy(price), this.market.quoteToken.decimals);
+
+    this.spotMarketInfo = {
+      ...info,
+      volume,
+    };
 
     // fixme
     // if (!this.market || this.market instanceof PerpMarket) return;
