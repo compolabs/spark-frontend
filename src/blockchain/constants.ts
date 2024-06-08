@@ -45,7 +45,7 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
   {},
 );
 
-export const INDEXER_URL = "https://indexer.bigdevenergy.link/67b693c/v1/graphql";
+export const INDEXER_URL = "https://indexer.bigdevenergy.link/41c1ca4/v1/graphql";
 
 export const PYTH_URL = "https://hermes.pyth.network";
 
