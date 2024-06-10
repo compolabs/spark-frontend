@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useDisconnect } from "@fuels/react";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
@@ -10,6 +11,7 @@ import Button from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";
 import Text, { TEXT_TYPES } from "@src/components/Text";
+import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 import { AppWallet } from "@src/stores/SettingsStore";
 
@@ -23,6 +25,10 @@ enum ActiveState {
 }
 
 const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) => {
+  const { disconnect } = useDisconnect();
+  const { currentConnector, isConnected, isConnecting, isLoadingConnectors, isLoading, isFetching, connect, address } =
+    useWallet();
+  const [isSigning, setIsSigning] = useState(false);
   const { accountStore, settingsStore } = useStores();
   const theme = useTheme();
 
@@ -79,6 +85,7 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) =>
   const renderWallets = () => {
     return (
       <>
+        <Button onClick={connect}>Connect Wallet</Button>
         <WalletContainer>
           {activeWallets.map(({ name, icon: WalletIcon }) => (
             <WalletItem key={name} onClick={() => handleNextStateClick(name)}>
