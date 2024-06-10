@@ -1,8 +1,10 @@
 import React from "react";
 import styled from "@emotion/styled";
+import { useDisconnect } from "@fuels/react";
 import { observer } from "mobx-react";
 
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
+import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 import centerEllipsis from "@src/utils/centerEllipsis";
 
@@ -17,10 +19,12 @@ interface Props {
 
 const ConnectedWalletButton: React.FC<Props> = observer(({ isFocused, className, onClick }) => {
   const { accountStore } = useStores();
+  const { address } = useWallet();
+  const { disconnect } = useDisconnect();
 
   return (
     <Root className={className} gap="8px" isFocused={isFocused} center onClick={onClick}>
-      {centerEllipsis(accountStore.address ?? "", 10)}
+      {centerEllipsis(address ?? "", 10)}
       <ArrowIconStyled alt="Arrow Icon" src={arrowIcon} />
     </Root>
   );

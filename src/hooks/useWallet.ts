@@ -15,7 +15,7 @@ interface ICurrentConnector {
 
 const DEFAULT_CONNECTOR: ICurrentConnector = {
   logo: "",
-  title: "Wallet Demo",
+  title: "",
 };
 
 export const useWallet = () => {
@@ -31,8 +31,6 @@ export const useWallet = () => {
   const { balance, isLoading: isLoadingBalance, isFetching: isFetchingBalance } = useBalance({ address });
 
   const [currentConnector, setCurrentConnector] = useState<ICurrentConnector>(DEFAULT_CONNECTOR);
-
-  console.log(currentConnector);
 
   useEffect(() => {
     refetchConnected();

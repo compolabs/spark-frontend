@@ -12,6 +12,7 @@ import { ReactComponent as Menu } from "@src/assets/icons/menu.svg";
 import { MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
+import { useWallet } from "@src/hooks/useWallet";
 import ConnectWalletDialog from "@src/screens/ConnectWallet";
 import { MODAL_TYPE } from "@src/stores/ModalStore";
 import { media } from "@src/themes/breakpoints";
@@ -26,7 +27,8 @@ import DepositWithdrawModal from "./DepositWithdrawModal";
 import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
-  const { tradeStore, accountStore, modalStore } = useStores();
+  const { tradeStore, modalStore, accountStore } = useStores();
+  const { address } = useWallet();
   const location = useLocation();
   const media = useMedia();
 
@@ -45,7 +47,7 @@ const Header: React.FC = observer(() => {
   };
 
   const renderWallet = () => {
-    if (!accountStore.address) {
+    if (!address) {
       return (
         <WalletContainer>
           <Button fitContent green onClick={openConnectDialog}>
@@ -157,7 +159,9 @@ const Header: React.FC = observer(() => {
         onDepositWithdrawClick={() => modalStore.open(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)}
         onWalletConnect={openConnectDialog}
       />
-      <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
+      {isConnectDialogVisible ? (
+        <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
+      ) : null}
       <AccountInfoSheet isOpen={isAccountInfoSheetOpen} onClose={closeAccountInfo} />
       <DepositWithdrawModal visible={modalStore.isOpen(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)} onClose={modalStore.close} />
     </Root>

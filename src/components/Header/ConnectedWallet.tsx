@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import { useDisconnect } from "@fuels/react";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
@@ -11,6 +12,7 @@ import copyIcon from "@src/assets/icons/copy.svg";
 import linkIcon from "@src/assets/icons/link.svg";
 import logoutIcon from "@src/assets/icons/logout.svg";
 import { FuelNetwork } from "@src/blockchain";
+import { useWallet } from "@src/hooks/useWallet";
 import BN from "@src/utils/BN";
 import { getExplorerLinkByAddress } from "@src/utils/getExplorerLink";
 import { useStores } from "@stores";
@@ -21,17 +23,25 @@ import ConnectedWalletButton from "./ConnectedWalletButton";
 
 const ConnectedWallet: React.FC = observer(() => {
   const { accountStore, notificationStore, balanceStore } = useStores();
+  const { address, refetchWallet, balance } = useWallet();
+  const { disconnect } = useDisconnect();
+
+  // TODO: enable wallet balance auto-update ?
+  // useEffect(() => {
+  //   const interval = setInterval(() => refetchWallet(), 5000);
+  //   return () => clearInterval(interval);
+  // }, [refetchWallet]);
+
   const [isFocused, setIsFocused] = useState(false);
 
   const bcNetwork = FuelNetwork.getInstance();
 
-  const ethBalance = BN.formatUnits(
-    balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
-    bcNetwork!.getTokenBySymbol("ETH").decimals,
-  )?.toFormat(4);
+  const ethBalance = BN.formatUnits(balance?.toString() ?? "0", bcNetwork!.getTokenBySymbol("ETH").decimals).toFormat(
+    4,
+  );
 
   const handleAddressCopy = () => {
-    accountStore.address && copy(accountStore.address);
+    address && copy(address);
     notificationStore.toast(createToast({ text: "Your address was copied" }), { type: "info" });
   };
 
@@ -44,13 +54,13 @@ const ConnectedWallet: React.FC = observer(() => {
     },
     {
       icon: linkIcon,
-      action: () => window.open(getExplorerLinkByAddress(accountStore.address!)),
+      action: () => window.open(getExplorerLinkByAddress(address)),
       title: "View in Explorer",
       active: true,
     },
     {
       icon: logoutIcon,
-      action: () => accountStore.disconnect(),
+      action: () => disconnect(),
       title: "Disconnect",
       active: true,
     },

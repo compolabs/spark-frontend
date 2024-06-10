@@ -6,7 +6,7 @@ import { Nullable } from "tsdef";
 
 import { createToast } from "@src/components/Toast";
 
-import { TOKENS_BY_ASSET_ID, WALLETS } from "./constants";
+import { TOKENS_BY_ASSET_ID } from "./constants";
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
 
 export class WalletManager {
@@ -23,23 +23,6 @@ export class WalletManager {
 
     this.fuel.on(this.fuel.events.currentAccount, this.onCurrentAccountChange);
   }
-
-  setWallet = async (wallet: string) => {
-    const isSelected = await this.fuel.selectConnector(wallet);
-    console.log(isSelected, wallet);
-    if (!isSelected) {
-      toast(
-        createToast({
-          text: `${wallet} is not installed. Please install it to continue.`,
-          linkText: "Download",
-          url: WALLETS.find((w) => w.name === wallet)?.url,
-        }),
-        { type: "error" },
-      );
-      return false;
-    }
-    return true;
-  };
 
   connect = async (): Promise<void> => {
     const hasConnector = await this.fuel.hasConnector();

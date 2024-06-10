@@ -4,13 +4,10 @@ import { ORDER_TYPE } from "@src/screens/TradeScreen/RightBlock/CreateOrder/Crea
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
 import RootStore from "@stores/RootStore";
 
-export type AppWallet = "Fuel Wallet" | "Fuelet Wallet";
-
 export interface ISerializedSettingStore {
   isUserAgreedWithTerms?: boolean;
   tradeTableSize?: number;
   orderType?: ORDER_TYPE;
-  selectedWallet?: AppWallet;
 }
 
 export enum TRADE_TABLE_SIZE {
@@ -46,14 +43,10 @@ class SettingsStore {
   orderType: ORDER_TYPE = ORDER_TYPE.Market;
   setOrderType = (v: ORDER_TYPE) => (this.orderType = v);
 
-  selectedWallet: AppWallet = "Fuel Wallet";
-  setSelectedWallet = (v: AppWallet) => (this.selectedWallet = v);
-
   serialize = (): ISerializedSettingStore => ({
     isUserAgreedWithTerms: this.isUserAgreedWithTerms,
     tradeTableSize: this.tradeTableSize,
     orderType: this.orderType,
-    selectedWallet: this.selectedWallet,
   });
 }
 

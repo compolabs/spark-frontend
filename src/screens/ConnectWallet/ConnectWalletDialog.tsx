@@ -1,151 +1,85 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { useDisconnect } from "@fuels/react";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
 import { ReactComponent as ArrowIcon } from "@src/assets/icons/arrowUp.svg";
-import { WALLETS } from "@src/blockchain/constants";
 import Button from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
-import { AppWallet } from "@src/stores/SettingsStore";
 
 type IProps = Omit<IDialogPropTypes, "onClose"> & {
   onClose: () => void;
+  visible: boolean;
 };
 
-enum ActiveState {
-  SELECT_WALLET,
-  USER_AGREEMENT,
-}
+// TODO: refactor account store, minting and save address in local storage
 
-const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) => {
-  const { disconnect } = useDisconnect();
-  const { currentConnector, isConnected, isConnecting, isLoadingConnectors, isLoading, isFetching, connect, address } =
-    useWallet();
-  const [isSigning, setIsSigning] = useState(false);
+const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) => {
   const { accountStore, settingsStore } = useStores();
   const theme = useTheme();
+  const { connect, address } = useWallet();
+  const [isUserAgreedWithTerms, setIsUserAgreedWithTerms] = useState(settingsStore.isUserAgreedWithTerms ?? false);
 
-  const activeWallets = useMemo(() => WALLETS.filter((w) => w.isActive), []);
-
-  const [activeState, setActiveState] = useState(ActiveState.SELECT_WALLET);
-
-  useEffect(() => {
-    if (rest.visible) return;
-
-    setActiveState(ActiveState.SELECT_WALLET);
-  }, [rest.visible]);
-
-  const handleWalletClick = () => {
-    accountStore.connectWallet().then(onClose);
+  const connectAndSaveAddress = () => {
+    connect();
+    accountStore.setAddress(address);
   };
 
-  const handleNextStateClick = (wallet: AppWallet) => {
-    settingsStore.setSelectedWallet(wallet);
-    if (settingsStore.isUserAgreedWithTerms) {
-      handleWalletClick();
-      return;
-    }
-
-    setActiveState(ActiveState.USER_AGREEMENT);
+  const openWalletConnectUI = () => {
+    connectAndSaveAddress();
+    onClose();
   };
 
-  const renderHeader = () => {
-    if (activeState === ActiveState.SELECT_WALLET) {
-      return (
-        <HeaderContainer>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
-            Connect your wallet
-          </Text>
-          <StyledText color={theme.colors.textSecondary} type={TEXT_TYPES.BUTTON_SECONDARY} onClick={onClose}>
-            Close
-          </StyledText>
-        </HeaderContainer>
-      );
-    }
-
-    return (
-      <HeaderContainer>
-        <ArrowContainer>
-          <StyledArrowIcon onClick={() => setActiveState(ActiveState.SELECT_WALLET)} />
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
-            Terms and conditions
-          </Text>
-        </ArrowContainer>
-      </HeaderContainer>
-    );
-  };
-
-  const renderWallets = () => {
-    return (
-      <>
-        <Button onClick={connect}>Connect Wallet</Button>
-        <WalletContainer>
-          {activeWallets.map(({ name, icon: WalletIcon }) => (
-            <WalletItem key={name} onClick={() => handleNextStateClick(name)}>
-              <WalletIconContainer>
-                <WalletIcon />
-              </WalletIconContainer>
-              <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
-                {name}
-              </Text>
-            </WalletItem>
-          ))}
-        </WalletContainer>
-        <FooterContainer>
-          <Text type={TEXT_TYPES.BODY}>New to Fuel blockchain?</Text>
-          <StyledLink
-            href="https://chromewebstore.google.com/detail/fuel-wallet/dldjpboieedgcmpkchcjcbijingjcgok"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY}>Install Fuel Wallet</Text>
-          </StyledLink>
-        </FooterContainer>
-      </>
-    );
-  };
-
-  const toggleUserAgreement = () => {
+  const saveUserAgreement = () => {
     settingsStore.setIsUserAgreedWithTerms(!settingsStore.isUserAgreedWithTerms);
+    openWalletConnectUI();
   };
 
-  const renderAgreement = () => {
-    return (
-      <>
-        <AgreementContainer className="better-scroll">{AGREEMENT_TEXT}</AgreementContainer>
-        <ButtonContainer>
-          <CheckboxContainer>
-            <Checkbox checked={settingsStore.isUserAgreedWithTerms} onChange={toggleUserAgreement}>
-              <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-                I have read, understand and accept these terms
-              </Text>
-            </Checkbox>
-          </CheckboxContainer>
-          <Button disabled={!settingsStore.isUserAgreedWithTerms} green onClick={() => handleWalletClick()}>
-            Agree and Continue
-          </Button>
-        </ButtonContainer>
-      </>
-    );
-  };
+  const renderAgreement = () => (
+    <>
+      <AgreementContainer className="better-scroll">{AGREEMENT_TEXT}</AgreementContainer>
+      <ButtonContainer>
+        <CheckboxContainer>
+          <Checkbox checked={isUserAgreedWithTerms} onChange={() => setIsUserAgreedWithTerms(!isUserAgreedWithTerms)}>
+            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+              I have read, understand and accept these terms
+            </Text>
+          </Checkbox>
+        </CheckboxContainer>
+        <Button disabled={!isUserAgreedWithTerms} green onClick={() => saveUserAgreement()}>
+          Agree and Continue
+        </Button>
+      </ButtonContainer>
+    </>
+  );
 
   const renderContent = () => {
-    if (activeState === ActiveState.SELECT_WALLET) {
-      return renderWallets();
+    if (!settingsStore.isUserAgreedWithTerms) {
+      return renderAgreement();
+    } else {
+      openWalletConnectUI();
     }
-
-    return renderAgreement();
   };
 
   return (
-    <Dialog onClose={onClose} {...rest} title={renderHeader()}>
+    <Dialog
+      title={
+        <HeaderContainer>
+          <ArrowContainer>
+            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
+              Terms and conditions
+            </Text>
+          </ArrowContainer>
+        </HeaderContainer>
+      }
+      visible={visible}
+      onClose={onClose}
+    >
       <Root>{renderContent()}</Root>
     </Dialog>
   );

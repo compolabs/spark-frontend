@@ -2,12 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter as Router } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import {
-  BurnerWalletConnector,
-  FueletWalletConnector,
-  FuelWalletConnector,
-  FuelWalletDevelopmentConnector,
-} from "@fuels/connectors";
+import { FueletWalletConnector, FuelWalletConnector, FuelWalletDevelopmentConnector } from "@fuels/connectors";
 import { WalletConnectConnector } from "@fuels/connectors/walletconnect";
 import { FuelProvider } from "@fuels/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -35,10 +30,11 @@ console.warn(`Version: ${__COMMIT_HASH__}`);
 
 const queryClient = new QueryClient();
 
+// TODO: move to env file
 const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 const METADATA = {
-  name: "Wallet Demo",
-  description: "Fuel Wallets Demo",
+  name: "Spark",
+  description: "Spark is the fastest onchain order book based on Fuel Network",
   url: location.href,
   icons: ["https://connectors.fuel.network/logo_white.png"],
 };
@@ -81,7 +77,6 @@ root.render(
                   projectId: WC_PROJECT_ID,
                 }),
                 new FuelWalletDevelopmentConnector(),
-                new BurnerWalletConnector(),
               ],
             }}
             theme="dark"

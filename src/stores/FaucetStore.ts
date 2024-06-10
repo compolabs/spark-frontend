@@ -72,12 +72,12 @@ class FaucetStore {
     }
   };
 
-  mintByAssetId = (assetId: string) => {
+  mintByAssetId = (assetId: string, address?: string) => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
     const token = bcNetwork?.getTokenByAssetId(assetId);
 
-    if (!token || !accountStore.address) return;
+    if (!token || !(accountStore.address || address)) return;
 
     if (token.symbol === "ETH") {
       window.open(`${FUEL_FAUCET}${accountStore.address}`, "blank");
@@ -87,16 +87,12 @@ class FaucetStore {
     this.mint(assetId);
   };
 
-  disabled = (assetId: string) => {
+  disabled = (assetId: string, address: string) => {
     const { accountStore, faucetStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     const token = bcNetwork?.getTokenByAssetId(assetId);
-    return (
-      faucetStore.loading ||
-      !faucetStore.initialized ||
-      (token && token.symbol !== "ETH" && accountStore.address === null)
-    );
+    return faucetStore.loading || !faucetStore.initialized || (token && token.symbol !== "ETH" && address === null);
   };
 
   private setLoading = (l: boolean) => (this.loading = l);

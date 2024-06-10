@@ -3,7 +3,6 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { NETWORK_ERROR, NetworkError } from "@src/blockchain/NetworkError";
 import { createToast } from "@src/components/Toast";
 
 import RootStore from "./RootStore";
@@ -14,6 +13,7 @@ export interface ISerializedAccountStore {
 }
 
 class AccountStore {
+  public address: Nullable<string> = null;
   initialized = false;
 
   constructor(
@@ -42,28 +42,28 @@ class AccountStore {
 
     const bcNetwork = FuelNetwork.getInstance();
 
-    try {
-      await bcNetwork?.connectWallet(settingsStore.selectedWallet);
-    } catch (error: any) {
-      console.error("Error connecting to wallet:", error);
+    // try {
+    // await bcNetwork?.connectWallet(settingsStore.selectedWallet);
+    // } catch (error: any) {
+    //   console.error("Error connecting to wallet:", error);
 
-      if (error instanceof NetworkError) {
-        if (error.code === NETWORK_ERROR.UNKNOWN_ACCOUNT) {
-          notificationStore.toast(createToast({ text: "Please authorize the wallet account when connecting." }), {
-            type: "info",
-          });
-          return;
-        }
-      }
+    //   if (error instanceof NetworkError) {
+    //     if (error.code === NETWORK_ERROR.UNKNOWN_ACCOUNT) {
+    //       notificationStore.toast(createToast({ text: "Please authorize the wallet account when connecting." }), {
+    //         type: "info",
+    //       });
+    //       return;
+    //     }
+    //   }
 
-      notificationStore.toast(createToast({ text: "Unexpected error. Please try again." }), { type: "error" });
+    //   notificationStore.toast(createToast({ text: "Unexpected error. Please try again." }), { type: "error" });
 
-      try {
-        bcNetwork?.disconnectWallet();
-      } catch {
-        /* empty */
-      }
-    }
+    //   try {
+    //     bcNetwork?.disconnectWallet();
+    //   } catch {
+    //     /* empty */
+    //   }
+    // }
   };
 
   connectWalletByPrivateKey = async (privateKey: string) => {
@@ -89,11 +89,15 @@ class AccountStore {
     bcNetwork?.disconnectWallet();
   };
 
-  get address() {
-    const bcNetwork = FuelNetwork.getInstance();
+  setAddress = (address: string) => {
+    this.address = address;
+  };
 
-    return bcNetwork.getAddress();
-  }
+  // get address() {
+  //   const bcNetwork = FuelNetwork.getInstance();
+
+  //   return bcNetwork.getAddress();
+  // }
 
   get address0x() {
     const address = new Address(this.address as any).toB256();

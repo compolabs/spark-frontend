@@ -79,11 +79,6 @@ export class FuelNetwork {
   };
 
   connectWallet = async (wallet: string): Promise<void> => {
-    // TODO: refactor this method
-    const isWalletSet = await this.walletManager.setWallet(wallet);
-    if (!isWalletSet) {
-      return;
-    }
     await this.walletManager.connect();
     this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
