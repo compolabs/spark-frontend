@@ -22,7 +22,7 @@ import BN from "@src/utils/BN";
 import hexToRgba from "@src/utils/hexToRgb";
 import { useStores } from "@stores";
 
-import { ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
+import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
 
 import { useSpotOrderbookVM } from "./SpotOrderbookVM";
 
@@ -122,16 +122,7 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
 
     return orders.map((o, index) => (
-      <OrderRow
-        key={index + "order"}
-        type={type}
-        onClick={() => {
-          orderSpotVm.setOrderMode(orderMode);
-          orderSpotVm.setInputPrice(o.price);
-          orderSpotVm.setInputAmount(new BN(o.baseSize), true);
-          settingsStore.setOrderType(ORDER_TYPE.Limit);
-        }}
-      >
+      <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
         <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
         <Text primary>{o.baseSizeUnits.toSignificant(decimals)}</Text>
         <TextOverflow color={color}>{BN.formatUnits(o.price, 9).toFormat(decimals)}</TextOverflow>

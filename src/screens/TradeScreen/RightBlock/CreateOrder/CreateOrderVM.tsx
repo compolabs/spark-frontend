@@ -7,6 +7,7 @@ import { FuelNetwork } from "@src/blockchain";
 import { PerpMaxAbsPositionSize } from "@src/blockchain/types";
 import { createToast } from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
+import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
@@ -96,9 +97,9 @@ class CreateOrderVM {
       },
     );
 
-    // reset input values when switch from buy to sell, and from perp to spot
+    // reset input values when switch from perp to spot
     reaction(
-      () => [this.mode, tradeStore.market],
+      () => tradeStore.market,
       () => {
         this.setInputAmount(BN.ZERO);
         this.setInputTotal(BN.ZERO);
@@ -137,7 +138,13 @@ class CreateOrderVM {
     return this.mode === ORDER_MODE.SELL;
   }
 
-  setOrderMode = (mode: ORDER_MODE) => (this.mode = mode);
+  setOrderMode = (mode: ORDER_MODE) => {
+    this.mode = mode;
+
+    this.setInputAmount(BN.ZERO);
+    this.setInputTotal(BN.ZERO);
+    this.setInputPercent(0);
+  };
 
   onMaxClick = () => {
     const { tradeStore } = this.rootStore;
@@ -374,6 +381,22 @@ class CreateOrderVM {
     await balanceStore.update();
 
     this.setLoading(false);
+  };
+
+  selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {
+    const { settingsStore, accountStore, balanceStore } = this.rootStore;
+    const isBuyMode = mode === ORDER_MODE.BUY;
+
+    settingsStore.setOrderType(ORDER_TYPE.Limit);
+    this.setOrderMode(mode);
+    this.setInputPrice(order.price);
+
+    const assetId = isBuyMode ? order.quoteToken.assetId : order.baseToken.assetId;
+    const orderSize = isBuyMode ? order.quoteSize : order.baseSize;
+
+    const amount = accountStore.isConnected ? BN.min(balanceStore.getBalance(assetId), orderSize) : orderSize;
+
+    isBuyMode ? this.setInputTotal(amount, true) : this.setInputAmount(amount, true);
   };
 
   private setLoading = (l: boolean) => (this.loading = l);
