@@ -1,5 +1,4 @@
-import Spark from "@compolabs/spark-orderbook-ts-sdk";
-import { WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
+import SparkOrderBookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -31,14 +30,14 @@ export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
 
   private walletManager = new WalletManager();
-  private sdk: Spark;
+  private orderbookSdk: SparkOrderBookSdk;
 
   public network = NETWORKS[0];
 
   private constructor() {
     makeObservable(this.walletManager);
 
-    this.sdk = new Spark({
+    this.orderbookSdk = new SparkOrderBookSdk({
       networkUrl: NETWORKS[0].url,
       contractAddresses: CONTRACT_ADDRESSES,
       indexerApiUrl: INDEXER_URL,
@@ -81,34 +80,39 @@ export class FuelNetwork {
 
   connectWallet = async (): Promise<void> => {
     await this.walletManager.connect();
-    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    this.orderbookSdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {
-    await this.walletManager.connectByPrivateKey(privateKey, await this.sdk.getProvider());
-    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    await this.walletManager.connectByPrivateKey(privateKey, await this.orderbookSdk.getProvider());
+    this.orderbookSdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 
   disconnectWallet = (): void => {
     this.walletManager.disconnect();
-    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    this.orderbookSdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 
   addAssetToWallet = async (assetId: string): Promise<void> => {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<WriteTransactionResponse> => {
+  createSpotOrder = async (
+    assetAddress: string,
+    amount: string,
+    price: string,
+    type: OrderType,
+  ): Promise<WriteTransactionResponse> => {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const baseAsset = this.getAssetFromToken(baseToken);
-    const quoteToken = this.getTokenBySymbol("USDC");
-    const quoteAsset = this.getAssetFromToken(quoteToken);
+    // const quoteToken = this.getTokenBySymbol("USDC");
+    // const quoteAsset = this.getAssetFromToken(quoteToken);
 
-    return this.sdk.createSpotOrder(baseAsset, quoteAsset, size, price);
+    return this.orderbookSdk.createOrder(amount, baseAsset, price, type);
   };
 
   cancelSpotOrder = async (orderId: string): Promise<void> => {
-    await this.sdk.cancelSpotOrder(orderId);
+    await this.orderbookSdk.cancelOrder(orderId);
   };
 
   mintToken = async (assetAddress: string): Promise<void> => {
@@ -117,7 +121,7 @@ export class FuelNetwork {
 
     const amount = FAUCET_AMOUNTS[token.symbol].toString();
 
-    await this.sdk.mintToken(asset, amount);
+    await this.orderbookSdk.mintToken(asset, amount);
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
@@ -164,30 +168,30 @@ export class FuelNetwork {
   };
 
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.sdk.fetchSpotMarkets(limit);
+    return this.orderbookSdk.fetchMarkets(limit);
   };
 
   fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
     const token = this.getTokenByAssetId(baseTokenAddress);
     const asset = this.getAssetFromToken(token);
 
-    return this.sdk.fetchSpotMarketPrice(asset);
+    return this.orderbookSdk.fetchMarketPrice(asset);
   };
 
   fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
-    const orders = await this.sdk.fetchSpotOrders(params);
+    const orders = await this.orderbookSdk.fetchOrders(params);
 
     return orders.map((obj) => new SpotMarketOrder(obj));
   };
 
   fetchSpotTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
-    const trades = await this.sdk.fetchSpotTrades(params);
+    const trades = await this.orderbookSdk.fetchTrades(params);
 
     return trades.map((obj) => new SpotMarketTrade({ ...obj, userAddress: params.trader }));
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    return this.sdk.fetchSpotVolume();
+    return this.orderbookSdk.fetchVolume();
   };
 
   matchPerpOrders = async (order1: string, order2: string): Promise<unknown> => {

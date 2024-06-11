@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
+import { OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
@@ -348,8 +349,9 @@ class CreateOrderVM {
     }
 
     try {
-      const baseToken = market.baseToken;
-      const baseSize = this.isSell ? this.inputAmount.times(-1) : this.inputAmount;
+      const token = market.baseToken;
+      const amount = this.isSell ? this.inputAmount.times(-1) : this.inputAmount;
+      const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
 
       let hash: Undefinable<string> = "";
       if (tradeStore.isPerp) {
@@ -363,9 +365,10 @@ class CreateOrderVM {
         // hash = data?.transactionId;
       } else {
         const data = await bcNetwork.createSpotOrder(
-          baseToken.assetId,
-          baseSize.toString(),
+          amount.toString(),
+          token.assetId,
           this.inputPrice.toString(),
+          type,
         );
         hash = data.transactionId;
       }
