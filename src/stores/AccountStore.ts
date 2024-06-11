@@ -26,7 +26,7 @@ class AccountStore {
       if (initState.privateKey) {
         this.connectWalletByPrivateKey(initState.privateKey);
       } else if (initState.address) {
-        this.connectWallet();
+        // this.connectWallet();
       }
     }
 
@@ -37,36 +37,8 @@ class AccountStore {
     this.initialized = true;
   };
 
-  connectWallet = async () => {
-    const { notificationStore, settingsStore } = this.rootStore;
-
-    const bcNetwork = FuelNetwork.getInstance();
-
-    // try {
-    // await bcNetwork?.connectWallet(settingsStore.selectedWallet);
-    // } catch (error: any) {
-    //   console.error("Error connecting to wallet:", error);
-
-    //   if (error instanceof NetworkError) {
-    //     if (error.code === NETWORK_ERROR.UNKNOWN_ACCOUNT) {
-    //       notificationStore.toast(createToast({ text: "Please authorize the wallet account when connecting." }), {
-    //         type: "info",
-    //       });
-    //       return;
-    //     }
-    //   }
-
-    //   notificationStore.toast(createToast({ text: "Unexpected error. Please try again." }), { type: "error" });
-
-    //   try {
-    //     bcNetwork?.disconnectWallet();
-    //   } catch {
-    //     /* empty */
-    //   }
-    // }
-  };
-
   connectWalletByPrivateKey = async (privateKey: string) => {
+    // TODO: set address
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -90,14 +62,17 @@ class AccountStore {
   };
 
   setAddress = (address: string) => {
-    this.address = address;
+    if (address) {
+      const addressInstance = Address.fromDynamicInput(address);
+      const bech32 = addressInstance.bech32Address;
+      console.log(bech32);
+      this.address = bech32;
+    } else {
+      this.address = "";
+    }
+
+    this.serialize();
   };
-
-  // get address() {
-  //   const bcNetwork = FuelNetwork.getInstance();
-
-  //   return bcNetwork.getAddress();
-  // }
 
   get address0x() {
     const address = new Address(this.address as any).toB256();
@@ -113,7 +88,7 @@ class AccountStore {
 
     return {
       privateKey: bcNetwork?.getPrivateKey() ?? null,
-      address: bcNetwork?.getAddress() ?? null,
+      address: this.address,
     };
   };
 }

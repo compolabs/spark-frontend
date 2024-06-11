@@ -36,13 +36,19 @@ const ConnectedWallet: React.FC = observer(() => {
 
   const bcNetwork = FuelNetwork.getInstance();
 
-  const ethBalance = BN.formatUnits(balance?.toString() ?? "0", bcNetwork!.getTokenBySymbol("ETH").decimals).toFormat(
-    4,
-  );
+  const ethBalance = BN.formatUnits(
+    balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
+    bcNetwork!.getTokenBySymbol("ETH").decimals,
+  )?.toFormat(4);
 
   const handleAddressCopy = () => {
     address && copy(address);
     notificationStore.toast(createToast({ text: "Your address was copied" }), { type: "info" });
+  };
+
+  const disconnectWallet = () => {
+    disconnect();
+    accountStore.disconnect();
   };
 
   const actions = [

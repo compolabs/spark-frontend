@@ -4,7 +4,6 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
-import { ReactComponent as ArrowIcon } from "@src/assets/icons/arrowUp.svg";
 import Button from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";
@@ -20,18 +19,13 @@ type IProps = Omit<IDialogPropTypes, "onClose"> & {
 // TODO: refactor account store, minting and save address in local storage
 
 const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) => {
-  const { accountStore, settingsStore } = useStores();
+  const { settingsStore } = useStores();
   const theme = useTheme();
-  const { connect, address } = useWallet();
+  const { connect } = useWallet();
   const [isUserAgreedWithTerms, setIsUserAgreedWithTerms] = useState(settingsStore.isUserAgreedWithTerms ?? false);
 
-  const connectAndSaveAddress = () => {
-    connect();
-    accountStore.setAddress(address);
-  };
-
   const openWalletConnectUI = () => {
-    connectAndSaveAddress();
+    connect();
     onClose();
   };
 
@@ -101,56 +95,6 @@ const Root = styled.div`
   padding-bottom: 24px;
 `;
 
-const WalletContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 16px 0;
-  width: 100%;
-  gap: 4px;
-`;
-
-const WalletItem = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 4px 24px;
-  gap: 4px;
-  cursor: pointer;
-`;
-
-const WalletIconContainer = styled.div`
-  display: flex;
-
-  svg {
-    height: 24px;
-    width: 24px;
-  }
-`;
-
-const FooterContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
-
-const StyledLink = styled.a`
-  cursor: pointer;
-  transition: 0.4s;
-  text-decoration: none;
-
-  :hover {
-    opacity: 0.8;
-  }
-`;
-
-const StyledText = styled(Text)`
-  cursor: pointer;
-  transition: 0.4s;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
 const AgreementContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -178,10 +122,6 @@ const ButtonContainer = styled.div`
 const ArrowContainer = styled.div`
   display: flex;
   gap: 10px;
-`;
-
-const StyledArrowIcon = styled(ArrowIcon)`
-  transform: rotate(90deg);
 `;
 
 const AGREEMENT_TEXT = (

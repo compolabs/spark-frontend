@@ -30,7 +30,6 @@ console.warn(`Version: ${__COMMIT_HASH__}`);
 
 const queryClient = new QueryClient();
 
-// TODO: move to env file
 const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 const METADATA = {
   name: "Spark",

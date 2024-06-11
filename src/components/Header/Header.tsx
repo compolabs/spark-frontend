@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -9,6 +9,7 @@ import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import { ReactComponent as Logo } from "@src/assets/icons/logo.svg";
 import { ReactComponent as Menu } from "@src/assets/icons/menu.svg";
+import { FuelNetwork } from "@src/blockchain";
 import { MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
@@ -35,6 +36,14 @@ const Header: React.FC = observer(() => {
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
+
+  useEffect(() => {
+    accountStore.setAddress(address);
+    if (address) {
+      const bcNetwork = FuelNetwork.getInstance();
+      bcNetwork.setWallet(address);
+    }
+  }, [address]);
 
   const toggleMenu = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
