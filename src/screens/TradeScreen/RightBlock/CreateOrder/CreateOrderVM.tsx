@@ -349,8 +349,7 @@ class CreateOrderVM {
     }
 
     try {
-      const token = market.baseToken;
-      const amount = this.isSell ? this.inputAmount.times(-1) : this.inputAmount;
+      const token = market.quoteToken;
       const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
 
       let hash: Undefinable<string> = "";
@@ -365,7 +364,7 @@ class CreateOrderVM {
         // hash = data?.transactionId;
       } else {
         const data = await bcNetwork.createSpotOrder(
-          amount.toString(),
+          this.inputAmount.toString(),
           token.assetId,
           this.inputPrice.toString(),
           type,

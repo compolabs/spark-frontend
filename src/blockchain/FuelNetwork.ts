@@ -64,6 +64,7 @@ export class FuelNetwork {
     return this.walletManager.getBalance(accountAddress, assetAddress);
   };
 
+  // TODO: Fix for mobile wallets connected to desktop
   getIsExternalWallet = () => false;
 
   getTokenList = (): Token[] => {
