@@ -64,26 +64,26 @@ root.render(
   // <React.StrictMode>
   <storesContext.Provider value={STORE}>
     <ThemeWrapper>
-      <Router>
-        <QueryClientProvider client={queryClient}>
-          <FuelProvider
-            fuelConfig={{
-              connectors: [
-                new FuelWalletConnector(),
-                new FueletWalletConnector(),
-                new WalletConnectConnector({
-                  wagmiConfig,
-                  projectId: WC_PROJECT_ID,
-                }),
-                new FuelWalletDevelopmentConnector(),
-              ],
-            }}
-            theme="dark"
-          >
+      <QueryClientProvider client={queryClient}>
+        <FuelProvider
+          fuelConfig={{
+            connectors: [
+              new FuelWalletConnector(),
+              new FueletWalletConnector(),
+              new WalletConnectConnector({
+                wagmiConfig,
+                projectId: WC_PROJECT_ID,
+              }),
+              new FuelWalletDevelopmentConnector(),
+            ],
+          }}
+          theme="dark"
+        >
+          <Router>
             <App />
-          </FuelProvider>
-        </QueryClientProvider>
-      </Router>
+          </Router>
+        </FuelProvider>
+      </QueryClientProvider>
       <ToastContainer
         autoClose={5000}
         closeOnClick={false}

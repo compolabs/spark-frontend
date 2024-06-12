@@ -29,13 +29,15 @@ import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
   const { tradeStore, modalStore, accountStore } = useStores();
-  const { address } = useWallet();
+  const { address, wallet } = useWallet();
   const location = useLocation();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
+
+  console.log(wallet);
 
   useEffect(() => {
     accountStore.setAddress(address);

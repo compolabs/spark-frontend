@@ -20,7 +20,21 @@ export class WalletManager {
   }
 
   setWallet = async (account: string) => {
-    this.wallet = await this.fuel.getWallet(account);
+    let currentAccount: string | null = null;
+    try {
+      currentAccount = await this.fuel.currentAccount();
+    } catch (error) {
+      console.error("Not authorized");
+    }
+    if (currentAccount) {
+      try {
+        this.wallet = await this.fuel.getWallet(account);
+      } catch (err) {
+        console.error("There is no wallet for this account");
+      }
+    }
+    // for ethereum wallets should be another logic to connect
+    console.log(this.wallet, "wallet");
     this.address = account;
   };
 
