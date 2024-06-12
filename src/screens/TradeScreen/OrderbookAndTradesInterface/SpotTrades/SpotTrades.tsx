@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -10,26 +10,12 @@ import {
   useSpotTradesVM,
 } from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
 import { SmartFlex } from "@src/components/SmartFlex";
-import { useEventListener } from "@src/hooks/useEventListener";
-import { useMedia } from "@src/hooks/useMedia";
 
 const SpotTradesImpl: React.FC = observer(() => {
   const vm = useSpotTradesVM();
   const theme = useTheme();
-  const media = useMedia();
 
-  useEffect(() => {
-    vm.calcSize(media.mobile);
-  }, [media.mobile]);
-
-  const handleCalcSize = useCallback(() => {
-    vm.calcSize(media.mobile);
-  }, [media.mobile]);
-
-  useEventListener("resize", handleCalcSize);
-
-  const trades = vm.trades.slice(-vm.amountOfOrders);
-  if (trades.length === 0)
+  if (vm.trades.length === 0)
     return (
       <Root alignItems="center" justifyContent="center" mainAxisSize="stretch">
         <Text type={TEXT_TYPES.SUPPORTING}>No trades yet</Text>
@@ -46,7 +32,7 @@ const SpotTradesImpl: React.FC = observer(() => {
       </Header>
 
       <Container className="better-scroll">
-        {trades.map((trade) => (
+        {vm.trades.map((trade) => (
           <Row key={"trade" + trade.id} alignItems="center" justifyContent="space-between" style={{ marginBottom: 2 }}>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
               {trade.formatPrice}
@@ -74,6 +60,7 @@ export default SpotTrades;
 
 const Root = styled(Column)`
   width: 100%;
+  height: 100%;
 `;
 
 const Header = styled.div`
@@ -90,21 +77,12 @@ const Header = styled.div`
   }
 `;
 
-const Container = styled.div<{
-  fitContent?: boolean;
-  reverse?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+const Container = styled.div`
   width: 100%;
-  ${({ fitContent }) => !fitContent && "height: 100%;"};
-  ${({ reverse }) => reverse && "flex-direction: column-reverse;"};
-  height: 100%;
   box-sizing: border-box;
-  padding: 54px 12px 0;
+  padding: 5px 12px 0;
   overflow-y: auto;
-  max-height: calc(100vh - 263px);
+  max-height: calc(100vh - 260px);
   gap: 2px;
 `;
 
