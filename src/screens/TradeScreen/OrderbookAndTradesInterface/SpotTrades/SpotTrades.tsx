@@ -78,6 +78,7 @@ const Header = styled.div`
 `;
 
 const Container = styled.div`
+  display: grid;
   width: 100%;
   box-sizing: border-box;
   padding: 5px 12px 0;
