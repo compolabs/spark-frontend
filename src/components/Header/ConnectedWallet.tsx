@@ -23,14 +23,8 @@ import ConnectedWalletButton from "./ConnectedWalletButton";
 
 const ConnectedWallet: React.FC = observer(() => {
   const { accountStore, notificationStore, balanceStore } = useStores();
-  const { address, refetchWallet, balance } = useWallet();
+  const { address } = useWallet();
   const { disconnect } = useDisconnect();
-
-  // TODO: enable wallet balance auto-update ?
-  // useEffect(() => {
-  //   const interval = setInterval(() => refetchWallet(), 5000);
-  //   return () => clearInterval(interval);
-  // }, [refetchWallet]);
 
   const [isFocused, setIsFocused] = useState(false);
 

@@ -14,13 +14,11 @@ interface IProps {
 }
 
 const Toast: React.FC<IProps> = ({ text, linkText = "Open In Explorer", hash, address, url }) => {
-  let link;
+  let link = url;
   if (hash) {
     link = getExplorerLinkByHash(hash);
   } else if (address) {
     link = getExplorerLinkByAddress(address);
-  } else if (url) {
-    link = url;
   }
 
   return (

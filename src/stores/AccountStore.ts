@@ -61,16 +61,7 @@ class AccountStore {
   };
 
   setAddress = (address: string) => {
-    if (address) {
-      const addressInstance = Address.fromDynamicInput(address);
-      const bech32 = addressInstance.bech32Address;
-      console.log(bech32);
-      this.address = bech32;
-    } else {
-      this.address = "";
-    }
-
-    this.serialize();
+    this.address = address;
   };
 
   get address0x() {

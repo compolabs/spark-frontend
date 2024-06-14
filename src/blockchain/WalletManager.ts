@@ -37,7 +37,6 @@ export class WalletManager {
       // for ethereum wallets should be another logic to connect
       this.wallet = wallet as any;
     }
-    console.log(this.wallet, "wallet");
     this.address = account;
   };
 
