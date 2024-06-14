@@ -30,14 +30,10 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const bcNetwork = FuelNetwork.getInstance();
 
-  // const ethBalance = BN.formatUnits(
-  //   balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
-  //   bcNetwork?.getTokenBySymbol("ETH").decimals,
-  // )?.toFormat(4);
-
-  const ethBalance = BN.formatUnits(balance?.toString() ?? "0", bcNetwork!.getTokenBySymbol("ETH").decimals).toFormat(
-    4,
-  );
+  const ethBalance = BN.formatUnits(
+    balanceStore.getBalance(bcNetwork!.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
+    bcNetwork?.getTokenBySymbol("ETH").decimals,
+  )?.toFormat(4);
 
   const handleAddressCopy = () => {
     accountStore.address && copy(accountStore.address);
@@ -46,6 +42,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   const handleDisconnect = () => {
+    accountStore.disconnect();
     disconnect();
     onClose();
   };
