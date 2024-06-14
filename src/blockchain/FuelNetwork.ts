@@ -78,8 +78,8 @@ export class FuelNetwork {
     return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
-  setWallet = async (account: string): Promise<void> => {
-    await this.walletManager.setWallet(account);
+  setWallet = async (account: string, wallet?: any): Promise<void> => {
+    await this.walletManager.setWallet(account, wallet);
     this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 

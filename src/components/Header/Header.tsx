@@ -37,15 +37,13 @@ const Header: React.FC = observer(() => {
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
 
-  console.log(wallet);
-
   useEffect(() => {
     accountStore.setAddress(address);
-    if (address) {
+    if (address && wallet) {
       const bcNetwork = FuelNetwork.getInstance();
-      bcNetwork.setWallet(address);
+      bcNetwork.setWallet(address, wallet);
     }
-  }, [address]);
+  }, [address, wallet?.address]);
 
   const toggleMenu = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

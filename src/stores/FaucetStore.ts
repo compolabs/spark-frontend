@@ -65,6 +65,7 @@ class FaucetStore {
       notificationStore.toast(createToast({ text: "Minting successful!" }), { type: "success" });
       await accountStore.addAsset(assetId);
     } catch (error: any) {
+      console.log(error);
       handleWalletErrors(notificationStore, error, "We were unable to mint tokens at this time");
     } finally {
       this.setLoading(false);

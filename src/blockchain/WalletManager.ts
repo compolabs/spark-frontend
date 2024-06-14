@@ -1,5 +1,5 @@
-import { Fuel, FuelWalletConnector } from "@fuel-wallet/sdk";
-import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
+import { FuelWalletConnector } from "@fuels/connectors";
+import { Account, Fuel, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -19,21 +19,24 @@ export class WalletManager {
     makeAutoObservable(this);
   }
 
-  setWallet = async (account: string) => {
+  setWallet = async (account: string, wallet?: Account | null) => {
     let currentAccount: string | null = null;
     try {
       currentAccount = await this.fuel.currentAccount();
     } catch (error) {
-      console.error("Not authorized");
+      console.error("Not authorized for fuel");
     }
     if (currentAccount) {
       try {
-        this.wallet = await this.fuel.getWallet(account);
+        const fuelWallet = await this.fuel.getWallet(account);
+        this.wallet = fuelWallet as any;
       } catch (err) {
         console.error("There is no wallet for this account");
       }
+    } else {
+        // for ethereum wallets should be another logic to connect
+      this.wallet = wallet as any;
     }
-    // for ethereum wallets should be another logic to connect
     console.log(this.wallet, "wallet");
     this.address = account;
   };
