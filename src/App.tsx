@@ -8,6 +8,7 @@ import { Column } from "@components/Flex";
 import Header from "./components/Header";
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
 import Faucet from "./screens/Faucet";
+import { SwapScreen } from "./screens/SwapScreen";
 import TradeScreen from "./screens/TradeScreen";
 import { ROUTES } from "./constants";
 
@@ -30,6 +31,7 @@ const App: React.FC = observer(() => {
       <Routes>
         <Route element={<TradeScreen />} path={ROUTES.TRADE} />
         <Route element={<TradeScreen />} path={ROUTES.ROOT} />
+        <Route element={<SwapScreen />} path={ROUTES.SWAP} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
       </Routes>
     </Root>

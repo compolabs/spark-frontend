@@ -2,6 +2,7 @@ export const ROUTES = {
   ROOT: "/",
   TRADE: "/:marketId",
   FAUCET: "/faucet",
+  SWAP: "/swap",
 };
 
 export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/sepolia";
@@ -21,6 +22,7 @@ type TMenuItem = {
 export const MENU_ITEMS: Array<TMenuItem> = [
   { title: "TRADE", route: ROUTES.ROOT },
   { title: "FAUCET", route: ROUTES.FAUCET },
+  { title: "SWAP", route: ROUTES.SWAP },
   { title: "DOCS", link: "https://docs.sprk.fi" },
   { title: "GITHUB", link: "https://github.com/compolabs/spark" },
   { title: "TWITTER", link: "https://twitter.com/Sprkfi" },
