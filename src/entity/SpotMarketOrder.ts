@@ -24,15 +24,15 @@ export class SpotMarketOrder {
   readonly baseToken: Token;
   readonly quoteToken = TOKENS_BY_SYMBOL.USDC; // TODO: Переписать пробрасывать через аргументы;
   readonly trader: string;
-  readonly baseSize: BN;
-  readonly baseSizeUnits: BN;
-  readonly quoteSize: BN;
-  readonly quoteSizeUnits: BN;
   readonly price: BN;
   readonly priceUnits: BN;
   readonly priceScale = 1e9;
   readonly priceDecimals = DEFAULT_DECIMALS;
   readonly type: "BUY" | "SELL";
+  baseSize: BN;
+  baseSizeUnits: BN;
+  quoteSize: BN;
+  quoteSizeUnits: BN;
 
   constructor(order: SpotMarketOrderParams) {
     this.id = order.id;
@@ -65,4 +65,16 @@ export class SpotMarketOrder {
   get marketSymbol() {
     return `${this.baseToken.symbol}-${this.quoteToken.symbol}`;
   }
+
+  addBaseSize = (amount: BN) => {
+    this.baseSize = this.baseSize.plus(amount);
+
+    this.baseSizeUnits = BN.formatUnits(this.baseSize, this.baseToken.decimals);
+    this.quoteSize = this.baseSize
+      .abs()
+      .times(this.price)
+      .times(Math.pow(10, this.quoteToken.decimals))
+      .div(Math.pow(10, this.baseToken.decimals) * this.priceScale);
+    this.quoteSizeUnits = BN.formatUnits(this.quoteSize, this.quoteToken.decimals);
+  };
 }

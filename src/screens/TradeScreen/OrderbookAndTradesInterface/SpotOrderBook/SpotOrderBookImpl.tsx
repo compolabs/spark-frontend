@@ -34,9 +34,9 @@ export enum SPOT_ORDER_FILTER {
   BUY = 2,
 }
 
-export const SPOT_DECIMAL_OPTIONS = [2, 3, 4, 5];
+const SPOT_DECIMAL_OPTIONS = [0, 1, 2, 3];
 
-export const SPOT_SETTINGS_ICONS = {
+const SPOT_SETTINGS_ICONS = {
   [SPOT_ORDER_FILTER.SELL_AND_BUY]: sellAndBuyIcon,
   [SPOT_ORDER_FILTER.SELL]: sellIcon,
   [SPOT_ORDER_FILTER.BUY]: buyIcon,
@@ -113,7 +113,12 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
     );
   };
 
-  const decimals = SPOT_DECIMAL_OPTIONS[+vm.decimalKey];
+  const indexOfDecimal = SPOT_DECIMAL_OPTIONS.indexOf(vm.decimalGroup);
+
+  const handleDecimalSelect = (index: string) => {
+    const value = SPOT_DECIMAL_OPTIONS[Number(index)];
+    vm.setDecimalGroup(value);
+  };
 
   const renderOrders = (orders: SpotMarketOrder[], type: "sell" | "buy") => {
     const orderMode = type === "sell" ? ORDER_MODE.BUY : ORDER_MODE.SELL;
@@ -124,9 +129,9 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
     return orders.map((o, index) => (
       <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
         <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
-        <Text primary>{o.baseSizeUnits.toSignificant(decimals)}</Text>
-        <TextOverflow color={color}>{BN.formatUnits(o.price, 9).toFormat(decimals)}</TextOverflow>
-        <Text primary>{numeral(o.quoteSizeUnits).format(`0.${"0".repeat(decimals)}a`)}</Text>
+        <Text primary>{o.baseSizeUnits.toFormat(3)}</Text>
+        <TextOverflow color={color}>{BN.formatUnits(o.price, 9).toFormat(vm.decimalGroup)}</TextOverflow>
+        <Text primary>{numeral(o.quoteSizeUnits).format(`0.${"0".repeat(vm.decimalGroup)}a`)}</Text>
       </OrderRow>
     ));
   };
@@ -139,8 +144,8 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
             title: new BN(10).pow(-v).toString(),
             key: index.toString(),
           }))}
-          selected={vm.decimalKey}
-          onSelect={({ key }) => vm.setDecimalKey(key)}
+          selected={String(indexOfDecimal)}
+          onSelect={({ key }) => handleDecimalSelect(key)}
         />
         {renderSettingsIcons()}
       </SettingsContainer>
@@ -185,10 +190,10 @@ const SpotOrderBookImpl: React.FC<IProps> = observer(() => {
           decimals={SPOT_DECIMAL_OPTIONS}
           filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([key, value]) => value)}
           isOpen={isSettingsOpen}
-          selectedDecimal={vm.decimalKey}
+          selectedDecimal={String(indexOfDecimal)}
           selectedFilter={vm.orderFilter}
           onClose={closeSettings}
-          onDecimalSelect={vm.setDecimalKey}
+          onDecimalSelect={handleDecimalSelect}
           onFilterSelect={vm.setOrderFilter}
         />
       </OrderbookContainer>

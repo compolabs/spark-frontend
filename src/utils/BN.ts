@@ -98,6 +98,10 @@ class BN extends BigNumber {
     return new BN(super.sqrt());
   }
 
+  // integerValue(rm?: BigNumber.RoundingMode | undefined): BN {
+  //   return new BN(super.integerValue(rm));
+  // }
+
   toDecimalPlaces(decimalPlaces: number, roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN): BN {
     return new BN(super.dp(decimalPlaces, roundingMode));
   }

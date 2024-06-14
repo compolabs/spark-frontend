@@ -6,6 +6,7 @@ import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
+import { groupOrders } from "@src/utils/groupOrders";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
@@ -26,8 +27,8 @@ export const SpotOrderbookVMProvider: React.FC<IProps> = ({ children }) => {
 export const useSpotOrderbookVM = () => useVM(ctx);
 
 type TOrderbookData = {
-  buy: Array<SpotMarketOrder>;
-  sell: Array<SpotMarketOrder>;
+  buy: SpotMarketOrder[];
+  sell: SpotMarketOrder[];
   spreadPercent: string;
   spreadPrice: string;
 };
@@ -37,13 +38,16 @@ const UPDATE_INTERVAL = 2 * 1000;
 class SpotOrderbookVM {
   rootStore: RootStore;
 
+  allBuyOrders: SpotMarketOrder[] = [];
+  allSellOrders: SpotMarketOrder[] = [];
+
   orderbook: TOrderbookData = {
     buy: [],
     sell: [],
     spreadPercent: "0.00",
     spreadPrice: "",
   };
-  decimalKey: string = "0";
+  decimalGroup = 2;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
   amountOfOrders: number = 0;
 
@@ -115,7 +119,17 @@ class SpotOrderbookVM {
 
   setAmountOfOrders = (value: number) => (this.amountOfOrders = value);
 
-  setDecimalKey = (value: string) => (this.decimalKey = value);
+  setDecimalGroup = (value: number) => {
+    this.decimalGroup = value;
+
+    const buyOrdersCombinedByDecimal = groupOrders(this.allBuyOrders, value);
+    const sellOrdersCombinedByDecimal = groupOrders(this.allSellOrders, value);
+
+    this.setOrderbook({
+      buy: buyOrdersCombinedByDecimal,
+      sell: sellOrdersCombinedByDecimal,
+    });
+  };
 
   setOrderFilter = (value: SPOT_ORDER_FILTER) => (this.orderFilter = value);
 
@@ -127,7 +141,7 @@ class SpotOrderbookVM {
     if (!this.rootStore.initialized || !market) return;
 
     const bcNetwork = FuelNetwork.getInstance();
-    const limit = 100;
+    const limit = 200;
 
     this.isOrderBookLoading = true;
 
@@ -136,28 +150,46 @@ class SpotOrderbookVM {
       bcNetwork!.fetchSpotOrders({ baseToken: market.baseToken.assetId, type: "SELL", limit }),
     ]);
 
-    //bid = max of buy
-    const buyPrices = buy.map((order) => order.price);
-    const maxBuyPrice = buyPrices.reduce((max, current) => (current.gt(max) ? current : max), buyPrices[0]);
+    this.allBuyOrders = buy;
+    this.allSellOrders = sell;
 
-    //ask = min of sell
-    const sellPrices = sell.map((order) => order.price);
-    const minSellPrice = sellPrices.reduce((min, current) => (current.lt(min) ? current : min), sellPrices[0]);
+    const buyOrdersCombinedByDecimal = groupOrders(this.allBuyOrders, this.decimalGroup);
+    const sellOrdersCombinedByDecimal = groupOrders(this.allSellOrders, this.decimalGroup);
+
+    const getPrice = (orders: SpotMarketOrder[], priceType: "max" | "min"): BN => {
+      const compareType = priceType === "max" ? "gt" : "lt";
+      return orders.reduce((value, order) => (order.price[compareType](value) ? order.price : value), orders[0].price);
+    };
+
+    const maxBuyPrice = getPrice(this.allBuyOrders, "max");
+    const minSellPrice = getPrice(this.allSellOrders, "min");
 
     if (maxBuyPrice && minSellPrice) {
       // spread = ask - bid
       const spread = minSellPrice.minus(maxBuyPrice);
       const formattedSpread = BN.formatUnits(spread, DEFAULT_DECIMALS).toSignificant(2);
+      const spreadPercent = spread.div(maxBuyPrice).times(100);
 
-      const spreadPercent = minSellPrice.minus(maxBuyPrice).div(maxBuyPrice).times(100);
-      this.setOrderbook({ buy, sell, spreadPercent: spreadPercent.toFormat(2), spreadPrice: formattedSpread });
+      this.setOrderbook({
+        buy: buyOrdersCombinedByDecimal,
+        sell: sellOrdersCombinedByDecimal,
+        spreadPercent: spreadPercent.toFormat(2),
+        spreadPrice: formattedSpread,
+      });
       this.isOrderBookLoading = false;
       return;
     }
 
-    this.setOrderbook({ buy, sell, spreadPercent: "0.00", spreadPrice: "0.00" });
+    this.setOrderbook({
+      buy: buyOrdersCombinedByDecimal,
+      sell: sellOrdersCombinedByDecimal,
+      spreadPercent: "0.00",
+      spreadPrice: "0.00",
+    });
     this.isOrderBookLoading = false;
   };
 
-  private setOrderbook = (orderbook: TOrderbookData) => (this.orderbook = orderbook);
+  private setOrderbook = (orderbook: Partial<TOrderbookData>) => {
+    this.orderbook = { ...this.orderbook, ...orderbook };
+  };
 }
