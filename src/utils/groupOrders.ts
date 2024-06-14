@@ -13,8 +13,10 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
 
   orders.forEach((order) => {
     const roundedPrice = roundPrice(order.price, DEFAULT_DECIMALS - decimals);
-    if (!groupedOrders[roundedPrice.toString()]) {
-      groupedOrders[roundedPrice.toString()] = new SpotMarketOrder({
+    const price = roundedPrice.toString();
+
+    if (!groupedOrders[price]) {
+      groupedOrders[price] = new SpotMarketOrder({
         id: order.id,
         baseToken: order.baseToken.assetId,
         trader: order.trader,
@@ -23,7 +25,7 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
         blockTimestamp: order.timestamp.unix(),
       });
     }
-    groupedOrders[roundedPrice.toString()].addBaseSize(order.baseSize);
+    groupedOrders[price].addBaseSize(order.baseSize);
   });
 
   return Object.values(groupedOrders);
