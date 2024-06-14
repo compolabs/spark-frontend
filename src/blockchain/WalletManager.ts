@@ -34,7 +34,7 @@ export class WalletManager {
         console.error("There is no wallet for this account");
       }
     } else {
-        // for ethereum wallets should be another logic to connect
+      // for ethereum wallets should be another logic to connect
       this.wallet = wallet as any;
     }
     console.log(this.wallet, "wallet");
