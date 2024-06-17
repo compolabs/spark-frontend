@@ -63,7 +63,6 @@ class FaucetStore {
     try {
       await bcNetwork?.mintToken(assetId);
       notificationStore.toast(createToast({ text: "Minting successful!" }), { type: "success" });
-      await accountStore.addAsset(assetId);
     } catch (error: any) {
       console.log(error);
       handleWalletErrors(notificationStore, error, "We were unable to mint tokens at this time");

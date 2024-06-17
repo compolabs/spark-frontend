@@ -158,7 +158,7 @@ class TradeStore {
       this.setSpotMarkets(spotMarkets);
       await this.updateMarketPrices();
     } catch (error) {
-      console.error("[PERP] Error init spot market", error);
+      console.error("Error init spot market", error);
     }
   };
 
