@@ -11,6 +11,7 @@ import { BalanceStore } from "./BalanceStore";
 import { CollateralStore } from "./CollateralStore";
 import { ModalStore } from "./ModalStore";
 import OracleStore from "./OracleStore";
+import SwapStore from "./SwapStore";
 
 export interface ISerializedRootStore {
   accountStore?: ISerializedAccountStore;
@@ -29,6 +30,7 @@ export default class RootStore {
   oracleStore: OracleStore;
   collateralStore: CollateralStore;
   modalStore: ModalStore;
+  swapStore: SwapStore;
 
   private constructor(initState?: ISerializedRootStore) {
     this.notificationStore = new NotificationStore(this);
@@ -40,6 +42,7 @@ export default class RootStore {
     this.oracleStore = new OracleStore(this);
     this.collateralStore = new CollateralStore(this);
     this.modalStore = new ModalStore(this);
+    this.swapStore = new SwapStore(this);
 
     makeAutoObservable(this);
 

@@ -1,12 +1,35 @@
 import React, { useState } from "react";
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import arrowDownIcon from "@src/assets/icons/arrowDown.svg";
+import { ReactComponent as WalletIcon } from "@src/assets/icons/wallet.svg";
+import { TOKENS_LIST } from "@src/blockchain/constants";
 import Text, { TEXT_TYPES } from "@src/components/Text";
+import { useStores } from "@src/stores";
 import { isValidAmountInput, replaceComma } from "@src/utils/swapUtils";
 
+import { TokenOption, TokenSelect } from "./TokenSelect";
+
 export const SwapScreen: React.FC = () => {
+  const theme = useTheme();
+  const { accountStore, balanceStore, faucetStore } = useStores();
   const [payAmount, setPayAmount] = useState<string>("0.00");
   const [receiveAmount, setReceiveAmount] = useState<string>("0.00");
+
+  const sellTokenOptions = TOKENS_LIST.map((token) => ({
+    key: token.symbol,
+    title: token.name,
+    img: token.logo,
+    symbol: token.symbol,
+  }));
+
+  const [sellToken, setSellToken] = useState<TokenOption>(sellTokenOptions[0]);
+  const [buyToken, setBuyToken] = useState<TokenOption>(sellTokenOptions[1]);
+
+  const exchangeRate = 3653; // TODO: get exchange rate from API
+
+  console.log(Array.from(faucetStore.faucetTokens));
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPayAmount = replaceComma(e.target.value);
@@ -38,16 +61,31 @@ export const SwapScreen: React.FC = () => {
         <SwapBox>
           <BoxHeader>
             <Actions>Sell Half All</Actions>
-            <TokenSelect>Icon + Token title select</TokenSelect>
+            <TokenSelect options={sellTokenOptions} value={sellToken} onSelect={() => {}} />
           </BoxHeader>
           <SwapInput autoComplete="off" id="pay-amount" type="text" value={payAmount} onChange={onPayAmountChange} />
           <BalanceSection>
             <Text type={TEXT_TYPES.BODY}>$0.00</Text>
-            <Text type={TEXT_TYPES.BODY}>wallet icon Balance</Text>
+            {accountStore.address ? (
+              <Balance>
+                <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+                  320
+                </Text>
+                <WalletIcon />
+              </Balance>
+            ) : null}
           </BalanceSection>
         </SwapBox>
+
+        <SwitchTokens>
+          <img alt="arrow down" src={arrowDownIcon} />
+        </SwitchTokens>
+
         <SwapBox>
-          <BoxHeader>Buy</BoxHeader>
+          <BoxHeader>
+            <Text type={TEXT_TYPES.BODY}>Buy</Text>
+            <TokenSelect options={sellTokenOptions} value={buyToken} onSelect={() => {}} />
+          </BoxHeader>
           <SwapInput
             autoComplete="off"
             id="receive-amount"
@@ -57,8 +95,18 @@ export const SwapScreen: React.FC = () => {
           />
           <BalanceSection>
             <Text type={TEXT_TYPES.BODY}>$0.00</Text>
-            <Text type={TEXT_TYPES.BODY}>wallet icon Balance</Text>
+            {accountStore.address ? (
+              <Balance>
+                <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+                  0.15
+                </Text>
+                <WalletIcon />
+              </Balance>
+            ) : null}
           </BalanceSection>
+          <ExchangeRate>
+            <Text type={TEXT_TYPES.BODY}>1 ETH = {exchangeRate}($...) </Text>
+          </ExchangeRate>
         </SwapBox>
       </SwapContainer>
     </Root>
@@ -73,6 +121,7 @@ const Root = styled.div`
   justify-content: center;
   width: 100%;
   gap: 16px;
+  position: relative;
 `;
 
 const TitleContainer = styled.div`
@@ -99,7 +148,7 @@ const SwapContainer = styled.div`
 const SwapBox = styled.div`
   border-radius: 8px 8px 16px 16px;
   background-color: #232323;
-  padding: 16px 20px;
+  padding: 16px 8px 16px 20px;
   &:first-of-type {
     margin-bottom: 4px;
     border-radius: 16px 16px 8px 8px;
@@ -118,12 +167,6 @@ const Actions = styled.div`
   gap: 8px;
 `;
 
-const TokenSelect = styled.div`
-  border-radius: 30px;
-  background: #0000004d;
-  padding: 8px;
-`;
-
 const SwapInput = styled.input`
   border: none;
   width: 100%;
@@ -137,4 +180,27 @@ const BalanceSection = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+
+const Balance = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const ExchangeRate = styled.div`
+  background: #0000004d;
+  border-radius: 33px;
+  text-align: center;
+  margin-top: 32px;
+  padding: 9px 0;
+`;
+
+const SwitchTokens = styled.div`
+  position: absolute;
+  background-color: ${({ theme }) => theme.colors.greenLight};
+  width: 28px;
+  height: 44px;
+  border-radius: 22px;
+  transition: 0.4s;
 `;
