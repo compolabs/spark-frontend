@@ -4,8 +4,8 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
-import { ReactComponent as ArrowIcon } from "@src/assets/icons/arrowUp.svg";
-import { ReactComponent as FuelWalletIcon } from "@src/assets/wallets/fuel.svg";
+import ArrowIcon from "@src/assets/icons/arrowUp.svg?react";
+import FuelWalletIcon from "@src/assets/wallets/fuel.svg?react";
 import Button from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";

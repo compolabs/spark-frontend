@@ -19,7 +19,7 @@ const initState = loadState();
 
 const STORE = RootStore.create(initState);
 
-console.warn(`Version: ${__COMMIT_HASH__}`);
+console.warn(`Version: ${process.env.__COMMIT_HASH__}`);
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(

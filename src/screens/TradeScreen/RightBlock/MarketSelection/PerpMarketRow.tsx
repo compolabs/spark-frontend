@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Text, { TEXT_TYPES } from "@components/Text";
-import { ReactComponent as ArrowLeftIcon } from "@src/assets/icons/arrowLeft.svg";
+import ArrowLeftIcon from "@src/assets/icons/arrowLeft.svg?react";
 import outlineStarIcon from "@src/assets/icons/star.svg";
 import filledStarIcon from "@src/assets/icons/yellowStar.svg";
 import { SmartFlex } from "@src/components/SmartFlex";
