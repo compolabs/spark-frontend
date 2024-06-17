@@ -40,8 +40,12 @@ const Header: React.FC = observer(() => {
   useEffect(() => {
     accountStore.setAddress(address);
     if (address && wallet) {
-      const bcNetwork = FuelNetwork.getInstance();
-      bcNetwork.setWallet(address, wallet);
+      const setWallet = async () => {
+        const bcNetwork = FuelNetwork.getInstance();
+        await bcNetwork.setWallet(address, wallet);
+      };
+
+      setWallet();
     }
   }, [address, wallet?.address]);
 
