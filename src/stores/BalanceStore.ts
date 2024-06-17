@@ -49,8 +49,9 @@ export class BalanceStore {
   update = async () => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
+    const wallet = bcNetwork.getWallet();
 
-    if (!accountStore.address) return;
+    if (!accountStore.address || !wallet) return;
 
     try {
       for (const token of bcNetwork!.getTokenList()) {

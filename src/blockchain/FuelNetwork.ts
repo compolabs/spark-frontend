@@ -64,6 +64,10 @@ export class FuelNetwork {
     return this.walletManager.getBalance(accountAddress, assetAddress);
   };
 
+  getWallet = (): Nullable<any> => {
+    return this.walletManager.wallet;
+  };
+
   getIsExternalWallet = () => false;
 
   getTokenList = (): Token[] => {
