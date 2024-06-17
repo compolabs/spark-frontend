@@ -24,6 +24,8 @@ class SpotTradesVM {
 
   private tradesUpdater: IntervalUpdater;
 
+  isTradesLoading = false;
+
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
     this.updateTrades().then();
@@ -41,6 +43,8 @@ class SpotTradesVM {
 
     if (!initialized || !market) return;
 
+    this.isTradesLoading = true;
+
     try {
       const tradesResponse = await bcNetwork!.fetchSpotTrades({
         baseToken: market.baseToken.assetId,
@@ -50,5 +54,7 @@ class SpotTradesVM {
     } catch (error) {
       console.error("Error with loading trades");
     }
+
+    this.isTradesLoading = false;
   };
 }
