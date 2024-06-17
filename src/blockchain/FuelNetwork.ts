@@ -1,5 +1,4 @@
 import Spark from "@compolabs/spark-orderbook-ts-sdk";
-import { WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -79,8 +78,8 @@ export class FuelNetwork {
     return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
-  connectWallet = async (): Promise<void> => {
-    await this.walletManager.connect();
+  setWallet = async (account: string, wallet?: any): Promise<void> => {
+    await this.walletManager.setWallet(account, wallet);
     this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 
@@ -98,7 +97,7 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<WriteTransactionResponse> => {
+  createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<any> => {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const baseAsset = this.getAssetFromToken(baseToken);
     const quoteToken = this.getTokenBySymbol("USDC");

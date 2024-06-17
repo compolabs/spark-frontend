@@ -1,156 +1,79 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
-import { ReactComponent as ArrowIcon } from "@src/assets/icons/arrowUp.svg";
-import { ReactComponent as FuelWalletIcon } from "@src/assets/wallets/fuel.svg";
 import Button from "@src/components/Button";
 import { Checkbox } from "@src/components/Checkbox";
 import { Dialog } from "@src/components/Dialog";
 import Text, { TEXT_TYPES } from "@src/components/Text";
+import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 
 type IProps = Omit<IDialogPropTypes, "onClose"> & {
   onClose: () => void;
+  visible: boolean;
 };
 
-enum ActiveState {
-  SELECT_WALLET,
-  USER_AGREEMENT,
-}
+// TODO: refactor account store, minting and save address in local storage
 
-interface Wallet {
-  name: string;
-  icon: React.FC;
-  isActive: boolean;
-}
-
-const WALLETS: Wallet[] = [
-  {
-    name: "Fuel Wallet",
-    isActive: true,
-    icon: FuelWalletIcon,
-  },
-];
-
-const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, ...rest }) => {
-  const { accountStore, settingsStore } = useStores();
+const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) => {
+  const { settingsStore } = useStores();
   const theme = useTheme();
+  const { connect } = useWallet();
+  const [isUserAgreedWithTerms, setIsUserAgreedWithTerms] = useState(settingsStore.isUserAgreedWithTerms ?? false);
 
-  const activeWallets = useMemo(() => WALLETS.filter((w) => w.isActive), []);
-
-  const [activeState, setActiveState] = useState(ActiveState.SELECT_WALLET);
-
-  useEffect(() => {
-    if (rest.visible) return;
-
-    setActiveState(ActiveState.SELECT_WALLET);
-  }, [rest.visible]);
-
-  const handleWalletClick = () => {
-    accountStore.connectWallet().then(onClose);
+  const openWalletConnectUI = () => {
+    connect();
+    onClose();
   };
 
-  const handleNextStateClick = () => {
-    if (settingsStore.isUserAgreedWithTerms) {
-      handleWalletClick();
-      return;
-    }
-
-    setActiveState(ActiveState.USER_AGREEMENT);
-  };
-
-  const renderHeader = () => {
-    if (activeState === ActiveState.SELECT_WALLET) {
-      return (
-        <HeaderContainer>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
-            Connect your wallet
-          </Text>
-          <StyledText color={theme.colors.textSecondary} type={TEXT_TYPES.BUTTON_SECONDARY} onClick={onClose}>
-            Close
-          </StyledText>
-        </HeaderContainer>
-      );
-    }
-
-    return (
-      <HeaderContainer>
-        <ArrowContainer>
-          <StyledArrowIcon onClick={() => setActiveState(ActiveState.SELECT_WALLET)} />
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
-            Terms and conditions
-          </Text>
-        </ArrowContainer>
-      </HeaderContainer>
-    );
-  };
-
-  const renderWallets = () => {
-    return (
-      <>
-        <WalletContainer>
-          {activeWallets.map(({ name, icon: WalletIcon }) => (
-            <WalletItem key={name} onClick={handleNextStateClick}>
-              <WalletIconContainer>
-                <WalletIcon />
-              </WalletIconContainer>
-              <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
-                {name}
-              </Text>
-            </WalletItem>
-          ))}
-        </WalletContainer>
-        <FooterContainer>
-          <Text type={TEXT_TYPES.BODY}>New to Fuel blockchain?</Text>
-          <StyledLink
-            href="https://chromewebstore.google.com/detail/fuel-wallet/dldjpboieedgcmpkchcjcbijingjcgok"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY}>Install Fuel Wallet</Text>
-          </StyledLink>
-        </FooterContainer>
-      </>
-    );
-  };
-
-  const toggleUserAgreement = () => {
+  const saveUserAgreement = () => {
     settingsStore.setIsUserAgreedWithTerms(!settingsStore.isUserAgreedWithTerms);
+    openWalletConnectUI();
   };
 
-  const renderAgreement = () => {
-    return (
-      <>
-        <AgreementContainer className="better-scroll">{AGREEMENT_TEXT}</AgreementContainer>
-        <ButtonContainer>
-          <CheckboxContainer>
-            <Checkbox checked={settingsStore.isUserAgreedWithTerms} onChange={toggleUserAgreement}>
-              <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-                I have read, understand and accept these terms
-              </Text>
-            </Checkbox>
-          </CheckboxContainer>
-          <Button disabled={!settingsStore.isUserAgreedWithTerms} green onClick={() => handleWalletClick()}>
-            Agree and Continue
-          </Button>
-        </ButtonContainer>
-      </>
-    );
-  };
+  const renderAgreement = () => (
+    <>
+      <AgreementContainer className="better-scroll">{AGREEMENT_TEXT}</AgreementContainer>
+      <ButtonContainer>
+        <CheckboxContainer>
+          <Checkbox checked={isUserAgreedWithTerms} onChange={() => setIsUserAgreedWithTerms(!isUserAgreedWithTerms)}>
+            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+              I have read, understand and accept these terms
+            </Text>
+          </Checkbox>
+        </CheckboxContainer>
+        <Button disabled={!isUserAgreedWithTerms} green onClick={() => saveUserAgreement()}>
+          Agree and Continue
+        </Button>
+      </ButtonContainer>
+    </>
+  );
 
   const renderContent = () => {
-    if (activeState === ActiveState.SELECT_WALLET) {
-      return renderWallets();
+    if (!settingsStore.isUserAgreedWithTerms) {
+      return renderAgreement();
+    } else {
+      openWalletConnectUI();
     }
-
-    return renderAgreement();
   };
 
   return (
-    <Dialog onClose={onClose} {...rest} title={renderHeader()}>
+    <Dialog
+      title={
+        <HeaderContainer>
+          <ArrowContainer>
+            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
+              Terms and conditions
+            </Text>
+          </ArrowContainer>
+        </HeaderContainer>
+      }
+      visible={visible}
+      onClose={onClose}
+    >
       <Root>{renderContent()}</Root>
     </Dialog>
   );
@@ -170,56 +93,6 @@ const Root = styled.div`
   align-items: center;
   justify-content: center;
   padding-bottom: 24px;
-`;
-
-const WalletContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 16px 0;
-  width: 100%;
-  gap: 4px;
-`;
-
-const WalletItem = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 4px 24px;
-  gap: 4px;
-  cursor: pointer;
-`;
-
-const WalletIconContainer = styled.div`
-  display: flex;
-
-  svg {
-    height: 24px;
-    width: 24px;
-  }
-`;
-
-const FooterContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
-
-const StyledLink = styled.a`
-  cursor: pointer;
-  transition: 0.4s;
-  text-decoration: none;
-
-  :hover {
-    opacity: 0.8;
-  }
-`;
-
-const StyledText = styled(Text)`
-  cursor: pointer;
-  transition: 0.4s;
-
-  &:hover {
-    opacity: 0.8;
-  }
 `;
 
 const AgreementContainer = styled.div`
@@ -249,10 +122,6 @@ const ButtonContainer = styled.div`
 const ArrowContainer = styled.div`
   display: flex;
   gap: 10px;
-`;
-
-const StyledArrowIcon = styled(ArrowIcon)`
-  transform: rotate(90deg);
 `;
 
 const AGREEMENT_TEXT = (

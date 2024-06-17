@@ -1,3 +1,5 @@
+import { FueletWalletConnector, FuelWalletConnector } from "@fuels/connectors";
+
 export const ROUTES = {
   ROOT: "/",
   TRADE: "/:marketId",
@@ -27,3 +29,15 @@ export const MENU_ITEMS: Array<TMenuItem> = [
   { title: "GITHUB", link: "https://github.com/compolabs/spark" },
   { title: "TWITTER", link: "https://twitter.com/Sprkfi" },
 ];
+
+export const FUEL_CONFIG = {
+  connectors: [
+    new FuelWalletConnector(),
+    new FueletWalletConnector(),
+    // new WalletConnectConnector({
+    //   wagmiConfig,
+    //   projectId: WC_PROJECT_ID,
+    // }),
+    // new FuelWalletDevelopmentConnector(),
+  ],
+};
