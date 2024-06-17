@@ -50,7 +50,7 @@ export class BalanceStore {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!accountStore.isConnected) return;
+    if (!accountStore.address) return;
 
     try {
       for (const token of bcNetwork!.getTokenList()) {
@@ -76,7 +76,7 @@ export class BalanceStore {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!accountStore.isConnected) return "0";
+    if (!accountStore.address) return "0";
 
     const balance = await bcNetwork!.getBalance(accountStore.address!, assetId);
 

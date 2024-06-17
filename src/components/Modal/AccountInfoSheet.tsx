@@ -1,11 +1,13 @@
 import React from "react";
 import styled from "@emotion/styled";
+import { useDisconnect } from "@fuels/react";
 import copy from "copy-to-clipboard";
 
 import copyIcon from "@src/assets/icons/copy.svg";
 import linkIcon from "@src/assets/icons/link.svg";
 import logoutIcon from "@src/assets/icons/logout.svg";
 import { FuelNetwork } from "@src/blockchain";
+import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 import BN from "@src/utils/BN";
 import { getExplorerLinkByAddress } from "@src/utils/getExplorerLink";
@@ -23,6 +25,8 @@ interface Props {
 
 const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
   const { accountStore, notificationStore, balanceStore } = useStores();
+  const { balance } = useWallet();
+  const { disconnect } = useDisconnect();
 
   const bcNetwork = FuelNetwork.getInstance();
 
@@ -39,6 +43,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const handleDisconnect = () => {
     accountStore.disconnect();
+    disconnect();
     onClose();
   };
 
