@@ -1,3 +1,6 @@
+// import { OrderbookContracts } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
+// TODO: add types from sdk after fixed export
+
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { Token } from "@src/entity/Token";
 

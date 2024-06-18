@@ -64,6 +64,10 @@ export class FuelNetwork {
     return this.walletManager.getBalance(accountAddress, assetAddress);
   };
 
+  getWallet = (): Nullable<any> => {
+    return this.walletManager.wallet;
+  };
+
   getIsExternalWallet = () => false;
 
   getTokenList = (): Token[] => {
@@ -78,8 +82,8 @@ export class FuelNetwork {
     return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
-  connectWallet = async (): Promise<void> => {
-    await this.walletManager.connect();
+  setWallet = async (account: string, wallet?: any): Promise<void> => {
+    await this.walletManager.setWallet(account, wallet);
     this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 

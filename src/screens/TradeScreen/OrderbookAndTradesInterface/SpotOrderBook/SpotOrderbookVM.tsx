@@ -10,7 +10,7 @@ import { groupOrders } from "@src/utils/groupOrders";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
-import { SPOT_ORDER_FILTER } from "./SpotOrderBookImpl";
+import { SPOT_ORDER_FILTER } from "./SpotOrderBook";
 
 const ctx = React.createContext<SpotOrderbookVM | null>(null);
 

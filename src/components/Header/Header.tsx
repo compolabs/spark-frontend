@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -9,9 +9,11 @@ import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import Logo from "@src/assets/icons/logo.svg?react";
 import Menu from "@src/assets/icons/menu.svg?react";
+import { FuelNetwork } from "@src/blockchain";
 import { MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
+import { useWallet } from "@src/hooks/useWallet";
 import ConnectWalletDialog from "@src/screens/ConnectWallet";
 import { MODAL_TYPE } from "@src/stores/ModalStore";
 import { media } from "@src/themes/breakpoints";
@@ -26,13 +28,26 @@ import DepositWithdrawModal from "./DepositWithdrawModal";
 import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
-  const { tradeStore, accountStore, modalStore } = useStores();
+  const { tradeStore, modalStore, accountStore } = useStores();
+  const { address, wallet } = useWallet();
   const location = useLocation();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
+
+  useEffect(() => {
+    accountStore.setAddress(address);
+    if (address && wallet) {
+      const setWallet = async () => {
+        const bcNetwork = FuelNetwork.getInstance();
+        await bcNetwork.setWallet(address, wallet);
+      };
+
+      setWallet();
+    }
+  }, [address, wallet?.address]);
 
   const toggleMenu = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -45,7 +60,7 @@ const Header: React.FC = observer(() => {
   };
 
   const renderWallet = () => {
-    if (!accountStore.address) {
+    if (!address) {
       return (
         <WalletContainer>
           <Button fitContent green onClick={openConnectDialog}>
@@ -157,7 +172,9 @@ const Header: React.FC = observer(() => {
         onDepositWithdrawClick={() => modalStore.open(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)}
         onWalletConnect={openConnectDialog}
       />
-      <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
+      {isConnectDialogVisible ? (
+        <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
+      ) : null}
       <AccountInfoSheet isOpen={isAccountInfoSheetOpen} onClose={closeAccountInfo} />
       <DepositWithdrawModal visible={modalStore.isOpen(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)} onClose={modalStore.close} />
     </Root>
