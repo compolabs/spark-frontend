@@ -14,6 +14,7 @@ export type TokenOption = {
   title: string;
   symbol: string;
   img: string;
+  balance: string;
 };
 
 interface TokenSelectProps {
@@ -44,23 +45,28 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
       <img alt="arrow" className="menu-arrow" src={arrowIcon} />
       {isSelectMenuVisible && (
         <OptionsContainer>
-          <SearchInput value="test" onChange={() => console.log("search")} />
+          <Container>
+            <SearchInput value="test" onChange={() => console.log("search")} />
+          </Container>
+
           <OptionsHeader>
             <Text type={TEXT_TYPES.BODY}>Asset</Text>
             <Text type={TEXT_TYPES.BODY}>Balance</Text>
           </OptionsHeader>
           {options.map((option) => (
-            <Option key={option.key}>
-              <OptionRightPart key={option.key} onClick={() => onSelect(option)}>
+            <Option key={option.key} onClick={() => onSelect(option)}>
+              <OptionRightPart key={option.key}>
                 <img alt={option.symbol} src={option.img} />
                 <OptionTitle>
-                  {option.symbol}
+                  <TokenSymbol color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+                    {option.symbol}
+                  </TokenSymbol>
                   <Text type={TEXT_TYPES.BODY}>{option.title}</Text>
                 </OptionTitle>
               </OptionRightPart>
 
               <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                0.00
+                {option.balance ?? "0.00"}
               </Text>
             </Option>
           ))}
@@ -72,7 +78,6 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
 
 const SelectWrapper = styled.div<{
   focused?: boolean;
-  disabled?: boolean;
 }>`
   position: relative;
   color: white;
@@ -85,7 +90,7 @@ const SelectWrapper = styled.div<{
   gap: 8px;
   cursor: pointer;
   transition: 0.4s;
-  width: 121px;
+  min-width: 121px;
 
   .menu-arrow {
     transition: 0.4s;
@@ -95,8 +100,7 @@ const SelectWrapper = styled.div<{
   :hover {
     background-color: #ffffff12;
     .menu-arrow {
-      transform: ${({ focused, disabled }) =>
-        focused ? "rotate(-180)" : disabled ? "rotate(0deg)" : "rotate(-90deg)"};
+      transform: ${({ focused }) => (focused ? "rotate(-180)" : "rotate(-90deg)")};
     }
   }
 `;
@@ -107,13 +111,18 @@ const SelectedOption = styled.div`
   gap: 8px;
 `;
 
+const Container = styled.div`
+  padding: 0 16px;
+`;
+
 const OptionsContainer = styled.div`
+  z-index: 1;
   position: absolute;
   top: calc(100% + 8px);
   width: 300px;
   right: 0;
   background-color: ${({ theme }) => theme.colors.bgSecondary};
-  padding: 16px;
+  padding: 16px 0 0;
   border-radius: 10px;
   max-height: 336px;
   display: flex;
@@ -127,6 +136,7 @@ const OptionsContainer = styled.div`
 const OptionsHeader = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: 0 16px;
 `;
 
 const Option = styled.div`
@@ -135,16 +145,29 @@ const Option = styled.div`
   justify-content: space-between;
   gap: 8px;
   cursor: pointer;
+  padding: 4px 16px;
+
+  &:hover {
+    background-color: #373737;
+  }
+
+  &:last-child {
+    border-radius: 0 0 10px 10px;
+  }
 `;
 
 const OptionRightPart = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 `;
 
 const OptionTitle = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+`;
+
+const TokenSymbol = styled(Text)`
+  font-size: 16px;
 `;

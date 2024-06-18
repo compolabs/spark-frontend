@@ -3,14 +3,13 @@ import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import { ReactComponent as ArrowDownIcon } from "@src/assets/icons/arrowDown.svg";
-import { ReactComponent as SettingsIcon } from "@src/assets/icons/gear.svg";
 import { ReactComponent as WalletIcon } from "@src/assets/icons/wallet.svg";
-import { TOKENS_LIST } from "@src/blockchain/constants";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 import { isValidAmountInput, replaceComma } from "@src/utils/swapUtils";
 
+import { SuccessModal } from "./SuccessModal";
 import { TokenOption, TokenSelect } from "./TokenSelect";
 
 const INPUT_FILL_OPTIONS = ["Half", "All"];
@@ -18,23 +17,18 @@ const INPUT_FILL_OPTIONS = ["Half", "All"];
 export const SwapScreen: React.FC = () => {
   const { isConnected } = useWallet();
   const theme = useTheme();
-  const { accountStore, balanceStore, faucetStore } = useStores();
+  const { accountStore, balanceStore, faucetStore, swapStore } = useStores();
   const [payAmount, setPayAmount] = useState<string>("0.00");
   const [receiveAmount, setReceiveAmount] = useState<string>("0.00");
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
 
-  const sellTokenOptions = TOKENS_LIST.map((token) => ({
-    key: token.symbol,
-    title: token.name,
-    img: token.logo,
-    symbol: token.symbol,
-  }));
+  const [sellToken, setSellToken] = useState<TokenOption>(swapStore.tokens[0]);
+  const [buyToken, setBuyToken] = useState<TokenOption>(swapStore.tokens[1]);
 
-  const [sellToken, setSellToken] = useState<TokenOption>(sellTokenOptions[0]);
-  const [buyToken, setBuyToken] = useState<TokenOption>(sellTokenOptions[1]);
+  const sellTokenOptions: any = swapStore.tokens.filter((token) => token.symbol !== buyToken.symbol);
+  const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== sellToken.symbol);
 
   const exchangeRate = 3653; // TODO: get exchange rate from API
-
-  console.log(Array.from(faucetStore.faucetTokens));
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPayAmount = replaceComma(e.target.value);
@@ -95,7 +89,7 @@ export const SwapScreen: React.FC = () => {
                 </Actions>
               )}
             </ActionContainer>
-            <TokenSelect options={sellTokenOptions} value={sellToken} onSelect={() => {}} />
+            <TokenSelect options={sellTokenOptions} value={sellToken} onSelect={(option) => setSellToken(option)} />
           </BoxHeader>
           <SwapInput autoComplete="off" id="pay-amount" type="text" value={payAmount} onChange={onPayAmountChange} />
           <BalanceSection>
@@ -118,7 +112,7 @@ export const SwapScreen: React.FC = () => {
         <SwapBox>
           <BoxHeader>
             <Text type={TEXT_TYPES.BODY}>Buy</Text>
-            <TokenSelect options={sellTokenOptions} value={buyToken} onSelect={() => {}} />
+            <TokenSelect options={buyTokenOptions} value={buyToken} onSelect={(option) => setBuyToken(option)} />
           </BoxHeader>
           <SwapInput
             autoComplete="off"
@@ -139,36 +133,26 @@ export const SwapScreen: React.FC = () => {
             ) : null}
           </BalanceSection>
           <ExchangeRate>
-            <Text type={TEXT_TYPES.BODY}>1 ETH = {exchangeRate}($...) </Text>
+            <Text type={TEXT_TYPES.BODY}>1 ETH = {exchangeRate} USDC ($3,653) </Text>
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
-      <InfoBlock>
-        <InfoLine>
-          <Text type={TEXT_TYPES.BODY}>Slippage tolerance</Text>
-          <LeftBlock>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-              1%
-            </Text>
-            <SettingsIcon />
-          </LeftBlock>
-        </InfoLine>
-        <InfoLine>
-          <Text type={TEXT_TYPES.BODY}>Exchange fee</Text>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-            0.00003 ETH (0,1$)
-          </Text>
-        </InfoLine>
-        <InfoLine>
-          <Text type={TEXT_TYPES.BODY}>Network fee</Text>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-            0.0001 ETH (4$)
-          </Text>
-        </InfoLine>
-      </InfoBlock>
-      <SwapButton>
+      <SwapButton disabled={!isConnected || !Number(payAmount)}>
         Swap {sellToken.symbol} to {buyToken.symbol}
       </SwapButton>
+
+      {isSuccessModalVisible && (
+        <SuccessModal
+          hash=""
+          transactionInfo={{
+            sellToken: sellToken.symbol,
+            buyToken: buyToken.symbol,
+            sellAmount: payAmount,
+            buyAmount: receiveAmount,
+          }}
+          onClose={() => setSuccessModalVisible(false)}
+        />
+      )}
     </Root>
   );
 };
@@ -312,6 +296,7 @@ const SwitchTokens = styled.button<{ disabled: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
   background-color: ${({ theme, disabled }) => (disabled ? theme.colors.borderSecondary : theme.colors.greenLight)};
   color: ${({ theme, disabled }) => (disabled ? theme.colors.iconDisabled : "#171717")};
   transition:
@@ -340,30 +325,6 @@ const SwitchTokens = styled.button<{ disabled: boolean }>`
   }
 `;
 
-const InfoBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-  border-radius: 16px;
-  background-color: #232323;
-  padding: 16px 20px;
-  width: 100%;
-`;
-
-const InfoLine = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const LeftBlock = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-`;
-
 const SwapButton = styled.button`
   outline: none;
   border-radius: 16px;
@@ -374,6 +335,7 @@ const SwapButton = styled.button`
   transition: all 0.2s;
   color: ${({ theme }) => theme.colors.textPrimary};
   padding: 16px 0;
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
 
   &:disabled {
     color: ${({ theme }) => theme.colors.textDisabled};

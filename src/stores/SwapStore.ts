@@ -19,14 +19,15 @@ class SwapStore {
 
     return bcNetwork!.getTokenList().map((v) => {
       const balance = balanceStore.getBalance(v.assetId);
-      // const mintAmount = new BN(FAUCET_AMOUNTS[v.symbol] ?? 0);
       const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
+      const token = bcNetwork!.getTokenByAssetId(v.assetId);
+
       return {
-        ...bcNetwork!.getTokenByAssetId(v.assetId),
-        ...balance,
-        formatBalance,
-        // mintAmount,
-        // disabled: !AVAILABLE_TOKENS.includes(v.symbol),
+        key: token.symbol,
+        title: token.name,
+        symbol: token.symbol,
+        img: token.logo,
+        balance: formatBalance?.toFormat(4),
       };
     });
   }
