@@ -1,17 +1,22 @@
 import React, { useState } from "react";
-import { useTheme } from "@emotion/react";
+import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import arrowDownIcon from "@src/assets/icons/arrowDown.svg";
+import { ReactComponent as ArrowDownIcon } from "@src/assets/icons/arrowDown.svg";
+import { ReactComponent as SettingsIcon } from "@src/assets/icons/gear.svg";
 import { ReactComponent as WalletIcon } from "@src/assets/icons/wallet.svg";
 import { TOKENS_LIST } from "@src/blockchain/constants";
 import Text, { TEXT_TYPES } from "@src/components/Text";
+import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 import { isValidAmountInput, replaceComma } from "@src/utils/swapUtils";
 
 import { TokenOption, TokenSelect } from "./TokenSelect";
 
+const INPUT_FILL_OPTIONS = ["Half", "All"];
+
 export const SwapScreen: React.FC = () => {
+  const { isConnected } = useWallet();
   const theme = useTheme();
   const { accountStore, balanceStore, faucetStore } = useStores();
   const [payAmount, setPayAmount] = useState<string>("0.00");
@@ -51,6 +56,22 @@ export const SwapScreen: React.FC = () => {
     setReceiveAmount(newReceiveAmount);
   };
 
+  const onSwitchTokens = () => {
+    const temp = sellToken;
+    setSellToken(buyToken);
+    setBuyToken(temp);
+  };
+
+  const fillPayAmount = (option: string) => {
+    if (option === "Half") {
+      setPayAmount("160");
+      // setPayAmount((balanceStore.balance / 2).toFixed(2));
+    } else if (option === "All") {
+      setPayAmount("320");
+      // setPayAmount(balanceStore.balance.toFixed(2));
+    }
+  };
+
   return (
     <Root>
       <TitleContainer>
@@ -60,13 +81,26 @@ export const SwapScreen: React.FC = () => {
       <SwapContainer>
         <SwapBox>
           <BoxHeader>
-            <Actions>Sell Half All</Actions>
+            <ActionContainer>
+              <Text type={TEXT_TYPES.BODY}>Sell</Text>
+              {isConnected && (
+                <Actions>
+                  {INPUT_FILL_OPTIONS.map((option) => (
+                    <ActionTag key={option} onClick={() => fillPayAmount(option)}>
+                      <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+                        {option}
+                      </Text>
+                    </ActionTag>
+                  ))}
+                </Actions>
+              )}
+            </ActionContainer>
             <TokenSelect options={sellTokenOptions} value={sellToken} onSelect={() => {}} />
           </BoxHeader>
           <SwapInput autoComplete="off" id="pay-amount" type="text" value={payAmount} onChange={onPayAmountChange} />
           <BalanceSection>
             <Text type={TEXT_TYPES.BODY}>$0.00</Text>
-            {accountStore.address ? (
+            {isConnected ? (
               <Balance>
                 <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
                   320
@@ -77,8 +111,8 @@ export const SwapScreen: React.FC = () => {
           </BalanceSection>
         </SwapBox>
 
-        <SwitchTokens>
-          <img alt="arrow down" src={arrowDownIcon} />
+        <SwitchTokens disabled={!isConnected} onClick={onSwitchTokens}>
+          <ArrowDownIcon />
         </SwitchTokens>
 
         <SwapBox>
@@ -95,7 +129,7 @@ export const SwapScreen: React.FC = () => {
           />
           <BalanceSection>
             <Text type={TEXT_TYPES.BODY}>$0.00</Text>
-            {accountStore.address ? (
+            {isConnected ? (
               <Balance>
                 <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
                   0.15
@@ -109,6 +143,32 @@ export const SwapScreen: React.FC = () => {
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
+      <InfoBlock>
+        <InfoLine>
+          <Text type={TEXT_TYPES.BODY}>Slippage tolerance</Text>
+          <LeftBlock>
+            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+              1%
+            </Text>
+            <SettingsIcon />
+          </LeftBlock>
+        </InfoLine>
+        <InfoLine>
+          <Text type={TEXT_TYPES.BODY}>Exchange fee</Text>
+          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+            0.00003 ETH (0,1$)
+          </Text>
+        </InfoLine>
+        <InfoLine>
+          <Text type={TEXT_TYPES.BODY}>Network fee</Text>
+          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+            0.0001 ETH (4$)
+          </Text>
+        </InfoLine>
+      </InfoBlock>
+      <SwapButton>
+        Swap {sellToken.symbol} to {buyToken.symbol}
+      </SwapButton>
     </Root>
   );
 };
@@ -122,10 +182,23 @@ const Root = styled.div`
   width: 100%;
   gap: 16px;
   position: relative;
+  width: 400px;
 `;
 
 const TitleContainer = styled.div`
   margin-bottom: 16px;
+`;
+
+const textAnimation = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 `;
 
 const Title = styled.h1`
@@ -136,19 +209,22 @@ const Title = styled.h1`
   text-align: center;
   background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: ${textAnimation} 3s infinite;
+  background-size: 300% 300%;
   color: transparent;
   margin: 0 auto 8px;
 `;
 
 const SwapContainer = styled.div`
   position: relative;
-  width: 400px;
+  width: 100%;
 `;
 
 const SwapBox = styled.div`
   border-radius: 8px 8px 16px 16px;
   background-color: #232323;
-  padding: 16px 8px 16px 20px;
+  padding: 16px 20px;
   &:first-of-type {
     margin-bottom: 4px;
     border-radius: 16px 16px 8px 8px;
@@ -160,6 +236,32 @@ const BoxHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  margin-right: -12px;
+`;
+
+const ActionContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+`;
+
+const ActionTag = styled.button`
+  background-color: #00e38826;
+  padding: 5px 6px;
+  border-radius: 4px;
+  outline: none;
+  border: none;
+  transition: background-color 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #00e3884d;
+  }
+
+  &:active {
+    background-color: #00e38873;
+  }
 `;
 
 const Actions = styled.div`
@@ -196,11 +298,91 @@ const ExchangeRate = styled.div`
   padding: 9px 0;
 `;
 
-const SwitchTokens = styled.div`
+const SwitchTokens = styled.button<{ disabled: boolean }>`
+  outline: none;
+  border: none;
   position: absolute;
+  left: calc(50% - 14px);
+  top: 120px; // TODO: height of first section, check for mobile
   background-color: ${({ theme }) => theme.colors.greenLight};
   width: 28px;
   height: 44px;
   border-radius: 22px;
-  transition: 0.4s;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme, disabled }) => (disabled ? theme.colors.borderSecondary : theme.colors.greenLight)};
+  color: ${({ theme, disabled }) => (disabled ? theme.colors.iconDisabled : "#171717")};
+  transition:
+    border-radius 0.2s,
+    transform 0.2s;
+
+  &:hover {
+    transform: scaleX(1.3);
+    border-radius: 40%;
+
+    svg {
+      transform: scaleX(0.7692);
+      transform-origin: center;
+    }
+  }
+
+  &:active {
+    background-color: #2effab;
+  }
+
+  svg {
+    fill: ${({ theme, disabled }) => (disabled ? theme.colors.iconDisabled : "#171717")};
+    transition:
+      background-color 0.2s,
+      transform 0.2s;
+  }
+`;
+
+const InfoBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  border-radius: 16px;
+  background-color: #232323;
+  padding: 16px 20px;
+  width: 100%;
+`;
+
+const InfoLine = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const LeftBlock = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const SwapButton = styled.button`
+  outline: none;
+  border-radius: 16px;
+  cursor: pointer;
+  width: 100%;
+  border: 1px solid ${({ theme }) => theme.colors.greenLight};
+  background-color: ${({ theme }) => theme.colors.greenDark};
+  transition: all 0.2s;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  padding: 16px 0;
+
+  &:disabled {
+    color: ${({ theme }) => theme.colors.textDisabled};
+    background-color: ${({ theme }) => theme.colors.borderSecondary};
+    border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+  }
+
+  &:hover,
+  &:active {
+    background-color: ${({ theme }) => theme.colors.greenMedium};
+  }
 `;
