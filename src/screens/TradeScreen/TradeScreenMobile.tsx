@@ -11,7 +11,8 @@ import { SmartFlex } from "@src/components/SmartFlex";
 import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 
-import SpotOrderBook from "./OrderbookAndTradesInterface/SpotOrderBook";
+import { SpotOrderBook } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
+import { SpotOrderbookVMProvider } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderbookVM";
 import CreateOrder from "./RightBlock/CreateOrder";
 import MarketSelection from "./RightBlock/MarketSelection";
 import MarketStatistics from "./MarketStatistics";
@@ -37,7 +38,9 @@ const TradeScreenMobile: React.FC = observer(() => {
     return (
       <MobileContent>
         <ContentWrapper>
-          <SpotOrderBook />
+          <SpotOrderbookVMProvider>
+            <SpotOrderBook />
+          </SpotOrderbookVMProvider>
         </ContentWrapper>
         <ContentWrapper>
           <CreateOrder />

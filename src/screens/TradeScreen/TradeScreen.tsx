@@ -50,7 +50,7 @@ const TradeScreen: React.FC = observer(() => {
   tradeStore.setMarketSymbol(selectedMarket);
 
   return (
-    //я оборачиваю весь TradeScreenImpl в CreateOrderSpotVMProvider потому что при нажатии на трейд в OrderbookAndTradesInterface должно меняться значение в RightBlock
+    // TradeScreenImpl оборачивается в CreateOrderSpotVMProvider чтобы при нажатии на ордер в OrderbookAndTradesInterface устанавливать значение в RightBlock
     <CreateOrderVMProvider>
       <TradeScreenImpl />
     </CreateOrderVMProvider>

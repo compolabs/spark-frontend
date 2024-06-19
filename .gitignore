@@ -27,3 +27,5 @@ yarn-error.log*
 public/charting_library/
 public/datafeeds/
 src/charting_library/
+
+package-lock.json

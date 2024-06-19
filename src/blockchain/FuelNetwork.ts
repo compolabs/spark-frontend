@@ -1,4 +1,4 @@
-import SparkOrderBookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import SparkOrderBookSdk from "@compolabs/spark-orderbook-ts-sdk";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -64,6 +64,10 @@ export class FuelNetwork {
     return this.walletManager.getBalance(accountAddress, assetAddress);
   };
 
+  getWallet = (): Nullable<any> => {
+    return this.walletManager.wallet;
+  };
+
   // TODO: Fix for mobile wallets connected to desktop
   getIsExternalWallet = () => false;
 
@@ -79,8 +83,8 @@ export class FuelNetwork {
     return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
-  connectWallet = async (): Promise<void> => {
-    await this.walletManager.connect();
+  setWallet = async (account: string, wallet?: any): Promise<void> => {
+    await this.walletManager.setWallet(account, wallet);
     this.orderbookSdk.setActiveWallet(this.walletManager.wallet ?? undefined);
   };
 
@@ -98,12 +102,7 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (
-    assetAddress: string,
-    amount: string,
-    price: string,
-    type: OrderType,
-  ): Promise<WriteTransactionResponse> => {
+  createSpotOrder = async (assetAddress: string, amount: string, price: string, type: OrderType): Promise<any> => {
     const baseToken = this.getTokenByAssetId(assetAddress);
     const baseAsset = this.getAssetFromToken(baseToken);
     // const quoteToken = this.getTokenBySymbol("USDC");

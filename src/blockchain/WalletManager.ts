@@ -1,10 +1,7 @@
-import { toast } from "react-toastify";
-import { Fuel, FuelWalletConnector } from "@fuel-wallet/sdk";
-import { Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
+import { FuelWalletConnector } from "@fuels/connectors";
+import { Account, Fuel, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
-
-import { createToast } from "@src/components/Toast";
 
 import { TOKENS_BY_ASSET_ID } from "./constants";
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
@@ -20,34 +17,26 @@ export class WalletManager {
 
   constructor() {
     makeAutoObservable(this);
-
-    this.fuel.on(this.fuel.events.currentAccount, this.onCurrentAccountChange);
   }
 
-  connect = async (): Promise<void> => {
-    const hasConnector = await this.fuel.hasConnector();
-
-    if (!hasConnector) {
-      throw new NetworkError(NETWORK_ERROR.NOT_CONNECTED);
-    }
-    const isApproved = await this.fuel.connect();
-
-    if (!isApproved) {
-      return;
-    }
-
-    let account = null;
+  setWallet = async (account: string, wallet?: Account | null) => {
+    let currentAccount: string | null = null;
     try {
-      account = await this.fuel.currentAccount();
+      currentAccount = await this.fuel.currentAccount();
     } catch (error) {
-      console.error("Not authorized");
+      console.error("Not authorized for fuel");
     }
-
-    if (!account) {
-      throw new NetworkError(NETWORK_ERROR.UNKNOWN_ACCOUNT);
+    if (currentAccount) {
+      try {
+        const fuelWallet = await this.fuel.getWallet(account);
+        this.wallet = fuelWallet as any;
+      } catch (err) {
+        console.error("There is no wallet for this account");
+      }
+    } else {
+      // for ethereum wallets should be another logic to connect
+      this.wallet = wallet as any;
     }
-
-    this.wallet = await this.fuel.getWallet(account);
     this.address = account;
   };
 
@@ -107,24 +96,5 @@ export class WalletManager {
     this.privateKey = null;
 
     void this.fuel.disconnect();
-  };
-
-  private onCurrentAccountChange = async (account: Nullable<string>) => {
-    if (account === null) {
-      try {
-        await this.connect();
-      } catch (error) {
-        if (error instanceof NetworkError) {
-          if (error.code === NETWORK_ERROR.UNKNOWN_ACCOUNT) {
-            toast(createToast({ text: "Please authorize the wallet account when connecting." }), { type: "info" });
-            return;
-          }
-        }
-      }
-      return;
-    }
-
-    this.wallet = await this.fuel.getWallet(account);
-    this.address = account;
   };
 }

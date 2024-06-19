@@ -24,25 +24,22 @@ To get started with Spark, clone the repository and follow these commands:
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start the development server
-npm run start
+pnpm run start
 
 # Build for production
-npm run build
-
-# Run tests
-npm run test
+pnpm run build
 
 # Lint the project
-npm run lint
+pnpm run lint
 
 # Prepare for deployment
-npm run predeploy
+pnpm run predeploy
 
 # Deploy to GitHub Pages
-npm run deploy
+pnpm run deploy
 ```
 
 ### License

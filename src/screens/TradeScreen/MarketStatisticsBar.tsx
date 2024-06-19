@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Text, { TEXT_TYPES } from "@components/Text";
 import arrowLeft from "@src/assets/icons/arrowLeft.svg";
 import arrowUp from "@src/assets/icons/arrowUp.svg";
-import { ReactComponent as SwitchIcon } from "@src/assets/icons/switch.svg";
+import SwitchIcon from "@src/assets/icons/switch.svg?react";
 import { SmartFlex } from "@src/components/SmartFlex";
 import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";

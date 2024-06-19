@@ -24,8 +24,7 @@ class SpotTradesVM {
 
   private tradesUpdater: IntervalUpdater;
 
-  amountOfOrders: number = 0;
-  setAmountOfOrders = (value: number) => (this.amountOfOrders = value);
+  isTradesLoading = false;
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
@@ -36,12 +35,6 @@ class SpotTradesVM {
     this.tradesUpdater.run();
   }
 
-  calcSize = (isMobile: boolean) => {
-    const orderbookHeight = isMobile ? 380 : window.innerHeight - 210;
-    const rowHeight = 17;
-    this.setAmountOfOrders(Math.floor((orderbookHeight - 24) / rowHeight));
-  };
-
   updateTrades = async () => {
     const { accountStore, tradeStore, initialized } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
@@ -49,6 +42,8 @@ class SpotTradesVM {
     const market = tradeStore.market;
 
     if (!initialized || !market) return;
+
+    this.isTradesLoading = true;
 
     try {
       const tradesResponse = await bcNetwork!.fetchSpotTrades({
@@ -59,5 +54,7 @@ class SpotTradesVM {
     } catch (error) {
       console.error("Error with loading trades");
     }
+
+    this.isTradesLoading = false;
   };
 }

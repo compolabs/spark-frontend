@@ -3,8 +3,8 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
-import { ReactComponent as LeftCaretIcon } from "src/assets/icons/arrowUp.svg";
 
+import LeftCaretIcon from "@src/assets/icons/arrowUp.svg?react";
 import { FuelNetwork } from "@src/blockchain";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
