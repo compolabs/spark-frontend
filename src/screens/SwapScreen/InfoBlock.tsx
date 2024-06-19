@@ -1,23 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import SettingsIcon from "@src/assets/icons/gear.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
+import { media } from "@src/themes/breakpoints";
 
-interface InfoBlockProps {}
+import { SlippageSettings } from "./SlippageSettings";
 
-export const InfoBlock: React.FC<InfoBlockProps> = () => {
+interface InfoBlockProps {
+  slippage: number;
+  updateSlippage: (percent: number) => void;
+}
+
+export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }) => {
   const theme = useTheme();
+  const [isSlippageSettingOpen, setSlippageSettingOpen] = useState(false);
+
   return (
     <Root>
       <InfoLine>
         <Text type={TEXT_TYPES.BODY}>Slippage tolerance</Text>
         <LeftBlock>
           <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-            1%
+            {slippage}%
           </Text>
-          <SettingsIcon />
+          <Icon onClick={() => setSlippageSettingOpen(!isSlippageSettingOpen)} />
         </LeftBlock>
       </InfoLine>
       <InfoLine>
@@ -32,6 +40,10 @@ export const InfoBlock: React.FC<InfoBlockProps> = () => {
           0.0001 ETH (4$)
         </Text>
       </InfoLine>
+
+      {isSlippageSettingOpen && (
+        <SlippageSettings saveSlippage={updateSlippage} onClose={() => setSlippageSettingOpen(false)} />
+      )}
     </Root>
   );
 };
@@ -45,6 +57,11 @@ const Root = styled.div`
   background-color: #232323;
   padding: 16px 20px;
   width: 100%;
+  position: relative;
+
+  ${media.mobile} {
+    position: static;
+  }
 `;
 
 const InfoLine = styled.div`
@@ -58,4 +75,8 @@ const LeftBlock = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+`;
+
+const Icon = styled(SettingsIcon)`
+  cursor: pointer;
 `;

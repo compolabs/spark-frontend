@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
 import WalletIcon from "@src/assets/icons/wallet.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
+import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
@@ -20,9 +20,10 @@ export const SwapScreen: React.FC = () => {
   const { isConnected } = useWallet();
   const theme = useTheme();
   const { accountStore, balanceStore, faucetStore, swapStore } = useStores();
+  const [slippage, setSlippage] = useState(1);
   const [payAmount, setPayAmount] = useState<string>("0.00");
   const [receiveAmount, setReceiveAmount] = useState<string>("0.00");
-  const [isSuccessModalVisible, setSuccessModalVisible] = useState(true);
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
 
   const [sellToken, setSellToken] = useState<TokenOption>(swapStore.tokens[0]);
   const [buyToken, setBuyToken] = useState<TokenOption>(swapStore.tokens[1]);
@@ -104,7 +105,7 @@ export const SwapScreen: React.FC = () => {
             {isConnected ? (
               <Balance>
                 <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                  320
+                  {sellToken.balance}
                 </Text>
                 <WalletIcon />
               </Balance>
@@ -138,18 +139,16 @@ export const SwapScreen: React.FC = () => {
             {isConnected ? (
               <Balance>
                 <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                  0.15
+                  {buyToken.balance}
                 </Text>
                 <WalletIcon />
               </Balance>
             ) : null}
           </BalanceSection>
-          <ExchangeRate>
-            <Text type={TEXT_TYPES.BODY}>1 ETH = {exchangeRate} USDC ($3,653) </Text>
-          </ExchangeRate>
+          <ExchangeRate>1 ETH = {exchangeRate} USDC ($3,653)</ExchangeRate>
         </SwapBox>
       </SwapContainer>
-      <InfoBlock />
+      <InfoBlock slippage={slippage} updateSlippage={setSlippage} />
       <SwapButton disabled={!isConnected || !Number(payAmount)}>
         Swap {sellToken.symbol} to {buyToken.symbol}
       </SwapButton>
@@ -277,7 +276,13 @@ const SwapInput = styled.input`
   background: transparent;
   outline: none;
   color: white;
+
+  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
   font-size: 24px;
+
+  ${media.mobile} {
+    font-size: 24px;
+  }
 `;
 
 const BalanceSection = styled.div`
@@ -298,6 +303,9 @@ const ExchangeRate = styled.div`
   text-align: center;
   margin-top: 32px;
   padding: 9px 0;
+
+  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const SwitchTokens = styled.button<{ disabled: boolean }>`
