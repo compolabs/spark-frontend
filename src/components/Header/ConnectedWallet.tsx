@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-import { useDisconnect } from "@fuels/react";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
@@ -23,8 +22,7 @@ import ConnectedWalletButton from "./ConnectedWalletButton";
 
 const ConnectedWallet: React.FC = observer(() => {
   const { accountStore, notificationStore, balanceStore } = useStores();
-  const { address } = useWallet();
-  const { disconnect } = useDisconnect();
+  const { address, disconnect } = useWallet();
 
   const [isFocused, setIsFocused] = useState(false);
 
@@ -60,7 +58,7 @@ const ConnectedWallet: React.FC = observer(() => {
     },
     {
       icon: logoutIcon,
-      action: () => disconnect(),
+      action: () => disconnectWallet(),
       title: "Disconnect",
       active: true,
     },

@@ -16,12 +16,10 @@ export interface Network {
   url: string;
 }
 
-export const NETWORKS: Network[] = [
-  {
-    name: "Fuel",
-    url: "https://testnet.fuel.network/v1/graphql",
-  },
-];
+export const NETWORK: Network = {
+  name: "Fuel",
+  url: "https://beta-5.fuel.network/graphql",
+};
 
 export const EXPLORER_URL = "https://app.fuel.network/";
 
