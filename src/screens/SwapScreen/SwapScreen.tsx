@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { ReactComponent as ArrowDownIcon } from "@src/assets/icons/arrowDown.svg";
-import { ReactComponent as WalletIcon } from "@src/assets/icons/wallet.svg";
+import ArrowDownIcon  from "@src/assets/icons/arrowDown.svg";
+import  WalletIcon from "@src/assets/icons/wallet.svg";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";

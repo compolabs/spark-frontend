@@ -2,9 +2,9 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { ReactComponent as ArrowRight } from "@src/assets/icons/arrowRight.svg";
-import { ReactComponent as CheckCircle } from "@src/assets/icons/check-circle.svg";
-import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
+import ArrowRight from "@src/assets/icons/arrowRight.svg";
+import CheckCircle from "@src/assets/icons/check-circle.svg";
+import CloseIcon from "@src/assets/icons/close.svg";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { useMedia } from "@src/hooks/useMedia";
