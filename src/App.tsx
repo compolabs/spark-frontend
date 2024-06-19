@@ -12,7 +12,7 @@ import Faucet from "./screens/Faucet";
 import TradeScreen from "./screens/TradeScreen";
 import { isProduction, ROUTES } from "./constants";
 
-const isUnderConstruction = isProduction || 1;
+const isUnderConstruction = isProduction;
 
 const App: React.FC = observer(() => {
   usePrivateKeyAsAuth();
