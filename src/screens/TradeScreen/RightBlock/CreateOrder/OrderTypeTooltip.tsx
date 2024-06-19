@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import InfoIcon from "@src/assets/icons/info.svg?react";
 import limitBuyChart from "@src/assets/tooltip/order/limitBuyChart.svg";
 import limitSellChart from "@src/assets/tooltip/order/limitSellChart.svg";
 import marketChart from "@src/assets/tooltip/order/marketChart.svg";
