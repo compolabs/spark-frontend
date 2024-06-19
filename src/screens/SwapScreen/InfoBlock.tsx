@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { ReactComponent as SettingsIcon } from "@src/assets/icons/gear.svg";
+import SettingsIcon from "@src/assets/icons/gear.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 
 interface InfoBlockProps {}

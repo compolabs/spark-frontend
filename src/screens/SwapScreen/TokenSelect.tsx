@@ -3,6 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
+import CloseIcon from "@src/assets/icons/close.svg?react";
 import SearchInput from "@src/components/SearchInput";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useMedia } from "@src/hooks/useMedia";
@@ -18,12 +19,13 @@ export type TokenOption = {
 };
 
 interface TokenSelectProps {
+  selectType: "Buy" | "Sell";
   value: TokenOption;
   options: TokenOption[];
   onSelect: (option: TokenOption) => void;
 }
 
-export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSelect }) => {
+export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSelect, selectType }) => {
   const media = useMedia();
   const theme = useTheme();
   const [isSelectMenuVisible, setSelectMenuVisible] = useState(false);
@@ -31,11 +33,15 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
   const selectRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(selectRef, () => setSelectMenuVisible(false));
 
+  const selectOption = (option: TokenOption) => {
+    setSelectMenuVisible(false);
+    onSelect(option);
+  };
+
   return (
     <SelectWrapper
-      ref={selectRef}
       focused={isSelectMenuVisible}
-      onClick={() => setSelectMenuVisible(!isSelectMenuVisible)}
+      onClick={() => (!isSelectMenuVisible ? setSelectMenuVisible(true) : null)}
     >
       <SelectedOption>
         <img alt={value.symbol} src={value.img} />
@@ -44,33 +50,41 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
 
       <img alt="arrow" className="menu-arrow" src={arrowIcon} />
       {isSelectMenuVisible && (
-        <OptionsContainer>
-          <Container>
-            <SearchInput value="test" onChange={() => console.log("search")} />
-          </Container>
+        <MobileOverlay>
+          <OptionsContainer ref={selectRef}>
+            <Container>
+              <MobileHeader>
+                <Text type={TEXT_TYPES.H} primary>
+                  {selectType}
+                </Text>
+                <CloseIcon onClick={() => setSelectMenuVisible(false)} />
+              </MobileHeader>
+              <SearchInput value="test" onChange={() => console.log("search")} />
+            </Container>
 
-          <OptionsHeader>
-            <Text type={TEXT_TYPES.BODY}>Asset</Text>
-            <Text type={TEXT_TYPES.BODY}>Balance</Text>
-          </OptionsHeader>
-          {options.map((option) => (
-            <Option key={option.key} onClick={() => onSelect(option)}>
-              <OptionRightPart key={option.key}>
-                <img alt={option.symbol} src={option.img} />
-                <OptionTitle>
-                  <TokenSymbol color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-                    {option.symbol}
-                  </TokenSymbol>
-                  <Text type={TEXT_TYPES.BODY}>{option.title}</Text>
-                </OptionTitle>
-              </OptionRightPart>
+            <OptionsHeader>
+              <Text type={TEXT_TYPES.BODY}>Asset</Text>
+              <Text type={TEXT_TYPES.BODY}>Balance</Text>
+            </OptionsHeader>
+            {options.map((option) => (
+              <Option key={option.key} onClick={() => selectOption(option)}>
+                <OptionRightPart key={option.key}>
+                  <img alt={option.symbol} src={option.img} />
+                  <OptionTitle>
+                    <TokenSymbol color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+                      {option.symbol}
+                    </TokenSymbol>
+                    <Text type={TEXT_TYPES.BODY}>{option.title}</Text>
+                  </OptionTitle>
+                </OptionRightPart>
 
-              <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                {option.balance ?? "0.00"}
-              </Text>
-            </Option>
-          ))}
-        </OptionsContainer>
+                <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+                  {option.balance ?? "0.00"}
+                </Text>
+              </Option>
+            ))}
+          </OptionsContainer>
+        </MobileOverlay>
       )}
     </SelectWrapper>
   );
@@ -103,6 +117,10 @@ const SelectWrapper = styled.div<{
       transform: ${({ focused }) => (focused ? "rotate(-180)" : "rotate(-90deg)")};
     }
   }
+
+  ${media.mobile} {
+    position: static;
+  }
 `;
 
 const SelectedOption = styled.div`
@@ -113,6 +131,28 @@ const SelectedOption = styled.div`
 
 const Container = styled.div`
   padding: 0 16px;
+`;
+
+const MobileOverlay = styled.div`
+  ${media.mobile} {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: #93939338;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    z-index: 1;
+  }
+`;
+
+const MobileHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
 `;
 
 const OptionsContainer = styled.div`
@@ -130,6 +170,14 @@ const OptionsContainer = styled.div`
   gap: 13px;
 
   ${media.mobile} {
+    z-index: 2;
+    backdrop-filter: blur(5px);
+    position: relative;
+    left: auto;
+    right: auto;
+    width: calc(100% - 16px);
+    margin: 0 auto;
+    top: auto;
   }
 `;
 

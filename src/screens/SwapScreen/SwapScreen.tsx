@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import ArrowDownIcon  from "@src/assets/icons/arrowDown.svg";
-import  WalletIcon from "@src/assets/icons/wallet.svg";
+import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
+import WalletIcon from "@src/assets/icons/wallet.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
+import { media } from "@src/themes/breakpoints";
 import { isValidAmountInput, replaceComma } from "@src/utils/swapUtils";
 
+import { InfoBlock } from "./InfoBlock";
 import { SuccessModal } from "./SuccessModal";
 import { TokenOption, TokenSelect } from "./TokenSelect";
 
@@ -20,7 +22,7 @@ export const SwapScreen: React.FC = () => {
   const { accountStore, balanceStore, faucetStore, swapStore } = useStores();
   const [payAmount, setPayAmount] = useState<string>("0.00");
   const [receiveAmount, setReceiveAmount] = useState<string>("0.00");
-  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(true);
 
   const [sellToken, setSellToken] = useState<TokenOption>(swapStore.tokens[0]);
   const [buyToken, setBuyToken] = useState<TokenOption>(swapStore.tokens[1]);
@@ -89,7 +91,12 @@ export const SwapScreen: React.FC = () => {
                 </Actions>
               )}
             </ActionContainer>
-            <TokenSelect options={sellTokenOptions} value={sellToken} onSelect={(option) => setSellToken(option)} />
+            <TokenSelect
+              options={sellTokenOptions}
+              selectType="Sell"
+              value={sellToken}
+              onSelect={(option) => setSellToken(option)}
+            />
           </BoxHeader>
           <SwapInput autoComplete="off" id="pay-amount" type="text" value={payAmount} onChange={onPayAmountChange} />
           <BalanceSection>
@@ -112,7 +119,12 @@ export const SwapScreen: React.FC = () => {
         <SwapBox>
           <BoxHeader>
             <Text type={TEXT_TYPES.BODY}>Buy</Text>
-            <TokenSelect options={buyTokenOptions} value={buyToken} onSelect={(option) => setBuyToken(option)} />
+            <TokenSelect
+              options={buyTokenOptions}
+              selectType="Buy"
+              value={buyToken}
+              onSelect={(option) => setBuyToken(option)}
+            />
           </BoxHeader>
           <SwapInput
             autoComplete="off"
@@ -137,6 +149,7 @@ export const SwapScreen: React.FC = () => {
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
+      <InfoBlock />
       <SwapButton disabled={!isConnected || !Number(payAmount)}>
         Swap {sellToken.symbol} to {buyToken.symbol}
       </SwapButton>
@@ -167,6 +180,11 @@ const Root = styled.div`
   gap: 16px;
   position: relative;
   width: 400px;
+
+  ${media.mobile} {
+    width: 100%;
+    padding: 0 8px;
+  }
 `;
 
 const TitleContainer = styled.div`

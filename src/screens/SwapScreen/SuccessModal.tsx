@@ -2,9 +2,9 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import ArrowRight from "@src/assets/icons/arrowRight.svg";
-import CheckCircle from "@src/assets/icons/check-circle.svg";
-import CloseIcon from "@src/assets/icons/close.svg";
+import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
+import CheckCircle from "@src/assets/icons/check-circle.svg?react";
+import CloseIcon from "@src/assets/icons/close.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { useMedia } from "@src/hooks/useMedia";
@@ -36,10 +36,6 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ hash, onClose, trans
           <Text type={TEXT_TYPES.BODY}>I NEED HELP</Text>
           <CloseIcon onClick={onClose} />
         </Actions>
-        {/* <ModalHeader>
-          <Text type={TEXT_TYPES.H2}>Success</Text>
-          <CloseIcon onClick={onClose} />
-        </ModalHeader> */}
         <ModalContent>
           <CheckCircle />
           <Description>
@@ -94,7 +90,8 @@ const Modal = styled.div`
   position: relative;
 
   ${media.mobile} {
-    width: 100%;
+    width: calc(100% - 30px);
+    margin: 0 auto;
   }
 `;
 
