@@ -5,10 +5,12 @@ import styled from "@emotion/styled";
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
 import WalletIcon from "@src/assets/icons/wallet.svg?react";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
+import { DEFAULT_DECIMALS } from "@src/constants";
 import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
-import { isValidAmountInput, replaceComma } from "@src/utils/swapUtils";
+import BN from "@src/utils/BN";
+import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
 
 import { InfoBlock } from "./InfoBlock";
 import { SuccessModal } from "./SuccessModal";
@@ -19,7 +21,7 @@ const INPUT_FILL_OPTIONS = ["Half", "All"];
 export const SwapScreen: React.FC = () => {
   const { isConnected } = useWallet();
   const theme = useTheme();
-  const { accountStore, balanceStore, faucetStore, swapStore } = useStores();
+  const { accountStore, balanceStore, faucetStore, swapStore, oracleStore } = useStores();
   const [slippage, setSlippage] = useState(1);
   const [payAmount, setPayAmount] = useState<string>("0.00");
   const [receiveAmount, setReceiveAmount] = useState<string>("0.00");
@@ -31,7 +33,13 @@ export const SwapScreen: React.FC = () => {
   const sellTokenOptions: any = swapStore.tokens.filter((token) => token.symbol !== buyToken.symbol);
   const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== sellToken.symbol);
 
-  const exchangeRate = 3653; // TODO: get exchange rate from API
+  const buyTokenPrice = buyToken.priceFeed
+    ? BN.formatUnits(oracleStore.getTokenIndexPrice(buyToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
+    : "0";
+
+  const sellTokenPrice = sellToken.priceFeed
+    ? BN.formatUnits(oracleStore.getTokenIndexPrice(sellToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
+    : "0";
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPayAmount = replaceComma(e.target.value);
@@ -41,6 +49,11 @@ export const SwapScreen: React.FC = () => {
     }
 
     setPayAmount(newPayAmount);
+
+    const receiveAmount =
+      Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
+
+    setReceiveAmount(receiveAmount.toFixed(2));
   };
 
   const onReceivedTokensChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +64,10 @@ export const SwapScreen: React.FC = () => {
     }
 
     setReceiveAmount(newReceiveAmount);
+
+    const payAmount =
+      Number(newReceiveAmount) * (parseNumberWithCommas(buyTokenPrice) / parseNumberWithCommas(sellTokenPrice));
+    setPayAmount(payAmount.toFixed(2));
   };
 
   const onSwitchTokens = () => {
@@ -145,7 +162,9 @@ export const SwapScreen: React.FC = () => {
               </Balance>
             ) : null}
           </BalanceSection>
-          <ExchangeRate>1 ETH = {exchangeRate} USDC ($3,653)</ExchangeRate>
+          <ExchangeRate>
+            1 {buyToken.symbol} = {buyTokenPrice} USDC ($3,653)
+          </ExchangeRate>
         </SwapBox>
       </SwapContainer>
       <InfoBlock slippage={slippage} updateSlippage={setSlippage} />

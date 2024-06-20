@@ -8,3 +8,7 @@ export function isValidAmountInput(value: string): boolean {
 export function replaceComma(value: string): string {
   return value.replace(",", ".");
 }
+
+export function parseNumberWithCommas(str: string): number {
+  return parseFloat(str.replace(/,/g, ""));
+}
