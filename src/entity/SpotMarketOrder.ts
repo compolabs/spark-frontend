@@ -1,80 +1,96 @@
 import dayjs, { Dayjs } from "dayjs";
 
 import { FuelNetwork } from "@src/blockchain";
-import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 
 import { Token } from "./Token";
+import { Order } from "@compolabs/spark-orderbook-ts-sdk";
 
-export interface SpotMarketOrderParams {
-  id: string;
-  baseToken: string;
-  trader: string;
-  baseSize: BN;
-  orderPrice: BN;
-  blockTimestamp: number;
-}
+export type SpotMarketOrderParams = {
+  quoteAssetId: string;
+} & Order;
 
 export class SpotMarketOrder {
-  // Децимал цены = 9
-  // Децимал quoteToken = 6 (USDC)
-  readonly id: string;
-  readonly timestamp: Dayjs;
+  readonly id: Order["id"];
+  readonly user: Order["user"];
+  readonly orderType: Order["order_type"];
+  readonly assetType: Order["asset_type"];
+  readonly status: Order["status"];
+
   readonly baseToken: Token;
-  readonly quoteToken = TOKENS_BY_SYMBOL.USDC; // TODO: Переписать пробрасывать через аргументы;
-  readonly trader: string;
+  readonly quoteToken: Token;
+
+  readonly timestamp: Dayjs;
+
   readonly price: BN;
-  readonly priceUnits: BN;
-  readonly priceScale = 1e9;
-  readonly priceDecimals = DEFAULT_DECIMALS;
-  readonly type: "BUY" | "SELL";
-  baseSize: BN;
-  baseSizeUnits: BN;
-  quoteSize: BN;
-  quoteSizeUnits: BN;
+
+  initialAmount: BN;
+  currentAmount: BN;
+  initialQuoteAmount: BN;
+  currentQuoteAmount: BN;
 
   constructor(order: SpotMarketOrderParams) {
-    this.id = order.id;
-
     const bcNetwork = FuelNetwork.getInstance();
-    const baseToken = bcNetwork.getTokenByAssetId(order.baseToken);
 
-    if (!baseToken) {
-      throw new Error("Unexpected token");
-    }
+    this.id = order.id;
+    this.user = order.user;
+    this.status = order.status;
 
-    this.baseToken = baseToken;
+    this.baseToken = bcNetwork.getTokenByAssetId(order.asset);
+    this.quoteToken = bcNetwork.getTokenByAssetId(order.quoteAssetId);
 
-    this.trader = order.trader;
-    this.type = order.baseSize.lt(0) ? "SELL" : "BUY";
-    this.baseSize = new BN(order.baseSize).abs();
-    this.baseSizeUnits = BN.formatUnits(this.baseSize, this.baseToken.decimals);
-    this.quoteSize = order.baseSize
-      .abs()
-      .times(order.orderPrice)
-      .times(Math.pow(10, this.quoteToken.decimals))
-      .div(Math.pow(10, this.baseToken.decimals) * this.priceScale);
+    this.orderType = order.order_type;
+    this.assetType = order.asset_type;
 
-    this.quoteSizeUnits = BN.formatUnits(this.quoteSize, this.quoteToken.decimals);
-    this.price = order.orderPrice;
-    this.priceUnits = BN.formatUnits(order.orderPrice, this.priceDecimals);
-    this.timestamp = dayjs.unix(order.blockTimestamp);
+    this.price = new BN(order.price);
+
+    this.initialAmount = new BN(order.initial_amount);
+    this.initialQuoteAmount = this.initialAmount.multipliedBy(this.priceUnits);
+    this.currentAmount = new BN(order.amount);
+    this.currentQuoteAmount = this.currentAmount.multipliedBy(this.priceUnits);
+
+    this.timestamp = dayjs(order.timestamp);
   }
 
   get marketSymbol() {
     return `${this.baseToken.symbol}-${this.quoteToken.symbol}`;
   }
 
-  addBaseSize = (amount: BN) => {
-    this.baseSize = this.baseSize.plus(amount);
+  get priceUnits(): BN {
+    return BN.formatUnits(this.price, DEFAULT_DECIMALS);
+  }
 
-    this.baseSizeUnits = BN.formatUnits(this.baseSize, this.baseToken.decimals);
-    this.quoteSize = this.baseSize
-      .abs()
-      .times(this.price)
-      .times(Math.pow(10, this.quoteToken.decimals))
-      .div(Math.pow(10, this.baseToken.decimals) * this.priceScale);
-    this.quoteSizeUnits = BN.formatUnits(this.quoteSize, this.quoteToken.decimals);
+  get initialAmountUnits(): BN {
+    return BN.formatUnits(this.initialAmount, this.baseToken.decimals);
+  }
+
+  get currentAmountUnits(): BN {
+    return BN.formatUnits(this.currentAmount, this.baseToken.decimals);
+  }
+
+  get initialQuoteAmountUnits(): BN {
+    return BN.formatUnits(this.initialQuoteAmount, this.quoteToken.decimals);
+  }
+
+  get currentQuoteAmountUnits(): BN {
+    return BN.formatUnits(this.currentQuoteAmount, this.quoteToken.decimals);
+  }
+
+  get formatPrice() {
+    return this.priceUnits.toSignificant(2);
+  }
+
+  get formatInitialAmount() {
+    return this.initialAmountUnits.toSignificant(2);
+  }
+
+  get formatCurrentAmount() {
+    return this.currentAmountUnits.toSignificant(2);
+  }
+
+  addInitialAmount = (amount: BN) => {
+    this.initialAmount = this.initialAmount.plus(amount);
+    this.initialQuoteAmount = this.initialAmount.multipliedBy(this.priceUnits);
   };
 }

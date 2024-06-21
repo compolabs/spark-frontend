@@ -123,15 +123,15 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const renderOrders = (orders: SpotMarketOrder[], type: "sell" | "buy") => {
     const orderMode = type === "sell" ? ORDER_MODE.BUY : ORDER_MODE.SELL;
     const volumePercent = (ord: SpotMarketOrder) =>
-      type === "sell" ? ord.baseSize.div(vm.totalSell) : ord.quoteSize.div(vm.totalBuy);
+      type === "sell" ? ord.initialAmount.div(vm.totalSell) : ord.initialQuoteAmount.div(vm.totalBuy);
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
 
     return orders.map((o, index) => (
       <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
         <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
-        <Text primary>{o.baseSizeUnits.toFormat(3)}</Text>
-        <TextOverflow color={color}>{BN.formatUnits(o.price, 9).toFormat(vm.decimalGroup)}</TextOverflow>
-        <Text primary>{numeral(o.quoteSizeUnits).format(`0.${"0".repeat(vm.decimalGroup)}a`)}</Text>
+        <Text primary>{o.initialAmountUnits.toFormat(3)}</Text>
+        <TextOverflow color={color}>{o.priceUnits.toFormat(vm.decimalGroup)}</TextOverflow>
+        <Text primary>{numeral(o.initialQuoteAmountUnits).format(`0.${"0".repeat(vm.decimalGroup)}a`)}</Text>
       </OrderRow>
     ));
   };

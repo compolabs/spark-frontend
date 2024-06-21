@@ -1,4 +1,8 @@
-import SparkOrderBookSdk from "@compolabs/spark-orderbook-ts-sdk";
+import SparkOrderBookSdk, {
+  GetMatchOrderEventsParams,
+  GetOrdersParams,
+  OrderType,
+} from "@compolabs/spark-orderbook-ts-sdk";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -17,7 +21,6 @@ import {
   TOKENS_LIST,
 } from "./constants";
 import {
-  FetchOrdersParams,
   FetchTradesParams,
   MarketCreateEvent,
   PerpMaxAbsPositionSize,
@@ -85,17 +88,17 @@ export class FuelNetwork {
 
   setWallet = async (account: string, wallet?: any): Promise<void> => {
     await this.walletManager.setWallet(account, wallet);
-    this.orderbookSdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {
-    await this.walletManager.connectByPrivateKey(privateKey, await this.orderbookSdk.getProvider());
-    this.orderbookSdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    await this.walletManager.connectByPrivateKey(privateKey, (await this.orderbookSdk.getProvider()) as any);
+    this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   disconnectWallet = (): void => {
     this.walletManager.disconnect();
-    this.orderbookSdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   addAssetToWallet = async (assetId: string): Promise<void> => {
@@ -108,7 +111,7 @@ export class FuelNetwork {
     // const quoteToken = this.getTokenBySymbol("USDC");
     // const quoteAsset = this.getAssetFromToken(quoteToken);
 
-    return this.orderbookSdk.createOrder(amount, baseAsset, price, type);
+    // return this.orderbookSdk.createOrder(amount, baseAsset, price, type);
   };
 
   cancelSpotOrder = async (orderId: string): Promise<void> => {
@@ -178,20 +181,39 @@ export class FuelNetwork {
     return this.orderbookSdk.fetchMarketPrice(asset);
   };
 
-  fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
+  fetchSpotOrders = async (params: GetOrdersParams): Promise<SpotMarketOrder[]> => {
     const orders = await this.orderbookSdk.fetchOrders(params);
 
-    return orders.map((obj) => new SpotMarketOrder(obj));
+    return orders.map(
+      (order) =>
+        new SpotMarketOrder({
+          ...order,
+          quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+        }),
+    );
   };
 
-  fetchSpotTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
-    const trades = await this.orderbookSdk.fetchTrades(params);
+  fetchSpotTrades = async (params: GetMatchOrderEventsParams): Promise<SpotMarketTrade[]> => {
+    const trades = await this.orderbookSdk.getMatchOrderEvents(params);
 
-    return trades.map((obj) => new SpotMarketTrade({ ...obj, userAddress: params.trader }));
+    return trades.map(
+      (trade) =>
+        new SpotMarketTrade({
+          ...trade,
+          user: this.getAddress() ?? "",
+          quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+        }),
+    );
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    return this.orderbookSdk.fetchVolume();
+    const data = await this.orderbookSdk.fetchVolume();
+
+    return {
+      low: new BN(data.low24h),
+      high: new BN(data.high24h),
+      volume: new BN(data.volume24h),
+    };
   };
 
   matchPerpOrders = async (order1: string, order2: string): Promise<unknown> => {

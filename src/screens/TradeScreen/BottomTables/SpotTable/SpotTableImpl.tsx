@@ -35,28 +35,28 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
   orderColumnHelper.accessor("marketSymbol", {
     header: "Pair",
   }),
-  orderColumnHelper.accessor("type", {
+  orderColumnHelper.accessor("orderType", {
     header: "Type",
     cell: (props) => (
-      <TableText color={props.getValue() === "SELL" ? theme.colors.redLight : theme.colors.greenLight}>
+      <TableText color={props.getValue() === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
         {props.getValue()}
       </TableText>
     ),
   }),
-  orderColumnHelper.accessor("baseSizeUnits", {
+  orderColumnHelper.accessor("formatInitialAmount", {
     header: "Amount",
     cell: (props) => (
       <SmartFlex center="y" gap="4px">
-        <TableText primary>{props.getValue().toSignificant(2)}</TableText>
+        <TableText primary>{props.getValue()}</TableText>
         <TokenBadge>
           <Text>{props.row.original.baseToken.symbol}</Text>
         </TokenBadge>
       </SmartFlex>
     ),
   }),
-  orderColumnHelper.accessor("priceUnits", {
+  orderColumnHelper.accessor("formatPrice", {
     header: "Price",
-    cell: (props) => toCurrency(props.getValue().toSignificant(2)),
+    cell: (props) => toCurrency(props.getValue()),
   }),
   orderColumnHelper.accessor("id", {
     header: "",
@@ -85,7 +85,7 @@ const HISTORY_COLUMNS = (theme: Theme) => [
   tradeColumnHelper.accessor("type", {
     header: "Type",
     cell: (props) => (
-      <TableText color={props.getValue() === "SELL" ? theme.colors.redLight : theme.colors.greenLight}>
+      <TableText color={props.getValue() === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
         {props.getValue()}
       </TableText>
     ),
@@ -170,7 +170,7 @@ const SpotTableImpl: React.FC = observer(() => {
           <SmartFlex gap="2px" column>
             <Text type={TEXT_TYPES.SUPPORTING}>Amount</Text>
             <SmartFlex center="y" gap="4px">
-              <Text color={theme.colors.textPrimary}>{ord.baseSizeUnits.toSignificant(2)}</Text>
+              <Text color={theme.colors.textPrimary}>{ord.formatInitialAmount}</Text>
               <TokenBadge>
                 <Text>{ord.baseToken.symbol}</Text>
               </TokenBadge>
@@ -182,8 +182,8 @@ const SpotTableImpl: React.FC = observer(() => {
           <SmartFlex gap="2px" column>
             <SmartFlex center="y" gap="4px">
               <Text type={TEXT_TYPES.SUPPORTING}>Side:</Text>
-              <TableText color={ord.type === "SELL" ? theme.colors.redLight : theme.colors.greenLight}>
-                {ord.type}
+              <TableText color={ord.orderType === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
+                {ord.orderType}
               </TableText>
             </SmartFlex>
           </SmartFlex>
@@ -194,7 +194,7 @@ const SpotTableImpl: React.FC = observer(() => {
           </CancelButton>
           <SmartFlex alignItems="flex-end" gap="2px" column>
             <Text type={TEXT_TYPES.SUPPORTING}>Price:</Text>
-            <Text color={theme.colors.textPrimary}>{toCurrency(ord.priceUnits.toSignificant(2))}</Text>
+            <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice)}</Text>
           </SmartFlex>
         </MobileTableRowColumn>
       </MobileTableOrderRow>
@@ -209,7 +209,7 @@ const SpotTableImpl: React.FC = observer(() => {
           <SmartFlex gap="2px" column>
             <Text type={TEXT_TYPES.SUPPORTING}>Amount</Text>
             <SmartFlex center="y" gap="4px">
-              <Text color={theme.colors.textPrimary}>{ord.formatTradeAmount}</Text>
+              <Text color={theme.colors.textPrimary}>{ord.formatInitialAmount}</Text>
               <TokenBadge>
                 <Text>{ord.baseToken.symbol}</Text>
               </TokenBadge>
@@ -221,14 +221,14 @@ const SpotTableImpl: React.FC = observer(() => {
           <SmartFlex gap="2px" column>
             <SmartFlex center="y" gap="4px">
               <Text type={TEXT_TYPES.SUPPORTING}>Side:</Text>
-              <TableText color={ord.type === "SELL" ? theme.colors.redLight : theme.colors.greenLight}>
-                {ord.type}
+              <TableText color={ord.orderType === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
+                {ord.orderType}
               </TableText>
             </SmartFlex>
             <SmartFlex center="y" gap="4px">
               <Text type={TEXT_TYPES.SUPPORTING}>Filled:</Text>
               <SmartFlex center="y" gap="4px">
-                <Text color={theme.colors.textPrimary}>{ord.formatTradeAmount}</Text>
+                <Text color={theme.colors.textPrimary}>{ord.formatCurrentAmount}</Text>
                 <TokenBadge>
                   <Text>{ord.baseToken.symbol}</Text>
                 </TokenBadge>

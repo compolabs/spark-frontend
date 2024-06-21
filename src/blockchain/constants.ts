@@ -43,7 +43,7 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
   {},
 );
 
-export const INDEXER_URL = "https://indexer.bigdevenergy.link/22318a2/v1/graphql";
+export const INDEXER_URL = "https://indexer.bigdevenergy.link/67b693c/v1/graphql";
 // export const INDEXER_URL = "http://localhost:8080/v1/graphql";
 // export const INDEXER_URL = "https://envio-orderbook-indexer.spark-defi.com/v1/graphql";
 export const PYTH_URL = "https://hermes.pyth.network";

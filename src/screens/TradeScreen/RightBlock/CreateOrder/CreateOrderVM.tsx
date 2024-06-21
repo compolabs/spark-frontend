@@ -394,7 +394,7 @@ class CreateOrderVM {
     this.setInputPrice(order.price);
 
     const assetId = isBuyMode ? order.quoteToken.assetId : order.baseToken.assetId;
-    const orderSize = isBuyMode ? order.quoteSize : order.baseSize;
+    const orderSize = isBuyMode ? order.initialQuoteAmount : order.initialAmount;
 
     const amount = accountStore.isConnected ? BN.min(balanceStore.getBalance(assetId), orderSize) : orderSize;
 

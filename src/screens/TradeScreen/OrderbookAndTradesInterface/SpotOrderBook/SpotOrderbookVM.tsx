@@ -11,6 +11,7 @@ import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
 import { SPOT_ORDER_FILTER } from "./SpotOrderBook";
+import { GetOrdersParams } from "@compolabs/spark-orderbook-ts-sdk";
 
 const ctx = React.createContext<SpotOrderbookVM | null>(null);
 
@@ -104,11 +105,11 @@ class SpotOrderbookVM {
   }
 
   get totalBuy() {
-    return this.buyOrders.reduce((acc, order) => acc.plus(order.quoteSize), BN.ZERO);
+    return this.buyOrders.reduce((acc, order) => acc.plus(order.initialQuoteAmount), BN.ZERO);
   }
 
   get totalSell() {
-    return this.sellOrders.reduce((acc, order) => acc.plus(order.baseSize), BN.ZERO);
+    return this.sellOrders.reduce((acc, order) => acc.plus(order.initialAmount), BN.ZERO);
   }
 
   calcSize = (isMobile: boolean) => {
@@ -141,13 +142,18 @@ class SpotOrderbookVM {
     if (!this.rootStore.initialized || !market) return;
 
     const bcNetwork = FuelNetwork.getInstance();
-    const limit = 200;
+
+    const params: GetOrdersParams = {
+      limit: 200,
+      asset: market.baseToken.assetId,
+      status: ["Active"],
+    };
 
     this.isOrderBookLoading = true;
 
     const [buy, sell] = await Promise.all([
-      bcNetwork!.fetchSpotOrders({ baseToken: market.baseToken.assetId, type: "BUY", limit }),
-      bcNetwork!.fetchSpotOrders({ baseToken: market.baseToken.assetId, type: "SELL", limit }),
+      bcNetwork!.fetchSpotOrders({ ...params, orderType: "Buy" }),
+      bcNetwork!.fetchSpotOrders({ ...params, orderType: "Sell" }),
     ]);
 
     this.allBuyOrders = buy;

@@ -25,7 +25,7 @@ const ORDERS_UPDATE_INTERVAL = 5 * 1000; // 5 sec
 
 class SpotTableVM {
   myOrders: SpotMarketOrder[] = [];
-  myOrdersHistory: SpotMarketTrade[] = [];
+  myOrdersHistory: SpotMarketOrder[] = [];
   initialized: boolean = false;
 
   isOrderCancelling = false;
@@ -96,18 +96,21 @@ class SpotTableVM {
     const sortDesc = (a: { timestamp: Dayjs }, b: { timestamp: Dayjs }) =>
       b.timestamp.valueOf() - a.timestamp.valueOf();
 
+    const limit = 500;
+
     try {
       const [ordersData, ordersHistoryData] = await Promise.all([
         bcNetwork!.fetchSpotOrders({
-          baseToken: market.baseToken.assetId,
-          limit: 500,
-          trader: accountStore.address,
-          isActive: true,
+          limit,
+          asset: market.baseToken.assetId,
+          user: accountStore.address,
+          status: ["Active"],
         }),
-        bcNetwork!.fetchSpotTrades({
-          baseToken: market.baseToken.assetId,
-          limit: 500,
-          trader: accountStore.address,
+        bcNetwork!.fetchSpotOrders({
+          limit,
+          asset: market.baseToken.assetId,
+          user: accountStore.address,
+          status: ["Closed", "Canceled"],
         }),
       ]);
 
@@ -122,7 +125,7 @@ class SpotTableVM {
 
   private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
 
-  private setMyOrdersHistory = (myOrdersHistory: SpotMarketTrade[]) => (this.myOrdersHistory = myOrdersHistory);
+  private setMyOrdersHistory = (myOrdersHistory: SpotMarketOrder[]) => (this.myOrdersHistory = myOrdersHistory);
 
   private setInitialized = (l: boolean) => (this.initialized = l);
 }
