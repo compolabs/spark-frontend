@@ -98,14 +98,13 @@ export class SpotMarketOrder {
   };
 
   private getQuoteAmount = (amount: BN, price: BN) => {
-    const decimalsDiff = Math.abs(DEFAULT_DECIMALS - this.baseToken.decimals);
-    const decimalsDiff2 = Math.abs(this.quoteToken.decimals - this.baseToken.decimals);
-    // const maxDecimals = Math.max(DEFAULT_DECIMALS, this.baseToken.decimals);
+    const decimalsDiffPrice = Math.abs(DEFAULT_DECIMALS - this.baseToken.decimals);
+    const decimalsDiffTokens = 2 * DEFAULT_DECIMALS - this.quoteToken.decimals;
 
     const result = amount
       .multipliedBy(price)
-      .multipliedBy(BN.parseUnits(1, decimalsDiff))
-      .dividedToIntegerBy(BN.parseUnits(1, DEFAULT_DECIMALS + decimalsDiff2));
+      .multipliedBy(BN.parseUnits(1, decimalsDiffPrice))
+      .dividedToIntegerBy(BN.parseUnits(1, decimalsDiffTokens));
 
     return new BN(result);
   };
