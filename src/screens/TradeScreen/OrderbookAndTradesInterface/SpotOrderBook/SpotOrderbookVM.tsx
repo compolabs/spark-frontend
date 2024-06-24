@@ -164,7 +164,10 @@ class SpotOrderbookVM {
 
     const getPrice = (orders: SpotMarketOrder[], priceType: "max" | "min"): BN => {
       const compareType = priceType === "max" ? "gt" : "lt";
-      return orders.reduce((value, order) => (order.price[compareType](value) ? order.price : value), orders[0].price);
+      return orders.reduce(
+        (value, order) => (order.price[compareType](value) ? order.price : value),
+        orders[0]?.price ?? BN.ZERO,
+      );
     };
 
     const maxBuyPrice = getPrice(this.allBuyOrders, "max");
