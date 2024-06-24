@@ -1,17 +1,17 @@
 import BN from "@src/utils/BN";
 
-export type FetchOrdersParams<T = string> = {
-  baseToken: T;
-  limit: number;
-  trader?: T;
-  type?: "BUY" | "SELL";
-  isActive?: boolean;
-};
+// export type FetchOrdersParams = {
+//   baseToken: string;
+//   limit: number;
+//   trader?: string;
+//   type?: "BUY" | "SELL";
+//   isActive?: boolean;
+// };
 
-export type FetchTradesParams<T = string> = {
-  baseToken: T;
+export type FetchTradesParams = {
   limit: number;
-  trader?: T;
+  asset?: string;
+  user?: string;
 };
 
 export type MarketCreateEvent = {

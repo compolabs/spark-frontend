@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@compolabs/spark-orderbook-ts-sdk':
-        specifier: 1.2.4
-        version: 1.2.4(fuels@0.89.2)
+        specifier: 1.3.3-beta
+        version: 1.3.3-beta(fuels@0.89.2)
       '@emotion/react':
         specifier: ^11.11.3
         version: 11.11.4(@types/react@18.3.3)(react@18.3.1)
@@ -984,8 +984,8 @@ packages:
   '@coinbase/wallet-sdk@4.0.3':
     resolution: {integrity: sha512-y/OGEjlvosikjfB+wk+4CVb9OxD1ob9cidEBLI5h8Hxaf/Qoob2XoVT1uvhtAzBx34KpGYSd+alKvh/GCRre4Q==}
 
-  '@compolabs/spark-orderbook-ts-sdk@1.2.4':
-    resolution: {integrity: sha512-LJ7+fMBA3JsJAmGxPXNWytIiGGWw2NrVaCYEkISEhmzKK/Pbe9BsN438V7VJAmrycnvg20uTHVppWDTAg1XLug==}
+  '@compolabs/spark-orderbook-ts-sdk@1.3.3-beta':
+    resolution: {integrity: sha512-nPGfb/XKdjxtl3Y8HfhoOClw3l7lmMZx1FeJl+PuoOYoG757QwpALEeVBv8U9L4YP2vSR4YeCYlMZrlQmJwpuA==}
     engines: {node: '>=18'}
     peerDependencies:
       fuels: '>=0.89.0'
@@ -7799,11 +7799,13 @@ snapshots:
       preact: 10.22.0
       sha.js: 2.4.11
 
-  '@compolabs/spark-orderbook-ts-sdk@1.2.4(fuels@0.89.2)':
+  '@compolabs/spark-orderbook-ts-sdk@1.3.3-beta(fuels@0.89.2)':
     dependencies:
       bignumber.js: 9.1.2
       fuels: 0.89.2
       tsdef: 0.0.14
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu': 4.18.0
 
   '@emotion/babel-plugin@11.11.0':
     dependencies:

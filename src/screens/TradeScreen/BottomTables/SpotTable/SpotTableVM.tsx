@@ -5,7 +5,7 @@ import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { createToast } from "@src/components/Toast";
-import { SpotMarketOrder, SpotMarketTrade } from "@src/entity";
+import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -25,7 +25,7 @@ const ORDERS_UPDATE_INTERVAL = 5 * 1000; // 5 sec
 
 class SpotTableVM {
   myOrders: SpotMarketOrder[] = [];
-  myOrdersHistory: SpotMarketTrade[] = [];
+  myOrdersHistory: SpotMarketOrder[] = [];
   initialized: boolean = false;
 
   isOrderCancelling = false;
@@ -62,22 +62,23 @@ class SpotTableVM {
     );
   }
 
-  cancelOrder = async (orderId: string) => {
+  cancelOrder = async (order: SpotMarketOrder) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (!this.rootStore.tradeStore.market) return;
 
     this.isOrderCancelling = true;
-    this.cancelingOrderId = orderId;
+    this.cancelingOrderId = order.id;
     if (bcNetwork?.getIsExternalWallet()) {
       notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
     }
 
     try {
-      await bcNetwork?.cancelSpotOrder(orderId);
+      await bcNetwork?.cancelSpotOrder(order);
       notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
     } catch (error) {
+      console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
     }
 
@@ -96,18 +97,21 @@ class SpotTableVM {
     const sortDesc = (a: { timestamp: Dayjs }, b: { timestamp: Dayjs }) =>
       b.timestamp.valueOf() - a.timestamp.valueOf();
 
+    const limit = 500;
+
     try {
       const [ordersData, ordersHistoryData] = await Promise.all([
         bcNetwork!.fetchSpotOrders({
-          baseToken: market.baseToken.assetId,
-          limit: 500,
-          trader: accountStore.address,
-          isActive: true,
+          limit,
+          asset: market.baseToken.assetId,
+          user: accountStore.address0x,
+          status: ["Active"],
         }),
-        bcNetwork!.fetchSpotTrades({
-          baseToken: market.baseToken.assetId,
-          limit: 500,
-          trader: accountStore.address,
+        bcNetwork!.fetchSpotOrders({
+          limit,
+          asset: market.baseToken.assetId,
+          user: accountStore.address0x,
+          status: ["Closed", "Canceled"],
         }),
       ]);
 
@@ -122,7 +126,7 @@ class SpotTableVM {
 
   private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
 
-  private setMyOrdersHistory = (myOrdersHistory: SpotMarketTrade[]) => (this.myOrdersHistory = myOrdersHistory);
+  private setMyOrdersHistory = (myOrdersHistory: SpotMarketOrder[]) => (this.myOrdersHistory = myOrdersHistory);
 
   private setInitialized = (l: boolean) => (this.initialized = l);
 }

@@ -10,9 +10,9 @@ import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
 import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
 import TradeScreen from "./screens/TradeScreen";
-import { isProduction, ROUTES } from "./constants";
+import { ROUTES } from "./constants";
 
-const isUnderConstruction = isProduction;
+const isUnderConstruction = false;
 
 const App: React.FC = observer(() => {
   usePrivateKeyAsAuth();
