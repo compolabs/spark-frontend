@@ -1,7 +1,11 @@
 import SparkOrderBookSdk, {
+  AssetType,
+  CreateOrderParams,
+  DepositParams,
   GetMatchOrderEventsParams,
   GetOrdersParams,
   OrderType,
+  WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
@@ -105,17 +109,29 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (assetAddress: string, amount: string, price: string, type: OrderType): Promise<any> => {
-    const baseToken = this.getTokenByAssetId(assetAddress);
-    const baseAsset = this.getAssetFromToken(baseToken);
-    // const quoteToken = this.getTokenBySymbol("USDC");
-    // const quoteAsset = this.getAssetFromToken(quoteToken);
+  createSpotOrder = async (deposit: DepositParams, order: CreateOrderParams): Promise<WriteTransactionResponse> => {
+    // const token = this.getTokenByAssetId(assetAddress);
+    // const asset = this.getAssetFromToken(token);
 
-    // return this.orderbookSdk.createOrder(amount, baseAsset, price, type);
+    return this.orderbookSdk.createOrder(deposit, order);
   };
 
-  cancelSpotOrder = async (orderId: string): Promise<void> => {
-    await this.orderbookSdk.cancelOrder(orderId);
+  cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {
+    const withdrawAmount = order.orderType === OrderType.Buy ? order.currentQuoteAmount : order.currentAmount;
+    const assetType = order.orderType === OrderType.Buy ? AssetType.Quote : AssetType.Base;
+
+    console.log({
+      amount: withdrawAmount.toString(),
+      assetType: assetType,
+    });
+
+    await this.orderbookSdk.cancelOrder(
+      {
+        amount: withdrawAmount.toString(),
+        assetType: assetType,
+      },
+      order.id,
+    );
   };
 
   mintToken = async (assetAddress: string): Promise<void> => {

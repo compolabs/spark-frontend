@@ -1,11 +1,13 @@
+import { Order } from "@compolabs/spark-orderbook-ts-sdk";
 import dayjs, { Dayjs } from "dayjs";
 
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 
+import "./test";
+
 import { Token } from "./Token";
-import { Order } from "@compolabs/spark-orderbook-ts-sdk";
 
 export type SpotMarketOrderParams = {
   quoteAssetId: string;
@@ -46,9 +48,10 @@ export class SpotMarketOrder {
     this.price = new BN(order.price);
 
     this.initialAmount = new BN(order.initial_amount);
-    this.initialQuoteAmount = this.initialAmount.multipliedBy(this.priceUnits);
+    this.initialQuoteAmount = this.getQuoteAmount(this.initialAmount, this.price);
+
     this.currentAmount = new BN(order.amount);
-    this.currentQuoteAmount = this.currentAmount.multipliedBy(this.priceUnits);
+    this.currentQuoteAmount = this.getQuoteAmount(this.currentAmount, this.price);
 
     this.timestamp = dayjs(order.timestamp);
   }
@@ -91,6 +94,29 @@ export class SpotMarketOrder {
 
   addInitialAmount = (amount: BN) => {
     this.initialAmount = this.initialAmount.plus(amount);
-    this.initialQuoteAmount = this.initialAmount.multipliedBy(this.priceUnits);
+    this.initialQuoteAmount = this.getQuoteAmount(this.initialAmount, this.price);
+  };
+
+  private getQuoteAmount = (amount: BN, price: BN) => {
+    const decimalsDiff = Math.abs(DEFAULT_DECIMALS - this.baseToken.decimals);
+    const decimalsDiff2 = Math.abs(this.quoteToken.decimals - this.baseToken.decimals);
+    // const maxDecimals = Math.max(DEFAULT_DECIMALS, this.baseToken.decimals);
+
+    const result = amount
+      .multipliedBy(price)
+      .multipliedBy(BN.parseUnits(1, decimalsDiff))
+      .dividedToIntegerBy(BN.parseUnits(1, DEFAULT_DECIMALS + decimalsDiff2));
+
+    return new BN(result);
+  };
+
+  debug = () => {
+    return {
+      initialAmount: this.initialAmount.toString(),
+      currentAmount: this.currentAmount.toString(),
+      initialQuoteAmount: this.initialQuoteAmount.toString(),
+      currentQuoteAmount: this.currentQuoteAmount.toString(),
+      price: this.price.toString(),
+    };
   };
 }

@@ -5,7 +5,7 @@ import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { createToast } from "@src/components/Toast";
-import { SpotMarketOrder, SpotMarketTrade } from "@src/entity";
+import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -62,22 +62,23 @@ class SpotTableVM {
     );
   }
 
-  cancelOrder = async (orderId: string) => {
+  cancelOrder = async (order: SpotMarketOrder) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (!this.rootStore.tradeStore.market) return;
 
     this.isOrderCancelling = true;
-    this.cancelingOrderId = orderId;
+    this.cancelingOrderId = order.id;
     if (bcNetwork?.getIsExternalWallet()) {
       notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
     }
 
     try {
-      await bcNetwork?.cancelSpotOrder(orderId);
+      await bcNetwork?.cancelSpotOrder(order);
       notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
     } catch (error) {
+      console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
     }
 
@@ -103,13 +104,13 @@ class SpotTableVM {
         bcNetwork!.fetchSpotOrders({
           limit,
           asset: market.baseToken.assetId,
-          user: accountStore.address,
+          user: accountStore.address0x,
           status: ["Active"],
         }),
         bcNetwork!.fetchSpotOrders({
           limit,
           asset: market.baseToken.assetId,
-          user: accountStore.address,
+          user: accountStore.address0x,
           status: ["Closed", "Canceled"],
         }),
       ]);

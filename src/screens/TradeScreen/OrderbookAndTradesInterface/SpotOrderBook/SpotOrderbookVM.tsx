@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { GetOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
@@ -11,7 +12,6 @@ import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
 import { SPOT_ORDER_FILTER } from "./SpotOrderBook";
-import { GetOrdersParams } from "@compolabs/spark-orderbook-ts-sdk";
 
 const ctx = React.createContext<SpotOrderbookVM | null>(null);
 
@@ -152,8 +152,8 @@ class SpotOrderbookVM {
     this.isOrderBookLoading = true;
 
     const [buy, sell] = await Promise.all([
-      bcNetwork!.fetchSpotOrders({ ...params, orderType: "Buy" }),
-      bcNetwork!.fetchSpotOrders({ ...params, orderType: "Sell" }),
+      bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Buy }),
+      bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Sell }),
     ]);
 
     this.allBuyOrders = buy;

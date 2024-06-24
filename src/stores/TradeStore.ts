@@ -104,11 +104,14 @@ class TradeStore {
     const info = await FuelNetwork.getInstance().fetchSpotVolume();
     const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(this.market.baseToken.priceFeed), DEFAULT_DECIMALS);
-    const volume = BN.parseUnits(baseTokenAmount.multipliedBy(price), this.market.quoteToken.decimals);
+    const volume = BN.parseUnits(baseTokenAmount.multipliedBy(price), DEFAULT_DECIMALS);
+    const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
+    const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
 
     this.spotMarketInfo = {
-      ...info,
       volume,
+      low,
+      high,
     };
 
     // fixme

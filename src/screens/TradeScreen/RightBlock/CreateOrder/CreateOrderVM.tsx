@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
-import { OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { AssetType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
@@ -349,7 +349,6 @@ class CreateOrderVM {
     }
 
     try {
-      const token = market.quoteToken;
       const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
 
       let hash: Undefinable<string> = "";
@@ -363,12 +362,19 @@ class CreateOrderVM {
         // )) as WriteTransactionResponse;
         // hash = data?.transactionId;
       } else {
-        const data = await bcNetwork.createSpotOrder(
-          this.inputAmount.toString(),
-          token.assetId,
-          this.inputPrice.toString(),
+        const deposit = {
+          amount: this.mode === ORDER_MODE.BUY ? this.inputTotal.toString() : this.inputAmount.toString(),
+          asset: this.mode === ORDER_MODE.BUY ? market.quoteToken.assetId : market.baseToken.assetId,
+        };
+
+        const order = {
+          amount: this.inputAmount.toString(),
+          tokenType: AssetType.Base,
+          price: this.inputPrice.toString(),
           type,
-        );
+        };
+
+        const data = await bcNetwork.createSpotOrder(deposit, order);
         hash = data.transactionId;
       }
 
