@@ -49,6 +49,8 @@ class TradeStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
+    const { oracleStore } = rootStore;
+
     if (initState) {
       const favMarkets = initState.favMarkets?.split(",").filter(Boolean);
       favMarkets && this.setFavMarkets(favMarkets);
@@ -60,7 +62,7 @@ class TradeStore {
     this.marketPricesUpdater = new IntervalUpdater(this.updateMarketPrices, MARKET_PRICES_UPDATE_INTERVAL);
 
     reaction(
-      () => [this.market, this.rootStore.oracleStore.initialized],
+      () => [this.market, oracleStore.initialized],
       () => {
         this.updateMarketInfo();
       },

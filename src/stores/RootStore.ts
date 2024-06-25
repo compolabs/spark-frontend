@@ -21,23 +21,23 @@ export interface ISerializedRootStore {
 export default class RootStore {
   static instance?: RootStore;
   accountStore: AccountStore;
+  oracleStore: OracleStore;
   faucetStore: FaucetStore;
   settingsStore: SettingsStore;
   notificationStore: NotificationStore;
   tradeStore: TradeStore;
   balanceStore: BalanceStore;
-  oracleStore: OracleStore;
   collateralStore: CollateralStore;
   modalStore: ModalStore;
 
   private constructor(initState?: ISerializedRootStore) {
     this.notificationStore = new NotificationStore(this);
     this.accountStore = new AccountStore(this, initState?.accountStore);
+    this.oracleStore = new OracleStore(this);
     this.faucetStore = new FaucetStore(this);
     this.settingsStore = new SettingsStore(this, initState?.settingStore);
     this.tradeStore = new TradeStore(this, initState?.tradeStore);
     this.balanceStore = new BalanceStore(this);
-    this.oracleStore = new OracleStore(this);
     this.collateralStore = new CollateralStore(this);
     this.modalStore = new ModalStore(this);
 
