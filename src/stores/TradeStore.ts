@@ -12,7 +12,7 @@ export interface ISerializedTradeStore {
   favMarkets: string | null;
 }
 
-const MARKET_INFO_UPDATE_INTERVAL = 1 * 60 * 1000; // 1 min
+const MARKET_INFO_UPDATE_INTERVAL = 5 * 1000; // 1 min
 const MARKET_PRICES_UPDATE_INTERVAL = 10 * 1000; // 10 sec
 
 class TradeStore {
@@ -104,7 +104,7 @@ class TradeStore {
     const info = await FuelNetwork.getInstance().fetchSpotVolume();
     const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(this.market.baseToken.priceFeed), DEFAULT_DECIMALS);
-    const volume = BN.parseUnits(baseTokenAmount.multipliedBy(price), DEFAULT_DECIMALS);
+    const volume = baseTokenAmount.multipliedBy(price);
     const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
     const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
 
