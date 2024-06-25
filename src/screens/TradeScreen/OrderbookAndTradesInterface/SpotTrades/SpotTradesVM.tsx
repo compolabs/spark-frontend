@@ -47,7 +47,7 @@ class SpotTradesVM {
 
     try {
       const tradesResponse = await bcNetwork!.fetchSpotTrades({
-        baseToken: market.baseToken.assetId,
+        asset: market.baseToken.assetId,
         limit: 50,
       });
       this.trades = tradesResponse;

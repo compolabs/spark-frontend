@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 
 import { Row } from "@components/Flex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { TWITTER_LINK } from "@src/constants";
 
 import tweets from "./tweets";
 
@@ -17,7 +18,7 @@ const StatusBar: React.FC = observer(() => {
   return (
     <Root>
       <Row alignItems="center" mainAxisSize="fit-content" style={{ flex: 1 }}>
-        <a href="https://twitter.com/Sprkfi" rel="noreferrer noopener" target="_blank">
+        <a href={TWITTER_LINK} rel="noreferrer noopener" target="_blank">
           <LinkText type={TEXT_TYPES.SUPPORTING}>Twitter</LinkText>
         </a>
       </Row>
@@ -89,12 +90,10 @@ const Divider = styled.div`
 
 const LinkText = styled(Text)`
   ${TEXT_TYPES.SUPPORTING};
-  transition: .4s;
+  transition: 0.4s;
   cursor: pointer;
 
   &:hover {
     color: ${({ theme }) => theme.colors.textPrimary};
   }
-;
-}
 `;

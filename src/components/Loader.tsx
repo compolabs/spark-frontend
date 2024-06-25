@@ -10,11 +10,12 @@ interface Props {
   size?: number;
   hideText?: boolean;
   text?: string;
+  className?: string;
 }
 
-const Loader: React.FC<Props> = ({ size = 64, hideText, text = "Loading" }) => {
+const Loader: React.FC<Props> = ({ size = 64, hideText, text = "Loading", className }) => {
   return (
-    <SmartFlex gap="8px" height="100%" width="100%" center column>
+    <SmartFlex className={className} gap="8px" height="100%" width="100%" center column>
       <LoaderLogoImage alt="loader" height={size} src={sparkLogoIcon} width={size} />
       {!hideText && <Text primary>{text}</Text>}
     </SmartFlex>

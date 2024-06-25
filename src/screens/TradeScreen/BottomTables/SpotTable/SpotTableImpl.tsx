@@ -11,7 +11,7 @@ import { Row } from "@src/components/Flex";
 import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
 import Table from "@src/components/Table";
-import { SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { SpotMarketOrder, Token } from "@src/entity";
 import { useMedia } from "@src/hooks/useMedia";
 import MintButtons from "@src/screens/Faucet/MintButtons";
 import { media } from "@src/themes/breakpoints";
@@ -24,7 +24,7 @@ import { BaseTable } from "../BaseTable";
 import { useSpotTableVMProvider } from "./SpotTableVM";
 
 const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
-const tradeColumnHelper = createColumnHelper<SpotMarketTrade>();
+const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();
 const balanceColumnHelper = createColumnHelper<{ asset: Token; balance: string; assetId: string }>();
 
 const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: Theme) => [
@@ -35,28 +35,28 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
   orderColumnHelper.accessor("marketSymbol", {
     header: "Pair",
   }),
-  orderColumnHelper.accessor("type", {
+  orderColumnHelper.accessor("orderType", {
     header: "Type",
     cell: (props) => (
-      <TableText color={props.getValue() === "SELL" ? theme.colors.redLight : theme.colors.greenLight}>
+      <TableText color={props.getValue() === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
         {props.getValue()}
       </TableText>
     ),
   }),
-  orderColumnHelper.accessor("baseSizeUnits", {
+  orderColumnHelper.accessor("formatInitialAmount", {
     header: "Amount",
     cell: (props) => (
       <SmartFlex center="y" gap="4px">
-        <TableText primary>{props.getValue().toSignificant(2)}</TableText>
+        <TableText primary>{props.getValue()}</TableText>
         <TokenBadge>
           <Text>{props.row.original.baseToken.symbol}</Text>
         </TokenBadge>
       </SmartFlex>
     ),
   }),
-  orderColumnHelper.accessor("priceUnits", {
+  orderColumnHelper.accessor("formatPrice", {
     header: "Price",
-    cell: (props) => toCurrency(props.getValue().toSignificant(2)),
+    cell: (props) => toCurrency(props.getValue()),
   }),
   orderColumnHelper.accessor("id", {
     header: "",
@@ -66,7 +66,7 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
         style={{
           minWidth: "92px",
         }}
-        onClick={() => vm.cancelOrder(props.getValue())}
+        onClick={() => vm.cancelOrder(props.row.original)}
       >
         {vm.cancelingOrderId === props.getValue() ? "Loading..." : "Cancel"}
       </CancelButton>
@@ -82,15 +82,15 @@ const HISTORY_COLUMNS = (theme: Theme) => [
   tradeColumnHelper.accessor("marketSymbol", {
     header: "Pair",
   }),
-  tradeColumnHelper.accessor("type", {
+  tradeColumnHelper.accessor("orderType", {
     header: "Type",
     cell: (props) => (
-      <TableText color={props.getValue() === "SELL" ? theme.colors.redLight : theme.colors.greenLight}>
+      <TableText color={props.getValue() === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
         {props.getValue()}
       </TableText>
     ),
   }),
-  tradeColumnHelper.accessor("formatTradeAmount", {
+  tradeColumnHelper.accessor("formatInitialAmount", {
     header: "Amount",
     cell: (props) => (
       <SmartFlex center="y" gap="4px">
@@ -105,9 +105,17 @@ const HISTORY_COLUMNS = (theme: Theme) => [
     header: "Price",
     cell: (props) => toCurrency(props.getValue()),
   }),
-  tradeColumnHelper.accessor("formatTradeAmount", {
+  tradeColumnHelper.accessor("formatCurrentAmount", {
     id: "filled",
     header: "Filled",
+    cell: (props) => (
+      <SmartFlex center="y" gap="4px">
+        <TableText primary>{props.getValue()}</TableText>
+        <TokenBadge>
+          <Text>{props.row.original.baseToken.symbol}</Text>
+        </TokenBadge>
+      </SmartFlex>
+    ),
   }),
 ];
 
@@ -170,7 +178,7 @@ const SpotTableImpl: React.FC = observer(() => {
           <SmartFlex gap="2px" column>
             <Text type={TEXT_TYPES.SUPPORTING}>Amount</Text>
             <SmartFlex center="y" gap="4px">
-              <Text color={theme.colors.textPrimary}>{ord.baseSizeUnits.toSignificant(2)}</Text>
+              <Text color={theme.colors.textPrimary}>{ord.formatInitialAmount}</Text>
               <TokenBadge>
                 <Text>{ord.baseToken.symbol}</Text>
               </TokenBadge>
@@ -182,19 +190,19 @@ const SpotTableImpl: React.FC = observer(() => {
           <SmartFlex gap="2px" column>
             <SmartFlex center="y" gap="4px">
               <Text type={TEXT_TYPES.SUPPORTING}>Side:</Text>
-              <TableText color={ord.type === "SELL" ? theme.colors.redLight : theme.colors.greenLight}>
-                {ord.type}
+              <TableText color={ord.orderType === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
+                {ord.orderType}
               </TableText>
             </SmartFlex>
           </SmartFlex>
         </MobileTableRowColumn>
         <MobileTableRowColumn>
-          <CancelButton onClick={() => vm.cancelOrder(ord.id)}>
+          <CancelButton onClick={() => vm.cancelOrder(ord)}>
             {vm.cancelingOrderId === ord.id ? "Loading..." : "Cancel"}
           </CancelButton>
           <SmartFlex alignItems="flex-end" gap="2px" column>
             <Text type={TEXT_TYPES.SUPPORTING}>Price:</Text>
-            <Text color={theme.colors.textPrimary}>{toCurrency(ord.priceUnits.toSignificant(2))}</Text>
+            <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice)}</Text>
           </SmartFlex>
         </MobileTableRowColumn>
       </MobileTableOrderRow>
@@ -209,7 +217,7 @@ const SpotTableImpl: React.FC = observer(() => {
           <SmartFlex gap="2px" column>
             <Text type={TEXT_TYPES.SUPPORTING}>Amount</Text>
             <SmartFlex center="y" gap="4px">
-              <Text color={theme.colors.textPrimary}>{ord.formatTradeAmount}</Text>
+              <Text color={theme.colors.textPrimary}>{ord.formatInitialAmount}</Text>
               <TokenBadge>
                 <Text>{ord.baseToken.symbol}</Text>
               </TokenBadge>
@@ -221,14 +229,14 @@ const SpotTableImpl: React.FC = observer(() => {
           <SmartFlex gap="2px" column>
             <SmartFlex center="y" gap="4px">
               <Text type={TEXT_TYPES.SUPPORTING}>Side:</Text>
-              <TableText color={ord.type === "SELL" ? theme.colors.redLight : theme.colors.greenLight}>
-                {ord.type}
+              <TableText color={ord.orderType === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
+                {ord.orderType}
               </TableText>
             </SmartFlex>
             <SmartFlex center="y" gap="4px">
               <Text type={TEXT_TYPES.SUPPORTING}>Filled:</Text>
               <SmartFlex center="y" gap="4px">
-                <Text color={theme.colors.textPrimary}>{ord.formatTradeAmount}</Text>
+                <Text color={theme.colors.textPrimary}>{ord.formatCurrentAmount}</Text>
                 <TokenBadge>
                   <Text>{ord.baseToken.symbol}</Text>
                 </TokenBadge>
