@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
+import { AssetType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
@@ -348,8 +349,7 @@ class CreateOrderVM {
     }
 
     try {
-      const baseToken = market.baseToken;
-      const baseSize = this.isSell ? this.inputAmount.times(-1) : this.inputAmount;
+      const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
 
       let hash: Undefinable<string> = "";
       if (tradeStore.isPerp) {
@@ -362,11 +362,19 @@ class CreateOrderVM {
         // )) as WriteTransactionResponse;
         // hash = data?.transactionId;
       } else {
-        const data = await bcNetwork.createSpotOrder(
-          baseToken.assetId,
-          baseSize.toString(),
-          this.inputPrice.toString(),
-        );
+        const deposit = {
+          amount: this.mode === ORDER_MODE.BUY ? this.inputTotal.toString() : this.inputAmount.toString(),
+          asset: this.mode === ORDER_MODE.BUY ? market.quoteToken.assetId : market.baseToken.assetId,
+        };
+
+        const order = {
+          amount: this.inputAmount.toString(),
+          tokenType: AssetType.Base,
+          price: this.inputPrice.toString(),
+          type,
+        };
+
+        const data = await bcNetwork.createSpotOrder(deposit, order);
         hash = data.transactionId;
       }
 
@@ -392,7 +400,7 @@ class CreateOrderVM {
     this.setInputPrice(order.price);
 
     const assetId = isBuyMode ? order.quoteToken.assetId : order.baseToken.assetId;
-    const orderSize = isBuyMode ? order.quoteSize : order.baseSize;
+    const orderSize = isBuyMode ? order.initialQuoteAmount : order.initialAmount;
 
     const amount = accountStore.isConnected ? BN.min(balanceStore.getBalance(assetId), orderSize) : orderSize;
 
