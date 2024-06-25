@@ -12,7 +12,7 @@ export interface ISerializedTradeStore {
   favMarkets: string | null;
 }
 
-const MARKET_INFO_UPDATE_INTERVAL = 5 * 1000; // 1 min
+const MARKET_INFO_UPDATE_INTERVAL = 1 * 60 * 1000; // 1 min
 const MARKET_PRICES_UPDATE_INTERVAL = 10 * 1000; // 10 sec
 
 class TradeStore {
@@ -60,10 +60,11 @@ class TradeStore {
     this.marketPricesUpdater = new IntervalUpdater(this.updateMarketPrices, MARKET_PRICES_UPDATE_INTERVAL);
 
     reaction(
-      () => this.market,
+      () => [this.market, this.rootStore.oracleStore.initialized],
       () => {
         this.updateMarketInfo();
       },
+      { fireImmediately: true },
     );
 
     this.marketInfoUpdater.run(true);
