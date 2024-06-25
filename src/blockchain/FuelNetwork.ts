@@ -2,7 +2,6 @@ import SparkOrderBookSdk, {
   AssetType,
   CreateOrderParams,
   DepositParams,
-  GetMatchOrderEventsParams,
   GetOrdersParams,
   OrderType,
   WriteTransactionResponse,
@@ -26,6 +25,7 @@ import {
 } from "./constants";
 import {
   FetchTradesParams,
+  GetSpotTradesParams,
   MarketCreateEvent,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
@@ -209,15 +209,15 @@ export class FuelNetwork {
     );
   };
 
-  fetchSpotTrades = async (params: GetMatchOrderEventsParams): Promise<SpotMarketTrade[]> => {
-    const trades = await this.orderbookSdk.getMatchOrderEvents(params);
+  fetchSpotTrades = async (params: GetSpotTradesParams): Promise<SpotMarketTrade[]> => {
+    const trades = await this.orderbookSdk.getTradeOrderEvents(params);
 
     return trades.map(
       (trade) =>
         new SpotMarketTrade({
           ...trade,
-          user: this.getAddress() ?? "",
-          quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+          baseAssetId: params.market.baseToken.assetId,
+          quoteAssetId: params.market.quoteToken.assetId,
         }),
     );
   };

@@ -1,3 +1,6 @@
+import { GetTradeOrderEventsParams } from "@compolabs/spark-orderbook-ts-sdk";
+
+import { SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
 
 // export type FetchOrdersParams = {
@@ -42,3 +45,7 @@ export type PerpPendingFundingPayment = {
   fundingPayment: BN;
   fundingGrowthPayment: BN;
 };
+
+export type GetSpotTradesParams = {
+  market: SpotMarket;
+} & GetTradeOrderEventsParams;

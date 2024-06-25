@@ -2,8 +2,8 @@ import { execSync } from "child_process";
 
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
 import checker from "vite-plugin-checker";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 
