@@ -2,7 +2,6 @@ import SparkOrderBookSdk, {
   AssetType,
   CreateOrderParams,
   DepositParams,
-  GetMatchOrderEventsParams,
   GetOrdersParams,
   OrderType,
   WriteTransactionResponse,
@@ -18,7 +17,7 @@ import BN from "@src/utils/BN";
 import {
   CONTRACT_ADDRESSES,
   INDEXER_URL,
-  NETWORKS,
+  NETWORK,
   PYTH_URL,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
@@ -26,6 +25,7 @@ import {
 } from "./constants";
 import {
   FetchTradesParams,
+  GetSpotTradesParams,
   MarketCreateEvent,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
@@ -39,13 +39,13 @@ export class FuelNetwork {
   private walletManager = new WalletManager();
   private orderbookSdk: SparkOrderBookSdk;
 
-  public network = NETWORKS[0];
+  public network = NETWORK;
 
   private constructor() {
     makeObservable(this.walletManager);
 
     this.orderbookSdk = new SparkOrderBookSdk({
-      networkUrl: NETWORKS[0].url,
+      networkUrl: NETWORK.url,
       contractAddresses: CONTRACT_ADDRESSES,
       indexerApiUrl: INDEXER_URL,
       pythUrl: PYTH_URL,
@@ -209,15 +209,15 @@ export class FuelNetwork {
     );
   };
 
-  fetchSpotTrades = async (params: GetMatchOrderEventsParams): Promise<SpotMarketTrade[]> => {
-    const trades = await this.orderbookSdk.getMatchOrderEvents(params);
+  fetchSpotTrades = async (params: GetSpotTradesParams): Promise<SpotMarketTrade[]> => {
+    const trades = await this.orderbookSdk.getTradeOrderEvents(params);
 
     return trades.map(
       (trade) =>
         new SpotMarketTrade({
           ...trade,
-          user: this.getAddress() ?? "",
-          quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+          baseAssetId: params.market.baseToken.assetId,
+          quoteAssetId: params.market.quoteToken.assetId,
         }),
     );
   };

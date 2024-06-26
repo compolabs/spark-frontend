@@ -7,6 +7,7 @@ import {
   useIsConnected,
   useWallet as useFuelWallet,
 } from "@fuels/react";
+import { useDisconnect } from "@fuels/react";
 
 interface ICurrentConnector {
   logo: string;
@@ -23,6 +24,7 @@ export const useWallet = () => {
   const { connect, isConnecting, isLoading: isLoadingConnectors } = useConnectUI();
   const { isConnected, refetch: refetchConnected } = useIsConnected();
   const { account, isLoading: isLoadingAccount, isFetching: isFetchingAccount } = useAccount();
+  const { disconnect } = useDisconnect();
 
   const address = account ?? "";
 
@@ -70,6 +72,7 @@ export const useWallet = () => {
     isLoadingConnectors,
     wallet,
     connect,
+    disconnect,
     refetchConnected,
     refetchWallet,
   };
