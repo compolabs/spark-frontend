@@ -1,16 +1,15 @@
+import { BN, MatchOrderEvent, TradeOrderEvent } from "@compolabs/spark-orderbook-ts-sdk";
 import dayjs, { Dayjs } from "dayjs";
 
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
-import BN from "@src/utils/BN";
 
 import { Token } from "./Token";
-import { MatchOrderEvent, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
 type SpotMarketTradeParams = {
-  user: string;
+  baseAssetId: string;
   quoteAssetId: string;
-} & MatchOrderEvent;
+} & TradeOrderEvent;
 
 export class SpotMarketTrade {
   readonly id: MatchOrderEvent["id"];
@@ -21,8 +20,6 @@ export class SpotMarketTrade {
   readonly tradeSize: MatchOrderEvent["match_size"];
   readonly tradePrice: MatchOrderEvent["match_price"];
 
-  readonly type: OrderType;
-
   readonly timestamp: Dayjs;
 
   constructor(params: SpotMarketTradeParams) {
@@ -30,14 +27,11 @@ export class SpotMarketTrade {
 
     this.id = params.id;
 
-    this.baseToken = bcNetwork.getTokenByAssetId(params.asset);
+    this.baseToken = bcNetwork.getTokenByAssetId(params.baseAssetId);
     this.quoteToken = bcNetwork.getTokenByAssetId(params.quoteAssetId);
 
-    this.tradeSize = params.match_size;
-    this.tradePrice = params.match_price;
-
-    // TODO: Check assumption
-    this.type = params.owner === params.user ? OrderType.Buy : OrderType.Sell;
+    this.tradeSize = params.trade_size;
+    this.tradePrice = params.trade_price;
 
     this.timestamp = dayjs(params.timestamp);
   }
