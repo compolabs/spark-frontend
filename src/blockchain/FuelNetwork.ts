@@ -1,4 +1,11 @@
-import Spark from "@compolabs/spark-orderbook-ts-sdk";
+import SparkOrderBookSdk, {
+  AssetType,
+  CreateOrderParams,
+  DepositParams,
+  GetOrdersParams,
+  OrderType,
+  WriteTransactionResponse,
+} from "@compolabs/spark-orderbook-ts-sdk";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -17,8 +24,8 @@ import {
   TOKENS_LIST,
 } from "./constants";
 import {
-  FetchOrdersParams,
   FetchTradesParams,
+  GetSpotTradesParams,
   MarketCreateEvent,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
@@ -30,14 +37,14 @@ export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
 
   private walletManager = new WalletManager();
-  private sdk: Spark;
+  private orderbookSdk: SparkOrderBookSdk;
 
   public network = NETWORK;
 
   private constructor() {
     makeObservable(this.walletManager);
 
-    this.sdk = new Spark({
+    this.orderbookSdk = new SparkOrderBookSdk({
       networkUrl: NETWORK.url,
       contractAddresses: CONTRACT_ADDRESSES,
       indexerApiUrl: INDEXER_URL,
@@ -68,6 +75,7 @@ export class FuelNetwork {
     return this.walletManager.wallet;
   };
 
+  // TODO: Fix for mobile wallets connected to desktop
   getIsExternalWallet = () => false;
 
   getTokenList = (): Token[] => {
@@ -84,34 +92,46 @@ export class FuelNetwork {
 
   setWallet = async (account: string, wallet?: any): Promise<void> => {
     await this.walletManager.setWallet(account, wallet);
-    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {
-    await this.walletManager.connectByPrivateKey(privateKey, await this.sdk.getProvider());
-    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    await this.walletManager.connectByPrivateKey(privateKey, (await this.orderbookSdk.getProvider()) as any);
+    this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   disconnectWallet = (): void => {
     this.walletManager.disconnect();
-    this.sdk.setActiveWallet(this.walletManager.wallet ?? undefined);
+    this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   addAssetToWallet = async (assetId: string): Promise<void> => {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (assetAddress: string, size: string, price: string): Promise<any> => {
-    const baseToken = this.getTokenByAssetId(assetAddress);
-    const baseAsset = this.getAssetFromToken(baseToken);
-    const quoteToken = this.getTokenBySymbol("USDC");
-    const quoteAsset = this.getAssetFromToken(quoteToken);
+  createSpotOrder = async (deposit: DepositParams, order: CreateOrderParams): Promise<WriteTransactionResponse> => {
+    // const token = this.getTokenByAssetId(assetAddress);
+    // const asset = this.getAssetFromToken(token);
 
-    return this.sdk.createSpotOrder(baseAsset, quoteAsset, size, price);
+    return this.orderbookSdk.createOrder(deposit, order);
   };
 
-  cancelSpotOrder = async (orderId: string): Promise<void> => {
-    await this.sdk.cancelSpotOrder(orderId);
+  cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {
+    const withdrawAmount = order.orderType === OrderType.Buy ? order.currentQuoteAmount : order.currentAmount;
+    const assetType = order.orderType === OrderType.Buy ? AssetType.Quote : AssetType.Base;
+
+    console.log({
+      amount: withdrawAmount.toString(),
+      assetType: assetType,
+    });
+
+    await this.orderbookSdk.cancelOrder(
+      {
+        amount: withdrawAmount.toString(),
+        assetType: assetType,
+      },
+      order.id,
+    );
   };
 
   mintToken = async (assetAddress: string): Promise<void> => {
@@ -120,7 +140,7 @@ export class FuelNetwork {
 
     const amount = FAUCET_AMOUNTS[token.symbol].toString();
 
-    await this.sdk.mintToken(asset, amount);
+    await this.orderbookSdk.mintToken(asset, amount);
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
@@ -167,30 +187,49 @@ export class FuelNetwork {
   };
 
   fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.sdk.fetchSpotMarkets(limit);
+    return this.orderbookSdk.fetchMarkets(limit);
   };
 
   fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
     const token = this.getTokenByAssetId(baseTokenAddress);
     const asset = this.getAssetFromToken(token);
 
-    return this.sdk.fetchSpotMarketPrice(asset);
+    return this.orderbookSdk.fetchMarketPrice(asset);
   };
 
-  fetchSpotOrders = async (params: FetchOrdersParams): Promise<SpotMarketOrder[]> => {
-    const orders = await this.sdk.fetchSpotOrders(params);
+  fetchSpotOrders = async (params: GetOrdersParams): Promise<SpotMarketOrder[]> => {
+    const orders = await this.orderbookSdk.fetchOrders(params);
 
-    return orders.map((obj) => new SpotMarketOrder(obj));
+    return orders.map(
+      (order) =>
+        new SpotMarketOrder({
+          ...order,
+          quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+        }),
+    );
   };
 
-  fetchSpotTrades = async (params: FetchTradesParams): Promise<SpotMarketTrade[]> => {
-    const trades = await this.sdk.fetchSpotTrades(params);
+  fetchSpotTrades = async (params: GetSpotTradesParams): Promise<SpotMarketTrade[]> => {
+    const trades = await this.orderbookSdk.getTradeOrderEvents(params);
 
-    return trades.map((obj) => new SpotMarketTrade({ ...obj, userAddress: params.trader }));
+    return trades.map(
+      (trade) =>
+        new SpotMarketTrade({
+          ...trade,
+          baseAssetId: params.market.baseToken.assetId,
+          quoteAssetId: params.market.quoteToken.assetId,
+        }),
+    );
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    return this.sdk.fetchSpotVolume();
+    const data = await this.orderbookSdk.fetchVolume();
+
+    return {
+      low: new BN(data.low24h),
+      high: new BN(data.high24h),
+      volume: new BN(data.volume24h),
+    };
   };
 
   matchPerpOrders = async (order1: string, order2: string): Promise<unknown> => {

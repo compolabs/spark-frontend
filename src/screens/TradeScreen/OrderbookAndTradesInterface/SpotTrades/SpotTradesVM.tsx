@@ -20,7 +20,7 @@ export const useSpotTradesVM = () => useVM(ctx);
 const UPDATE_TRADES_INTERVAL = 2 * 1000;
 
 class SpotTradesVM {
-  public trades: Array<SpotMarketTrade> = [];
+  public trades: SpotMarketTrade[] = [];
 
   private tradesUpdater: IntervalUpdater;
 
@@ -36,7 +36,7 @@ class SpotTradesVM {
   }
 
   updateTrades = async () => {
-    const { accountStore, tradeStore, initialized } = this.rootStore;
+    const { tradeStore, initialized } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     const market = tradeStore.market;
@@ -47,7 +47,7 @@ class SpotTradesVM {
 
     try {
       const tradesResponse = await bcNetwork!.fetchSpotTrades({
-        baseToken: market.baseToken.assetId,
+        market,
         limit: 50,
       });
       this.trades = tradesResponse;

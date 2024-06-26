@@ -7,19 +7,19 @@ import { Column } from "@components/Flex";
 
 import Header from "./components/Header";
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
+import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
 import TradeScreen from "./screens/TradeScreen";
 import { ROUTES } from "./constants";
 
-const Root = styled(Column)`
-  width: 100%;
-  align-items: center;
-  background: ${({ theme }) => theme.colors.bgPrimary};
-  height: 100vh;
-`;
+const isUnderConstruction = false;
 
 const App: React.FC = observer(() => {
   usePrivateKeyAsAuth();
+
+  if (isUnderConstruction) {
+    return <UnderConstruction />;
+  }
 
   return (
     <Root>
@@ -37,3 +37,10 @@ const App: React.FC = observer(() => {
 });
 
 export default App;
+
+const Root = styled(Column)`
+  width: 100%;
+  align-items: center;
+  background: ${({ theme }) => theme.colors.bgPrimary};
+  height: 100vh;
+`;

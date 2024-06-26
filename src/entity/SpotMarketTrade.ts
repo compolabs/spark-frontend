@@ -1,70 +1,47 @@
+import { BN, MatchOrderEvent, TradeOrderEvent } from "@compolabs/spark-orderbook-ts-sdk";
 import dayjs, { Dayjs } from "dayjs";
-import { Address, isBech32 } from "fuels";
-import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { DEFAULT_DECIMALS } from "@src/constants";
-import BN from "@src/utils/BN";
 
 import { Token } from "./Token";
 
-interface SpotMarketTradeParams {
-  id: string;
-  baseToken: string;
-  matcher: string;
-  seller: string;
-  buyer: string;
-  tradeAmount: BN;
-  price: BN;
-  timestamp: number;
-  userAddress?: string;
-}
-
-const getType = (buyer: string, seller: string, userAddress?: string) => {
-  if (!userAddress) return null;
-
-  const address = isBech32(userAddress) ? new Address(userAddress as `fuel${string}`).toB256() : userAddress;
-  return address.toLowerCase() === seller.toLowerCase()
-    ? "SELL"
-    : address.toLowerCase() === buyer.toLowerCase()
-      ? "BUY"
-      : null;
-};
+type SpotMarketTradeParams = {
+  baseAssetId: string;
+  quoteAssetId: string;
+} & TradeOrderEvent;
 
 export class SpotMarketTrade {
-  readonly id: SpotMarketTradeParams["id"];
+  readonly id: MatchOrderEvent["id"];
+
   readonly baseToken: Token;
-  readonly matcher: SpotMarketTradeParams["matcher"];
-  readonly seller: SpotMarketTradeParams["seller"];
-  readonly buyer: SpotMarketTradeParams["buyer"];
-  readonly tradeAmount: SpotMarketTradeParams["tradeAmount"];
-  readonly price: SpotMarketTradeParams["price"];
+  readonly quoteToken: Token;
+
+  readonly tradeSize: MatchOrderEvent["match_size"];
+  readonly tradePrice: MatchOrderEvent["match_price"];
+
   readonly timestamp: Dayjs;
-  readonly quoteToken = TOKENS_BY_SYMBOL.USDC; // TODO: Переписать, пробрасывать через аргументы
-  readonly type: Nullable<"SELL" | "BUY"> = null;
 
   constructor(params: SpotMarketTradeParams) {
     const bcNetwork = FuelNetwork.getInstance();
-    const baseToken = bcNetwork.getTokenByAssetId(params.baseToken);
 
     this.id = params.id;
-    this.baseToken = baseToken;
-    this.matcher = params.matcher;
-    this.seller = params.seller;
-    this.buyer = params.buyer;
-    this.tradeAmount = params.tradeAmount;
-    this.price = params.price;
-    this.timestamp = dayjs.unix(params.timestamp);
-    this.type = getType(this.buyer, this.seller, params.userAddress);
+
+    this.baseToken = bcNetwork.getTokenByAssetId(params.baseAssetId);
+    this.quoteToken = bcNetwork.getTokenByAssetId(params.quoteAssetId);
+
+    this.tradeSize = params.trade_size;
+    this.tradePrice = params.trade_price;
+
+    this.timestamp = dayjs(params.timestamp);
   }
 
   get formatPrice() {
-    return BN.formatUnits(this.price, DEFAULT_DECIMALS).toSignificant(2);
+    return BN.formatUnits(this.tradePrice, DEFAULT_DECIMALS).toSignificant(2);
   }
 
   get formatTradeAmount() {
-    return BN.formatUnits(this.tradeAmount, this.baseToken.decimals).toSignificant(2);
+    return BN.formatUnits(this.tradeSize, this.baseToken.decimals).toSignificant(2);
   }
 
   get marketSymbol() {

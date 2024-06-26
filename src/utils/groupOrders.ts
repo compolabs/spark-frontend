@@ -1,3 +1,4 @@
+import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 
@@ -18,14 +19,20 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
     if (!groupedOrders[price]) {
       groupedOrders[price] = new SpotMarketOrder({
         id: order.id,
-        baseToken: order.baseToken.assetId,
-        trader: order.trader,
-        baseSize: BN.ZERO,
-        orderPrice: roundedPrice,
-        blockTimestamp: order.timestamp.unix(),
+        status: "Active",
+        user: "",
+        price,
+        amount: BN.ZERO.toString(),
+        initial_amount: BN.ZERO.toString(),
+        order_type: order.orderType,
+        asset: order.baseToken.assetId,
+        asset_type: order.assetType,
+        quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+        timestamp: order.timestamp.toString(),
       });
     }
-    groupedOrders[price].addBaseSize(order.baseSize);
+
+    groupedOrders[price].addInitialAmount(order.initialAmount);
   });
 
   return Object.values(groupedOrders);
