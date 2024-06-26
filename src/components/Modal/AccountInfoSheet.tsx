@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { useDisconnect } from "@fuels/react";
 import copy from "copy-to-clipboard";
 
 import copyIcon from "@src/assets/icons/copy.svg";
@@ -24,9 +23,8 @@ interface Props {
 }
 
 const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
+  const { disconnect } = useWallet();
   const { accountStore, notificationStore, balanceStore } = useStores();
-  const { balance } = useWallet();
-  const { disconnect } = useDisconnect();
 
   const bcNetwork = FuelNetwork.getInstance();
 

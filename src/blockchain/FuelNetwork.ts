@@ -17,7 +17,7 @@ import BN from "@src/utils/BN";
 import {
   CONTRACT_ADDRESSES,
   INDEXER_URL,
-  NETWORKS,
+  NETWORK,
   PYTH_URL,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
@@ -39,13 +39,13 @@ export class FuelNetwork {
   private walletManager = new WalletManager();
   private orderbookSdk: SparkOrderBookSdk;
 
-  public network = NETWORKS[0];
+  public network = NETWORK;
 
   private constructor() {
     makeObservable(this.walletManager);
 
     this.orderbookSdk = new SparkOrderBookSdk({
-      networkUrl: NETWORKS[0].url,
+      networkUrl: NETWORK.url,
       contractAddresses: CONTRACT_ADDRESSES,
       indexerApiUrl: INDEXER_URL,
       pythUrl: PYTH_URL,
