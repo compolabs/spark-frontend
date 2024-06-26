@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import { observer } from "mobx-react";
 
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
 import WalletIcon from "@src/assets/icons/wallet.svg?react";
@@ -18,27 +19,23 @@ import { TokenOption, TokenSelect } from "./TokenSelect";
 
 const INPUT_FILL_OPTIONS = ["Half", "All"];
 
-export const SwapScreen: React.FC = () => {
+export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
   const { accountStore, balanceStore, faucetStore, swapStore, oracleStore } = useStores();
+
   const [slippage, setSlippage] = useState(1);
-  const [payAmount, setPayAmount] = useState<string>("0.00");
-  const [receiveAmount, setReceiveAmount] = useState<string>("0.00");
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
 
-  const [sellToken, setSellToken] = useState<TokenOption>(swapStore.tokens[0]);
-  const [buyToken, setBuyToken] = useState<TokenOption>(swapStore.tokens[1]);
+  const sellTokenOptions: any = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
+  const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
 
-  const sellTokenOptions: any = swapStore.tokens.filter((token) => token.symbol !== buyToken.symbol);
-  const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== sellToken.symbol);
-
-  const buyTokenPrice = buyToken.priceFeed
-    ? BN.formatUnits(oracleStore.getTokenIndexPrice(buyToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
+  const buyTokenPrice = swapStore.buyToken.priceFeed
+    ? BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
     : "0";
 
-  const sellTokenPrice = sellToken.priceFeed
-    ? BN.formatUnits(oracleStore.getTokenIndexPrice(sellToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
+  const sellTokenPrice = swapStore.sellToken.priceFeed
+    ? BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
     : "0";
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,12 +45,12 @@ export const SwapScreen: React.FC = () => {
       return;
     }
 
-    setPayAmount(newPayAmount);
+    swapStore.setPayAmount(newPayAmount);
 
     const receiveAmount =
       Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
 
-    setReceiveAmount(receiveAmount.toFixed(2));
+    swapStore.setReceiveAmount(receiveAmount.toFixed(2));
   };
 
   const onReceivedTokensChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,28 +60,58 @@ export const SwapScreen: React.FC = () => {
       return;
     }
 
-    setReceiveAmount(newReceiveAmount);
+    swapStore.setReceiveAmount(newReceiveAmount);
 
     const payAmount =
       Number(newReceiveAmount) * (parseNumberWithCommas(buyTokenPrice) / parseNumberWithCommas(sellTokenPrice));
-    setPayAmount(payAmount.toFixed(2));
+    swapStore.setPayAmount(payAmount.toFixed(2));
   };
 
   const onSwitchTokens = () => {
-    const temp = sellToken;
-    setSellToken(buyToken);
-    setBuyToken(temp);
+    const temp = { ...swapStore.sellToken };
+    swapStore.setSellToken(swapStore.buyToken as TokenOption);
+    swapStore.setBuyToken(temp as TokenOption);
   };
 
   const fillPayAmount = (option: string) => {
+    let newPayAmount = "";
     if (option === "Half") {
-      setPayAmount("160");
-      // setPayAmount((balanceStore.balance / 2).toFixed(2));
+      const half = Number(swapStore.sellToken.balance) / 2;
+      newPayAmount = half.toString();
     } else if (option === "All") {
-      setPayAmount("320");
-      // setPayAmount(balanceStore.balance.toFixed(2));
+      newPayAmount = swapStore.sellToken.balance;
     }
+    // const buyTokenPrice = swapStore.buyToken.priceFeed
+    // ? BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
+    // : "0";
+
+    console.log(newPayAmount, "newPayAmount");
+
+    swapStore.setPayAmount(newPayAmount);
+
+    const receiveAmount =
+      Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
+
+    console.log(parseNumberWithCommas(sellTokenPrice));
+    console.log(parseNumberWithCommas(buyTokenPrice));
+
+    swapStore.setReceiveAmount(receiveAmount.toFixed(6));
+
+    console.log(swapStore.receiveAmount, "receiveAmount");
   };
+
+  // recalculateTokenPrices() {
+  //   const { oracleStore } = this.rootStore;
+  // this.buyTokenPrice = this.buyToken.priceFeed
+  //   ? BN.formatUnits(oracleStore.getTokenIndexPrice(this.buyToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
+  //   : "0";
+
+  //   console.log(this.buyTokenPrice, "this.buyTokenPrice");
+
+  //   this.sellTokenPrice = this.sellToken.priceFeed
+  //     ? BN.formatUnits(oracleStore.getTokenIndexPrice(this.sellToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
+  //     : "0";
+  // }
 
   return (
     <Root>
@@ -112,17 +139,23 @@ export const SwapScreen: React.FC = () => {
             <TokenSelect
               options={sellTokenOptions}
               selectType="Sell"
-              value={sellToken}
-              onSelect={(option) => setSellToken(option)}
+              value={swapStore.sellToken}
+              onSelect={(option) => swapStore.setSellToken(option)}
             />
           </BoxHeader>
-          <SwapInput autoComplete="off" id="pay-amount" type="text" value={payAmount} onChange={onPayAmountChange} />
+          <SwapInput
+            autoComplete="off"
+            id="pay-amount"
+            type="text"
+            value={swapStore.payAmount}
+            onChange={onPayAmountChange}
+          />
           <BalanceSection>
             <Text type={TEXT_TYPES.BODY}>$0.00</Text>
             {isConnected ? (
               <Balance>
                 <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                  {sellToken.balance}
+                  {swapStore.sellToken.balance}
                 </Text>
                 <WalletIcon />
               </Balance>
@@ -140,15 +173,15 @@ export const SwapScreen: React.FC = () => {
             <TokenSelect
               options={buyTokenOptions}
               selectType="Buy"
-              value={buyToken}
-              onSelect={(option) => setBuyToken(option)}
+              value={swapStore.buyToken}
+              onSelect={(option) => swapStore.setBuyToken(option)}
             />
           </BoxHeader>
           <SwapInput
             autoComplete="off"
             id="receive-amount"
             type="text"
-            value={receiveAmount}
+            value={swapStore.receiveAmount}
             onChange={onReceivedTokensChange}
           />
           <BalanceSection>
@@ -156,37 +189,37 @@ export const SwapScreen: React.FC = () => {
             {isConnected ? (
               <Balance>
                 <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                  {buyToken.balance}
+                  {swapStore.buyToken.balance}
                 </Text>
                 <WalletIcon />
               </Balance>
             ) : null}
           </BalanceSection>
           <ExchangeRate>
-            1 {buyToken.symbol} = {buyTokenPrice} USDC ($3,653)
+            {/* TODO: add exchange rate */}1 {swapStore.buyToken.symbol} = {buyTokenPrice} USDC (${buyTokenPrice})
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
       <InfoBlock slippage={slippage} updateSlippage={setSlippage} />
-      <SwapButton disabled={!isConnected || !Number(payAmount)}>
-        Swap {sellToken.symbol} to {buyToken.symbol}
+      <SwapButton disabled={!isConnected || !Number(swapStore.payAmount)}>
+        Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}
       </SwapButton>
 
       {isSuccessModalVisible && (
         <SuccessModal
           hash=""
           transactionInfo={{
-            sellToken: sellToken.symbol,
-            buyToken: buyToken.symbol,
-            sellAmount: payAmount,
-            buyAmount: receiveAmount,
+            sellToken: swapStore.sellToken.symbol,
+            buyToken: swapStore.buyToken.symbol,
+            sellAmount: swapStore.payAmount,
+            buyAmount: swapStore.receiveAmount,
           }}
           onClose={() => setSuccessModalVisible(false)}
         />
       )}
     </Root>
   );
-};
+});
 
 const Root = styled.div`
   padding-top: 50px;
