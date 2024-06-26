@@ -7,6 +7,10 @@ export const handleWalletErrors = (notificationStore: NotificationStore, error: 
   if (message.includes("user rejected action") || message.includes("user rejected the transaction")) return;
   if (message.includes("assets already exist in wallet settings")) return;
 
+  if (message.includes("not enough coins to fit the target")) {
+    notificationStore.toast(createToast({ text: "Not enough funds to pay gas" }), { type: "error" });
+    return;
+  }
   if (message.includes("insufficient funds for intrinsic transaction cost")) {
     notificationStore.toast(createToast({ text: "Not enough funds to pay gas" }), { type: "error" });
     return;
