@@ -55,26 +55,3 @@ root.render(
   </storesContext.Provider>,
   // </React.StrictMode>,
 );
-function createConfig(arg0: { chains: any[]; transports: { [x: number]: any }; connectors: any[] }) {
-  throw new Error("Function not implemented.");
-}
-
-function http() {
-  throw new Error("Function not implemented.");
-}
-
-function injected(arg0: { shimDisconnect: boolean }) {
-  throw new Error("Function not implemented.");
-}
-
-function walletConnect(arg0: {
-  projectId: string;
-  metadata: { name: string; description: string; url: string; icons: string[] };
-  showQrModal: boolean;
-}) {
-  throw new Error("Function not implemented.");
-}
-
-function coinbaseWallet(arg0: { appName: string; appLogoUrl: string; darkMode: boolean; reloadOnDisconnect: boolean }) {
-  throw new Error("Function not implemented.");
-}
