@@ -120,11 +120,6 @@ export class FuelNetwork {
     const withdrawAmount = order.orderType === OrderType.Buy ? order.currentQuoteAmount : order.currentAmount;
     const assetType = order.orderType === OrderType.Buy ? AssetType.Quote : AssetType.Base;
 
-    console.log({
-      amount: withdrawAmount.toString(),
-      assetType: assetType,
-    });
-
     await this.orderbookSdk.cancelOrder(
       {
         amount: withdrawAmount.toString(),
