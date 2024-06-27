@@ -42,7 +42,7 @@ const LEVERAGE_OPTIONS = [5, 10, 20];
 
 const IS_TP_SL_FEATURE_DISABLED = true;
 
-const MINIMAL_ETH_REQUIRED = BN.formatUnits(2.5, 5);
+const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore, collateralStore } = useStores();
@@ -93,8 +93,9 @@ const CreateOrder: React.FC = observer(() => {
   const isInputPriceDisabled = settingsStore.orderType !== ORDER_TYPE.Limit;
 
   const renderButton = () => {
-    const nativeBalancePos = balanceStore.getNativeBalance().lt(MINIMAL_ETH_REQUIRED);
-    if (!isButtonDisabled && !nativeBalancePos) {
+    const isEnoughGas = balanceStore.getNativeBalance().gt(MINIMAL_ETH_REQUIRED);
+
+    if (!isButtonDisabled && !isEnoughGas) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient ETH for gas</Text>
