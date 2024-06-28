@@ -1,6 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
+import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
@@ -80,6 +81,10 @@ export class BalanceStore {
 
   getFormatBalance = (assetId: string, decimals: number) => {
     return BN.formatUnits(this.getBalance(assetId), decimals).toSignificant(2) ?? "-";
+  };
+
+  getNativeBalance = () => {
+    return this.balances.get(TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
   };
 
   private fetchBalance = async (assetId: string): Promise<string> => {
