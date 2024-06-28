@@ -11,7 +11,8 @@ import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
 import TradeScreen from "./screens/TradeScreen";
 import { ROUTES } from "./constants";
-
+import { ApolloProvider } from "@apollo/client";
+import client from "src/apolloClient";
 const isUnderConstruction = false;
 
 const App: React.FC = observer(() => {
@@ -22,17 +23,19 @@ const App: React.FC = observer(() => {
   }
 
   return (
-    <Root>
-      <Header />
-      {/* <Column alignItems="center" justifyContent="center" mainAxisSize="stretch">
+    <ApolloProvider client={client}>
+      <Root>
+        <Header />
+        {/* <Column alignItems="center" justifyContent="center" mainAxisSize="stretch">
         <Text>Spark is under construction</Text>
       </Column> */}
-      <Routes>
-        <Route element={<TradeScreen />} path={ROUTES.TRADE} />
-        <Route element={<TradeScreen />} path={ROUTES.ROOT} />
-        <Route element={<Faucet />} path={ROUTES.FAUCET} />
-      </Routes>
-    </Root>
+        <Routes>
+          <Route element={<TradeScreen />} path={ROUTES.TRADE} />
+          <Route element={<TradeScreen />} path={ROUTES.ROOT} />
+          <Route element={<Faucet />} path={ROUTES.FAUCET} />
+        </Routes>
+      </Root>
+    </ApolloProvider>
   );
 });
 

@@ -32,6 +32,6 @@
       "@screens/*": ["src/screens/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/typings"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
