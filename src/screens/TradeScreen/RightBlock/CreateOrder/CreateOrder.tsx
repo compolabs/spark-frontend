@@ -52,7 +52,7 @@ const CreateOrder: React.FC = observer(() => {
 
   const media = useMedia();
 
-  const isButtonDisabled = vm.loading || !vm.canProceed;
+  const isButtonDisabled = vm.isLoading || !vm.canProceed;
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
 
@@ -69,11 +69,11 @@ const CreateOrder: React.FC = observer(() => {
 
     const value = BN.percentOf(balance, v);
     if (vm.isSell) {
-      vm.setInputAmount(value, true);
+      vm.setInputAmount(value);
       return;
     }
 
-    vm.setInputTotal(value, true);
+    vm.setInputTotal(value);
   };
 
   const handleSetOrderType = (type: ORDER_TYPE) => {
@@ -83,7 +83,7 @@ const CreateOrder: React.FC = observer(() => {
   const handleSetPrice = (amount: BN) => {
     if (settingsStore.orderType === ORDER_TYPE.Market) return;
 
-    vm.setInputPrice(amount, true);
+    vm.setInputPrice(amount);
   };
 
   const toggleTpSl = () => {
@@ -106,7 +106,7 @@ const CreateOrder: React.FC = observer(() => {
     return (
       <CreateOrderButton disabled={isButtonDisabled} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
-          {vm.loading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
+          {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
         </Text>
       </CreateOrderButton>
     );
@@ -164,43 +164,43 @@ const CreateOrder: React.FC = observer(() => {
     );
   };
 
-  const renderLeverageContent = () => (
-    <Accordion transitionTimeout={400} transition>
-      <AccordionItem
-        header={
-          <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-              LEVERAGE
-            </Text>
-            <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{vm.inputLeveragePercent.toSignificant(2)}</Text>
-              <Text>&nbsp;%</Text>
-            </Row>
-          </Row>
-        }
-        hideBottomBorder
-      >
-        <SmartFlex gap="8px" column>
-          <Slider
-            max={100}
-            min={0}
-            percent={vm.inputLeverage.toNumber()}
-            symbol="x"
-            value={vm.inputLeveragePercent.toNumber()}
-            onChange={(v) => vm.setInputLeveragePercent(v as number)}
-          />
-          <SmartFlex gap="8px">
-            <TokenInput amount={vm.inputLeverage} decimals={0} setAmount={vm.setInputLeverage} />
-            {LEVERAGE_OPTIONS.map((option) => (
-              <LeverageButton key={option} onClick={() => vm.setInputLeverage(new BN(option))}>
-                {option}x
-              </LeverageButton>
-            ))}
-          </SmartFlex>
-        </SmartFlex>
-      </AccordionItem>
-    </Accordion>
-  );
+  // const renderLeverageContent = () => (
+  //   <Accordion transitionTimeout={400} transition>
+  //     <AccordionItem
+  //       header={
+  //         <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
+  //           <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+  //             LEVERAGE
+  //           </Text>
+  //           <Row alignItems="center" justifyContent="flex-end">
+  //             <Text primary>{vm.inputLeveragePercent.toSignificant(2)}</Text>
+  //             <Text>&nbsp;%</Text>
+  //           </Row>
+  //         </Row>
+  //       }
+  //       hideBottomBorder
+  //     >
+  //       <SmartFlex gap="8px" column>
+  //         <Slider
+  //           max={100}
+  //           min={0}
+  //           percent={vm.inputLeverage.toNumber()}
+  //           symbol="x"
+  //           value={vm.inputLeveragePercent.toNumber()}
+  //           onChange={(v) => vm.setInputLeveragePercent(v as number)}
+  //         />
+  //         <SmartFlex gap="8px">
+  //           <TokenInput amount={vm.inputLeverage} decimals={0} setAmount={vm.setInputLeverage} />
+  //           {LEVERAGE_OPTIONS.map((option) => (
+  //             <LeverageButton key={option} onClick={() => vm.setInputLeverage(new BN(option))}>
+  //               {option}x
+  //             </LeverageButton>
+  //           ))}
+  //         </SmartFlex>
+  //       </SmartFlex>
+  //     </AccordionItem>
+  //   </Accordion>
+  // );
 
   const renderTpSlContent = () => {
     if (!isPerp || IS_TP_SL_FEATURE_DISABLED) return;
@@ -286,7 +286,7 @@ const CreateOrder: React.FC = observer(() => {
             decimals={baseToken.decimals}
             error={vm.isSell ? vm.isInputError : undefined}
             label="Order size"
-            setAmount={(v) => vm.setInputAmount(v, true)}
+            setAmount={vm.setInputAmount}
             onBlur={vm.setActiveInput}
             onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
           />
@@ -300,7 +300,7 @@ const CreateOrder: React.FC = observer(() => {
               assetId={quoteToken.assetId}
               decimals={quoteToken.decimals}
               error={vm.isSell ? undefined : vm.isInputError}
-              setAmount={(v) => vm.setInputTotal(v, true)}
+              setAmount={vm.setInputTotal}
               onBlur={vm.setActiveInput}
               onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
             />
@@ -327,7 +327,7 @@ const CreateOrder: React.FC = observer(() => {
             />
           </SliderContainer>
         )}
-        {isPerp ? renderLeverageContent() : null}
+        {/* {isPerp ? renderLeverageContent() : null} */}
         {renderTpSlContent()}
         {renderOrderDetails()}
       </ParamsContainer>
