@@ -4,7 +4,6 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
-import WalletIcon from "@src/assets/icons/wallet.svg?react";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { useWallet } from "@src/hooks/useWallet";
@@ -13,11 +12,11 @@ import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
 
+import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
 import { SuccessModal } from "./SuccessModal";
 import { TokenSelect } from "./TokenSelect";
-import { BalanceSection } from "./BalanceSection";
 
 const INPUT_FILL_OPTIONS = ["Half", "All"];
 const INITIAL_SLIPPAGE = 1;
@@ -35,7 +34,6 @@ export const SwapScreen: React.FC = observer(() => {
   const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
 
   const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
-
   const sellTokenPrice = swapStore.getPrice(swapStore.sellToken);
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
@@ -137,7 +135,7 @@ export const SwapScreen: React.FC = observer(() => {
             value={swapStore.payAmount}
             onChange={onPayAmountChange}
           />
-          <BalanceSection isLoaded={isLoaded} balance={swapStore.sellToken.balance} balanceUSD={payAmountUSD} />
+          <BalanceSection balance={swapStore.sellToken.balance} balanceUSD={payAmountUSD} isLoaded={isLoaded} />
         </SwapBox>
 
         <SwitchTokens
@@ -164,7 +162,7 @@ export const SwapScreen: React.FC = observer(() => {
             value={swapStore.receiveAmount}
             onChange={onReceivedTokensChange}
           />
-          <BalanceSection isLoaded={isLoaded} balance={swapStore.buyToken.balance} balanceUSD={receiveAmountUSD} />
+          <BalanceSection balance={swapStore.buyToken.balance} balanceUSD={receiveAmountUSD} isLoaded={isLoaded} />
           <ExchangeRate>
             1 {swapStore.buyToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.sellToken.symbol} (${buyTokenPrice})
           </ExchangeRate>

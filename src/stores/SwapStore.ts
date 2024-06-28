@@ -15,6 +15,7 @@ class SwapStore {
   tokens: TokenOption[];
   sellToken: TokenOption;
   buyToken: TokenOption;
+  // maybe use BN
   payAmount: string;
   receiveAmount: string;
   buyTokenPrice: string;
@@ -84,11 +85,11 @@ class SwapStore {
 
   swapTokens = async ({ slippage }: { slippage: number }) => {
     const { notificationStore, balanceStore } = this.rootStore;
-    let hash: Undefinable<string> = "";
+    const hash: Undefinable<string> = "";
     const bcNetwork = FuelNetwork.getInstance();
 
     const params: GetOrdersParams = {
-      limit: 100, // or more
+      limit: 100, // or more if needed
       asset: this.buyToken.assetId, // sellToken.assetId for sell orders
       status: ["Active"],
     };
@@ -114,15 +115,11 @@ class SwapStore {
       assetType: AssetType.Base,
       orderType: OrderType.Buy,
       price: this.buyTokenPrice,
-      slippage: "0.01",
-      orders: [],
+      slippage: "100",
+      orders: sellOrders.map((order) => order.id),
     };
 
-    const data = {
-      transactionId: "123",
-    };
-
-    hash = data.transactionId;
+    //  await bcNetwork!.fulfillManyOrders(order, deposit)
 
     notificationStore.toast(createToast({ text: "Order Created", hash: hash }), {
       type: "success",
