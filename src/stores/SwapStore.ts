@@ -1,15 +1,15 @@
-import { autorun, makeAutoObservable, reaction, toJS } from "mobx";
+import { AssetType, GetOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { autorun, makeAutoObservable } from "mobx";
+import { Undefinable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
+import { createToast } from "@src/components/Toast";
+import { DEFAULT_DECIMALS } from "@src/constants";
+import { TokenOption } from "@src/screens/SwapScreen/TokenSelect";
 import BN from "@src/utils/BN";
+import { isValidAmountInput, parseNumberWithCommas } from "@src/utils/swapUtils";
 
 import RootStore from "./RootStore";
-import { TokenOption } from "@src/screens/SwapScreen/TokenSelect";
-import { parseNumberWithCommas } from "@src/utils/swapUtils";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { Undefinable } from "tsdef";
-import { AssetType, GetOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
-import { createToast } from "@src/components/Toast";
 
 class SwapStore {
   tokens: TokenOption[];
@@ -58,25 +58,28 @@ class SwapStore {
     this.sellTokenPrice = this.getPrice(this.sellToken);
   }
 
-  fetchNewTokens() {
+  fetchNewTokens(): TokenOption[] {
     const { balanceStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    return bcNetwork!.getTokenList().map((v) => {
-      const balance = balanceStore.getBalance(v.assetId);
-      const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
-      const token = bcNetwork!.getTokenByAssetId(v.assetId);
+    return bcNetwork!
+      .getTokenList()
+      .filter((token) => token.symbol !== "ETH")
+      .map((v) => {
+        const balance = balanceStore.getBalance(v.assetId);
+        const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
+        const token = bcNetwork!.getTokenByAssetId(v.assetId);
 
-      return {
-        key: token.symbol,
-        title: token.name,
-        symbol: token.symbol,
-        img: token.logo,
-        balance: formatBalance?.toFormat(4),
-        priceFeed: token.priceFeed,
-        assetId: token.assetId,
-      };
-    });
+        return {
+          key: token.symbol,
+          title: token.name,
+          symbol: token.symbol,
+          img: token.logo,
+          balance: formatBalance?.toFormat(4),
+          priceFeed: token.priceFeed,
+          assetId: token.assetId,
+        };
+      });
   }
 
   swapTokens = async ({ slippage }: { slippage: number }) => {
@@ -85,42 +88,36 @@ class SwapStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     const params: GetOrdersParams = {
-      limit: 200,
-      asset: this.buyToken.assetId, // ? sellToken.assetId
+      limit: 100, // or more
+      asset: this.buyToken.assetId, // sellToken.assetId for sell orders
       status: ["Active"],
     };
 
-    // maybe we need to fetch all orders
-    const [buy, sell] = await Promise.all([
-      bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Buy }),
-      bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Sell }),
-    ]);
+    const sellOrders = await bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Buy });
+    // TODO: check if there is enough price sum to fulfill the order
 
     const deposit = {
-      amount: this.payAmount,
-      asset: this.sellToken.symbol,
-      // amount: this.mode === ORDER_MODE.BUY ? this.inputTotal.toString() : this.inputAmount.toString(),
-      // asset: this.mode === ORDER_MODE.BUY ? market.quoteToken.assetId : market.baseToken.assetId,
+      amount: this.receiveAmount, // payAmount for sell order
+      asset: this.buyToken.assetId, // sellToken.assetId for sell order
     };
 
-    // matchmanyparamas
-    // amount
-    // assetType
-    // orderType
-    // price
-    // slippage
-    // orders
+    // fulfillManyParams
+    // amount: string;
+    // assetType: AssetType;
+    // orderType: OrderType;
+    // price: string;
+    // slippage: string;
+    // orders: string[];
 
     const order = {
-      amount: this.receiveAmount,
+      amount: this.payAmount,
       assetType: AssetType.Base,
-      orderType: "Market",
+      orderType: OrderType.Buy,
       price: this.buyTokenPrice,
       slippage: "0.01",
       orders: [],
     };
 
-    // const data = await bcNetwork.createSpotOrder(deposit, order);
     const data = {
       transactionId: "123",
     };
@@ -134,6 +131,31 @@ class SwapStore {
     // await balanceStore.update();
     // return hash?
   };
+
+  onSwitchTokens = () => {
+    const temp = { ...this.sellToken };
+    this.setSellToken(this.buyToken as TokenOption);
+    this.setBuyToken(temp as TokenOption);
+    this.recalculateAmounts();
+  };
+
+  recalculateAmounts() {
+    const payAmount = parseNumberWithCommas(this.payAmount);
+    const sellTokenPrice = parseNumberWithCommas(this.sellTokenPrice);
+    const buyTokenPrice = parseNumberWithCommas(this.buyTokenPrice);
+
+    if (payAmount && isValidAmountInput(this.payAmount)) {
+      const receiveAmount = payAmount * (sellTokenPrice / buyTokenPrice);
+      this.setReceiveAmount(receiveAmount.toFixed(2));
+    }
+
+    const receiveAmount = parseNumberWithCommas(this.receiveAmount);
+
+    if (receiveAmount && isValidAmountInput(this.receiveAmount)) {
+      const newPayAmount = receiveAmount * (buyTokenPrice / sellTokenPrice);
+      this.setPayAmount(newPayAmount.toFixed(2));
+    }
+  }
 
   setSellToken(token: TokenOption) {
     this.sellToken = token;

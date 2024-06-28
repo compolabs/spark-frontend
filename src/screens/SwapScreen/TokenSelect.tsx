@@ -1,10 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
 import CloseIcon from "@src/assets/icons/close.svg?react";
-import SearchInput from "@src/components/SearchInput";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useMedia } from "@src/hooks/useMedia";
 import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
@@ -31,6 +30,26 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
   const media = useMedia();
   const theme = useTheme();
   const [isSelectMenuVisible, setSelectMenuVisible] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState<TokenOption[]>(options);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    setFilteredOptions(options);
+  }, [options]);
+
+  // const filterTokens = (search: string) => {
+  //   const lowercasedSearch = search.toLowerCase();
+  //   const filtered = options.filter(
+  //     (option) =>
+  //       option.title.toLowerCase().includes(lowercasedSearch) || option.symbol.toLowerCase().includes(lowercasedSearch),
+  //   );
+  //   setFilteredOptions(filtered);
+  // };
+
+  // const handleSearchChange = (value: string) => {
+  //   setSearchTerm(value);
+  //   filterTokens(value);
+  // };
 
   const selectRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(selectRef, () => setSelectMenuVisible(false));
@@ -55,20 +74,23 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
         <MobileOverlay>
           <OptionsContainer ref={selectRef}>
             <Container>
-              <MobileHeader>
-                <Text type={TEXT_TYPES.H} primary>
-                  {selectType}
-                </Text>
-                <CloseIcon onClick={() => setSelectMenuVisible(false)} />
-              </MobileHeader>
-              <SearchInput value="test" onChange={() => console.log("search")} />
+              {media.mobile && (
+                <MobileHeader>
+                  <Text type={TEXT_TYPES.H} primary>
+                    {selectType}
+                  </Text>
+                  <CloseIcon onClick={() => setSelectMenuVisible(false)} />
+                </MobileHeader>
+              )}
+              {/* TODO add when there will be more tokens */}
+              {/* <SearchInput value={searchTerm} onChange={handleSearchChange} /> */}
             </Container>
 
             <OptionsHeader>
               <Text type={TEXT_TYPES.BODY}>Asset</Text>
               <Text type={TEXT_TYPES.BODY}>Balance</Text>
             </OptionsHeader>
-            {options.map((option) => (
+            {filteredOptions.map((option) => (
               <Option key={option.key} onClick={() => selectOption(option)}>
                 <OptionRightPart key={option.key}>
                   <img alt={option.symbol} src={option.img} />
@@ -154,7 +176,7 @@ const MobileHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 26px;
+  // margin-bottom: 26px;
 `;
 
 const OptionsContainer = styled.div`

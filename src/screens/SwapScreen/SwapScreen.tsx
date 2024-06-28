@@ -14,9 +14,9 @@ import BN from "@src/utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
 
 import { InfoBlock } from "./InfoBlock";
+import { PendingModal } from "./PendingModal";
 import { SuccessModal } from "./SuccessModal";
 import { TokenOption, TokenSelect } from "./TokenSelect";
-import { PendingModal } from "./PendingModal";
 
 const INPUT_FILL_OPTIONS = ["Half", "All"];
 
@@ -32,13 +32,10 @@ export const SwapScreen: React.FC = observer(() => {
   const sellTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
   const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
 
-  const buyTokenPrice = swapStore.buyToken.priceFeed
-    ? BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
-    : "0";
+  const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
 
-  const sellTokenPrice = swapStore.sellToken.priceFeed
-    ? BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
-    : "0";
+  const sellTokenPrice = swapStore.getPrice(swapStore.sellToken);
+  const usdcPrice = swapStore.getPrice(swapStore.tokens.find((token) => token.symbol === "USDC") as TokenOption);
 
   const exchangeRate =
     BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toNumber() /
@@ -138,7 +135,7 @@ export const SwapScreen: React.FC = observer(() => {
             onChange={onPayAmountChange}
           />
           <BalanceSection>
-            <Text type={TEXT_TYPES.BODY}>$0.00</Text>
+            <Text type={TEXT_TYPES.BODY}>${Number(sellTokenPrice) * Number(swapStore.payAmount)}</Text>
             {isConnected ? (
               <Balance>
                 <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
@@ -150,7 +147,7 @@ export const SwapScreen: React.FC = observer(() => {
           </BalanceSection>
         </SwapBox>
 
-        <SwitchTokens disabled={!isConnected} onClick={onSwitchTokens}>
+        <SwitchTokens disabled={!isConnected} onClick={swapStore.onSwitchTokens}>
           <ArrowDownIcon />
         </SwitchTokens>
 
@@ -172,7 +169,7 @@ export const SwapScreen: React.FC = observer(() => {
             onChange={onReceivedTokensChange}
           />
           <BalanceSection>
-            <Text type={TEXT_TYPES.BODY}>$0.00</Text>
+            <Text type={TEXT_TYPES.BODY}>${Number(buyTokenPrice) * Number(swapStore.receiveAmount)}</Text>
             {isConnected ? (
               <Balance>
                 <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
