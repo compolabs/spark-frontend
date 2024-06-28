@@ -116,6 +116,15 @@ export class FuelNetwork {
     return this.orderbookSdk.createOrder(deposit, order);
   };
 
+  swapTokens = async (deposit: DepositParams, order: CreateOrderParams): Promise<WriteTransactionResponse> => {
+    return {
+      transactionId: "",
+      value: "success",
+    };
+
+    // return this.orderbookSdk.fulfillOrderMany(deposit, order);
+  };
+
   cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {
     const withdrawAmount = order.orderType === OrderType.Buy ? order.currentQuoteAmount : order.currentAmount;
     const assetType = order.orderType === OrderType.Buy ? AssetType.Quote : AssetType.Base;

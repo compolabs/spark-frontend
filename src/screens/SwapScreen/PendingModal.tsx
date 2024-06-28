@@ -3,16 +3,13 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
-import CheckCircle from "@src/assets/icons/check-circle.svg?react";
+import Spinner from "@src/assets/icons/spinner.svg?react";
 import CloseIcon from "@src/assets/icons/close.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
-import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
-import { getExplorerLinkByHash } from "@src/utils/getExplorerLink";
 
-type SuccessModalProps = {
-  hash: string;
+type PendingModalProps = {
   onClose: () => void;
   transactionInfo: {
     sellToken: string;
@@ -22,12 +19,9 @@ type SuccessModalProps = {
   };
 };
 
-export const SuccessModal: React.FC<SuccessModalProps> = ({ hash, onClose, transactionInfo }) => {
-  const media = useMedia();
+export const PendingModal: React.FC<PendingModalProps> = ({ onClose, transactionInfo }) => {
   const theme = useTheme();
   const { sellToken, buyToken, sellAmount, buyAmount } = transactionInfo;
-
-  const link = getExplorerLinkByHash(hash);
 
   return (
     <Overlay>
@@ -37,16 +31,11 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ hash, onClose, trans
           <CloseIcon onClick={onClose} />
         </Actions>
         <ModalContent>
-          <CheckCircle />
+          <Spinner />
           <Description>
             <ModalTitle color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
-              Swap completed
+              Approve transaction in your wallet
             </ModalTitle>
-            <a href={link} rel="noreferrer noopener" target="_blank">
-              <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                See in Explorer
-              </Text>
-            </a>
           </Description>
 
           <TransactionInfo>
@@ -77,6 +66,15 @@ const Overlay = styled.div`
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(6px);
+`;
+
+const ModalTitle = styled(Text)`
+  text-align: center;
+  font-weight: 400;
+  max-width: 70%;
+  margin: 0 auto;
+  font-size: 24px;
+  line-height: 32px;
 `;
 
 const Modal = styled.div`
@@ -123,12 +121,6 @@ const Description = styled.div`
 const TransactionInfo = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-`;
-
-const ModalTitle = styled(Text)`
-  text-align: center;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 32px;
 `;

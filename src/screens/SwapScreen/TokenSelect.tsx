@@ -17,6 +17,7 @@ export type TokenOption = {
   img: string;
   balance: string;
   priceFeed: string;
+  assetId: string;
 };
 
 interface TokenSelectProps {

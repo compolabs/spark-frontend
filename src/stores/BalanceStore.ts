@@ -10,6 +10,7 @@ const UPDATE_INTERVAL = 5 * 1000;
 
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
+  public initialized: boolean = false;
 
   private balancesUpdater: IntervalUpdater;
 
@@ -27,14 +28,22 @@ export class BalanceStore {
       ([isConnected]) => {
         if (!isConnected) {
           this.balances = new Map();
+          this.initialized = false;
           return;
         }
-
+        this.initialize();
         this.balancesUpdater.update();
       },
       { fireImmediately: true },
     );
   }
+
+  initialize = async () => {
+    await this.update();
+    runInAction(() => {
+      this.initialized = true;
+    });
+  };
 
   get nonZeroBalancesAssetIds() {
     const nonZeroBalances: string[] = [];

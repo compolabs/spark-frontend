@@ -16,18 +16,20 @@ import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/ut
 import { InfoBlock } from "./InfoBlock";
 import { SuccessModal } from "./SuccessModal";
 import { TokenOption, TokenSelect } from "./TokenSelect";
+import { PendingModal } from "./PendingModal";
 
 const INPUT_FILL_OPTIONS = ["Half", "All"];
 
 export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
-  const { accountStore, balanceStore, faucetStore, swapStore, oracleStore } = useStores();
+  const { swapStore, oracleStore } = useStores();
 
   const [slippage, setSlippage] = useState(1);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [isPendingModalVisible, setPendingModalVisible] = useState(false); //TODO: set to true when transaction is pending
 
-  const sellTokenOptions: any = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
+  const sellTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
   const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
 
   const buyTokenPrice = swapStore.buyToken.priceFeed
@@ -37,6 +39,10 @@ export const SwapScreen: React.FC = observer(() => {
   const sellTokenPrice = swapStore.sellToken.priceFeed
     ? BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
     : "0";
+
+  const exchangeRate =
+    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toNumber() /
+    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toNumber();
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPayAmount = replaceComma(e.target.value);
@@ -81,37 +87,18 @@ export const SwapScreen: React.FC = observer(() => {
     } else if (option === "All") {
       newPayAmount = swapStore.sellToken.balance;
     }
-    // const buyTokenPrice = swapStore.buyToken.priceFeed
-    // ? BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
-    // : "0";
-
-    console.log(newPayAmount, "newPayAmount");
 
     swapStore.setPayAmount(newPayAmount);
 
     const receiveAmount =
       Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
 
-    console.log(parseNumberWithCommas(sellTokenPrice));
-    console.log(parseNumberWithCommas(buyTokenPrice));
-
     swapStore.setReceiveAmount(receiveAmount.toFixed(6));
-
-    console.log(swapStore.receiveAmount, "receiveAmount");
   };
 
-  // recalculateTokenPrices() {
-  //   const { oracleStore } = this.rootStore;
-  // this.buyTokenPrice = this.buyToken.priceFeed
-  //   ? BN.formatUnits(oracleStore.getTokenIndexPrice(this.buyToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
-  //   : "0";
-
-  //   console.log(this.buyTokenPrice, "this.buyTokenPrice");
-
-  //   this.sellTokenPrice = this.sellToken.priceFeed
-  //     ? BN.formatUnits(oracleStore.getTokenIndexPrice(this.sellToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
-  //     : "0";
-  // }
+  const swapTokens = () => {
+    // setPendingModalVisible(true);
+  };
 
   return (
     <Root>
@@ -196,12 +183,12 @@ export const SwapScreen: React.FC = observer(() => {
             ) : null}
           </BalanceSection>
           <ExchangeRate>
-            {/* TODO: add exchange rate */}1 {swapStore.buyToken.symbol} = {buyTokenPrice} USDC (${buyTokenPrice})
+            1 {swapStore.buyToken.symbol} = {exchangeRate.toFixed(5)} {swapStore.sellToken.symbol} (${buyTokenPrice})
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
       <InfoBlock slippage={slippage} updateSlippage={setSlippage} />
-      <SwapButton disabled={!isConnected || !Number(swapStore.payAmount)}>
+      <SwapButton disabled={!isConnected || !Number(swapStore.payAmount)} onClick={swapTokens}>
         Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}
       </SwapButton>
 
@@ -215,6 +202,18 @@ export const SwapScreen: React.FC = observer(() => {
             buyAmount: swapStore.receiveAmount,
           }}
           onClose={() => setSuccessModalVisible(false)}
+        />
+      )}
+
+      {isPendingModalVisible && (
+        <PendingModal
+          transactionInfo={{
+            sellToken: swapStore.sellToken.symbol,
+            buyToken: swapStore.buyToken.symbol,
+            sellAmount: swapStore.payAmount,
+            buyAmount: swapStore.receiveAmount,
+          }}
+          onClose={() => setPendingModalVisible(false)}
         />
       )}
     </Root>
