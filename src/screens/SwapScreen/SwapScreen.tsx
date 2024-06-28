@@ -16,16 +16,18 @@ import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/ut
 import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
 import { SuccessModal } from "./SuccessModal";
-import { TokenOption, TokenSelect } from "./TokenSelect";
+import { TokenSelect } from "./TokenSelect";
+import { BalanceSection } from "./BalanceSection";
 
 const INPUT_FILL_OPTIONS = ["Half", "All"];
+const INITIAL_SLIPPAGE = 1;
 
 export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
-  const { swapStore, oracleStore } = useStores();
+  const { swapStore, oracleStore, balanceStore } = useStores();
 
-  const [slippage, setSlippage] = useState(1);
+  const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [isPendingModalVisible, setPendingModalVisible] = useState(false); //TODO: set to true when transaction is pending
 
@@ -35,7 +37,9 @@ export const SwapScreen: React.FC = observer(() => {
   const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
 
   const sellTokenPrice = swapStore.getPrice(swapStore.sellToken);
-  const usdcPrice = swapStore.getPrice(swapStore.tokens.find((token) => token.symbol === "USDC") as TokenOption);
+
+  const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
+  const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
 
   const exchangeRate =
     BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toNumber() /
@@ -53,7 +57,7 @@ export const SwapScreen: React.FC = observer(() => {
     const receiveAmount =
       Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
 
-    swapStore.setReceiveAmount(receiveAmount.toFixed(2));
+    swapStore.setReceiveAmount(receiveAmount.toFixed(4));
   };
 
   const onReceivedTokensChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,22 +71,17 @@ export const SwapScreen: React.FC = observer(() => {
 
     const payAmount =
       Number(newReceiveAmount) * (parseNumberWithCommas(buyTokenPrice) / parseNumberWithCommas(sellTokenPrice));
-    swapStore.setPayAmount(payAmount.toFixed(2));
-  };
-
-  const onSwitchTokens = () => {
-    const temp = { ...swapStore.sellToken };
-    swapStore.setSellToken(swapStore.buyToken as TokenOption);
-    swapStore.setBuyToken(temp as TokenOption);
+    swapStore.setPayAmount(payAmount.toFixed(4));
   };
 
   const fillPayAmount = (option: string) => {
     let newPayAmount = "";
     if (option === "Half") {
-      const half = Number(swapStore.sellToken.balance) / 2;
+      const half = parseNumberWithCommas(swapStore.sellToken.balance) / 2;
       newPayAmount = half.toString();
     } else if (option === "All") {
-      newPayAmount = swapStore.sellToken.balance;
+      console.log(swapStore.sellToken.balance);
+      newPayAmount = parseNumberWithCommas(swapStore.sellToken.balance).toFixed(4);
     }
 
     swapStore.setPayAmount(newPayAmount);
@@ -90,12 +89,16 @@ export const SwapScreen: React.FC = observer(() => {
     const receiveAmount =
       Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
 
-    swapStore.setReceiveAmount(receiveAmount.toFixed(6));
+    swapStore.setReceiveAmount(receiveAmount.toFixed(4));
   };
 
   const swapTokens = () => {
     // setPendingModalVisible(true);
+    // call method to swap tokens from the store
   };
+
+  const isBalanceZero = Number(swapStore.sellToken.balance) === 0;
+  const isLoaded = isConnected && balanceStore.initialized;
 
   return (
     <Root>
@@ -108,7 +111,7 @@ export const SwapScreen: React.FC = observer(() => {
           <BoxHeader>
             <ActionContainer>
               <Text type={TEXT_TYPES.BODY}>Sell</Text>
-              {isConnected && (
+              {isLoaded && !isBalanceZero && (
                 <Actions>
                   {INPUT_FILL_OPTIONS.map((option) => (
                     <ActionTag key={option} onClick={() => fillPayAmount(option)}>
@@ -134,20 +137,13 @@ export const SwapScreen: React.FC = observer(() => {
             value={swapStore.payAmount}
             onChange={onPayAmountChange}
           />
-          <BalanceSection>
-            <Text type={TEXT_TYPES.BODY}>${Number(sellTokenPrice) * Number(swapStore.payAmount)}</Text>
-            {isConnected ? (
-              <Balance>
-                <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                  {swapStore.sellToken.balance}
-                </Text>
-                <WalletIcon />
-              </Balance>
-            ) : null}
-          </BalanceSection>
+          <BalanceSection isLoaded={isLoaded} balance={swapStore.sellToken.balance} balanceUSD={payAmountUSD} />
         </SwapBox>
 
-        <SwitchTokens disabled={!isConnected} onClick={swapStore.onSwitchTokens}>
+        <SwitchTokens
+          disabled={!isConnected || !balanceStore.initialized || isBalanceZero}
+          onClick={swapStore.onSwitchTokens}
+        >
           <ArrowDownIcon />
         </SwitchTokens>
 
@@ -168,24 +164,18 @@ export const SwapScreen: React.FC = observer(() => {
             value={swapStore.receiveAmount}
             onChange={onReceivedTokensChange}
           />
-          <BalanceSection>
-            <Text type={TEXT_TYPES.BODY}>${Number(buyTokenPrice) * Number(swapStore.receiveAmount)}</Text>
-            {isConnected ? (
-              <Balance>
-                <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                  {swapStore.buyToken.balance}
-                </Text>
-                <WalletIcon />
-              </Balance>
-            ) : null}
-          </BalanceSection>
+          <BalanceSection isLoaded={isLoaded} balance={swapStore.buyToken.balance} balanceUSD={receiveAmountUSD} />
           <ExchangeRate>
-            1 {swapStore.buyToken.symbol} = {exchangeRate.toFixed(5)} {swapStore.sellToken.symbol} (${buyTokenPrice})
+            1 {swapStore.buyToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.sellToken.symbol} (${buyTokenPrice})
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
       <InfoBlock slippage={slippage} updateSlippage={setSlippage} />
-      <SwapButton disabled={!isConnected || !Number(swapStore.payAmount)} onClick={swapTokens}>
+
+      <SwapButton
+        disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
+        onClick={swapTokens}
+      >
         Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}
       </SwapButton>
 
@@ -331,18 +321,6 @@ const SwapInput = styled.input`
   ${media.mobile} {
     font-size: 24px;
   }
-`;
-
-const BalanceSection = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Balance = styled.span`
-  display: flex;
-  align-items: center;
-  gap: 4px;
 `;
 
 const ExchangeRate = styled.div`

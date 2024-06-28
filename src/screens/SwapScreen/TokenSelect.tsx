@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
 import CloseIcon from "@src/assets/icons/close.svg?react";
+import SearchInput from "@src/components/SearchInput";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useMedia } from "@src/hooks/useMedia";
 import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
@@ -30,12 +31,12 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
   const media = useMedia();
   const theme = useTheme();
   const [isSelectMenuVisible, setSelectMenuVisible] = useState(false);
-  const [filteredOptions, setFilteredOptions] = useState<TokenOption[]>(options);
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [filteredOptions, setFilteredOptions] = useState<TokenOption[]>(options);
+  // const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    setFilteredOptions(options);
-  }, [options]);
+  // useEffect(() => {
+  //   setFilteredOptions(options);
+  // }, [options]);
 
   // const filterTokens = (search: string) => {
   //   const lowercasedSearch = search.toLowerCase();
@@ -90,7 +91,7 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
               <Text type={TEXT_TYPES.BODY}>Asset</Text>
               <Text type={TEXT_TYPES.BODY}>Balance</Text>
             </OptionsHeader>
-            {filteredOptions.map((option) => (
+            {options.map((option) => (
               <Option key={option.key} onClick={() => selectOption(option)}>
                 <OptionRightPart key={option.key}>
                   <img alt={option.symbol} src={option.img} />
@@ -176,7 +177,7 @@ const MobileHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  // margin-bottom: 26px;
+  margin-bottom: 26px;
 `;
 
 const OptionsContainer = styled.div`
@@ -186,7 +187,7 @@ const OptionsContainer = styled.div`
   width: 300px;
   right: 0;
   background-color: ${({ theme }) => theme.colors.bgSecondary};
-  padding: 16px 0 0;
+  padding: 8px 0 8px;
   border-radius: 10px;
   max-height: 336px;
   display: flex;

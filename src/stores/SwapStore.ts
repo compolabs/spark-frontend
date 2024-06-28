@@ -7,7 +7,7 @@ import { createToast } from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { TokenOption } from "@src/screens/SwapScreen/TokenSelect";
 import BN from "@src/utils/BN";
-import { isValidAmountInput, parseNumberWithCommas } from "@src/utils/swapUtils";
+import { parseNumberWithCommas } from "@src/utils/swapUtils";
 
 import RootStore from "./RootStore";
 
@@ -133,36 +133,28 @@ class SwapStore {
   };
 
   onSwitchTokens = () => {
-    const temp = { ...this.sellToken };
-    this.setSellToken(this.buyToken as TokenOption);
-    this.setBuyToken(temp as TokenOption);
-    this.recalculateAmounts();
-  };
-
-  recalculateAmounts() {
-    const payAmount = parseNumberWithCommas(this.payAmount);
     const sellTokenPrice = parseNumberWithCommas(this.sellTokenPrice);
     const buyTokenPrice = parseNumberWithCommas(this.buyTokenPrice);
 
-    if (payAmount && isValidAmountInput(this.payAmount)) {
-      const receiveAmount = payAmount * (sellTokenPrice / buyTokenPrice);
-      this.setReceiveAmount(receiveAmount.toFixed(2));
-    }
+    const tempToken = { ...this.sellToken };
 
-    const receiveAmount = parseNumberWithCommas(this.receiveAmount);
+    this.setSellToken(this.buyToken as TokenOption);
+    this.setBuyToken(tempToken as TokenOption);
 
-    if (receiveAmount && isValidAmountInput(this.receiveAmount)) {
-      const newPayAmount = receiveAmount * (buyTokenPrice / sellTokenPrice);
-      this.setPayAmount(newPayAmount.toFixed(2));
-    }
-  }
+    this.setPayAmount(this.receiveAmount);
+
+    const newReceiveAmount = Number(this.receiveAmount) * (buyTokenPrice / sellTokenPrice);
+    this.setReceiveAmount(newReceiveAmount.toFixed(4));
+  };
 
   setSellToken(token: TokenOption) {
     this.sellToken = token;
+    this.sellTokenPrice = this.getPrice(token);
   }
 
   setBuyToken(token: TokenOption) {
     this.buyToken = token;
+    this.buyTokenPrice = this.getPrice(token);
   }
 
   setPayAmount(value: string) {
