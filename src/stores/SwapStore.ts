@@ -87,19 +87,23 @@ class SwapStore {
     const { notificationStore, balanceStore } = this.rootStore;
     const hash: Undefinable<string> = "";
     const bcNetwork = FuelNetwork.getInstance();
+    const isBuy = this.buyToken.symbol === "BTC";
 
     const params: GetOrdersParams = {
       limit: 100, // or more if needed
-      asset: this.buyToken.assetId, // sellToken.assetId for sell orders
+      asset: isBuy ? this.buyToken.assetId : this.sellToken.assetId,
       status: ["Active"],
     };
 
-    const sellOrders = await bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Buy });
+    const sellOrders = await bcNetwork!.fetchSpotOrders({
+      ...params,
+      orderType: isBuy ? OrderType.Buy : OrderType.Sell,
+    });
     // TODO: check if there is enough price sum to fulfill the order
 
     const deposit = {
-      amount: this.receiveAmount, // payAmount for sell order
-      asset: this.buyToken.assetId, // sellToken.assetId for sell order
+      amount: isBuy ? this.receiveAmount : this.payAmount,
+      asset: isBuy ? this.buyToken.assetId : this.sellToken.assetId,
     };
 
     // fulfillManyParams
@@ -113,10 +117,10 @@ class SwapStore {
     const order = {
       amount: this.payAmount,
       assetType: AssetType.Base,
-      orderType: OrderType.Buy,
+      orderType: this.buyToken.symbol === "BTC" ? OrderType.Buy : OrderType.Sell,
       price: this.buyTokenPrice,
-      slippage: "100",
       orders: sellOrders.map((order) => order.id),
+      slippage: slippage,
     };
 
     //  await bcNetwork!.fulfillManyOrders(order, deposit)

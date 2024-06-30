@@ -92,7 +92,8 @@ export const SwapScreen: React.FC = observer(() => {
 
   const swapTokens = () => {
     // setPendingModalVisible(true);
-    // call method to swap tokens from the store
+    const slippagePercentage = Number(slippage) * 100;
+    swapStore.swapTokens({ slippage: slippagePercentage });
   };
 
   const isBalanceZero = Number(swapStore.sellToken.balance) === 0;
