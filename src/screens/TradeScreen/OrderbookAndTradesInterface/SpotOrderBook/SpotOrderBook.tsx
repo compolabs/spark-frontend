@@ -19,7 +19,7 @@ import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
-import hexToRgba from "@src/utils/hexToRgb";
+import { hexToRgba } from "@src/utils/hexToRgb";
 import { useStores } from "@stores";
 
 import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";

@@ -70,7 +70,7 @@ export const FUEL_CONFIG = {
     new FuelWalletConnector(),
     new FueletWalletConnector(),
     new WalletConnectConnector({
-      wagmiConfig,
+      wagmiConfig: wagmiConfig as any,
       projectId: WC_PROJECT_ID,
     }),
     // new FuelWalletDevelopmentConnector(),

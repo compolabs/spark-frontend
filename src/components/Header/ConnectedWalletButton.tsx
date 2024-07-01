@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
 import { useStores } from "@src/stores";
-import centerEllipsis from "@src/utils/centerEllipsis";
+import { getShortString } from "@src/utils/getShortString";
 
 import { SmartFlex } from "../SmartFlex";
 import { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
@@ -22,7 +22,7 @@ const ConnectedWalletButton: React.FC<Props> = observer(({ isFocused, className,
 
   return (
     <Root className={className} gap="8px" isFocused={isFocused} center onClick={onClick}>
-      {centerEllipsis(accountStore.address ?? "", 10)}
+      {getShortString(accountStore.address ?? "", 10)}
       <ArrowIconStyled alt="Arrow Icon" src={arrowIcon} />
     </Root>
   );
