@@ -18,7 +18,7 @@ export interface Network {
 
 export const NETWORK: Network = {
   name: "Fuel",
-  url: "https://beta-5.fuel.network/graphql",
+  url: "https://testnet.fuel.network/v1/graphql",
 };
 
 export const EXPLORER_URL = "https://app.fuel.network/";

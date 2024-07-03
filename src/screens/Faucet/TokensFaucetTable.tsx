@@ -3,9 +3,10 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import Chip from "@components/Chip";
-import { Column, Row } from "@components/Flex";
+import { Row } from "@components/Flex";
 import { TableText } from "@components/Table";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { SmartFlex } from "@src/components/SmartFlex";
 import { useStores } from "@stores";
 
 import MintButtons from "./MintButtons";
@@ -51,7 +52,6 @@ const Root = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  box-sizing: border-box;
   border: 1px solid ${({ theme }) => theme.colors.bgSecondary};
   overflow: hidden;
   border-radius: 10px;
@@ -63,17 +63,18 @@ const Root = styled.div`
   }
 `;
 
-const StyledTableRow = styled(Row)`
+const StyledTableRow = styled(SmartFlex)`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+
   margin-bottom: 1px;
   height: 48px;
-  flex-shrink: 0;
   background: ${({ theme }) => theme.colors.bgPrimary};
   align-items: center;
   padding: 0 12px;
-  box-sizing: border-box;
 
-  :last-of-type {
-    margin-bottom: 0;
+  & > :last-child {
+    justify-self: flex-end;
   }
 `;
 
@@ -83,7 +84,7 @@ const TableTitle = styled(Text)`
   ${TEXT_TYPES_MAP[TEXT_TYPES.SUPPORTING]}
 `;
 
-const TableBody = styled(Column)`
+const TableBody = styled(SmartFlex)`
+  flex-direction: column;
   width: 100%;
-  box-sizing: border-box;
 `;

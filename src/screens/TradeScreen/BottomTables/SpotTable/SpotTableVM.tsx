@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
+import { AssetType, BN, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
 import { Dayjs } from "dayjs";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { Nullable } from "tsdef";
@@ -26,10 +27,22 @@ const ORDERS_UPDATE_INTERVAL = 5 * 1000; // 5 sec
 class SpotTableVM {
   myOrders: SpotMarketOrder[] = [];
   myOrdersHistory: SpotMarketOrder[] = [];
+  myMarketBalance = {
+    locked: {
+      base: BN.ZERO,
+      quote: BN.ZERO,
+    },
+    liquid: {
+      base: BN.ZERO,
+      quote: BN.ZERO,
+    },
+  };
   initialized: boolean = false;
 
   isOrderCancelling = false;
   cancelingOrderId: Nullable<string> = null;
+  isWithdrawing = false;
+  withdrawingAssetId: Nullable<string> = null;
 
   private readonly rootStore: RootStore;
 
@@ -62,6 +75,16 @@ class SpotTableVM {
     );
   }
 
+  getContractBalanceInfo = (assetId: string) => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const token = bcNetwork.getTokenByAssetId(assetId);
+    const type = token.symbol === "USDC" ? AssetType.Quote : AssetType.Base;
+    const amount = type === AssetType.Quote ? this.myMarketBalance.liquid.quote : this.myMarketBalance.liquid.base;
+
+    return { amount, type };
+  };
+
   cancelOrder = async (order: SpotMarketOrder) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
@@ -77,6 +100,8 @@ class SpotTableVM {
     try {
       await bcNetwork?.cancelSpotOrder(order);
       notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
+
+      this.sync();
     } catch (error) {
       console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
@@ -84,6 +109,35 @@ class SpotTableVM {
 
     this.isOrderCancelling = false;
     this.cancelingOrderId = null;
+  };
+
+  withdrawBalance = async (assetId: string) => {
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    if (!this.rootStore.tradeStore.market) return;
+
+    this.isWithdrawing = true;
+    this.withdrawingAssetId = assetId;
+
+    if (bcNetwork?.getIsExternalWallet()) {
+      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+    }
+
+    const { amount, type } = this.getContractBalanceInfo(assetId);
+
+    try {
+      await bcNetwork?.withdrawSpotBalance(amount.toString(), type);
+      notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
+
+      this.sync();
+    } catch (error) {
+      console.error(error);
+      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
+    }
+
+    this.isWithdrawing = false;
+    this.withdrawingAssetId = null;
   };
 
   private sync = async () => {
@@ -100,7 +154,7 @@ class SpotTableVM {
     const limit = 500;
 
     try {
-      const [ordersData, ordersHistoryData] = await Promise.all([
+      const [ordersData, ordersHistoryData, balanceData] = await Promise.all([
         bcNetwork!.fetchSpotOrders({
           limit,
           asset: market.baseToken.assetId,
@@ -113,12 +167,16 @@ class SpotTableVM {
           user: accountStore.address0x,
           status: ["Closed", "Canceled"],
         }),
+        bcNetwork!.fetchSpotUserMarketBalance(accountStore.address as any),
       ]);
+
+      console.log(balanceData.liquid);
 
       const sortedOrder = ordersData.sort(sortDesc);
       const sortedOrdersHistory = ordersHistoryData.sort(sortDesc);
       this.setMyOrders(sortedOrder);
       this.setMyOrdersHistory(sortedOrdersHistory);
+      this.setMyMarketBalance(balanceData);
     } catch (error) {
       console.error(error);
     }
@@ -127,6 +185,18 @@ class SpotTableVM {
   private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
 
   private setMyOrdersHistory = (myOrdersHistory: SpotMarketOrder[]) => (this.myOrdersHistory = myOrdersHistory);
+
+  private setMyMarketBalance = (balance: UserMarketBalance) =>
+    (this.myMarketBalance = {
+      liquid: {
+        base: new BN(balance.liquid.base),
+        quote: new BN(balance.liquid.quote),
+      },
+      locked: {
+        base: new BN(balance.locked.base),
+        quote: new BN(balance.locked.quote),
+      },
+    });
 
   private setInitialized = (l: boolean) => (this.initialized = l);
 }
