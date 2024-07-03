@@ -4,9 +4,10 @@ import SparkOrderBookSdk, {
   DepositParams,
   GetOrdersParams,
   OrderType,
+  UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
-import { Account } from "fuels";
+import { Account, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -145,6 +146,10 @@ export class FuelNetwork {
     await this.orderbookSdk.mintToken(asset, amount);
   };
 
+  withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<void> => {
+    await this.orderbookSdk.withdraw(amount, assetType);
+  };
+
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
     const token = this.getTokenByAssetId(assetAddress);
     const asset = this.getAssetFromToken(token);
@@ -232,6 +237,10 @@ export class FuelNetwork {
       high: new BN(data.high24h),
       volume: new BN(data.volume24h),
     };
+  };
+
+  fetchSpotUserMarketBalance = async (accountAddress: Bech32Address): Promise<UserMarketBalance> => {
+    return this.orderbookSdk.fetchUserMarketBalance(accountAddress);
   };
 
   matchPerpOrders = async (order1: string, order2: string): Promise<unknown> => {

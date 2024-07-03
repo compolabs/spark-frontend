@@ -103,11 +103,6 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
         ${({ hovered }) => hovered && "cursor: pointer;"};
         ${({ hovered, theme }) => hovered && `background: ${theme.colors.textPrimary};`};
       }
-
-      :last-child {
-        td {
-        }
-      }
     }
 
     th {
