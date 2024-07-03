@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  useAccount,
-  useBalance,
-  useConnectUI,
-  useFuel,
-  useIsConnected,
-  useWallet as useFuelWallet,
-} from "@fuels/react";
+import { useAccount, useConnectUI, useFuel, useIsConnected, useWallet as useFuelWallet } from "@fuels/react";
 import { useDisconnect } from "@fuels/react";
 
 interface ICurrentConnector {
@@ -30,7 +23,7 @@ export const useWallet = () => {
 
   const { wallet, refetch: refetchWallet } = useFuelWallet(address);
 
-  const { balance, isLoading: isLoadingBalance, isFetching: isFetchingBalance } = useBalance({ address });
+  // const { balance, isLoading: isLoadingBalance, isFetching: isFetchingBalance } = useBalance({ address });
 
   const [currentConnector, setCurrentConnector] = useState<ICurrentConnector>(DEFAULT_CONNECTOR);
 
@@ -56,14 +49,14 @@ export const useWallet = () => {
     setCurrentConnector({ logo, title });
   }, [fuel.currentConnector, isConnected]);
 
-  const isLoading = [isLoadingAccount, isLoadingBalance].some(Boolean);
+  const isLoading = [isLoadingAccount].some(Boolean);
 
-  const isFetching = [isFetchingAccount, isFetchingBalance].some(Boolean);
+  const isFetching = [isFetchingAccount].some(Boolean);
 
   return {
-    address,
-    account,
-    balance,
+    // address,
+    // account,
+    // balance,
     currentConnector,
     isConnected,
     isConnecting,

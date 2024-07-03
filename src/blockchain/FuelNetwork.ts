@@ -7,7 +7,7 @@ import SparkOrderBookSdk, {
   UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
-import { Bech32Address } from "fuels";
+import { Account, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -92,13 +92,19 @@ export class FuelNetwork {
     return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
-  setWallet = async (account: string, wallet?: any): Promise<void> => {
-    await this.walletManager.setWallet(account, wallet);
+  // setWallet = async (account: string, wallet?: any): Promise<void> => {
+  //   await this.walletManager.setWallet(account, wallet);
+  //   this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
+  // };
+
+  connect = async (wallet: Account): Promise<void> => {
+    await this.walletManager.connect(wallet);
     this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {
-    await this.walletManager.connectByPrivateKey(privateKey, (await this.orderbookSdk.getProvider()) as any);
+    const provider = await this.orderbookSdk.getProvider();
+    await this.walletManager.connectByPrivateKey(privateKey, provider);
     this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
