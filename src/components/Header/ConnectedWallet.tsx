@@ -22,7 +22,7 @@ import ConnectedWalletButton from "./ConnectedWalletButton";
 
 const ConnectedWallet: React.FC = observer(() => {
   const { accountStore, notificationStore, balanceStore } = useStores();
-  const { disconnect } = useWallet();
+  const { address, disconnect } = useWallet();
 
   const [isFocused, setIsFocused] = useState(false);
 
@@ -34,7 +34,7 @@ const ConnectedWallet: React.FC = observer(() => {
   )?.toFormat(4);
 
   const handleAddressCopy = () => {
-    accountStore.address && copy(accountStore.address);
+    address && copy(address);
     notificationStore.toast(createToast({ text: "Your address was copied" }), { type: "info" });
   };
 
@@ -52,7 +52,7 @@ const ConnectedWallet: React.FC = observer(() => {
     },
     {
       icon: linkIcon,
-      action: () => accountStore.address && window.open(getExplorerLinkByAddress(accountStore.address)),
+      action: () => window.open(getExplorerLinkByAddress(address)),
       title: "View in Explorer",
       active: true,
     },

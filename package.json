@@ -30,7 +30,7 @@
     "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.10",
     "framer-motion": "^11.0.3",
-    "fuels": "^0.90.0",
+    "fuels": "^0.89.0",
     "gh-pages": "^6.1.1",
     "lodash": "^4.17.21",
     "mobx": "^6.12.0",
