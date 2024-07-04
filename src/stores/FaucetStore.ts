@@ -73,11 +73,14 @@ class FaucetStore {
   };
 
   mintByAssetId = (assetId: string) => {
-    const { accountStore } = this.rootStore;
+    const { accountStore, notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
     const token = bcNetwork?.getTokenByAssetId(assetId);
 
-    if (!token || !accountStore.address) return;
+    if (!token || !accountStore.address) {
+      handleWalletErrors(notificationStore, {}, "Please, connect wallet first");
+      return;
+    }
 
     if (token.symbol === "ETH") {
       window.open(`${FUEL_FAUCET}${accountStore.address}`, "blank");
