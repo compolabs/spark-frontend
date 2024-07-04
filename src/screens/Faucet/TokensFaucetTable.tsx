@@ -56,7 +56,7 @@ const TokensFaucetTable: React.FC = observer(() => {
               </Text>
               <MintButtons assetId={token.assetId} />
             </SmartFlex>
-            <SmartFlex justifyContent="space-between">
+            <SmartFlex gap="64px">
               <SmartFlex gap="8px" column>
                 <Text type={TEXT_TYPES.SUPPORTING}>Mint amount</Text>
                 <SmartFlex center="y" gap="4px">
