@@ -1,8 +1,6 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { media } from "@src/themes/breakpoints";
-
 /*
     Fonts:
 
@@ -32,76 +30,55 @@ interface IProps {
 }
 
 export const hStyle = `
-font-family: JetBrains Mono;
-font-size: 18px;
-font-style: normal;
-font-weight: 500;
-line-height: 18px;
-${media.mobile} {
-  font-size: 14px;
-  line-height: 16px;
-}
+  font-family: JetBrains Mono;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
 `;
 
 export const bodyStyle = `
-font-family: JetBrains Mono;
-font-size: 12px;
-font-style: normal;
-font-weight: 400;
-line-height: 14px;
-letter-spacing: 0.2px;
-${media.mobile} {
-  font-size: 10px;
-}
+  font-family: JetBrains Mono;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0.2px;
 `;
 
 export const buttonStyle = `
-font-family: Space Grotesk;
-font-size: 14px;
-font-style: normal;
-font-weight: 500;
-line-height: 16px;
-${media.mobile} {
-  font-size: 12px;
-}
+  font-family: Space Grotesk;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
 `;
 
 export const buttonSecondaryStyle = `
-font-family: Space Grotesk;
-font-size: 12px;
-font-style: normal;
-font-weight: 500;
-line-height: 16px; 
-text-transform: uppercase;
-${media.mobile} {
-  font-size: 10px;
-}
+  font-family: Space Grotesk;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; 
+  text-transform: uppercase;
 `;
 
 export const supportStyle = `
-font-family: Space Grotesk;
-font-size: 12px;
-font-style: normal;
-font-weight: 400;
-line-height: 12px; 
-letter-spacing: 0.2px;
-${media.mobile} {
-  font-size: 10px;
-  line-height: 10px;
-}
+  font-family: Space Grotesk;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 12px; 
+  letter-spacing: 0.2px;
 `;
 
 export const supportNumbersStyle = `
-font-family: Space Grotesk;
-font-size: 11px;
-font-style: normal;
-font-weight: 400;
-line-height: 11px; 
-letter-spacing: 0.2px;
-${media.mobile} {
-  font-size: 9px;
-  line-height: 9px;
-}
+  font-family: Space Grotesk;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 11px; 
+  letter-spacing: 0.2px;
 `;
 
 export const TEXT_TYPES_MAP = {

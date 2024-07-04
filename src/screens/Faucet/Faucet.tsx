@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 import TokensFaucetTable from "@screens/Faucet/TokensFaucetTable";
+import { SmartFlex } from "@src/components/SmartFlex";
 import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 
@@ -17,11 +18,12 @@ const Faucet: React.FC<IProps> = observer(() => {
   useEffect(() => {
     document.title = `Spark | Faucet`;
   }, []);
+
   return (
     <Root>
-      <Text type={TEXT_TYPES.H} primary>
+      <Title type={TEXT_TYPES.H} primary>
         Faucet for Fuel Network
-      </Text>
+      </Title>
       <SizedBox height={16} />
       {faucetStore.faucetTokens.length === 0 ? (
         <Skeleton count={4} height={48} style={{ margin: 4 }} />
@@ -34,10 +36,8 @@ const Faucet: React.FC<IProps> = observer(() => {
 
 export default Faucet;
 
-const Root = styled.div`
-  display: flex;
+const Root = styled(SmartFlex)`
   flex-direction: column;
-  box-sizing: border-box;
   padding: 0 16px;
   width: 100%;
   margin-bottom: 24px;
@@ -46,5 +46,11 @@ const Root = styled.div`
 
   ${media.desktop} {
     margin-top: 56px;
+  }
+`;
+
+const Title = styled(Text)`
+  ${media.mobile} {
+    text-align: center;
   }
 `;
