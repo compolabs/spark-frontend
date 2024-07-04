@@ -15,8 +15,6 @@ interface Props {
   onClick?: () => void;
 }
 
-// TODO: if user is connected with PK shows different address
-
 const ConnectedWalletButton: React.FC<Props> = observer(({ isFocused, className, onClick }) => {
   const { accountStore } = useStores();
 

@@ -9,7 +9,6 @@ import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import Logo from "@src/assets/icons/logo.svg?react";
 import Menu from "@src/assets/icons/menu.svg?react";
-import { FuelNetwork } from "@src/blockchain";
 import { MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
@@ -29,7 +28,7 @@ import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
   const { tradeStore, modalStore, accountStore } = useStores();
-  const { address, wallet } = useWallet();
+  const { isConnected, wallet } = useWallet();
   const location = useLocation();
   const media = useMedia();
 
@@ -38,16 +37,10 @@ const Header: React.FC = observer(() => {
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
 
   useEffect(() => {
-    accountStore.setAddress(address);
-    if (address && wallet) {
-      const setWallet = async () => {
-        const bcNetwork = FuelNetwork.getInstance();
-        await bcNetwork.setWallet(address, wallet);
-      };
+    if (!isConnected || !wallet) return;
 
-      setWallet();
-    }
-  }, [address, wallet?.address]);
+    accountStore.connect(wallet);
+  }, [isConnected, wallet]);
 
   const toggleMenu = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -60,7 +53,7 @@ const Header: React.FC = observer(() => {
   };
 
   const renderWallet = () => {
-    if (!address) {
+    if (!accountStore.address) {
       return (
         <WalletContainer>
           <Button fitContent green onClick={openConnectDialog}>

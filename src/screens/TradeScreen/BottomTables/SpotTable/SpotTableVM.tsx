@@ -170,8 +170,6 @@ class SpotTableVM {
         bcNetwork!.fetchSpotUserMarketBalance(accountStore.address as any),
       ]);
 
-      console.log(balanceData.liquid);
-
       const sortedOrder = ordersData.sort(sortDesc);
       const sortedOrdersHistory = ordersHistoryData.sort(sortDesc);
       this.setMyOrders(sortedOrder);
