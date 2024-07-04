@@ -36,13 +36,11 @@ const Header: React.FC = observer(() => {
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
 
-  console.log(accountStore.address);
-
   useEffect(() => {
     if (!isConnected || !wallet) return;
 
     accountStore.connect(wallet);
-  }, [isConnected]);
+  }, [isConnected, wallet]);
 
   const toggleMenu = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
