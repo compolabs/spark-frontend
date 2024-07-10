@@ -63,6 +63,18 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
       </SmartFlex>
     ),
   }),
+  orderColumnHelper.accessor("formatCurrentAmount", {
+    id: "filled",
+    header: "Filled",
+    cell: (props) => (
+      <SmartFlex center="y" gap="4px">
+        <TableText primary>{props.getValue()}</TableText>
+        <TokenBadge>
+          <Text>{props.row.original.baseToken.symbol}</Text>
+        </TokenBadge>
+      </SmartFlex>
+    ),
+  }),
   orderColumnHelper.accessor("formatPrice", {
     header: "Price",
     cell: (props) => toCurrency(props.getValue()),
@@ -113,18 +125,6 @@ const HISTORY_COLUMNS = (theme: Theme) => [
   tradeColumnHelper.accessor("formatPrice", {
     header: "Price",
     cell: (props) => toCurrency(props.getValue()),
-  }),
-  tradeColumnHelper.accessor("formatCurrentAmount", {
-    id: "filled",
-    header: "Filled",
-    cell: (props) => (
-      <SmartFlex center="y" gap="4px">
-        <TableText primary>{props.getValue()}</TableText>
-        <TokenBadge>
-          <Text>{props.row.original.baseToken.symbol}</Text>
-        </TokenBadge>
-      </SmartFlex>
-    ),
   }),
 ];
 
