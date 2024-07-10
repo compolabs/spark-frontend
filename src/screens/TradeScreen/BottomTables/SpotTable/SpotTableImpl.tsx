@@ -63,7 +63,7 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
       </SmartFlex>
     ),
   }),
-  orderColumnHelper.accessor("formatCurrentAmount", {
+  orderColumnHelper.accessor("formatFilledAmount", {
     id: "filled",
     header: "Filled",
     cell: (props) => (
