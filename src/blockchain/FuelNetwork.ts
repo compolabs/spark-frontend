@@ -49,7 +49,11 @@ export class FuelNetwork {
     this.orderbookSdk = new SparkOrderBookSdk({
       networkUrl: NETWORK.url,
       contractAddresses: CONTRACT_ADDRESSES,
-      indexerApiUrl: INDEXER_URL,
+      indexerConfig: {
+        httpUrl: INDEXER_URL,
+        wsUrl: "",
+        shouldUseWsOnly: false,
+      },
       pythUrl: PYTH_URL,
     });
   }
