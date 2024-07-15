@@ -51,7 +51,11 @@ class FaucetStore {
   private mint = async (assetId: string) => {
     const { accountStore, balanceStore, notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
-
+    try {
+      await bcNetwork!.addAssetToWallet(assetId);
+    } catch (error: any) {
+      console.error(error);
+    }
     if (!bcNetwork!.getTokenByAssetId(assetId) || !accountStore.address) return;
 
     this.setActionTokenAssetId(assetId);
