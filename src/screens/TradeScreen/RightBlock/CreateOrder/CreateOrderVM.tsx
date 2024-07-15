@@ -293,7 +293,7 @@ class CreateOrderVM {
         // hash = data?.transactionId;
       } else {
         const deposit = {
-          amount: this.mode === ORDER_MODE.BUY ? this.inputTotal.toString() : this.inputAmount.toString(),
+          amount: this.mode === ORDER_MODE.BUY ? this.inputTotal.integerValue().toString() : this.inputAmount.toString(),
           asset: this.mode === ORDER_MODE.BUY ? market.quoteToken.assetId : market.baseToken.assetId,
         };
 
