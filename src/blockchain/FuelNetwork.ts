@@ -2,7 +2,6 @@ import SparkOrderBookSdk, {
   AssetType,
   CreateOrderParams,
   DepositParams,
-  GetOrdersParams,
   OrderType,
   UserMarketBalance,
   WriteTransactionResponse,
@@ -11,7 +10,7 @@ import { Account, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, SpotMarketTrade, Token } from "@src/entity";
+import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, Token } from "@src/entity";
 import { PerpMarketTrade } from "@src/entity/PerpMarketTrade";
 import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
 import BN from "@src/utils/BN";
@@ -27,7 +26,6 @@ import {
 } from "./constants";
 import {
   FetchTradesParams,
-  GetSpotTradesParams,
   MarketCreateEvent,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
@@ -39,7 +37,7 @@ export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
 
   private walletManager = new WalletManager();
-  private orderbookSdk: SparkOrderBookSdk;
+  orderbookSdk: SparkOrderBookSdk;
 
   public network = NETWORK;
 
@@ -51,8 +49,7 @@ export class FuelNetwork {
       contractAddresses: CONTRACT_ADDRESSES,
       indexerConfig: {
         httpUrl: INDEXER_URL,
-        wsUrl: "",
-        shouldUseWsOnly: false,
+        wsUrl: "ws://localhost:8080/v1/graphql",
       },
       pythUrl: PYTH_URL,
     });
@@ -203,30 +200,44 @@ export class FuelNetwork {
     return this.orderbookSdk.fetchMarketPrice(asset);
   };
 
-  fetchSpotOrders = async (params: GetOrdersParams): Promise<SpotMarketOrder[]> => {
-    const orders = await this.orderbookSdk.fetchOrders(params);
+  // fetchSpotOrders = async (params: GetOrdersParams): Promise<SpotMarketOrder[]> => {
+  //   const ordersSubscription = this.orderbookSdk.subscribeOrders(params);
 
-    return orders.map(
-      (order) =>
-        new SpotMarketOrder({
-          ...order,
-          quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
-        }),
-    );
-  };
+  //   ordersSubscription.subscribe({
+  //     next: (orders) => {
+  //       orders.map(
+  //         (order) =>
+  //           new SpotMarketOrder({
+  //             ...order,
+  //             quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+  //           }),
+  //       );
+  //     },
+  //   });
 
-  fetchSpotTrades = async (params: GetSpotTradesParams): Promise<SpotMarketTrade[]> => {
-    const trades = await this.orderbookSdk.getTradeOrderEvents(params);
+  //   return orders.map(
+  //     (order) =>
+  //       new SpotMarketOrder({
+  //         ...order,
+  //         quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+  //       }),
+  //   );
+  // };
 
-    return trades.map(
-      (trade) =>
-        new SpotMarketTrade({
-          ...trade,
-          baseAssetId: params.market.baseToken.assetId,
-          quoteAssetId: params.market.quoteToken.assetId,
-        }),
-    );
-  };
+  // fetchSpotTrades = async (params: GetSpotTradesParams): Promise<SpotMarketTrade[]> => {
+  //   const trades = await this.orderbookSdk.subscribeTradeOrderEvents({
+  //     limit: params.limit,
+  //   });
+
+  //   return trades.map(
+  //     (trade) =>
+  //       new SpotMarketTrade({
+  //         ...trade,
+  //         baseAssetId: params.market.baseToken.assetId,
+  //         quoteAssetId: params.market.quoteToken.assetId,
+  //       }),
+  //   );
+  // };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
     const data = await this.orderbookSdk.fetchVolume();

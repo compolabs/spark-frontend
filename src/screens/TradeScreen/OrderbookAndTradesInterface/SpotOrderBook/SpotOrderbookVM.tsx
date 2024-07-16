@@ -1,9 +1,6 @@
 import React, { useMemo } from "react";
-import { GetOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
 
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
@@ -135,68 +132,84 @@ class SpotOrderbookVM {
   setOrderFilter = (value: SPOT_ORDER_FILTER) => (this.orderFilter = value);
 
   updateOrderBook = async () => {
-    const { tradeStore } = this.rootStore;
-
-    const market = tradeStore.market;
-
-    if (!this.rootStore.initialized || !market) return;
-
-    const bcNetwork = FuelNetwork.getInstance();
-
-    const params: GetOrdersParams = {
-      limit: 200,
-      asset: market.baseToken.assetId,
-      status: ["Active"],
-    };
-
-    this.isOrderBookLoading = true;
-
-    const [buy, sell] = await Promise.all([
-      bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Buy }),
-      bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Sell }),
-    ]);
-
-    this.allBuyOrders = buy;
-    this.allSellOrders = sell;
-
-    const buyOrdersCombinedByDecimal = groupOrders(this.allBuyOrders, this.decimalGroup);
-    const sellOrdersCombinedByDecimal = groupOrders(this.allSellOrders, this.decimalGroup);
-
-    const getPrice = (orders: SpotMarketOrder[], priceType: "max" | "min"): BN => {
-      const compareType = priceType === "max" ? "gt" : "lt";
-      return orders.reduce(
-        (value, order) => (order.price[compareType](value) ? order.price : value),
-        orders[0]?.price ?? BN.ZERO,
-      );
-    };
-
-    const maxBuyPrice = getPrice(this.allBuyOrders, "max");
-    const minSellPrice = getPrice(this.allSellOrders, "min");
-
-    if (maxBuyPrice && minSellPrice) {
-      // spread = ask - bid
-      const spread = minSellPrice.minus(maxBuyPrice);
-      const formattedSpread = BN.formatUnits(spread, DEFAULT_DECIMALS).toSignificant(2);
-      const spreadPercent = spread.div(maxBuyPrice).times(100);
-
-      this.setOrderbook({
-        buy: buyOrdersCombinedByDecimal,
-        sell: sellOrdersCombinedByDecimal,
-        spreadPercent: spreadPercent.toFormat(2),
-        spreadPrice: formattedSpread,
-      });
-      this.isOrderBookLoading = false;
-      return;
-    }
-
-    this.setOrderbook({
-      buy: buyOrdersCombinedByDecimal,
-      sell: sellOrdersCombinedByDecimal,
-      spreadPercent: "0.00",
-      spreadPrice: "0.00",
-    });
-    this.isOrderBookLoading = false;
+    return;
   };
+
+  // updateOrderBook = async () => {
+  //   const { tradeStore } = this.rootStore;
+
+  //   const market = tradeStore.market;
+
+  //   if (!this.rootStore.initialized || !market) return;
+
+  //   const bcNetwork = FuelNetwork.getInstance();
+
+  //   const params: GetOrdersParams = {
+  //     limit: 200,
+  //     asset: market.baseToken.assetId,
+  //     status: ["Active"],
+  //   };
+
+  //   this.isOrderBookLoading = true;
+
+  //   bcNetwork.orderbookSdk.subscribeOrders({ ...params, orderType: OrderType.Buy }).subscribe({
+  //     next: ({ data }) => {
+  //       if (!data) return;
+  //     },
+  //   });
+
+  //   bcNetwork.orderbookSdk.subscribeOrders({ ...params, orderType: OrderType.Sell }).subscribe({
+  //     next: ({ data }) => {
+  //       if (!data) return;
+  //     },
+  //   });
+
+  //   const [buy, sell] = await Promise.all([
+  //     bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Buy }),
+  //     bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Sell }),
+  //   ]);
+
+  //   this.allBuyOrders = buy;
+  //   this.allSellOrders = sell;
+
+  //   const buyOrdersCombinedByDecimal = groupOrders(this.allBuyOrders, this.decimalGroup);
+  //   const sellOrdersCombinedByDecimal = groupOrders(this.allSellOrders, this.decimalGroup);
+
+  //   const getPrice = (orders: SpotMarketOrder[], priceType: "max" | "min"): BN => {
+  //     const compareType = priceType === "max" ? "gt" : "lt";
+  //     return orders.reduce(
+  //       (value, order) => (order.price[compareType](value) ? order.price : value),
+  //       orders[0]?.price ?? BN.ZERO,
+  //     );
+  //   };
+
+  //   const maxBuyPrice = getPrice(this.allBuyOrders, "max");
+  //   const minSellPrice = getPrice(this.allSellOrders, "min");
+
+  //   if (maxBuyPrice && minSellPrice) {
+  //     // spread = ask - bid
+  //     const spread = minSellPrice.minus(maxBuyPrice);
+  //     const formattedSpread = BN.formatUnits(spread, DEFAULT_DECIMALS).toSignificant(2);
+  //     const spreadPercent = spread.div(maxBuyPrice).times(100);
+
+  //     this.setOrderbook({
+  //       buy: buyOrdersCombinedByDecimal,
+  //       sell: sellOrdersCombinedByDecimal,
+  //       spreadPercent: spreadPercent.toFormat(2),
+  //       spreadPrice: formattedSpread,
+  //     });
+  //     this.isOrderBookLoading = false;
+  //     return;
+  //   }
+
+  //   this.setOrderbook({
+  //     buy: buyOrdersCombinedByDecimal,
+  //     sell: sellOrdersCombinedByDecimal,
+  //     spreadPercent: "0.00",
+  //     spreadPrice: "0.00",
+  //   });
+  //   this.isOrderBookLoading = false;
+  // };
 
   private setOrderbook = (orderbook: Partial<TOrderbookData>) => {
     this.orderbook = { ...this.orderbook, ...orderbook };

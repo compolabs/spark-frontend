@@ -1,6 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
 import { AssetType, BN, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
-import { Dayjs } from "dayjs";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -140,45 +139,75 @@ class SpotTableVM {
     this.withdrawingAssetId = null;
   };
 
-  private sync = async () => {
-    const { accountStore, tradeStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
-
-    if (!tradeStore.market || !accountStore.address) return;
-
-    const { market } = tradeStore;
-
-    const sortDesc = (a: { timestamp: Dayjs }, b: { timestamp: Dayjs }) =>
-      b.timestamp.valueOf() - a.timestamp.valueOf();
-
-    const limit = 500;
-
-    try {
-      const [ordersData, ordersHistoryData, balanceData] = await Promise.all([
-        bcNetwork!.fetchSpotOrders({
-          limit,
-          asset: market.baseToken.assetId,
-          user: accountStore.address0x,
-          status: ["Active"],
-        }),
-        bcNetwork!.fetchSpotOrders({
-          limit,
-          asset: market.baseToken.assetId,
-          user: accountStore.address0x,
-          status: ["Closed", "Canceled"],
-        }),
-        bcNetwork!.fetchSpotUserMarketBalance(accountStore.address as any),
-      ]);
-
-      const sortedOrder = ordersData.sort(sortDesc);
-      const sortedOrdersHistory = ordersHistoryData.sort(sortDesc);
-      this.setMyOrders(sortedOrder);
-      this.setMyOrdersHistory(sortedOrdersHistory);
-      this.setMyMarketBalance(balanceData);
-    } catch (error) {
-      console.error(error);
-    }
+  sync = async () => {
+    return;
   };
+
+  // private sync = async () => {
+  //   const { accountStore, tradeStore } = this.rootStore;
+  //   const bcNetwork = FuelNetwork.getInstance();
+
+  //   if (!tradeStore.market || !accountStore.address) return;
+
+  //   const { market } = tradeStore;
+
+  //   const sortDesc = (a: { timestamp: Dayjs }, b: { timestamp: Dayjs }) =>
+  //     b.timestamp.valueOf() - a.timestamp.valueOf();
+
+  //   const limit = 500;
+
+  //   bcNetwork.orderbookSdk
+  //     .subscribeOrders({
+  //       limit,
+  //       asset: market.baseToken.assetId,
+  //       user: accountStore.address0x,
+  //       status: ["Active"],
+  //     })
+  //     .subscribe({
+  //       next: ({ data }) => {
+  //         if (!data) return;
+
+  //         const sortedOrder = data.Order.map(
+  //           (order) =>
+  //             new SpotMarketOrder({
+  //               ...order,
+  //               quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+  //             }),
+  //         ).sort(sortDesc);
+  //         this.setMyOrders(sortedOrder);
+  //       },
+  //     });
+
+  //   bcNetwork.orderbookSdk
+  //     .subscribeOrders({
+  //       limit,
+  //       asset: market.baseToken.assetId,
+  //       user: accountStore.address0x,
+  //       status: ["Closed", "Canceled"],
+  //     })
+  //     .subscribe({
+  //       next: ({ data }) => {
+  //         if (!data) return;
+
+  //         const sortedOrdersHistory = data.Order.map(
+  //           (order) =>
+  //             new SpotMarketOrder({
+  //               ...order,
+  //               quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+  //             }),
+  //         ).sort(sortDesc);
+  //         this.setMyOrdersHistory(sortedOrdersHistory);
+  //       },
+  //     });
+
+  //   try {
+  //     const balanceData = await bcNetwork!.fetchSpotUserMarketBalance(accountStore.address as any);
+
+  //     this.setMyMarketBalance(balanceData);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
 
