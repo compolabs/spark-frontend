@@ -27,7 +27,7 @@ import DepositWithdrawModal from "./DepositWithdrawModal";
 import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
-  const { tradeStore, modalStore, accountStore } = useStores();
+  const { tradeStore, modalStore, accountStore, mixPanelStore } = useStores();
   const { isConnected, wallet } = useWallet();
   const location = useLocation();
   const media = useMedia();
@@ -136,7 +136,13 @@ const Header: React.FC = observer(() => {
                 );
               else if (link)
                 return (
-                  <a key={title} href={link} rel="noopener noreferrer" target="_blank">
+                  <a
+                    key={title}
+                    href={link}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    onClick={() => mixPanelStore.trackEvent("desktopHeaderClick", { route: title })}
+                  >
                     <Tab key={title} type={TEXT_TYPES.BUTTON_SECONDARY}>
                       {title}
                     </Tab>
