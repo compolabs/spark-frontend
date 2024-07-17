@@ -27,7 +27,6 @@ class SpotTradesVM {
     reaction(
       () => [this.rootStore.tradeStore.market, this.rootStore.initialized],
       ([market, initialized]) => {
-        console.log("wtf", initialized, market);
         if (!initialized || !market) return;
 
         this.subscribeTrades();

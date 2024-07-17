@@ -200,45 +200,6 @@ export class FuelNetwork {
     return this.orderbookSdk.fetchMarketPrice(asset);
   };
 
-  // fetchSpotOrders = async (params: GetOrdersParams): Promise<SpotMarketOrder[]> => {
-  //   const ordersSubscription = this.orderbookSdk.subscribeOrders(params);
-
-  //   ordersSubscription.subscribe({
-  //     next: (orders) => {
-  //       orders.map(
-  //         (order) =>
-  //           new SpotMarketOrder({
-  //             ...order,
-  //             quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
-  //           }),
-  //       );
-  //     },
-  //   });
-
-  //   return orders.map(
-  //     (order) =>
-  //       new SpotMarketOrder({
-  //         ...order,
-  //         quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
-  //       }),
-  //   );
-  // };
-
-  // fetchSpotTrades = async (params: GetSpotTradesParams): Promise<SpotMarketTrade[]> => {
-  //   const trades = await this.orderbookSdk.subscribeTradeOrderEvents({
-  //     limit: params.limit,
-  //   });
-
-  //   return trades.map(
-  //     (trade) =>
-  //       new SpotMarketTrade({
-  //         ...trade,
-  //         baseAssetId: params.market.baseToken.assetId,
-  //         quoteAssetId: params.market.quoteToken.assetId,
-  //       }),
-  //   );
-  // };
-
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
     const data = await this.orderbookSdk.fetchVolume();
 
