@@ -164,7 +164,7 @@ class CreateOrderVM {
   };
 
   private onSpotMaxClick = () => {
-    const { tradeStore, balanceStore } = this.rootStore;
+    const { tradeStore, balanceStore, mixPanelStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (!tradeStore.market) return;
@@ -180,6 +180,8 @@ class CreateOrderVM {
       this.setInputAmount(balance);
       return;
     }
+
+    mixPanelStore.trackEvent("onMaxBtnClick", { type: this.isSell ? "SELL" : "BUY", value: balance.toString() });
 
     this.setInputTotal(balance);
   };
@@ -266,7 +268,7 @@ class CreateOrderVM {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, mixPanelStore } = this.rootStore;
     const { market } = tradeStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -311,6 +313,7 @@ class CreateOrderVM {
       notificationStore.toast(createToast({ text: "Order Created", hash: hash }), {
         type: "success",
       });
+      mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
       console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to process your order at this time");
