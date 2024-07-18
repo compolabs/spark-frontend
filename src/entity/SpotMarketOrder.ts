@@ -101,6 +101,11 @@ export class SpotMarketOrder {
     this.initialQuoteAmount = this.getQuoteAmount(this.initialAmount, this.price);
   };
 
+  addCurrentAmount = (amount: BN) => {
+    this.currentAmount = this.currentAmount.plus(amount);
+    this.currentQuoteAmount = this.getQuoteAmount(this.currentAmount, this.price);
+  };
+
   private getQuoteAmount = (amount: BN, price: BN) => {
     const decimalsDiffPrice = Math.abs(DEFAULT_DECIMALS - this.baseToken.decimals);
     const decimalsDiffTokens = 2 * DEFAULT_DECIMALS - this.quoteToken.decimals;

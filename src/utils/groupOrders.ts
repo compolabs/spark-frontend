@@ -33,6 +33,7 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
     }
 
     groupedOrders[price].addInitialAmount(order.initialAmount);
+    groupedOrders[price].addCurrentAmount(order.initialAmount);
   });
 
   return Object.values(groupedOrders);

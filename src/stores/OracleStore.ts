@@ -8,7 +8,7 @@ import BN from "@src/utils/BN";
 import RootStore from "@stores/RootStore";
 
 class OracleStore {
-  public rootStore: RootStore;
+  private readonly rootStore: RootStore;
 
   priceServiceConnection: EvmPriceServiceConnection;
   prices: Nullable<Record<string, Price>> = null;
