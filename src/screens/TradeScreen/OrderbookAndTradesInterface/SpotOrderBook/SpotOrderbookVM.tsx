@@ -133,7 +133,7 @@ class SpotOrderbookVM {
 
   setOrderFilter = (value: SPOT_ORDER_FILTER) => (this.orderFilter = value);
 
-  updateOrderBook = async () => {
+  updateOrderBook = () => {
     const { tradeStore } = this.rootStore;
     const market = tradeStore.market;
 
