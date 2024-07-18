@@ -129,7 +129,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     return orders.map((o, index) => (
       <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
         <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
-        <Text primary>{o.initialAmountUnits.toFormat(3)}</Text>
+        <Text primary>{o.currentAmountUnits.toFormat(3)}</Text>
         <TextOverflow color={color}>{o.priceUnits.toFormat(vm.decimalGroup)}</TextOverflow>
         <Text primary>{numeral(o.initialQuoteAmountUnits).format(`0.${"0".repeat(vm.decimalGroup)}a`)}</Text>
       </OrderRow>
