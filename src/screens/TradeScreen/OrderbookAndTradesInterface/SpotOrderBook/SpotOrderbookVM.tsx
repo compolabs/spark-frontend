@@ -142,7 +142,7 @@ class SpotOrderbookVM {
     const bcNetwork = FuelNetwork.getInstance();
 
     const params: GetOrdersParams = {
-      limit: 200,
+      limit: 100,
       asset: market.baseToken.assetId,
       status: ["Active"],
     };
