@@ -17,7 +17,7 @@ export const FAUCET_AMOUNTS: Record<string, number> = {
 const AVAILABLE_TOKENS = ["ETH", "UNI", "USDC"];
 
 class FaucetStore {
-  public rootStore: RootStore;
+  private readonly rootStore: RootStore;
 
   loading: boolean = false;
   actionTokenAssetId: Nullable<string> = null;

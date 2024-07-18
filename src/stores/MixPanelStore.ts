@@ -1,16 +1,21 @@
 import mixpanel, { Mixpanel } from "mixpanel-browser";
 import { makeAutoObservable } from "mobx";
+import { Nullable } from "tsdef";
 
 import RootStore from "@stores/RootStore.ts";
 
 class MixPanelStore {
-  mixpanel: Mixpanel | null = null;
-  readonly rootStore: RootStore;
+  private readonly rootStore: RootStore;
+
+  mixpanel: Nullable<Mixpanel> = null;
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
-    this.initializeMixpanel();
+
+    if (import.meta.env.PROD) {
+      this.initializeMixpanel();
+    }
   }
 
   initializeMixpanel() {
@@ -19,11 +24,12 @@ class MixPanelStore {
   }
 
   trackEvent(event: string, properties = {}) {
-    if (this.mixpanel) {
-      this.mixpanel.track(event, properties);
-    } else {
+    if (!this.mixpanel) {
       console.error("Mixpanel is not initialized");
+      return;
     }
+
+    this.mixpanel.track(event, properties);
   }
 }
 

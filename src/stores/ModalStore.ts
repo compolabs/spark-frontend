@@ -8,7 +8,7 @@ export enum MODAL_TYPE {
 }
 
 export class ModalStore {
-  readonly rootStore: RootStore;
+  private readonly rootStore: RootStore;
 
   modal: Nullable<MODAL_TYPE> = null;
 
