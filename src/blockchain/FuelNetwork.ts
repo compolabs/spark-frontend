@@ -6,7 +6,7 @@ import SparkOrderBookSdk, {
   UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
-import { Account, Bech32Address } from "fuels";
+import { Account, B256Address, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -62,7 +62,7 @@ export class FuelNetwork {
     return FuelNetwork.instance;
   }
 
-  getAddress = (): Nullable<string> => {
+  getAddress = (): Nullable<B256Address> => {
     return this.walletManager.address;
   };
 

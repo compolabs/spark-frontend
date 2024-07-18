@@ -49,8 +49,6 @@ class SpotTradesVM {
         next: ({ data }) => {
           if (!data) return;
 
-          console.log(data);
-
           const trades = data.TradeOrderEvent.map(
             (trade) =>
               new SpotMarketTrade({
@@ -66,7 +64,6 @@ class SpotTradesVM {
             this.isInitialLoadComplete = true;
           }
         },
-        error: (error) => console.log(error),
       });
   };
 

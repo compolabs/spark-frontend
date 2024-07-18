@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, useMemo } from "react";
 import { AssetType, BN, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
+import { Address } from "fuels";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -8,7 +9,10 @@ import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { createToast } from "@src/components/Toast";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
+import { Subscription } from "@src/typings/utils";
+import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
+import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
 const ctx = React.createContext<SpotTableVM | null>(null);
@@ -21,11 +25,15 @@ export const SpotTableVMProvider: React.FC<PropsWithChildren> = ({ children }) =
 
 export const useSpotTableVMProvider = () => useVM(ctx);
 
-const ORDERS_UPDATE_INTERVAL = 5 * 1000; // 5 sec
+const MARKET_BALANCE_UPDATE_INTERVAL = 15 * 1000; // 15 sec
 
 type OrderSortingFunction = (a: SpotMarketOrder, b: SpotMarketOrder) => number;
 
 class SpotTableVM {
+  private readonly rootStore: RootStore;
+  private subscriptionToOpenOrders: Nullable<Subscription> = null;
+  private subscriptionToHistoryOrders: Nullable<Subscription> = null;
+
   myOrders: SpotMarketOrder[] = [];
   myOrdersHistory: SpotMarketOrder[] = [];
   myMarketBalance = {
@@ -38,52 +46,41 @@ class SpotTableVM {
       quote: BN.ZERO,
     },
   };
-  initialized: boolean = false;
 
   isOrderCancelling = false;
   cancelingOrderId: Nullable<string> = null;
   isWithdrawing = false;
   withdrawingAssetId: Nullable<string> = null;
 
-  private readonly rootStore: RootStore;
+  isOpenOrdersLoaded = false;
+  isHistoryOrdersLoaded = false;
 
-  // private ordersUpdater: IntervalUpdater;
+  private marketBalanceUpdater: IntervalUpdater;
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
-    const { tradeStore, accountStore } = this.rootStore;
+    const { accountStore, tradeStore } = this.rootStore;
 
-    // when(
-    //   () => !!tradeStore.market,
-    //   () => this.sync().then(() => this.setInitialized(true)),
-    // );
-
-    // this.ordersUpdater = new IntervalUpdater(this.sync, ORDERS_UPDATE_INTERVAL);
-
-    // this.ordersUpdater.run(true);
+    this.marketBalanceUpdater = new IntervalUpdater(this.fetchUserMarketBalance, MARKET_BALANCE_UPDATE_INTERVAL);
+    this.marketBalanceUpdater.run(true);
 
     reaction(
-      () => [accountStore.isConnected, accountStore.address],
-      ([isConnected]) => {
-        if (!isConnected) {
+      () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected],
+      ([market, initialized, isConnected]) => {
+        if (!initialized || !market || !isConnected) {
           this.setMyOrders([]);
           return;
         }
-
-        // this.ordersUpdater.update();
-      },
-    );
-
-    reaction(
-      () => [this.rootStore.tradeStore.market, this.rootStore.initialized],
-      ([market, initialized]) => {
-        if (!initialized || !market) return;
 
         this.subscribeToOrders();
       },
       { fireImmediately: true },
     );
+  }
+
+  get initialized() {
+    return this.isOpenOrdersLoaded && this.isHistoryOrdersLoaded;
   }
 
   getContractBalanceInfo = (assetId: string) => {
@@ -138,8 +135,6 @@ class SpotTableVM {
     try {
       await bcNetwork?.withdrawSpotBalance(amount.toString(), type);
       notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
-
-      // this.sync();
     } catch (error) {
       console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
@@ -149,60 +144,60 @@ class SpotTableVM {
     this.withdrawingAssetId = null;
   };
 
-  private subscribeToOpenOrders = (sortDesc: OrderSortingFunction) => {
+  private subscribeToOpenOrders = (sortDesc: OrderSortingFunction, limit = 500) => {
     const { accountStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    const limit = 500;
+    if (this.subscriptionToOpenOrders) {
+      this.subscriptionToOpenOrders.unsubscribe();
+    }
 
-    const s = bcNetwork.orderbookSdk
+    this.subscriptionToOpenOrders = bcNetwork.orderbookSdk
       .subscribeOrders({
         limit,
         asset: tradeStore.market!.baseToken.assetId,
-        user: accountStore.address0x,
+        user: accountStore.address!,
         status: ["Active"],
       })
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = data.Order.map(
-            (order) =>
-              new SpotMarketOrder({
-                ...order,
-                quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
-              }),
-          ).sort(sortDesc);
+          const sortedOrder = formatSpotMarketOrders(data.Order, TOKENS_BY_SYMBOL.USDC.assetId).sort(sortDesc);
           this.setMyOrders(sortedOrder);
+
+          if (!this.isOpenOrdersLoaded) {
+            this.isOpenOrdersLoaded = true;
+          }
         },
       });
   };
 
-  private subscribeToHistoryOrders = (sortDesc: OrderSortingFunction) => {
+  private subscribeToHistoryOrders = (sortDesc: OrderSortingFunction, limit = 500) => {
     const { accountStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    const limit = 500;
+    if (this.subscriptionToHistoryOrders) {
+      this.subscriptionToHistoryOrders.unsubscribe();
+    }
 
-    bcNetwork.orderbookSdk
+    this.subscriptionToHistoryOrders = bcNetwork.orderbookSdk
       .subscribeOrders({
         limit,
         asset: tradeStore.market!.baseToken.assetId,
-        user: accountStore.address0x,
+        user: accountStore.address!,
         status: ["Closed", "Canceled"],
       })
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = data.Order.map(
-            (order) =>
-              new SpotMarketOrder({
-                ...order,
-                quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
-              }),
-          ).sort(sortDesc);
+          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, TOKENS_BY_SYMBOL.USDC.assetId).sort(sortDesc);
           this.setMyOrdersHistory(sortedOrdersHistory);
+
+          if (!this.isHistoryOrdersLoaded) {
+            this.isHistoryOrdersLoaded = true;
+          }
         },
       });
   };
@@ -211,16 +206,19 @@ class SpotTableVM {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
+    if (!accountStore.address) return;
+
     try {
-      const balanceData = await bcNetwork.fetchSpotUserMarketBalance(accountStore.address as any);
+      // TODO: After type fix in sdk
+      const address = Address.fromB256(accountStore.address);
+      const balanceData = await bcNetwork.fetchSpotUserMarketBalance(address.bech32Address);
       this.setMyMarketBalance(balanceData);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // TODO: Need to handle unsubscription
-  private subscribeToOrders = async () => {
+  private subscribeToOrders = () => {
     const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
 
     this.subscribeToOpenOrders(sortDesc);
@@ -242,6 +240,4 @@ class SpotTableVM {
         quote: new BN(balance.locked.quote),
       },
     });
-
-  private setInitialized = (l: boolean) => (this.initialized = l);
 }
