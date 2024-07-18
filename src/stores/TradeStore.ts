@@ -3,6 +3,7 @@ import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
+import { DEFAULT_DECIMALS } from "@src/constants";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -105,18 +106,18 @@ class TradeStore {
 
     if (!this.market) return;
 
-    // const info = await FuelNetwork.getInstance().fetchSpotVolume();
-    // const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
-    // const price = BN.formatUnits(oracleStore.getTokenIndexPrice(this.market.baseToken.priceFeed), DEFAULT_DECIMALS);
-    // const volume = baseTokenAmount.multipliedBy(price);
-    // const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
-    // const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
+    const info = await FuelNetwork.getInstance().fetchSpotVolume();
+    const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
+    const price = BN.formatUnits(oracleStore.getTokenIndexPrice(this.market.baseToken.priceFeed), DEFAULT_DECIMALS);
+    const volume = baseTokenAmount.multipliedBy(price);
+    const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
+    const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
 
-    // this.spotMarketInfo = {
-    //   volume,
-    //   low,
-    //   high,
-    // };
+    this.spotMarketInfo = {
+      volume,
+      low,
+      high,
+    };
 
     // fixme
     // if (!this.market || this.market instanceof PerpMarket) return;
