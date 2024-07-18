@@ -17,7 +17,8 @@ import BN from "@src/utils/BN";
 
 import {
   CONTRACT_ADDRESSES,
-  INDEXER_URL,
+  INDEXER_HTTP_URL,
+  INDEXER_WS_URL,
   NETWORK,
   PYTH_URL,
   TOKENS_BY_ASSET_ID,
@@ -48,8 +49,8 @@ export class FuelNetwork {
       networkUrl: NETWORK.url,
       contractAddresses: CONTRACT_ADDRESSES,
       indexerConfig: {
-        httpUrl: INDEXER_URL,
-        wsUrl: "ws://localhost:8080/v1/graphql",
+        httpUrl: INDEXER_HTTP_URL,
+        wsUrl: INDEXER_WS_URL,
       },
       pythUrl: PYTH_URL,
     });
