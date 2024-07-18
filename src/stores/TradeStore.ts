@@ -1,4 +1,4 @@
-import { makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
@@ -63,13 +63,13 @@ class TradeStore {
     this.marketInfoUpdater = new IntervalUpdater(this.updateMarketInfo, MARKET_INFO_UPDATE_INTERVAL);
     this.marketPricesUpdater = new IntervalUpdater(this.updateMarketPrices, MARKET_PRICES_UPDATE_INTERVAL);
 
-    reaction(
-      () => [this.market, oracleStore.initialized],
-      () => {
-        this.updateMarketInfo();
-      },
-      { fireImmediately: true },
-    );
+    // reaction(
+    //   () => [this.market, oracleStore.initialized],
+    //   () => {
+    //     this.updateMarketInfo();
+    //   },
+    //   { fireImmediately: true },
+    // );
 
     this.marketInfoUpdater.run(true);
     this.marketPricesUpdater.run();
