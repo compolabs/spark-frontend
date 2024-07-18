@@ -6,7 +6,17 @@ import { media } from "@src/themes/breakpoints";
 
 import TradingViewWidget from "./TradingViewWidget";
 
-interface IProps {}
+const Chart: React.FC = () => {
+  return (
+    <Root>
+      <ChartVMProvider>
+        <TradingViewWidget />
+      </ChartVMProvider>
+    </Root>
+  );
+};
+
+export default Chart;
 
 const Root = styled.div`
   display: flex;
@@ -26,15 +36,3 @@ const Root = styled.div`
     height: 100%;
   }
 `;
-
-const Chart: React.FC<IProps> = () => {
-  return (
-    <Root>
-      <ChartVMProvider>
-        <TradingViewWidget />
-      </ChartVMProvider>
-    </Root>
-  );
-};
-
-export default Chart;

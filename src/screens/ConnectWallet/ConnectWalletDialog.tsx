@@ -19,7 +19,7 @@ type IProps = Omit<IDialogPropTypes, "onClose"> & {
 // TODO: refactor account store, minting and save address in local storage
 
 const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) => {
-  const { settingsStore } = useStores();
+  const { settingsStore, mixPanelStore } = useStores();
   const theme = useTheme();
   const { connect } = useWallet();
   const [isUserAgreedWithTerms, setIsUserAgreedWithTerms] = useState(settingsStore.isUserAgreedWithTerms ?? false);
@@ -31,6 +31,7 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
 
   const saveUserAgreement = () => {
     settingsStore.setIsUserAgreedWithTerms(!settingsStore.isUserAgreedWithTerms);
+    mixPanelStore.trackEvent("agreeWithTerms", { agreed: "ok" });
     openWalletConnectUI();
   };
 
@@ -45,7 +46,7 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
             </Text>
           </Checkbox>
         </CheckboxContainer>
-        <Button disabled={!isUserAgreedWithTerms} green onClick={() => saveUserAgreement()}>
+        <Button disabled={!isUserAgreedWithTerms} green onClick={saveUserAgreement}>
           Agree and Continue
         </Button>
       </ButtonContainer>

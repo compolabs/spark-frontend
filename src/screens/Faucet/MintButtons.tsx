@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const MintButtons: React.FC<IProps> = observer(({ assetId }) => {
-  const { faucetStore } = useStores();
+  const { faucetStore, mixPanelStore } = useStores();
 
   if (!faucetStore.initialized) {
     return (
@@ -23,7 +23,10 @@ const MintButtons: React.FC<IProps> = observer(({ assetId }) => {
     <Button
       disabled={faucetStore.disabled(assetId)}
       style={{ width: 120 }}
-      onClick={() => faucetStore.mintByAssetId(assetId)}
+      onClick={() => {
+        mixPanelStore.trackEvent("mintTokenInFaucet", { assetId });
+        faucetStore.mintByAssetId(assetId);
+      }}
     >
       {faucetStore.loading && faucetStore.actionTokenAssetId === assetId ? "Loading..." : "Mint"}
     </Button>

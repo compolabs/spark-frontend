@@ -20,7 +20,7 @@ export const DEFAULT_DECIMALS = 9;
 export const USDC_DECIMALS = 6;
 
 export const TWITTER_LINK = "https://twitter.com/Sprkfi";
-export const GITHUB_LINK = "https://github.com/compolabs/spark";
+export const GITHUB_LINK = "https://github.com/compolabs";
 export const DOCS_LINK = "https://docs.sprk.fi";
 
 type TMenuItem = {
