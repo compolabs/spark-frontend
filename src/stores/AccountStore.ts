@@ -1,5 +1,5 @@
 const bcNetwork = FuelNetwork.getInstance();
-import { Account, B256Address } from "fuels";
+import { Account, Address } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -70,10 +70,17 @@ class AccountStore {
     bcNetwork?.disconnectWallet();
   };
 
-  get address(): Nullable<B256Address> {
+  get address() {
     const bcNetwork = FuelNetwork.getInstance();
 
     return bcNetwork.getAddress();
+  }
+
+  get address0x() {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const address = new Address(bcNetwork.getAddress() as any).toB256();
+    return address;
   }
 
   get isConnected() {

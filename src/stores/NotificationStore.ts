@@ -4,7 +4,7 @@ import { makeAutoObservable } from "mobx";
 import RootStore from "@stores/RootStore";
 
 class NotificationStore {
-  private readonly rootStore: RootStore;
+  public rootStore: RootStore;
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;

@@ -1,5 +1,4 @@
 import { makeAutoObservable, reaction } from "mobx";
-import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
@@ -10,22 +9,21 @@ import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import RootStore from "@stores/RootStore";
 
 export interface ISerializedTradeStore {
-  favMarkets: Nullable<string>;
+  favMarkets: string | null;
 }
 
 const MARKET_INFO_UPDATE_INTERVAL = 1 * 60 * 1000; // 1 min
 const MARKET_PRICES_UPDATE_INTERVAL = 10 * 1000; // 10 sec
 
 class TradeStore {
-  private readonly rootStore: RootStore;
-
-  initialized = false;
-  loading = false;
+  rootStore: RootStore;
+  initialized: boolean = false;
+  loading: boolean = false;
   favMarkets: string[] = [];
   spotMarkets: SpotMarket[] = [];
   perpMarkets: PerpMarket[] = [];
-  marketSelectionOpened = false;
-  marketSymbol: Nullable<string> = null;
+  marketSelectionOpened: boolean = false;
+  marketSymbol: string | null = null;
   readonly defaultMarketSymbol = "BTC-USDC";
 
   isPerp = false;

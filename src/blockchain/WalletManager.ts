@@ -1,5 +1,5 @@
 import { FuelWalletConnector } from "@fuels/connectors";
-import { Account, B256Address, Fuel, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
+import { Account, Fuel, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -7,7 +7,7 @@ import { TOKENS_BY_ASSET_ID } from "./constants";
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
 
 export class WalletManager {
-  public address: Nullable<B256Address> = null;
+  public address: Nullable<string> = null;
   public wallet: Nullable<Account | WalletLocked | WalletUnlocked> = null;
   public privateKey: Nullable<string> = null;
 
@@ -20,7 +20,7 @@ export class WalletManager {
   }
 
   connect = async (wallet: Account) => {
-    this.address = wallet.address.toB256();
+    this.address = wallet.address.toString();
     this.wallet = wallet;
   };
 
@@ -28,7 +28,7 @@ export class WalletManager {
     const wallet = Wallet.fromPrivateKey(privateKey, provider);
 
     this.privateKey = privateKey;
-    this.address = wallet.address.toB256();
+    this.address = wallet.address.toString();
     this.wallet = wallet;
   };
 

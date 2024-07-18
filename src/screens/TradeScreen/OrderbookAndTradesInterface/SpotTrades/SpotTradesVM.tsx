@@ -1,9 +1,10 @@
 import React, { PropsWithChildren, useMemo } from "react";
-import { makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
 import { SpotMarketTrade } from "@src/entity";
 import useVM from "@src/hooks/useVM";
+import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
 const ctx = React.createContext<SpotTradesVM | null>(null);
@@ -16,58 +17,44 @@ export const SpotTradesVMProvider: React.FC<PropsWithChildren> = ({ children }) 
 
 export const useSpotTradesVM = () => useVM(ctx);
 
+const UPDATE_TRADES_INTERVAL = 2 * 1000;
+
 class SpotTradesVM {
   public trades: SpotMarketTrade[] = [];
 
-  isInitialLoadComplete = false;
+  private tradesUpdater: IntervalUpdater;
+
+  isTradesLoading = false;
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
+    this.updateTrades().then();
 
-    reaction(
-      () => [this.rootStore.tradeStore.market, this.rootStore.initialized],
-      ([market, initialized]) => {
-        if (!initialized || !market) return;
+    this.tradesUpdater = new IntervalUpdater(this.updateTrades, UPDATE_TRADES_INTERVAL);
 
-        this.subscribeTrades();
-      },
-      { fireImmediately: true },
-    );
+    this.tradesUpdater.run();
   }
 
-  subscribeTrades = () => {
-    const { tradeStore } = this.rootStore;
-    const market = tradeStore.market;
-
+  updateTrades = async () => {
+    const { tradeStore, initialized } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    bcNetwork.orderbookSdk
-      .subscribeTradeOrderEvents({
+    const market = tradeStore.market;
+
+    if (!initialized || !market) return;
+
+    this.isTradesLoading = true;
+
+    try {
+      const tradesResponse = await bcNetwork!.fetchSpotTrades({
+        market,
         limit: 50,
-      })
-      .subscribe({
-        next: ({ data }) => {
-          if (!data) return;
-
-          const trades = data.TradeOrderEvent.map(
-            (trade) =>
-              new SpotMarketTrade({
-                ...trade,
-                baseAssetId: market!.baseToken.assetId,
-                quoteAssetId: market!.quoteToken.assetId,
-              }),
-          );
-
-          this.trades = trades;
-
-          if (!this.isInitialLoadComplete) {
-            this.isInitialLoadComplete = true;
-          }
-        },
       });
-  };
+      this.trades = tradesResponse;
+    } catch (error) {
+      console.error("Error with loading trades");
+    }
 
-  get isTradesLoading() {
-    return !this.isInitialLoadComplete;
-  }
+    this.isTradesLoading = false;
+  };
 }
