@@ -62,7 +62,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
 
   useEventListener("resize", handleCalcSize);
 
-  const isOrderBookEmpty = vm.orderbook.buy.length === 0 && vm.orderbook.sell.length === 0;
+  const isOrderBookEmpty = vm.allBuyOrders.length === 0 && vm.allSellOrders.length === 0;
 
   if (vm.isOrderBookLoading && isOrderBookEmpty) {
     return <Loader size={32} hideText />;
@@ -97,9 +97,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       return (
         <SpreadContainer>
           <Text type={TEXT_TYPES.H} primary>
-            {vm.orderbook.spreadPrice.length ? vm.orderbook.spreadPrice : "0.00"}
+            {vm.spreadPrice}
           </Text>
-          <Text>{`(${vm.orderbook.spreadPercent}%)`}</Text>
+          <Text>{`(${vm.spreadPercent}%)`}</Text>
         </SpreadContainer>
       );
     }
@@ -107,8 +107,8 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     return (
       <SpreadContainer>
         <Text type={TEXT_TYPES.SUPPORTING}>SPREAD</Text>
-        <Text primary>{vm.orderbook.spreadPrice}</Text>
-        <Text>{`(${vm.orderbook.spreadPercent}%) `}</Text>
+        <Text primary>{vm.spreadPrice}</Text>
+        <Text>{`(${vm.spreadPercent}%) `}</Text>
       </SpreadContainer>
     );
   };
