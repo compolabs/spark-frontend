@@ -1,6 +1,3 @@
-// import { OrderbookContracts } from "@compolabs/spark-orderbook-ts-sdk/dist/interface";
-// TODO: add types from sdk after fixed export
-
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { Token } from "@src/entity/Token";
 
@@ -41,7 +38,7 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
   {},
 );
 
-export const INDEXER_URL = "https://indexer.bigdevenergy.link/67b693c/v1/graphql";
-// export const INDEXER_URL = "http://localhost:8080/v1/graphql";
-// export const INDEXER_URL = "https://envio-orderbook-indexer.spark-defi.com/v1/graphql";
+export const INDEXER_HTTP_URL = "https://indexer.bigdevenergy.link/029c37c/v1/graphql";
+export const INDEXER_WS_URL = "wss://indexer.bigdevenergy.link/029c37c/v1/graphql";
+
 export const PYTH_URL = "https://hermes.pyth.network";

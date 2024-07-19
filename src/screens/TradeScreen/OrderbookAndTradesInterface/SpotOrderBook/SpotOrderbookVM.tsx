@@ -1,14 +1,17 @@
 import React, { useMemo } from "react";
 import { GetOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
+import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
+import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
+import { Subscription } from "@src/typings/utils";
 import BN from "@src/utils/BN";
+import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
 import { groupOrders } from "@src/utils/groupOrders";
-import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
 
 import { SPOT_ORDER_FILTER } from "./SpotOrderBook";
@@ -27,34 +30,20 @@ export const SpotOrderbookVMProvider: React.FC<IProps> = ({ children }) => {
 
 export const useSpotOrderbookVM = () => useVM(ctx);
 
-type TOrderbookData = {
-  buy: SpotMarketOrder[];
-  sell: SpotMarketOrder[];
-  spreadPercent: string;
-  spreadPrice: string;
-};
-
-const UPDATE_INTERVAL = 2 * 1000;
-
 class SpotOrderbookVM {
-  rootStore: RootStore;
+  private readonly rootStore: RootStore;
 
   allBuyOrders: SpotMarketOrder[] = [];
   allSellOrders: SpotMarketOrder[] = [];
 
-  orderbook: TOrderbookData = {
-    buy: [],
-    sell: [],
-    spreadPercent: "0.00",
-    spreadPrice: "",
-  };
   decimalGroup = 2;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
   amountOfOrders: number = 0;
 
   isOrderBookLoading = false;
 
-  private orderBookUpdater: IntervalUpdater;
+  private buySubscription: Nullable<Subscription> = null;
+  private sellSubscription: Nullable<Subscription> = null;
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -65,13 +54,10 @@ class SpotOrderbookVM {
       (initialized) => {
         if (!initialized) return;
 
-        this.orderBookUpdater.update();
+        this.updateOrderBook();
       },
+      { fireImmediately: true },
     );
-
-    this.orderBookUpdater = new IntervalUpdater(this.updateOrderBook, UPDATE_INTERVAL);
-
-    this.orderBookUpdater.run(true);
   }
 
   get oneSizeOrders() {
@@ -79,7 +65,7 @@ class SpotOrderbookVM {
   }
 
   get buyOrders() {
-    return this.orderbook.buy
+    return this.allBuyOrders
       .slice()
       .sort((a, b) => {
         if (a.price === null && b.price === null) return 0;
@@ -93,7 +79,7 @@ class SpotOrderbookVM {
   }
 
   get sellOrders() {
-    return this.orderbook.sell
+    return this.allSellOrders
       .slice()
       .sort((a, b) => {
         if (a.price === null && b.price === null) return 0;
@@ -126,17 +112,14 @@ class SpotOrderbookVM {
     const buyOrdersCombinedByDecimal = groupOrders(this.allBuyOrders, value);
     const sellOrdersCombinedByDecimal = groupOrders(this.allSellOrders, value);
 
-    this.setOrderbook({
-      buy: buyOrdersCombinedByDecimal,
-      sell: sellOrdersCombinedByDecimal,
-    });
+    this.allBuyOrders = buyOrdersCombinedByDecimal;
+    this.allSellOrders = sellOrdersCombinedByDecimal;
   };
 
   setOrderFilter = (value: SPOT_ORDER_FILTER) => (this.orderFilter = value);
 
-  updateOrderBook = async () => {
+  updateOrderBook = () => {
     const { tradeStore } = this.rootStore;
-
     const market = tradeStore.market;
 
     if (!this.rootStore.initialized || !market) return;
@@ -144,61 +127,76 @@ class SpotOrderbookVM {
     const bcNetwork = FuelNetwork.getInstance();
 
     const params: GetOrdersParams = {
-      limit: 200,
+      limit: 50,
       asset: market.baseToken.assetId,
       status: ["Active"],
     };
 
-    this.isOrderBookLoading = true;
+    this.subscribeToBuyOrders(bcNetwork, params);
+    this.subscribeToSellOrders(bcNetwork, params);
+  };
 
-    const [buy, sell] = await Promise.all([
-      bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Buy }),
-      bcNetwork!.fetchSpotOrders({ ...params, orderType: OrderType.Sell }),
-    ]);
-
-    this.allBuyOrders = buy;
-    this.allSellOrders = sell;
-
-    const buyOrdersCombinedByDecimal = groupOrders(this.allBuyOrders, this.decimalGroup);
-    const sellOrdersCombinedByDecimal = groupOrders(this.allSellOrders, this.decimalGroup);
-
-    const getPrice = (orders: SpotMarketOrder[], priceType: "max" | "min"): BN => {
-      const compareType = priceType === "max" ? "gt" : "lt";
-      return orders.reduce(
-        (value, order) => (order.price[compareType](value) ? order.price : value),
-        orders[0]?.price ?? BN.ZERO,
-      );
-    };
-
-    const maxBuyPrice = getPrice(this.allBuyOrders, "max");
-    const minSellPrice = getPrice(this.allSellOrders, "min");
-
-    if (maxBuyPrice && minSellPrice) {
-      // spread = ask - bid
-      const spread = minSellPrice.minus(maxBuyPrice);
-      const formattedSpread = BN.formatUnits(spread, DEFAULT_DECIMALS).toSignificant(2);
-      const spreadPercent = spread.div(maxBuyPrice).times(100);
-
-      this.setOrderbook({
-        buy: buyOrdersCombinedByDecimal,
-        sell: sellOrdersCombinedByDecimal,
-        spreadPercent: spreadPercent.toFormat(2),
-        spreadPrice: formattedSpread,
-      });
-      this.isOrderBookLoading = false;
-      return;
+  private subscribeToBuyOrders(bcNetwork: FuelNetwork, params: GetOrdersParams) {
+    if (this.buySubscription) {
+      this.buySubscription.unsubscribe();
     }
 
-    this.setOrderbook({
-      buy: buyOrdersCombinedByDecimal,
-      sell: sellOrdersCombinedByDecimal,
-      spreadPercent: "0.00",
-      spreadPrice: "0.00",
-    });
-    this.isOrderBookLoading = false;
-  };
+    this.buySubscription = bcNetwork.orderbookSdk.subscribeOrders({ ...params, orderType: OrderType.Buy }).subscribe({
+      next: ({ data }) => {
+        if (!data) return;
 
-  private setOrderbook = (orderbook: Partial<TOrderbookData>) => {
-    this.orderbook = { ...this.orderbook, ...orderbook };
-  };
+        const buyOrders = formatSpotMarketOrders(data.Order, TOKENS_BY_SYMBOL.USDC.assetId);
+        const buyOrdersCombinedByDecimal = groupOrders(buyOrders, this.decimalGroup);
+        this.allBuyOrders = buyOrdersCombinedByDecimal;
+      },
+    });
+  }
+
+  private subscribeToSellOrders(bcNetwork: FuelNetwork, params: GetOrdersParams) {
+    if (this.sellSubscription) {
+      this.sellSubscription.unsubscribe();
+    }
+
+    this.sellSubscription = bcNetwork.orderbookSdk.subscribeOrders({ ...params, orderType: OrderType.Sell }).subscribe({
+      next: ({ data }) => {
+        if (!data) return;
+
+        const sellOrders = formatSpotMarketOrders(data.Order, TOKENS_BY_SYMBOL.USDC.assetId);
+        const sellOrdersCombinedByDecimal = groupOrders(sellOrders, this.decimalGroup);
+        this.allSellOrders = sellOrdersCombinedByDecimal;
+      },
+    });
+  }
+
+  private getPrice(orders: SpotMarketOrder[], priceType: "max" | "min"): BN {
+    const compareType = priceType === "max" ? "gt" : "lt";
+    return orders.reduce(
+      (value, order) => (order.price[compareType](value) ? order.price : value),
+      orders[0]?.price ?? BN.ZERO,
+    );
+  }
+
+  private getMaxBuyPrice(): BN {
+    return this.getPrice(this.allBuyOrders, "max");
+  }
+
+  private getMinSellPrice(): BN {
+    return this.getPrice(this.allSellOrders, "min");
+  }
+
+  get spreadPrice(): string {
+    const maxBuyPrice = this.getMaxBuyPrice();
+    const minSellPrice = this.getMinSellPrice();
+
+    const spread = minSellPrice.minus(maxBuyPrice);
+    return BN.formatUnits(spread, DEFAULT_DECIMALS).toSignificant(2);
+  }
+
+  get spreadPercent(): string {
+    const maxBuyPrice = this.getMaxBuyPrice();
+    const minSellPrice = this.getMinSellPrice();
+
+    const spread = minSellPrice.minus(maxBuyPrice);
+    return spread.div(maxBuyPrice).times(100).toFormat(2);
+  }
 }
