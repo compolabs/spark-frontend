@@ -4,12 +4,14 @@ import styled from "@emotion/styled";
 
 import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
 import CheckCircle from "@src/assets/icons/check-circle.svg?react";
+import ErrorCircle from "@src/assets/icons/error-circle.svg?react";
 import CloseIcon from "@src/assets/icons/close.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 import { getExplorerLinkByHash } from "@src/utils/getExplorerLink";
+import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums.tsx";
 
 type SuccessModalProps = {
   hash: string;
@@ -20,9 +22,10 @@ type SuccessModalProps = {
     sellAmount: string;
     buyAmount: string;
   };
+  typeModal: ModalEnums;
 };
 
-export const SuccessModal: React.FC<SuccessModalProps> = ({ hash, onClose, transactionInfo }) => {
+export const ActionModal: React.FC<SuccessModalProps> = ({ hash, onClose, transactionInfo, typeModal }) => {
   const media = useMedia();
   const theme = useTheme();
   const { sellToken, buyToken, sellAmount, buyAmount } = transactionInfo;
@@ -37,10 +40,10 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ hash, onClose, trans
           <CloseIcon onClick={onClose} />
         </Actions>
         <ModalContent>
-          <CheckCircle />
+          {typeModal === ModalEnums.Success ? <CheckCircle /> : <ErrorCircle />}
           <Description>
             <ModalTitle color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
-              Swap completed
+              Swap {typeModal === ModalEnums.Success ? "completed" : "declined"}
             </ModalTitle>
             <a href={link} rel="noreferrer noopener" target="_blank">
               <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
