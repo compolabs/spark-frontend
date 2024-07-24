@@ -2,16 +2,16 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums.tsx";
 import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
 import CheckCircle from "@src/assets/icons/check-circle.svg?react";
-import ErrorCircle from "@src/assets/icons/error-circle.svg?react";
 import CloseIcon from "@src/assets/icons/close.svg?react";
+import ErrorCircle from "@src/assets/icons/error-circle.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 import { getExplorerLinkByHash } from "@src/utils/getExplorerLink";
-import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums.tsx";
 
 type SuccessModalProps = {
   hash: string;

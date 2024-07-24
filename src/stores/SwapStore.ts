@@ -15,7 +15,6 @@ import BN from "@src/utils/BN";
 import { parseNumberWithCommas } from "@src/utils/swapUtils";
 
 import RootStore from "./RootStore";
-import { CatchClause } from "typescript";
 
 class SwapStore {
   tokens: TokenOption[];
@@ -102,7 +101,6 @@ class SwapStore {
       asset: isBuy ? this.buyToken.assetId : this.sellToken.assetId,
       status: ["Active"],
     };
-    console.log('1')
     const sellOrders = await bcNetwork!.fetchSpotOrders({
       ...params,
       orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
@@ -126,7 +124,7 @@ class SwapStore {
       slippage: slippage.toString(),
     };
 
-      return await this.bcNetwork.swapTokens(deposit, order);
+    return await this.bcNetwork.swapTokens(deposit, order);
   };
 
   onSwitchTokens = () => {

@@ -3,8 +3,8 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
-import Spinner from "@src/assets/icons/spinner.svg?react";
 import CloseIcon from "@src/assets/icons/close.svg?react";
+import Spinner from "@src/assets/icons/spinner.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { media } from "@src/themes/breakpoints";
