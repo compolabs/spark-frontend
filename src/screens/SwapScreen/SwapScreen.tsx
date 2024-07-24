@@ -94,20 +94,16 @@ export const SwapScreen: React.FC = observer(() => {
   const swapTokens = async () => {
     setPendingModalVisible(true);
     const slippagePercentage = Number(slippage) * 100;
-    // notificationStore.toast("Slippage tolerance has been changed", {
-    //   type: "info",
-    //   position: "bottom-left",
-    //   hideProgressBar: true,
-    // });
     try {
       await swapStore.swapTokens({ slippage: slippagePercentage });
       setTypeModal(ModalEnums.Success);
     } catch (err) {
       setTypeModal(ModalEnums.Error);
-      console.log('err', err)
     } finally {
       setPendingModalVisible(false);
       setSuccessModalVisible(true);
+      swapStore.setPayAmount("0");
+      swapStore.setReceiveAmount("0");
     }
   };
 

@@ -97,8 +97,6 @@ class SwapStore {
     const hash: Undefinable<string> = "";
     const bcNetwork = FuelNetwork.getInstance();
     const isBuy = this.buyToken.symbol === "BTC"; // продумать если будет больше торговых пар, не будет работать
-    console.log("sellToken", this.sellToken);
-    console.log("buyToken", this.buyToken);
     const params: GetOrdersParams = {
       limit: 50, // or more if needed
       asset: isBuy ? this.buyToken.assetId : this.sellToken.assetId,
@@ -111,47 +109,24 @@ class SwapStore {
     });
     // TODO: check if there is enough price sum to fulfill the order
 
-    console.log("sellOrders", sellOrders);
-    console.log("orderType: !isBuy ? OrderType.Buy : OrderType.Sell,", !isBuy ? OrderType.Buy : OrderType.Sell);
-
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
+    const formattedVolume = BN.parseUnits(this.receiveAmount, this.buyToken.decimals).toString();
+
     const deposit = {
       amount: formattedAmount,
-      asset: isBuy ? this.buyToken.assetId : this.sellToken.assetId,
+      asset: this.sellToken.assetId,
     };
-    // const orders = [
-    //   "0x23038d23bd5e014ab55de2862bba2a1e07ffd17e23bf08460b7d358b57ecdc0e",
-    //   "0x9c535cf8c8d875a52abf46ade90805c295e1bf8dc7ae7d1fb20ec5072a85e869",
-    //   "0x9421178addecb1d0bbe015b0364c51ad62f3a898f448900b7e82d849575f86ec",
-    // ];
-    // const deposit = {
-    //   amount: "151554",
-    //   asset: isBuy ? this.buyToken.assetId : this.sellToken.assetId,
-    // };
 
-    // const order: FulfillOrderManyParams = {
-    //   amount: "151554",
-    //   assetType: AssetType.Base,
-    //   orderType: this.buyToken.symbol === "BTC" ? OrderType.Buy : OrderType.Sell,
-    //   price: "65002770000000",
-    //   orders: orders,
-    //   slippage: "10000",
-    // };
-
-    // 65,002.00
     const order: FulfillOrderManyParams = {
-      amount: formattedAmount,
+      amount: isBuy ? formattedVolume : formattedAmount,
       assetType: AssetType.Base,
       orderType: this.buyToken.symbol === "BTC" ? OrderType.Buy : OrderType.Sell,
       price: sellOrders[sellOrders.length - 1].price.toString(),
-      orders: sellOrders.map((order) => order.id),
+      orders: sellOrders.map((el) => el.id),
       slippage: slippage.toString(),
     };
 
-    // notificationStore.toast(createToast({ text: "Order Created", hash: hash }), {
-    //   type: "success",
-    // });
-    return await this.bcNetwork.swapTokens(deposit, order);
+      return await this.bcNetwork.swapTokens(deposit, order);
   };
 
   onSwitchTokens = () => {
