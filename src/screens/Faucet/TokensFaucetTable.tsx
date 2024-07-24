@@ -3,55 +3,94 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import Chip from "@components/Chip";
-import { Column, Row } from "@components/Flex";
 import { TableText } from "@components/Table";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { SmartFlex } from "@src/components/SmartFlex";
+import { useMedia } from "@src/hooks/useMedia";
 import { useStores } from "@stores";
 
 import MintButtons from "./MintButtons";
 
-interface IProps {}
-
-const TokensFaucetTable: React.FC<IProps> = observer((assetId) => {
+const TokensFaucetTable: React.FC = observer(() => {
   const { faucetStore } = useStores();
-  return (
-    <Root className="better-scroll">
-      <StyledTableRow>
-        <TableTitle>Asset</TableTitle>
-        <TableTitle>Mint amount</TableTitle>
-        <TableTitle>My balance</TableTitle>
-        <TableTitle>
-          <Row justifyContent="flex-end">{/*<Button style={{ width: 120 }}>Mint all</Button>*/}</Row>
-        </TableTitle>
-      </StyledTableRow>
-      <TableBody>
+
+  const media = useMedia();
+
+  const renderDesktop = () => {
+    return (
+      <DesktopTable className="better-scroll">
+        <TableRow>
+          <TableTitle>Asset</TableTitle>
+          <TableTitle>Mint amount</TableTitle>
+          <TableTitle>My balance</TableTitle>
+          <TableTitle></TableTitle>
+        </TableRow>
+        <TableBody>
+          {faucetStore.faucetTokens.map((token) => (
+            <TableRow key={token.assetId}>
+              <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+                {token.name}
+              </TableText>
+              <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+                {token.mintAmount.toSignificant(3)} &nbsp;<Chip>{token.symbol}</Chip>
+              </TableText>
+              <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+                {token.formatBalance?.toSignificant(3)} &nbsp;<Chip>{token.symbol}</Chip>
+              </TableText>
+              <MintButtons assetId={token.assetId} />
+            </TableRow>
+          ))}
+        </TableBody>
+      </DesktopTable>
+    );
+  };
+
+  const renderMobile = () => {
+    return (
+      <MobileContainer>
         {faucetStore.faucetTokens.map((token) => (
-          <StyledTableRow key={token.assetId}>
-            <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-              {token.name}
-            </TableText>
-            <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-              {token.mintAmount.toSignificant(3)} &nbsp;<Chip>{token.symbol}</Chip>
-            </TableText>
-            <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-              {token.formatBalance?.toSignificant(3)} &nbsp;<Chip>{token.symbol}</Chip>
-            </TableText>
-            <MintButtons assetId={token.assetId} />
-          </StyledTableRow>
+          <MintItemContainer key={token.assetId}>
+            <SmartFlex justifyContent="space-between">
+              <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+                {token.name}
+              </Text>
+              <MintButtons assetId={token.assetId} />
+            </SmartFlex>
+            <SmartFlex gap="64px">
+              <SmartFlex gap="8px" column>
+                <Text type={TEXT_TYPES.SUPPORTING}>Mint amount</Text>
+                <SmartFlex center="y" gap="4px">
+                  <Text type={TEXT_TYPES.BODY} primary>
+                    {token.mintAmount.toSignificant(3)}
+                  </Text>
+                  <Text>{token.symbol}</Text>
+                </SmartFlex>
+              </SmartFlex>
+              <SmartFlex gap="8px" column>
+                <Text type={TEXT_TYPES.SUPPORTING}>My balance</Text>
+                <SmartFlex center="y" gap="4px">
+                  <Text type={TEXT_TYPES.BODY} primary>
+                    {token.formatBalance.toSignificant(3)}
+                  </Text>
+                  <Text>{token.symbol}</Text>
+                </SmartFlex>
+              </SmartFlex>
+            </SmartFlex>
+          </MintItemContainer>
         ))}
-      </TableBody>
-    </Root>
-  );
+      </MobileContainer>
+    );
+  };
+
+  return media.desktop ? renderDesktop() : renderMobile();
 });
 
 export default TokensFaucetTable;
 
-const Root = styled.div`
+const DesktopTable = styled(SmartFlex)`
   background: ${({ theme }) => theme.colors.bgSecondary};
-  display: flex;
   width: 100%;
   flex-direction: column;
-  box-sizing: border-box;
   border: 1px solid ${({ theme }) => theme.colors.bgSecondary};
   overflow: hidden;
   border-radius: 10px;
@@ -63,17 +102,23 @@ const Root = styled.div`
   }
 `;
 
-const StyledTableRow = styled(Row)`
+const MobileContainer = styled(SmartFlex)`
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const TableRow = styled(SmartFlex)`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+
   margin-bottom: 1px;
   height: 48px;
-  flex-shrink: 0;
   background: ${({ theme }) => theme.colors.bgPrimary};
   align-items: center;
   padding: 0 12px;
-  box-sizing: border-box;
 
-  :last-of-type {
-    margin-bottom: 0;
+  & > :last-child {
+    justify-self: flex-end;
   }
 `;
 
@@ -83,7 +128,16 @@ const TableTitle = styled(Text)`
   ${TEXT_TYPES_MAP[TEXT_TYPES.SUPPORTING]}
 `;
 
-const TableBody = styled(Column)`
+const TableBody = styled(SmartFlex)`
+  flex-direction: column;
   width: 100%;
-  box-sizing: border-box;
+`;
+
+const MintItemContainer = styled(SmartFlex)`
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.colors.borderSecondary};
+  border-radius: 10px;
+
+  padding: 16px;
+  gap: 16px;
 `;

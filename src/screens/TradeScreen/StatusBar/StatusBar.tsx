@@ -2,9 +2,13 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { Row } from "@components/Flex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
+import XIcon from "@src/assets/social/x.svg?react";
+import { SmartFlex } from "@src/components/SmartFlex";
 import { TWITTER_LINK } from "@src/constants";
+import { useMedia } from "@src/hooks/useMedia";
+import { media } from "@src/themes/breakpoints";
+import { getDeviceInfo } from "@src/utils/getDeviceInfo";
 
 import tweets from "./tweets";
 
@@ -13,87 +17,62 @@ const StatusBar: React.FC = observer(() => {
     tweets[Math.floor(Math.random() * tweets.length)],
   )}`;
 
-  // const networkName = "FUEL";
+  const media = useMedia();
+  const { isIOS } = getDeviceInfo();
 
   return (
-    <Root>
-      <Row alignItems="center" mainAxisSize="fit-content" style={{ flex: 1 }}>
-        <a href={TWITTER_LINK} rel="noreferrer noopener" target="_blank">
-          <LinkText type={TEXT_TYPES.SUPPORTING}>Twitter</LinkText>
-        </a>
-      </Row>
-      <Row alignItems="center" justifyContent="center" mainAxisSize="fit-content" style={{ flex: 1 }}>
-        <a href={tweet} rel="noreferrer noopener" target="_blank">
-          <LinkText type={TEXT_TYPES.SUPPORTING}>✨Wanna sparkle?</LinkText>
-        </a>
-      </Row>
-      <Row alignItems="center" justifyContent="flex-end" mainAxisSize="fit-content" style={{ flex: 1 }}>
-        {/*<Text type={TEXT_TYPES.SUPPORTING}>{networkName}</Text>*/}
-        <Text type={TEXT_TYPES.SUPPORTING}>Powered by Fuel</Text>
-      </Row>
-
-      {/*
-      <Row alignItems="center" mainAxisSize="fit-content">
-        <Indicator error={!accountStore.address} />
-        <SizedBox width={8} />
-        <Text type={TEXT_TYPES.SUPPORTING}>Stable Connection</Text>
-      </Row>
-      <Row alignItems="center" mainAxisSize="fit-content">
-        <Indicator />
-        <SizedBox width={8} />
-        <Text type={TEXT_TYPES.SUPPORTING}> Response Time Name holder (xxxms)</Text>
-      </Row>
-      <DesktopRow>
-        <Divider />
-        <Text type={TEXT_TYPES.SUPPORTING}>XX,XXX TPS</Text>
-        <Divider />
-        <Text type={TEXT_TYPES.SUPPORTING}>Average Gas Prices:</Text>
-        <SizedBox width={8} />
-        <Chip>SPOT:&nbsp;X,XXXX€</Chip>
-        <SizedBox width={8} />
-        <Chip>PERP:&nbsp;X,XXXX€</Chip>
-      </DesktopRow>
-      */}
-    </Root>
+    <StatusBarContainer isIOS={isIOS}>
+      <LinkStyled href={tweet} rel="noreferrer noopener" target="_blank">
+        <LinkText>✨Wanna sparkle?</LinkText>
+      </LinkStyled>
+      {media.mobile && (
+        <LinkStyled href={TWITTER_LINK} rel="noreferrer noopener" target="_blank">
+          <XIconStyled />
+        </LinkStyled>
+      )}
+      <FooterText>Powered by Fuel</FooterText>
+    </StatusBarContainer>
   );
 });
 
 export default StatusBar;
 
-const Root = styled.div`
-  display: flex;
+const LinkStyled = styled.a``;
+
+const StatusBarContainer = styled(SmartFlex)<{ isIOS: boolean }>`
   align-items: center;
   width: 100%;
-  height: 26px;
-  box-sizing: border-box;
+  height: 28px;
   justify-content: space-between;
-  //border: 1px solid white;
-  //padding: 0 16px;
-  flex-shrink: 0;
+
+  padding: 12px 16px;
+
+  ${LinkStyled} {
+    display: flex;
+    align-items: center;
+  }
+
+  ${({ isIOS }) => isIOS && `padding-bottom: 48px;`};
 `;
 
-const Indicator = styled.div<{
-  error?: boolean;
-}>`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${({ theme, error }) => (error ? theme.colors.redLight : theme.colors.greenLight)};
+const XIconStyled = styled(XIcon)`
+  color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
-const Divider = styled.div`
-  width: 1px;
-  height: 18px;
-  background: ${({ theme }) => theme.colors.bgSecondary};
-  margin: 0 8px;
+const FooterText = styled(Text)`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textPrimary};
+
+  ${media.mobile} {
+    font-size: 14px;
+  }
 `;
 
-const LinkText = styled(Text)`
-  ${TEXT_TYPES.SUPPORTING};
-  transition: 0.4s;
+const LinkText = styled(FooterText)`
+  transition: 250ms;
   cursor: pointer;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.textPrimary};
+    color: ${({ theme }) => theme.colors.greenLight};
   }
 `;

@@ -18,7 +18,7 @@ export enum TRADE_TABLE_SIZE {
 }
 
 class SettingsStore {
-  public readonly rootStore: RootStore;
+  private readonly rootStore: RootStore;
   selectedTheme: THEME_TYPE = THEME_TYPE.DARK_THEME;
 
   constructor(rootStore: RootStore, initState?: ISerializedSettingStore) {

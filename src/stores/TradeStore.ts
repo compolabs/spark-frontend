@@ -1,4 +1,5 @@
-import { makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable } from "mobx";
+import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
@@ -9,21 +10,22 @@ import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import RootStore from "@stores/RootStore";
 
 export interface ISerializedTradeStore {
-  favMarkets: string | null;
+  favMarkets: Nullable<string>;
 }
 
-const MARKET_INFO_UPDATE_INTERVAL = 1 * 60 * 1000; // 1 min
+// const MARKET_INFO_UPDATE_INTERVAL = 1 * 60 * 1000; // 1 min
 const MARKET_PRICES_UPDATE_INTERVAL = 10 * 1000; // 10 sec
 
 class TradeStore {
-  rootStore: RootStore;
-  initialized: boolean = false;
-  loading: boolean = false;
+  private readonly rootStore: RootStore;
+
+  initialized = false;
+  loading = false;
   favMarkets: string[] = [];
   spotMarkets: SpotMarket[] = [];
   perpMarkets: PerpMarket[] = [];
-  marketSelectionOpened: boolean = false;
-  marketSymbol: string | null = null;
+  marketSelectionOpened = false;
+  marketSymbol: Nullable<string> = null;
   readonly defaultMarketSymbol = "BTC-USDC";
 
   isPerp = false;
@@ -42,7 +44,7 @@ class TradeStore {
     volume24h: BN.ZERO,
   };
 
-  private marketInfoUpdater: IntervalUpdater;
+  // private marketInfoUpdater: IntervalUpdater;
   private marketPricesUpdater: IntervalUpdater;
 
   constructor(rootStore: RootStore, initState?: ISerializedTradeStore) {
@@ -58,18 +60,18 @@ class TradeStore {
 
     this.initMarket();
 
-    this.marketInfoUpdater = new IntervalUpdater(this.updateMarketInfo, MARKET_INFO_UPDATE_INTERVAL);
+    // this.marketInfoUpdater = new IntervalUpdater(this.updateMarketInfo, MARKET_INFO_UPDATE_INTERVAL);
     this.marketPricesUpdater = new IntervalUpdater(this.updateMarketPrices, MARKET_PRICES_UPDATE_INTERVAL);
 
-    reaction(
-      () => [this.market, oracleStore.initialized],
-      () => {
-        this.updateMarketInfo();
-      },
-      { fireImmediately: true },
-    );
+    // reaction(
+    //   () => [this.market, oracleStore.initialized],
+    //   () => {
+    //     this.updateMarketInfo();
+    //   },
+    //   { fireImmediately: true },
+    // );
 
-    this.marketInfoUpdater.run(true);
+    // this.marketInfoUpdater.run(true);
     this.marketPricesUpdater.run();
   }
 

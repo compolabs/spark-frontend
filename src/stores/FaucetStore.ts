@@ -17,7 +17,7 @@ export const FAUCET_AMOUNTS: Record<string, number> = {
 const AVAILABLE_TOKENS = ["ETH", "UNI", "USDC"];
 
 class FaucetStore {
-  public rootStore: RootStore;
+  private readonly rootStore: RootStore;
 
   loading: boolean = false;
   actionTokenAssetId: Nullable<string> = null;
@@ -51,7 +51,11 @@ class FaucetStore {
   private mint = async (assetId: string) => {
     const { accountStore, balanceStore, notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
-
+    try {
+      await bcNetwork!.addAssetToWallet(assetId);
+    } catch (error: any) {
+      console.error(error);
+    }
     if (!bcNetwork!.getTokenByAssetId(assetId) || !accountStore.address) return;
 
     this.setActionTokenAssetId(assetId);
@@ -73,11 +77,14 @@ class FaucetStore {
   };
 
   mintByAssetId = (assetId: string) => {
-    const { accountStore } = this.rootStore;
+    const { accountStore, notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
     const token = bcNetwork?.getTokenByAssetId(assetId);
 
-    if (!token || !accountStore.address) return;
+    if (!token || !accountStore.address) {
+      handleWalletErrors(notificationStore, {}, "Please, connect wallet first");
+      return;
+    }
 
     if (token.symbol === "ETH") {
       window.open(`${FUEL_FAUCET}${accountStore.address}`, "blank");

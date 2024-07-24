@@ -1,4 +1,5 @@
-import { Address } from "fuels";
+const bcNetwork = FuelNetwork.getInstance();
+import { Account, B256Address } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -9,11 +10,9 @@ import RootStore from "./RootStore";
 
 export interface ISerializedAccountStore {
   privateKey: Nullable<string>;
-  address: Nullable<string>;
 }
 
 class AccountStore {
-  public address: Nullable<string> = null;
   initialized = false;
 
   constructor(
@@ -34,6 +33,17 @@ class AccountStore {
 
   init = async () => {
     this.initialized = true;
+  };
+
+  connect = async (wallet: Account) => {
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    try {
+      await bcNetwork?.connect(wallet);
+    } catch (error: any) {
+      notificationStore.toast(createToast({ text: "Unexpected error. Please try again." }), { type: "error" });
+    }
   };
 
   connectWalletByPrivateKey = async (privateKey: string) => {
@@ -60,25 +70,24 @@ class AccountStore {
     bcNetwork?.disconnectWallet();
   };
 
-  setAddress = (address: string) => {
-    this.address = address;
-  };
+  get address(): Nullable<B256Address> {
+    const bcNetwork = FuelNetwork.getInstance();
 
-  get address0x() {
-    const address = new Address(this.address as any).toB256();
-    return address;
+    return bcNetwork.getAddress();
   }
 
   get isConnected() {
-    return !!this.address;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    return !!bcNetwork.getAddress();
   }
 
   serialize = (): ISerializedAccountStore => {
     const bcNetwork = FuelNetwork.getInstance();
 
     return {
-      privateKey: bcNetwork?.getPrivateKey() ?? null,
-      address: this.address,
+      privateKey: bcNetwork.getPrivateKey() ?? null,
+      // address: bcNetwork.getAddress() ?? null,
     };
   };
 }

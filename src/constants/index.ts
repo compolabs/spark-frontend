@@ -1,7 +1,7 @@
 import { FueletWalletConnector, FuelWalletConnector, WalletConnectConnector } from "@fuels/connectors";
 import { coinbaseWallet, walletConnect } from "@wagmi/connectors";
 import { createConfig, http, injected } from "@wagmi/core";
-import { mainnet, sepolia } from "@wagmi/core/chains";
+import { sepolia } from "@wagmi/core/chains";
 
 export const ROUTES = {
   ROOT: "/",
@@ -9,6 +9,8 @@ export const ROUTES = {
   FAUCET: "/faucet",
   SWAP: "/swap",
 };
+
+export const isProduction = window.location.host === "app.sprk.fi";
 
 export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/sepolia";
 export const FUEL_FAUCET = "https://faucet-testnet.fuel.network/?address=";
@@ -19,7 +21,7 @@ export const DEFAULT_DECIMALS = 9;
 export const USDC_DECIMALS = 6;
 
 export const TWITTER_LINK = "https://twitter.com/Sprkfi";
-export const GITHUB_LINK = "https://github.com/compolabs/spark";
+export const GITHUB_LINK = "https://github.com/compolabs";
 export const DOCS_LINK = "https://docs.sprk.fi";
 
 type TMenuItem = {
@@ -38,16 +40,17 @@ export const MENU_ITEMS: Array<TMenuItem> = [
 ];
 
 const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
+
 const METADATA = {
   name: "Spark",
   description: "Spark is the fastest onchain order book based on Fuel Network",
   url: location.href,
   icons: ["https://connectors.fuel.network/logo_white.png"],
 };
+
 const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia],
+  chains: [sepolia],
   transports: {
-    [mainnet.id]: http(),
     [sepolia.id]: http(),
   },
   connectors: [
@@ -65,16 +68,14 @@ const wagmiConfig = createConfig({
     }),
   ],
 });
-export const isProduction = window.location.host === "app.sprk.fi";
 
 export const FUEL_CONFIG = {
   connectors: [
     new FuelWalletConnector(),
     new FueletWalletConnector(),
     new WalletConnectConnector({
-      wagmiConfig,
+      wagmiConfig: wagmiConfig as any,
       projectId: WC_PROJECT_ID,
     }),
-    // new FuelWalletDevelopmentConnector(),
   ],
 };

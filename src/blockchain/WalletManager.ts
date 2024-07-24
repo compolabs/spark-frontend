@@ -1,5 +1,5 @@
 import { FuelWalletConnector } from "@fuels/connectors";
-import { Account, Fuel, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
+import { Account, B256Address, Fuel, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -7,8 +7,8 @@ import { TOKENS_BY_ASSET_ID } from "./constants";
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
 
 export class WalletManager {
-  public address: Nullable<string> = null;
-  public wallet: Nullable<WalletLocked | WalletUnlocked> = null;
+  public address: Nullable<B256Address> = null;
+  public wallet: Nullable<Account | WalletLocked | WalletUnlocked> = null;
   public privateKey: Nullable<string> = null;
 
   private fuel = new Fuel({
@@ -19,32 +19,16 @@ export class WalletManager {
     makeAutoObservable(this);
   }
 
-  setWallet = async (account: string, wallet?: Account | null) => {
-    let currentAccount: string | null = null;
-    try {
-      currentAccount = await this.fuel.currentAccount();
-    } catch (error) {
-      console.error("Not authorized for fuel");
-    }
-    if (currentAccount) {
-      try {
-        const fuelWallet = await this.fuel.getWallet(account);
-        this.wallet = fuelWallet as any;
-      } catch (err) {
-        console.error("There is no wallet for this account");
-      }
-    } else {
-      // for ethereum wallets should be another logic to connect
-      this.wallet = wallet as any;
-    }
-    this.address = account;
+  connect = async (wallet: Account) => {
+    this.address = wallet.address.toB256();
+    this.wallet = wallet;
   };
 
   connectByPrivateKey = async (privateKey: string, provider: Provider): Promise<void> => {
     const wallet = Wallet.fromPrivateKey(privateKey, provider);
 
     this.privateKey = privateKey;
-    this.address = wallet.address.toString();
+    this.address = wallet.address.toB256();
     this.wallet = wallet;
   };
 

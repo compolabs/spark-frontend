@@ -2,7 +2,6 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 
 import Button from "@components/Button";
-import { Row } from "@components/Flex";
 import { useStores } from "@stores";
 
 interface IProps {
@@ -10,28 +9,27 @@ interface IProps {
 }
 
 const MintButtons: React.FC<IProps> = observer(({ assetId }) => {
-  const { faucetStore } = useStores();
+  const { faucetStore, mixPanelStore } = useStores();
 
   if (!faucetStore.initialized) {
     return (
-      <Row justifyContent="flex-end" style={{ flex: 1 }}>
-        <Button disabled green>
-          Loading...
-        </Button>
-      </Row>
+      <Button disabled green>
+        Loading...
+      </Button>
     );
   }
 
   return (
-    <Row justifyContent="flex-end" style={{ flex: 1 }}>
-      <Button
-        disabled={faucetStore.disabled(assetId)}
-        style={{ width: 120 }}
-        onClick={() => faucetStore.mintByAssetId(assetId)}
-      >
-        {faucetStore.loading && faucetStore.actionTokenAssetId === assetId ? "Loading..." : "Mint"}
-      </Button>
-    </Row>
+    <Button
+      disabled={faucetStore.disabled(assetId)}
+      style={{ width: 120 }}
+      onClick={() => {
+        mixPanelStore.trackEvent("mintTokenInFaucet", { assetId });
+        faucetStore.mintByAssetId(assetId);
+      }}
+    >
+      {faucetStore.loading && faucetStore.actionTokenAssetId === assetId ? "Loading..." : "Mint"}
+    </Button>
   );
 });
 

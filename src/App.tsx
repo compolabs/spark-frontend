@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { Column } from "@components/Flex";
 
 import Header from "./components/Header";
+import { PWAModal } from "./components/PWAModal";
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
 import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
@@ -34,6 +35,8 @@ const App: React.FC = observer(() => {
         <Route element={<SwapScreen />} path={ROUTES.SWAP} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
       </Routes>
+
+      <PWAModal />
     </Root>
   );
 });

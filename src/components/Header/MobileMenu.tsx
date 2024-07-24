@@ -3,9 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text from "@components/Text";
 import { MENU_ITEMS } from "@src/constants";
 import { useStores } from "@src/stores";
+import { media } from "@src/themes/breakpoints";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
 
 import Button from "../Button";
@@ -23,79 +24,82 @@ interface IProps {
   onClose: () => void;
 }
 
-const MobileMenu: React.FC<IProps> = ({ isOpen, onAccountClick, onWalletConnect, onClose, onDepositWithdrawClick }) => {
-  const { accountStore, tradeStore } = useStores();
-  const location = useLocation();
+const MobileMenu: React.FC<IProps> = observer(
+  ({ isOpen, onAccountClick, onWalletConnect, onClose, onDepositWithdrawClick }) => {
+    const { accountStore, tradeStore } = useStores();
+    const location = useLocation();
 
-  const handleAccountClick = () => {
-    onAccountClick();
-    onClose();
-  };
+    const handleAccountClick = () => {
+      onAccountClick();
+      onClose();
+    };
 
-  const handleConnectWallet = () => {
-    onWalletConnect();
-    onClose();
-  };
+    const handleConnectWallet = () => {
+      onWalletConnect();
+      onClose();
+    };
 
-  const handleDepositWithdrawClick = () => {
-    onDepositWithdrawClick();
-    onClose();
-  };
+    const handleDepositWithdrawClick = () => {
+      onDepositWithdrawClick();
+      onClose();
+    };
 
-  const renderWalletButton = () => {
-    return accountStore.address ? (
-      <ConnectedWalletButtonStyled onClick={handleAccountClick} />
-    ) : (
-      <Button green onClick={handleConnectWallet}>
-        Connect wallet
-      </Button>
-    );
-  };
+    const renderWalletButton = () => {
+      return accountStore.address ? (
+        <ConnectedWalletButtonStyled onClick={handleAccountClick} />
+      ) : (
+        <Button green onClick={handleConnectWallet}>
+          Connect wallet
+        </Button>
+      );
+    };
 
-  return (
-    <MenuOverlay isOpen={isOpen} top={50} zIndex={300}>
-      <Body>
-        <Container>
-          <SizedBox height={8} />
-          {MENU_ITEMS.map(({ title, link, route }) => {
-            if (!link && !route) {
-              return (
-                <MenuItem key={title}>
-                  <Text>{title}</Text>
-                </MenuItem>
-              );
-            } else if (route) {
-              return (
-                <Link key={title} to={route} onClick={onClose}>
-                  <MenuItem key={title} isSelected={isRoutesEquals(route, location.pathname)}>
-                    <Text>{title}</Text>
-                  </MenuItem>
-                </Link>
-              );
-            } else if (link) {
-              return (
-                <a key={title} href={link} rel="noopener noreferrer" target="_blank">
+    return (
+      <MenuOverlay isOpen={isOpen} top={50} zIndex={300}>
+        <Body>
+          <Container>
+            {MENU_ITEMS.map(({ title, link, route }) => {
+              if (!link && !route) {
+                return (
                   <MenuItem key={title}>
                     <Text>{title}</Text>
                   </MenuItem>
-                </a>
-              );
-            }
+                );
+              } else if (route) {
+                return (
+                  <Link key={title} to={route} onClick={onClose}>
+                    <MenuItem key={title} isSelected={isRoutesEquals(route, location.pathname)}>
+                      <Text>{title}</Text>
+                    </MenuItem>
+                  </Link>
+                );
+              } else if (link) {
+                return (
+                  <a key={title} href={link} rel="noopener noreferrer" target="_blank">
+                    <MenuItem key={title}>
+                      <Text>{title}</Text>
+                    </MenuItem>
+                  </a>
+                );
+              }
 
-            return null;
-          })}
-        </Container>
-        <SizedBox height={8} />
-        <FooterContainer gap="8px" column>
-          {tradeStore.isPerpAvailable ? <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button> : null}
-          {renderWalletButton()}
-        </FooterContainer>
-      </Body>
-    </MenuOverlay>
-  );
-};
+              return null;
+            })}
+          </Container>
+          <SizedBox height={8} />
+          <FooterContainer gap="8px" column>
+            {tradeStore.isPerpAvailable ? (
+              <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button>
+            ) : null}
+            {renderWalletButton()}
+          </FooterContainer>
+        </Body>
+      </MenuOverlay>
+    );
+  },
+);
 
-export default observer(MobileMenu);
+export default MobileMenu;
 
 const Body = styled.div`
   display: flex;
@@ -107,19 +111,24 @@ const Body = styled.div`
 
 const MenuItem = styled.div<{ isSelected?: boolean }>`
   cursor: pointer;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]};
   padding: 12px 32px;
 
   ${Text} {
     color: ${({ theme, isSelected }) => (isSelected ? theme.colors.textPrimary : theme.colors.textSecondary)};
+    ${media.mobile} {
+      font-size: 16px;
+    }
   }
 `;
 
-const Container = styled.div`
-  display: flex;
+const Container = styled(SmartFlex)`
   flex-direction: column;
   background: ${({ theme }) => `${theme.colors.bgSecondary}`};
+
+  padding-top: 8px;
+
   border-radius: 10px;
+  gap: 8px;
   height: 100%;
 `;
 

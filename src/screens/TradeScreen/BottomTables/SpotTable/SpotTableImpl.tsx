@@ -6,11 +6,14 @@ import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
 import Text, { TEXT_TYPES } from "@components/Text";
+import InfoIcon from "@src/assets/icons/info.svg?react";
 import { FuelNetwork } from "@src/blockchain";
+import Button from "@src/components/Button";
 import { Row } from "@src/components/Flex";
 import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
 import Table from "@src/components/Table";
+import Tooltip from "@src/components/Tooltip";
 import { SpotMarketOrder, Token } from "@src/entity";
 import { useMedia } from "@src/hooks/useMedia";
 import MintButtons from "@src/screens/Faucet/MintButtons";
@@ -25,7 +28,13 @@ import { useSpotTableVMProvider } from "./SpotTableVM";
 
 const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();
-const balanceColumnHelper = createColumnHelper<{ asset: Token; balance: string; assetId: string }>();
+const balanceColumnHelper = createColumnHelper<{
+  asset: Token;
+  contractBalance: string;
+  walletBalance: string;
+  balance: string;
+  assetId: string;
+}>();
 
 const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: Theme) => [
   orderColumnHelper.accessor("timestamp", {
@@ -45,6 +54,18 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
   }),
   orderColumnHelper.accessor("formatInitialAmount", {
     header: "Amount",
+    cell: (props) => (
+      <SmartFlex center="y" gap="4px">
+        <TableText primary>{props.getValue()}</TableText>
+        <TokenBadge>
+          <Text>{props.row.original.baseToken.symbol}</Text>
+        </TokenBadge>
+      </SmartFlex>
+    ),
+  }),
+  orderColumnHelper.accessor("formatFilledAmount", {
+    id: "filled",
+    header: "Filled",
     cell: (props) => (
       <SmartFlex center="y" gap="4px">
         <TableText primary>{props.getValue()}</TableText>
@@ -105,18 +126,6 @@ const HISTORY_COLUMNS = (theme: Theme) => [
     header: "Price",
     cell: (props) => toCurrency(props.getValue()),
   }),
-  tradeColumnHelper.accessor("formatCurrentAmount", {
-    id: "filled",
-    header: "Filled",
-    cell: (props) => (
-      <SmartFlex center="y" gap="4px">
-        <TableText primary>{props.getValue()}</TableText>
-        <TokenBadge>
-          <Text>{props.row.original.baseToken.symbol}</Text>
-        </TokenBadge>
-      </SmartFlex>
-    ),
-  }),
 ];
 
 const BALANCE_COLUMNS = [
@@ -132,10 +141,34 @@ const BALANCE_COLUMNS = [
   }),
   balanceColumnHelper.accessor("balance", {
     header: "Balance",
+    cell: (props) => (
+      <Tooltip
+        config={{
+          placement: "top",
+          trigger: "hover",
+        }}
+        containerStyles={{ width: "fit-content" }}
+        content={
+          <SmartFlex gap="4px" padding="4px 8px" width="fit-content" column>
+            <Text>
+              Wallet: {props.row.original.walletBalance} {props.row.original.asset.symbol}
+            </Text>
+            <Text>
+              Contract: {props.row.original.contractBalance} {props.row.original.asset.symbol}
+            </Text>
+          </SmartFlex>
+        }
+      >
+        <SmartFlex gap="4px">
+          {props.getValue()}
+          <InfoIcon />
+        </SmartFlex>
+      </Tooltip>
+    ),
   }),
   balanceColumnHelper.accessor("assetId", {
     header: "",
-    cell: (props) => <MintButtons assetId={props.getValue()} />,
+    cell: (props) => <BalanceButtons assetId={props.getValue()} />,
   }),
 ];
 
@@ -155,9 +188,17 @@ const SpotTableImpl: React.FC = observer(() => {
     .filter(([, balance]) => balance && balance.gt(0))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
+
+      // TODO: Remove when other markets appear
+      const contractBalance =
+        token.symbol === "USDC" ? vm.myMarketBalance.liquid.quote : vm.myMarketBalance.liquid.base;
+      const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
+
       return {
         asset: token,
-        balance: BN.formatUnits(balance, token.decimals).toSignificant(2),
+        walletBalance: BN.formatUnits(balance, token.decimals).toSignificant(2),
+        contractBalance: BN.formatUnits(contractBalance, token.decimals).toSignificant(2),
+        balance: BN.formatUnits(totalBalance, token.decimals).toSignificant(2),
         assetId,
       };
     });
@@ -253,35 +294,63 @@ const SpotTableImpl: React.FC = observer(() => {
       </MobileTableOrderRow>
     ));
 
-    const balanceData = Array.from(balanceStore.balances)
-      .filter(([, balance]) => balance && balance.gt(0))
-      .map(([assetId, balance], i) => {
-        const token = bcNetwork!.getTokenByAssetId(assetId);
-        return (
-          <MobileTableOrderRow key={i + "mobile-row"}>
-            <MobileTableRowColumn>
-              <Text type={TEXT_TYPES.SUPPORTING}>Token</Text>
-              <SmartFlex center="y" gap="4px">
-                <TokenIcon alt="market-icon" src={token.logo} />
-                <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
-                  {token.symbol}
-                </Text>
+    const mobileBalanceData = balanceData.map(({ assetId, balance, contractBalance, walletBalance, asset }, i) => {
+      const { amount } = vm.getContractBalanceInfo(assetId);
+      const isHidden = amount.eq(BN.ZERO);
+
+      return (
+        <MobileTableOrderRow key={i + "mobile-row"}>
+          <MobileTableRowColumn>
+            <Text type={TEXT_TYPES.SUPPORTING}>Token</Text>
+            <SmartFlex center="y" gap="4px">
+              <TokenIcon alt="market-icon" src={asset.logo} />
+              <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
+                {asset.symbol}
+              </Text>
+            </SmartFlex>
+          </MobileTableRowColumn>
+          <MobileTableRowColumn>
+            <Text type={TEXT_TYPES.SUPPORTING}>Balance</Text>
+            <Tooltip
+              config={{
+                placement: "top",
+                trigger: "hover",
+              }}
+              containerStyles={{ width: "fit-content" }}
+              content={
+                <SmartFlex gap="4px" padding="4px 8px" width="fit-content" column>
+                  <Text>
+                    Wallet: {walletBalance} {asset.symbol}
+                  </Text>
+                  <Text>
+                    Contract: {contractBalance} {asset.symbol}
+                  </Text>
+                </SmartFlex>
+              }
+            >
+              <SmartFlex gap="4px">
+                <Text primary>{balance}</Text>
+                <InfoIcon />
               </SmartFlex>
-            </MobileTableRowColumn>
-            <MobileTableRowColumn>
-              <Text type={TEXT_TYPES.SUPPORTING}>Balance</Text>
-              <Text color={theme.colors.textPrimary}>{BN.formatUnits(balance, token.decimals).toFormat(2)}</Text>
-            </MobileTableRowColumn>
-            <MobileTableRowColumn>
+            </Tooltip>
+          </MobileTableRowColumn>
+          <MobileTableRowColumn>
+            <SmartFlex gap="4px">
+              {!isHidden && (
+                <CancelButton disabled={vm.isWithdrawing} onClick={() => vm.withdrawBalance(assetId)}>
+                  {vm.withdrawingAssetId === assetId ? "Loading..." : "Withdraw"}
+                </CancelButton>
+              )}
               <CancelButton onClick={() => faucetStore.mintByAssetId(assetId)}>
                 {faucetStore.loading && faucetStore.actionTokenAssetId === assetId ? "Loading..." : "Mint"}
               </CancelButton>
-            </MobileTableRowColumn>
-          </MobileTableOrderRow>
-        );
-      });
+            </SmartFlex>
+          </MobileTableRowColumn>
+        </MobileTableOrderRow>
+      );
+    });
 
-    const tabToData = [orderData, balanceData, orderHistoryData];
+    const tabToData = [orderData, mobileBalanceData, orderHistoryData];
 
     return (
       <SmartFlex width="100%" column>
@@ -321,6 +390,30 @@ const SpotTableImpl: React.FC = observer(() => {
         <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
       )}
     </>
+  );
+});
+
+const BalanceButtons: React.FC<{ assetId: string }> = observer(({ assetId }) => {
+  const vm = useSpotTableVMProvider();
+
+  const bcNetwork = FuelNetwork.getInstance();
+
+  const { amount } = vm.getContractBalanceInfo(assetId);
+
+  const token = bcNetwork.getTokenByAssetId(assetId);
+  const isEth = token.symbol === "ETH";
+
+  const isHidden = isEth || amount.eq(BN.ZERO);
+
+  return (
+    <SmartFlex gap="8px" justifyContent="flex-end" width="100%">
+      {!isHidden && (
+        <WithdrawButtonStyled disabled={vm.isWithdrawing} onClick={() => vm.withdrawBalance(assetId)}>
+          {vm.withdrawingAssetId === assetId ? "Loading..." : "Withdraw"}
+        </WithdrawButtonStyled>
+      )}
+      <MintButtons assetId={assetId} />
+    </SmartFlex>
   );
 });
 
@@ -388,4 +481,8 @@ const TextGraph = styled(Text)`
   ${media.desktop} {
     display: none;
   }
+`;
+
+const WithdrawButtonStyled = styled(Button)`
+  width: 120px;
 `;

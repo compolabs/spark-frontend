@@ -101,11 +101,11 @@ class SwapStore {
       limit: 50, // or more if needed
       asset: isBuy ? this.buyToken.assetId : this.sellToken.assetId,
       status: ["Active"],
-      orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     };
-
+    console.log('1')
     const sellOrders = await bcNetwork!.fetchSpotOrders({
       ...params,
+      orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     });
     // TODO: check if there is enough price sum to fulfill the order
 

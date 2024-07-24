@@ -37,11 +37,11 @@ export class SpotMarketTrade {
   }
 
   get formatPrice() {
-    return BN.formatUnits(this.tradePrice, DEFAULT_DECIMALS).toSignificant(2);
+    return BN.formatUnits(this.tradePrice, DEFAULT_DECIMALS).toFormat(2);
   }
 
   get formatTradeAmount() {
-    return BN.formatUnits(this.tradeSize, this.baseToken.decimals).toSignificant(2);
+    return BN.formatUnits(this.tradeSize, this.baseToken.decimals).toFormat(4);
   }
 
   get marketSymbol() {
