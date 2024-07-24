@@ -3,6 +3,7 @@ import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums.tsx";
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { DEFAULT_DECIMALS } from "@src/constants";
@@ -12,10 +13,10 @@ import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
 
+import { ActionModal } from "./ActionModal.tsx";
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
-import { SuccessModal } from "./SuccessModal";
 import { TokenSelect } from "./TokenSelect";
 
 const INPUT_FILL_OPTIONS = ["Half", "All"];
@@ -24,9 +25,9 @@ const INITIAL_SLIPPAGE = 1;
 export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
-  const { swapStore, oracleStore, balanceStore } = useStores();
-
+  const { swapStore, oracleStore, balanceStore, notificationStore } = useStores();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
+  const [typeModal, setTypeModal] = useState<ModalEnums>(ModalEnums.Success);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [isPendingModalVisible, setPendingModalVisible] = useState(false); //TODO: set to true when transaction is pending
 
@@ -90,10 +91,24 @@ export const SwapScreen: React.FC = observer(() => {
     swapStore.setReceiveAmount(receiveAmount.toFixed(4));
   };
 
-  const swapTokens = () => {
-    // setPendingModalVisible(true);
+  const swapTokens = async () => {
+    setPendingModalVisible(true);
     const slippagePercentage = Number(slippage) * 100;
-    swapStore.swapTokens({ slippage: slippagePercentage });
+    // notificationStore.toast("Slippage tolerance has been changed", {
+    //   type: "info",
+    //   position: "bottom-left",
+    //   hideProgressBar: true,
+    // });
+    try {
+      await swapStore.swapTokens({ slippage: slippagePercentage });
+      setTypeModal(ModalEnums.Success);
+    } catch (err) {
+      setTypeModal(ModalEnums.Error);
+      console.log('err', err)
+    } finally {
+      setPendingModalVisible(false);
+      setSuccessModalVisible(true);
+    }
   };
 
   const isBalanceZero = Number(swapStore.sellToken.balance) === 0;
@@ -179,7 +194,7 @@ export const SwapScreen: React.FC = observer(() => {
       </SwapButton>
 
       {isSuccessModalVisible && (
-        <SuccessModal
+        <ActionModal
           hash=""
           transactionInfo={{
             sellToken: swapStore.sellToken.symbol,
@@ -187,6 +202,7 @@ export const SwapScreen: React.FC = observer(() => {
             sellAmount: swapStore.payAmount,
             buyAmount: swapStore.receiveAmount,
           }}
+          typeModal={typeModal}
           onClose={() => setSuccessModalVisible(false)}
         />
       )}

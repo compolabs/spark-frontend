@@ -1,10 +1,10 @@
 import SparkOrderBookSdk, {
   AssetType,
   CreateOrderParams,
-  DepositParams,
+  DepositParams, FulfillOrderManyParams,
   GetOrdersParams,
   OrderType,
-  WriteTransactionResponse,
+  WriteTransactionResponse
 } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
@@ -116,13 +116,8 @@ export class FuelNetwork {
     return this.orderbookSdk.createOrder(deposit, order);
   };
 
-  swapTokens = async (deposit: DepositParams, order: CreateOrderParams): Promise<WriteTransactionResponse> => {
-    return {
-      transactionId: "",
-      value: "success",
-    };
-
-    // return this.orderbookSdk.fulfillOrderMany(deposit, order);
+  swapTokens = async (deposit: DepositParams, order: FulfillOrderManyParams): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.fulfillOrderMany(deposit, order);
   };
 
   cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {

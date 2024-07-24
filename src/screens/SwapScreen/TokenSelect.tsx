@@ -4,7 +4,6 @@ import styled from "@emotion/styled";
 
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
 import CloseIcon from "@src/assets/icons/close.svg?react";
-import SearchInput from "@src/components/SearchInput";
 import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useMedia } from "@src/hooks/useMedia";
 import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
@@ -18,6 +17,7 @@ export type TokenOption = {
   balance: string;
   priceFeed: string;
   assetId: string;
+  decimals: number;
 };
 
 interface TokenSelectProps {

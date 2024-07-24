@@ -252,7 +252,6 @@ class CreateOrderVM {
 
     const formattedInputPrice = BN.formatUnits(this.inputPrice, DEFAULT_DECIMALS);
     const formattedAmount = BN.formatUnits(amount, tradeStore.market.baseToken.decimals);
-
     const total = BN.parseUnits(formattedAmount.times(formattedInputPrice), tradeStore.market.quoteToken.decimals);
     this.setInputTotal(total);
 
