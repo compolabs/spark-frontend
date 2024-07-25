@@ -31,27 +31,6 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
   const media = useMedia();
   const theme = useTheme();
   const [isSelectMenuVisible, setSelectMenuVisible] = useState(false);
-  // const [filteredOptions, setFilteredOptions] = useState<TokenOption[]>(options);
-  // const [searchTerm, setSearchTerm] = useState("");
-
-  // useEffect(() => {
-  //   setFilteredOptions(options);
-  // }, [options]);
-
-  // const filterTokens = (search: string) => {
-  //   const lowercasedSearch = search.toLowerCase();
-  //   const filtered = options.filter(
-  //     (option) =>
-  //       option.title.toLowerCase().includes(lowercasedSearch) || option.symbol.toLowerCase().includes(lowercasedSearch),
-  //   );
-  //   setFilteredOptions(filtered);
-  // };
-
-  // const handleSearchChange = (value: string) => {
-  //   setSearchTerm(value);
-  //   filterTokens(value);
-  // };
-
   const selectRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(selectRef, () => setSelectMenuVisible(false));
 

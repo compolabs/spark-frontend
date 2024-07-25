@@ -11,7 +11,7 @@ const UPDATE_INTERVAL = 5 * 1000;
 
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
-  public initialized: boolean = false;
+  public initialized = false;
 
   private balancesUpdater: IntervalUpdater;
 

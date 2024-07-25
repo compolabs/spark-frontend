@@ -43,8 +43,6 @@ class SwapStore {
     });
   }
 
-  bcNetwork = FuelNetwork.getInstance();
-
   async initialize() {
     await this.rootStore.balanceStore.initialize();
     this.updateTokens();
@@ -92,8 +90,6 @@ class SwapStore {
   }
 
   swapTokens = async ({ slippage }: { slippage: number }): Promise<WriteTransactionResponse> => {
-    const { notificationStore, balanceStore, tradeStore } = this.rootStore;
-    const hash: Undefinable<string> = "";
     const bcNetwork = FuelNetwork.getInstance();
     const isBuy = this.buyToken.symbol === "BTC"; // продумать если будет больше торговых пар, не будет работать
     const params: GetOrdersParams = {
@@ -124,7 +120,7 @@ class SwapStore {
       slippage: slippage.toString(),
     };
 
-    return await this.bcNetwork.swapTokens(deposit, order);
+    return await bcNetwork.swapTokens(deposit, order);
   };
 
   onSwitchTokens = () => {

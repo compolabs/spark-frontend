@@ -3,7 +3,7 @@ import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums.tsx";
+import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { DEFAULT_DECIMALS } from "@src/constants";

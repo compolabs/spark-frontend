@@ -306,8 +306,6 @@ class CreateOrderVM {
           type,
         };
 
-        console.log(deposit, order);
-
         const data = await bcNetwork.createSpotOrder(deposit, order);
         hash = data.transactionId;
       }
