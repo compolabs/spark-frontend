@@ -1,7 +1,4 @@
-import { FueletWalletConnector, FuelWalletConnector, WalletConnectConnector } from "@fuels/connectors";
-import { coinbaseWallet, walletConnect } from "@wagmi/connectors";
-import { createConfig, http, injected } from "@wagmi/core";
-import { sepolia } from "@wagmi/core/chains";
+import { defaultConnectors } from "@fuels/connectors";
 
 export const ROUTES = {
   ROOT: "/",
@@ -37,43 +34,6 @@ export const MENU_ITEMS: Array<TMenuItem> = [
   { title: "TWITTER", link: TWITTER_LINK },
 ];
 
-const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
-
-const METADATA = {
-  name: "Spark",
-  description: "Spark is the fastest onchain order book based on Fuel Network",
-  url: location.href,
-  icons: ["https://connectors.fuel.network/logo_white.png"],
-};
-
-const wagmiConfig = createConfig({
-  chains: [sepolia],
-  transports: {
-    [sepolia.id]: http(),
-  },
-  connectors: [
-    injected({ shimDisconnect: false }),
-    walletConnect({
-      projectId: WC_PROJECT_ID,
-      metadata: METADATA,
-      showQrModal: false,
-    }),
-    coinbaseWallet({
-      appName: METADATA.name,
-      appLogoUrl: METADATA.icons[0],
-      darkMode: true,
-      reloadOnDisconnect: true,
-    }),
-  ],
-});
-
 export const FUEL_CONFIG = {
-  connectors: [
-    new FuelWalletConnector(),
-    new FueletWalletConnector(),
-    new WalletConnectConnector({
-      wagmiConfig: wagmiConfig as any,
-      projectId: WC_PROJECT_ID,
-    }),
-  ],
+  connectors: defaultConnectors({ devMode: import.meta.env.DEV }),
 };
