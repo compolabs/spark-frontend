@@ -144,7 +144,7 @@ class SpotTableVM {
     this.withdrawingAssetId = null;
   };
 
-  private subscribeToOpenOrders = (sortDesc: OrderSortingFunction, limit = 50) => {
+  private subscribeToOpenOrders = (sortDesc: OrderSortingFunction, limit = 100) => {
     const { accountStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -173,7 +173,7 @@ class SpotTableVM {
       });
   };
 
-  private subscribeToHistoryOrders = (sortDesc: OrderSortingFunction, limit = 50) => {
+  private subscribeToHistoryOrders = (sortDesc: OrderSortingFunction, limit = 100) => {
     const { accountStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
