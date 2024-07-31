@@ -38,7 +38,9 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
   {},
 );
 
-export const INDEXER_HTTP_URL = "https://indexer.bigdevenergy.link/67b693c/v1/graphql";
-export const INDEXER_WS_URL = "wss://indexer.bigdevenergy.link/67b693c/v1/graphql";
+const URL = "indexer.bigdevenergy.link/67b693c";
+
+export const INDEXER_HTTP_URL = `https://${URL}/v1/graphql`;
+export const INDEXER_WS_URL = `wss://${URL}/v1/graphql`;
 
 export const PYTH_URL = "https://hermes.pyth.network";

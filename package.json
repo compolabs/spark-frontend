@@ -11,7 +11,6 @@
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
-    "@compolabs/spark-orderbook-ts-sdk": "^1.4.1",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fuels/connectors": "^0.7.0",
