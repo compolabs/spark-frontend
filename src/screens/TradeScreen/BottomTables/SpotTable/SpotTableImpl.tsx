@@ -174,7 +174,7 @@ const BALANCE_COLUMNS = [
 
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const SpotTableImpl: React.FC = observer(() => {
-  const { balanceStore, faucetStore } = useStores();
+  const { balanceStore, faucetStore} = useStores();
   const bcNetwork = FuelNetwork.getInstance();
 
   const vm = useSpotTableVMProvider();
@@ -191,7 +191,7 @@ const SpotTableImpl: React.FC = observer(() => {
 
       // TODO: Remove when other markets appear
       const contractBalance =
-        token.symbol === "USDC" ? vm.myMarketBalance.liquid.quote : vm.myMarketBalance.liquid.base;
+        token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
       const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
 
       return {

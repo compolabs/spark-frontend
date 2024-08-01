@@ -12,6 +12,7 @@ import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
 import TradeScreen from "./screens/TradeScreen";
 import { ROUTES } from "./constants";
+import ManageAssetsDialog from "@screens/assets/ManageAssetsDialog/ManageAssetsDialog";
 
 const isUnderConstruction = false;
 
@@ -33,7 +34,7 @@ const App: React.FC = observer(() => {
         <Route element={<TradeScreen />} path={ROUTES.ROOT} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
       </Routes>
-
+      <ManageAssetsDialog />
       <PWAModal />
     </Root>
   );

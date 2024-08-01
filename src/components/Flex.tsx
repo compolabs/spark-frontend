@@ -7,12 +7,13 @@ export interface IFlexProps {
   alignItems?: "start" | "end" | "center" | "inherit" | "unset" | "flex-end" | "flex-start" | "baseline";
   crossAxisSize?: "min" | "max";
   mainAxisSize?: "fit-content" | "stretch";
+  gap?: string;
 }
 
 export const Row = styled.div<IFlexProps>`
   display: flex;
   flex-direction: row;
-
+  gap: ${({ gap }) => gap ?? "0px"};
   justify-content: ${({ justifyContent }) => justifyContent ?? "start"};
   align-items: ${({ alignItems }) => alignItems ?? "start"};
   height: ${({ crossAxisSize }) => (crossAxisSize === "max" ? "100%" : "fit-content")};
@@ -22,6 +23,7 @@ export const Row = styled.div<IFlexProps>`
 export const Column = styled.div<IFlexProps>`
   display: flex;
   flex-direction: column;
+  gap: ${({ gap }) => gap ?? "0px"};
   justify-content: ${({ justifyContent }) => justifyContent ?? "start"};
   align-items: ${({ alignItems }) => alignItems ?? "start"};
   width: ${({ crossAxisSize }) => (crossAxisSize === "max" ? "100%" : "fit-content")};

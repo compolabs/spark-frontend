@@ -1,3 +1,5 @@
+import { UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
+import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
@@ -8,11 +10,24 @@ import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import RootStore from "./RootStore";
 
 const UPDATE_INTERVAL = 5 * 1000;
+const MARKET_BALANCE_UPDATE_INTERVAL = 15 * 1000; // 15 sec
 
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
 
   private balancesUpdater: IntervalUpdater;
+  private marketBalanceUpdater: IntervalUpdater;
+
+  myMarketBalance = {
+    locked: {
+      base: BN.ZERO,
+      quote: BN.ZERO,
+    },
+    liquid: {
+      base: BN.ZERO,
+      quote: BN.ZERO,
+    },
+  };
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
@@ -23,6 +38,8 @@ export class BalanceStore {
 
     const { accountStore } = rootStore;
 
+    this.marketBalanceUpdater = new IntervalUpdater(this.fetchUserMarketBalance, MARKET_BALANCE_UPDATE_INTERVAL);
+    this.marketBalanceUpdater.run(true);
     reaction(
       () => [accountStore.isConnected, accountStore.address],
       ([isConnected]) => {
@@ -88,4 +105,32 @@ export class BalanceStore {
 
     return balance;
   };
+
+  private fetchUserMarketBalance = async () => {
+    const { accountStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    if (!accountStore.address) return;
+
+    try {
+      // TODO: After type fix in sdk
+      const address = Address.fromB256(accountStore.address);
+      const balanceData = await bcNetwork.fetchSpotUserMarketBalance(address.bech32Address);
+      this.setMyMarketBalance(balanceData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  private setMyMarketBalance = (balance: UserMarketBalance) =>
+    (this.myMarketBalance = {
+      liquid: {
+        base: new BN(balance.liquid.base),
+        quote: new BN(balance.liquid.quote),
+      },
+      locked: {
+        base: new BN(balance.locked.base),
+        quote: new BN(balance.locked.quote),
+      },
+    });
 }

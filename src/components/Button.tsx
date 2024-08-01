@@ -8,6 +8,7 @@ const Button = styled.button<{
   green?: boolean;
   red?: boolean;
   text?: boolean;
+  black?: boolean;
   fitContent?: boolean;
   //этот active и &:active отлтчаются: это состояние нажатой кнопки, а &:active - это цвеь в момент нажатия
   active?: boolean;
@@ -33,7 +34,7 @@ const Button = styled.button<{
     height: 40px;
   }
 
-  ${({ green, red, text, theme, active }) =>
+  ${({ green, red, black, text, theme, active }) =>
     (() => {
       switch (true) {
         case green:
@@ -66,6 +67,25 @@ const Button = styled.button<{
 
             &:active {
               background: ${theme.colors.redDark};
+            }
+
+            &:disabled {
+              border-color: ${theme.colors.borderSecondary};
+              background: ${theme.colors.borderSecondary};
+              color: ${theme.colors.textDisabled};
+            }
+          `;
+        case black:
+          return css`
+            border: 1px solid ${theme.colors.bgPrimary};
+            background: ${theme.colors.bgPrimary};
+
+            &:hover {
+              background: ${theme.colors.bgPrimary};
+            }
+
+            &:active {
+              background: ${theme.colors.bgPrimary};
             }
 
             &:disabled {
