@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -19,18 +19,18 @@ import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
 import { TokenSelect } from "./TokenSelect";
 
-const INPUT_FILL_OPTIONS = ["Half", "All"];
+const INPUT_FILL_OPTIONS = ["Half", "Max"];
 const INITIAL_SLIPPAGE = 1;
 
 export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
-  const { swapStore, oracleStore, balanceStore, notificationStore } = useStores();
+  const { swapStore, oracleStore, balanceStore } = useStores();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [typeModal, setTypeModal] = useState<ModalEnums>(ModalEnums.Success);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [isPendingModalVisible, setPendingModalVisible] = useState(false); //TODO: set to true when transaction is pending
-
+  const [transactionId, setTransactionId] = useState<string>("");
   const sellTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
   const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
 
@@ -40,9 +40,16 @@ export const SwapScreen: React.FC = observer(() => {
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
 
+  useEffect(() => {
+    const updateToken = setInterval(async () => {
+      swapStore.updateTokens();
+    }, 1000);
+
+    return () => clearInterval(updateToken);
+  }, []);
   const exchangeRate =
-    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toNumber() /
-    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toNumber();
+    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toNumber() /
+    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toNumber();
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPayAmount = replaceComma(e.target.value);
@@ -78,8 +85,7 @@ export const SwapScreen: React.FC = observer(() => {
     if (option === "Half") {
       const half = parseNumberWithCommas(swapStore.sellToken.balance) / 2;
       newPayAmount = half.toString();
-    } else if (option === "All") {
-      console.log(swapStore.sellToken.balance);
+    } else if (option === "Max") {
       newPayAmount = parseNumberWithCommas(swapStore.sellToken.balance).toFixed(4);
     }
 
@@ -95,21 +101,23 @@ export const SwapScreen: React.FC = observer(() => {
     setPendingModalVisible(true);
     const slippagePercentage = Number(slippage) * 100;
     try {
-      await swapStore.swapTokens({ slippage: slippagePercentage });
+      const data = await swapStore.swapTokens({ slippage: slippagePercentage });
+      setTransactionId(data?.transactionId);
       setTypeModal(ModalEnums.Success);
     } catch (err) {
       setTypeModal(ModalEnums.Error);
     } finally {
       setPendingModalVisible(false);
       setSuccessModalVisible(true);
-      swapStore.setPayAmount("0");
-      swapStore.setReceiveAmount("0");
     }
+  };
+
+  const handleMaxAmount = () => {
+    fillPayAmount(INPUT_FILL_OPTIONS[1]);
   };
 
   const isBalanceZero = Number(swapStore.sellToken.balance) === 0;
   const isLoaded = isConnected && balanceStore.initialized;
-
   return (
     <Root>
       <TitleContainer>
@@ -147,7 +155,12 @@ export const SwapScreen: React.FC = observer(() => {
             value={swapStore.payAmount}
             onChange={onPayAmountChange}
           />
-          <BalanceSection balance={swapStore.sellToken.balance} balanceUSD={payAmountUSD} isLoaded={isLoaded} />
+          <BalanceSection
+            balance={swapStore.sellToken.balance}
+            balanceUSD={payAmountUSD}
+            handleMaxAmount={handleMaxAmount}
+            isLoaded={isLoaded}
+          />
         </SwapBox>
 
         <SwitchTokens
@@ -174,9 +187,14 @@ export const SwapScreen: React.FC = observer(() => {
             value={swapStore.receiveAmount}
             onChange={onReceivedTokensChange}
           />
-          <BalanceSection balance={swapStore.buyToken.balance} balanceUSD={receiveAmountUSD} isLoaded={isLoaded} />
+          <BalanceSection
+            balance={swapStore.buyToken.balance}
+            balanceUSD={receiveAmountUSD}
+            handleMaxAmount={handleMaxAmount}
+            isLoaded={isLoaded}
+          />
           <ExchangeRate>
-            1 {swapStore.buyToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.sellToken.symbol} (${buyTokenPrice})
+            1 {swapStore.sellToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.buyToken.symbol} (${buyTokenPrice})
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
@@ -191,7 +209,7 @@ export const SwapScreen: React.FC = observer(() => {
 
       {isSuccessModalVisible && (
         <ActionModal
-          hash=""
+          hash={transactionId}
           transactionInfo={{
             sellToken: swapStore.sellToken.symbol,
             buyToken: swapStore.buyToken.symbol,
@@ -199,7 +217,11 @@ export const SwapScreen: React.FC = observer(() => {
             buyAmount: swapStore.receiveAmount,
           }}
           typeModal={typeModal}
-          onClose={() => setSuccessModalVisible(false)}
+          onClose={() => {
+            swapStore.setPayAmount("0");
+            swapStore.setReceiveAmount("0");
+            setSuccessModalVisible(false);
+          }}
         />
       )}
 
@@ -367,11 +389,11 @@ const SwitchTokens = styled.button<{ disabled: boolean }>`
     transform 0.2s;
 
   &:hover {
-    transform: scaleX(1.3);
-    border-radius: 40%;
+    transform: scale(1.25);
+    //border-radius: 40%;
 
     svg {
-      transform: scaleX(0.7692);
+      transform: scale(1.25);
       transform-origin: center;
     }
   }

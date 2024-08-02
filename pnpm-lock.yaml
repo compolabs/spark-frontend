@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@compolabs/spark-orderbook-ts-sdk':
-        specifier: ^1.4.3
-        version: 1.4.3(@types/react@18.3.3)(fuels@0.90.0)(graphql@16.8.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.4.4
+        version: 1.4.4(@types/react@18.3.3)(fuels@0.90.0)(graphql@16.8.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@emotion/react':
         specifier: ^11.11.3
         version: 11.11.4(@types/react@18.3.3)(react@18.3.1)
@@ -1011,8 +1011,8 @@ packages:
   '@coinbase/wallet-sdk@3.9.1':
     resolution: {integrity: sha512-cGUE8wm1/cMI8irRMVOqbFWYcnNugqCtuy2lnnHfgloBg+GRLs9RsrkOUDMdv/StfUeeKhCDyYudsXXvcL1xIA==}
 
-  '@compolabs/spark-orderbook-ts-sdk@1.4.3':
-    resolution: {integrity: sha512-TjNtNuIgCxcKo4ywRMsRkFSRe9kz7L0y8UPGTn5OTq+0pU36zKUw9NQN1Gdal4NgkLgmmI+59GvZ8Lk2QYwnxg==}
+  '@compolabs/spark-orderbook-ts-sdk@1.4.4':
+    resolution: {integrity: sha512-r7z3IxF7u72c+QgOGn9X3kdeN1i/qMapQvcN6FyKjybiTHr9pRhPBzV5xKytUIGaU9RsFuRnGvMyzmz73RNDFw==}
     engines: {node: '>=18'}
     peerDependencies:
       fuels: '>=0.90.0'
@@ -7945,7 +7945,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@compolabs/spark-orderbook-ts-sdk@1.4.3(@types/react@18.3.3)(fuels@0.90.0)(graphql@16.8.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@compolabs/spark-orderbook-ts-sdk@1.4.4(@types/react@18.3.3)(fuels@0.90.0)(graphql@16.8.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@apollo/client': 3.11.1(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       bignumber.js: 9.1.2
@@ -8405,7 +8405,7 @@ snapshots:
       '@ethereumjs/util': 9.0.3
       '@ethersproject/bytes': 5.7.0
       '@wagmi/core': 2.9.1(@tanstack/query-core@5.45.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4)
-      '@web3modal/wagmi': 4.1.11(@types/react@18.3.3)(@wagmi/connectors@4.3.3(@types/react@18.3.3)(@wagmi/core@2.9.1(@tanstack/query-core@5.45.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1))(react@18.3.1)(rollup@4.18.0)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.9.1(@tanstack/query-core@5.45.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))
+      '@web3modal/wagmi': 4.1.11(x52r2s65khvnv6fjpcccrspr4u)
       fuels: 0.90.0
       socket.io-client: 4.7.2(bufferutil@4.0.8)
       viem: 2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4)
@@ -10429,8 +10429,8 @@ snapshots:
       lit: 3.1.0
       qrcode: 1.5.3
 
-  ? '@web3modal/wagmi@4.1.11(@types/react@18.3.3)(@wagmi/connectors@4.3.3(@types/react@18.3.3)(@wagmi/core@2.9.1(@tanstack/query-core@5.45.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1))(react@18.3.1)(rollup@4.18.0)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.9.1(@tanstack/query-core@5.45.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))'
-  : dependencies:
+  '@web3modal/wagmi@4.1.11(x52r2s65khvnv6fjpcccrspr4u)':
+    dependencies:
       '@wagmi/connectors': 4.3.3(@types/react@18.3.3)(@wagmi/core@2.9.1(@tanstack/query-core@5.45.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1))(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1))(react@18.3.1)(rollup@4.18.0)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4)
       '@wagmi/core': 2.9.1(@tanstack/query-core@5.45.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(viem@2.10.2(bufferutil@4.0.8)(typescript@5.4.5)(zod@3.22.4))(zod@3.22.4)
       '@web3modal/polyfills': 4.1.11

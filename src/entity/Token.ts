@@ -5,6 +5,7 @@ interface TokenParams {
   logo: string;
   assetId: string;
   priceFeed: string;
+  persition: number;
 }
 
 export class Token {
@@ -14,6 +15,7 @@ export class Token {
   public readonly logo: TokenParams["logo"];
   public readonly assetId: TokenParams["assetId"];
   public readonly priceFeed: TokenParams["priceFeed"];
+  public readonly persition: TokenParams["persition"];
 
   constructor(params: TokenParams) {
     this.name = params.name;
@@ -22,5 +24,6 @@ export class Token {
     this.logo = params.logo;
     this.assetId = params.assetId;
     this.priceFeed = params.priceFeed;
+    this.persition = params.persition;
   }
 }

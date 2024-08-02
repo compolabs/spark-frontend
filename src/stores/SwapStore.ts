@@ -6,7 +6,6 @@ import {
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
 import { autorun, makeAutoObservable } from "mobx";
-import { Undefinable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
@@ -58,8 +57,8 @@ class SwapStore {
   updateTokens() {
     const newTokens = this.fetchNewTokens();
     this.tokens = newTokens;
-    this.sellToken = newTokens[0];
-    this.buyToken = newTokens[1];
+    this.sellToken = newTokens.find((el) => el.assetId === this.sellToken.assetId) ?? newTokens[0];
+    this.buyToken = newTokens.find((el) => el.assetId === this.buyToken.assetId) ?? newTokens[1];
     this.buyTokenPrice = this.getPrice(this.buyToken);
     this.sellTokenPrice = this.getPrice(this.sellToken);
   }
@@ -74,6 +73,7 @@ class SwapStore {
       .map((v) => {
         const balance = balanceStore.getBalance(v.assetId);
         const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
+        // console.log('formatBalance', vala)
         const token = bcNetwork!.getTokenByAssetId(v.assetId);
 
         return {
@@ -81,10 +81,11 @@ class SwapStore {
           title: token.name,
           symbol: token.symbol,
           img: token.logo,
-          balance: formatBalance?.toFormat(4),
+          balance: formatBalance?.toFormat(v.persition),
           priceFeed: token.priceFeed,
           assetId: token.assetId,
           decimals: token.decimals,
+          persition: token.persition,
         };
       });
   }
@@ -105,7 +106,6 @@ class SwapStore {
 
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
     const formattedVolume = BN.parseUnits(this.receiveAmount, this.buyToken.decimals).toString();
-
     const deposit = {
       amount: formattedAmount,
       asset: this.sellToken.assetId,

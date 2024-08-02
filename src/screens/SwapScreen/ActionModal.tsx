@@ -12,6 +12,7 @@ import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 import { getExplorerLinkByHash } from "@src/utils/getExplorerLink";
+import { SmartFlex } from "@components/SmartFlex.tsx";
 
 type SuccessModalProps = {
   hash: string;
@@ -36,7 +37,9 @@ export const ActionModal: React.FC<SuccessModalProps> = ({ hash, onClose, transa
     <Overlay>
       <Modal>
         <Actions>
-          <Text type={TEXT_TYPES.BODY}>I NEED HELP</Text>
+          <a href="https://discord.com/invite/rsZnUY3kgm" target="_blank">
+            <Text type={TEXT_TYPES.BODY}>I NEED HELP</Text>
+          </a>
           <CloseIcon onClick={onClose} />
         </Actions>
         <ModalContent>
@@ -45,14 +48,16 @@ export const ActionModal: React.FC<SuccessModalProps> = ({ hash, onClose, transa
             <ModalTitle color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
               Swap {typeModal === ModalEnums.Success ? "completed" : "declined"}
             </ModalTitle>
-            <a href={link} rel="noreferrer noopener" target="_blank">
-              <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                See in Explorer
-              </Text>
-            </a>
+            {typeModal === ModalEnums.Success && (
+              <a href={link} rel="noreferrer noopener" target="_blank">
+                <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+                  See in Explorer
+                </Text>
+              </a>
+            )}
           </Description>
 
-          <TransactionInfo>
+          <SmartFlex gap="4px" justifyContent="center">
             <img alt={sellToken} src={TOKEN_LOGOS[sellToken]} width="16px" />
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
               {sellAmount} {sellToken}
@@ -62,7 +67,7 @@ export const ActionModal: React.FC<SuccessModalProps> = ({ hash, onClose, transa
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
               {buyAmount} {buyToken}
             </Text>
-          </TransactionInfo>
+          </SmartFlex>
         </ModalContent>
       </Modal>
     </Overlay>
@@ -121,12 +126,6 @@ const Description = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-`;
-
-const TransactionInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
 `;
 
 const ModalTitle = styled(Text)`
