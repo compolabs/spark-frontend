@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { GetOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -126,46 +126,49 @@ class SpotOrderbookVM {
 
     const bcNetwork = FuelNetwork.getInstance();
 
-    const params: GetOrdersParams = {
-      limit: 50,
+    const params: Omit<GetActiveOrdersParams, "orderType"> = {
+      limit: 100,
       asset: market.baseToken.assetId,
-      status: ["Active"],
     };
 
     this.subscribeToBuyOrders(bcNetwork, params);
     this.subscribeToSellOrders(bcNetwork, params);
   };
 
-  private subscribeToBuyOrders(bcNetwork: FuelNetwork, params: GetOrdersParams) {
+  private subscribeToBuyOrders(bcNetwork: FuelNetwork, params: Omit<GetActiveOrdersParams, "orderType">) {
     if (this.buySubscription) {
       this.buySubscription.unsubscribe();
     }
 
-    this.buySubscription = bcNetwork.orderbookSdk.subscribeOrders({ ...params, orderType: OrderType.Buy }).subscribe({
-      next: ({ data }) => {
-        if (!data) return;
+    this.buySubscription = bcNetwork.orderbookSdk
+      .subscribeActiveOrders<OrderType.Buy>({ ...params, orderType: OrderType.Buy })
+      .subscribe({
+        next: ({ data }) => {
+          if (!data) return;
 
-        const buyOrders = formatSpotMarketOrders(data.Order, TOKENS_BY_SYMBOL.USDC.assetId);
-        const buyOrdersCombinedByDecimal = groupOrders(buyOrders, this.decimalGroup);
-        this.allBuyOrders = buyOrdersCombinedByDecimal;
-      },
-    });
+          const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, TOKENS_BY_SYMBOL.USDC.assetId);
+          const buyOrdersCombinedByDecimal = groupOrders(buyOrders, this.decimalGroup);
+          this.allBuyOrders = buyOrdersCombinedByDecimal;
+        },
+      });
   }
 
-  private subscribeToSellOrders(bcNetwork: FuelNetwork, params: GetOrdersParams) {
+  private subscribeToSellOrders(bcNetwork: FuelNetwork, params: Omit<GetActiveOrdersParams, "orderType">) {
     if (this.sellSubscription) {
       this.sellSubscription.unsubscribe();
     }
 
-    this.sellSubscription = bcNetwork.orderbookSdk.subscribeOrders({ ...params, orderType: OrderType.Sell }).subscribe({
-      next: ({ data }) => {
-        if (!data) return;
+    this.sellSubscription = bcNetwork.orderbookSdk
+      .subscribeActiveOrders<OrderType.Sell>({ ...params, orderType: OrderType.Sell })
+      .subscribe({
+        next: ({ data }) => {
+          if (!data) return;
 
-        const sellOrders = formatSpotMarketOrders(data.Order, TOKENS_BY_SYMBOL.USDC.assetId);
-        const sellOrdersCombinedByDecimal = groupOrders(sellOrders, this.decimalGroup);
-        this.allSellOrders = sellOrdersCombinedByDecimal;
-      },
-    });
+          const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, TOKENS_BY_SYMBOL.USDC.assetId);
+          const sellOrdersCombinedByDecimal = groupOrders(sellOrders, this.decimalGroup);
+          this.allSellOrders = sellOrdersCombinedByDecimal;
+        },
+      });
   }
 
   private getPrice(orders: SpotMarketOrder[], priceType: "max" | "min"): BN {
