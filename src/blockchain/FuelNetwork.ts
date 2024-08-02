@@ -3,7 +3,8 @@ import SparkOrderBookSdk, {
   CreateOrderParams,
   DepositParams,
   FulfillOrderManyParams,
-  GetOrdersParams,
+  GetActiveOrdersParams,
+  Order,
   OrderType,
   UserMarketBalance,
   WriteTransactionResponse,
@@ -207,15 +208,20 @@ export class FuelNetwork {
     return this.orderbookSdk.fetchMarketPrice(asset);
   };
 
-  fetchSpotOrders = async (params: GetOrdersParams): Promise<SpotMarketOrder[]> => {
-    const { data } = await this.orderbookSdk.fetchOrders(params);
-    return data.Order.map(
-      (order) =>
-        new SpotMarketOrder({
-          ...order,
-          quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
-        }),
-    );
+  fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
+    const { data } = await this.orderbookSdk.fetchActiveOrders(params);
+
+    const formatOrder = (order: Order) =>
+      new SpotMarketOrder({
+        ...order,
+        quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+      });
+
+    if ("ActiveSellOrder" in data) {
+      return data.ActiveSellOrder.map(formatOrder);
+    } else {
+      return data.ActiveBuyOrder.map(formatOrder);
+    }
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
