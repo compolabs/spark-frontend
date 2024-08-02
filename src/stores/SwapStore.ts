@@ -81,11 +81,11 @@ class SwapStore {
           title: token.name,
           symbol: token.symbol,
           img: token.logo,
-          balance: formatBalance?.toFormat(v.persition),
+          balance: formatBalance?.toFormat(v.precision),
           priceFeed: token.priceFeed,
           assetId: token.assetId,
           decimals: token.decimals,
-          persition: token.persition,
+          precision: token.precision,
         };
       });
   }
