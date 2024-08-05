@@ -93,7 +93,7 @@ export class SpotMarketOrder {
   }
 
   get formatFilledAmount() {
-    return this.initialAmount.minus(this.currentAmount).toSignificant(2);
+    return this.initialAmount.minus(this.currentAmount).dividedBy(1e8).toSignificant(2);
   }
 
   addInitialAmount = (amount: BN) => {
