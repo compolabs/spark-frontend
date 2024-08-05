@@ -1,10 +1,12 @@
-import { UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
+import { AssetType, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
 import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
+import { createToast } from "@components/Toast.tsx";
 import { FuelNetwork } from "@src/blockchain";
 import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import BN from "@src/utils/BN";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors.ts";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
 import RootStore from "./RootStore";
@@ -95,15 +97,70 @@ export class BalanceStore {
     return this.balances.get(TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
   };
 
+  getContractBalanceInfo = (assetId: string) => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const token = bcNetwork.getTokenByAssetId(assetId);
+    const type = token.symbol === "USDC" ? AssetType.Quote : AssetType.Base;
+    const amount =
+      type === AssetType.Quote
+        ? this.rootStore.balanceStore.myMarketBalance.liquid.quote
+        : this.rootStore.balanceStore.myMarketBalance.liquid.base;
+
+    return { amount, type };
+  };
+
+  depositBalance = async (assetId: string, amount: number) => {
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    // if (!this.rootStore.tradeStore.market) return;
+
+    if (bcNetwork?.getIsExternalWallet()) {
+      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+    }
+    const data = bcNetwork.getTokenByAssetId(assetId);
+    const asset = {
+      address: assetId,
+      symbol: data.symbol,
+      decimals: data.decimals,
+    };
+    try {
+      await bcNetwork?.depositSpotBalance(amount.toString(), asset);
+      notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
+    } catch (error) {
+      console.error(error);
+      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
+    }
+  };
+
+  withdrawBalance = async (assetId: string, amount: number) => {
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    // if (!this.rootStore.tradeStore.market) return;
+
+    if (bcNetwork?.getIsExternalWallet()) {
+      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+    }
+    const { type } = this.getContractBalanceInfo(assetId);
+
+    try {
+      await bcNetwork?.withdrawSpotBalance(amount.toString(), type);
+      notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
+    } catch (error) {
+      console.error(error);
+      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
+    }
+  };
+
   private fetchBalance = async (assetId: string): Promise<string> => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (!accountStore.address) return "0";
 
-    const balance = await bcNetwork!.getBalance(accountStore.address!, assetId);
-
-    return balance;
+    return await bcNetwork!.getBalance(accountStore.address!, assetId);
   };
 
   private fetchUserMarketBalance = async () => {

@@ -174,7 +174,7 @@ const BALANCE_COLUMNS = [
 
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const SpotTableImpl: React.FC = observer(() => {
-  const { balanceStore, faucetStore} = useStores();
+  const { balanceStore, faucetStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
 
   const vm = useSpotTableVMProvider();
@@ -295,7 +295,7 @@ const SpotTableImpl: React.FC = observer(() => {
     ));
 
     const mobileBalanceData = balanceData.map(({ assetId, balance, contractBalance, walletBalance, asset }, i) => {
-      const { amount } = vm.getContractBalanceInfo(assetId);
+      const { amount } = balanceStore.getContractBalanceInfo(assetId);
       const isHidden = amount.eq(BN.ZERO);
 
       return (
@@ -395,10 +395,10 @@ const SpotTableImpl: React.FC = observer(() => {
 
 const BalanceButtons: React.FC<{ assetId: string }> = observer(({ assetId }) => {
   const vm = useSpotTableVMProvider();
-
+  const { balanceStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
 
-  const { amount } = vm.getContractBalanceInfo(assetId);
+  const { amount } = balanceStore.getContractBalanceInfo(assetId);
 
   const token = bcNetwork.getTokenByAssetId(assetId);
   const isEth = token.symbol === "ETH";

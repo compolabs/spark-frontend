@@ -50,7 +50,7 @@ export default Tooltip;
 const Root = styled.div`
   display: flex;
   background: ${({ theme }) => `${theme.colors.bgSecondary}`};
-  z-index: 3;
+  z-index: 999999999999;
   padding: 8px 0;
   border-radius: 10px;
   width: fit-content;

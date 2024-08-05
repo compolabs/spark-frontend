@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
@@ -24,6 +24,7 @@ interface IProps {
   onBlur?: () => void;
   onFocus?: () => void;
   readOnly?: boolean;
+  styleInputContainer?: CSSProperties;
 }
 
 const TokenInput: React.FC<IProps> = observer((props) => {
@@ -49,7 +50,12 @@ const TokenInput: React.FC<IProps> = observer((props) => {
           <Text>{props.label}</Text>
         </>
       )}
-      <InputContainer error={props.error} focused={focused} readOnly={!props.setAmount}>
+      <InputContainer
+        error={props.error}
+        focused={focused}
+        readOnly={!props.setAmount}
+        style={props.styleInputContainer}
+      >
         <BigNumberInput
           autofocus={focused}
           decimals={props.decimals}

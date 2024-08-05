@@ -12,6 +12,7 @@ import { Subscription } from "@src/typings/utils";
 import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { RootStore, useStores } from "@stores";
+import { BalanceStore } from "@stores/BalanceStore.ts";
 
 const ctx = React.createContext<SpotTableVM | null>(null);
 
@@ -64,16 +65,6 @@ class SpotTableVM {
     return this.isOpenOrdersLoaded && this.isHistoryOrdersLoaded;
   }
 
-  getContractBalanceInfo = (assetId: string) => {
-    const bcNetwork = FuelNetwork.getInstance();
-
-    const token = bcNetwork.getTokenByAssetId(assetId);
-    const type = token.symbol === "USDC" ? AssetType.Quote : AssetType.Base;
-    const amount = type === AssetType.Quote ? this.rootStore.balanceStore.myMarketBalance.liquid.quote : this.rootStore.balanceStore.myMarketBalance.liquid.base;
-
-    return { amount, type };
-  };
-
   cancelOrder = async (order: SpotMarketOrder) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
@@ -99,27 +90,11 @@ class SpotTableVM {
   };
 
   withdrawBalance = async (assetId: string) => {
-    const { notificationStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
-
-    if (!this.rootStore.tradeStore.market) return;
-
     this.isWithdrawing = true;
     this.withdrawingAssetId = assetId;
 
-    if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
-    }
-
-    const { amount, type } = this.getContractBalanceInfo(assetId);
-
-    try {
-      await bcNetwork?.withdrawSpotBalance(amount.toString(), type);
-      notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
-    } catch (error) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
-    }
+    const { amount } = this.rootStore.balanceStore.getContractBalanceInfo(assetId);
+    await this.rootStore.balanceStore.withdrawBalance(assetId, amount.toNumber());
 
     this.isWithdrawing = false;
     this.withdrawingAssetId = null;
