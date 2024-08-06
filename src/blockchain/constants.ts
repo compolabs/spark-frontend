@@ -3,10 +3,15 @@ import { Token } from "@src/entity/Token";
 
 import TOKENS_JSON from "./tokens.json";
 
+const CONTRACT_ADDRESSES_MARKET = import.meta.env.VITE_CONTRACT_ADDRESSES_MARKET;
+const CONTRACT_ADDRESSES_TOEKN_FACTORY = import.meta.env.VITE_CONTRACT_ADDRESSES_TOEKN_FACTORY;
+const CONTRACT_ADDRESSES_PYTH = import.meta.env.VITE_CONTRACT_ADDRESSES_PYTH
+const INDEXER_URL = import.meta.env.VITE_INDEXER_URL
+
 export const CONTRACT_ADDRESSES = {
-  market: "0x08ca18ed550d6229f001641d43aac58e00f9eb7e25c9bea6d33716af61e43b2a",
-  tokenFactory: "0x3141a3f11e3f784364d57860e3a4dcf9b73d42e23fd49038773cefb09c633348",
-  pyth: "0x3cd5005f23321c8ae0ccfa98fb07d9a5ff325c483f21d2d9540d6897007600c9",
+  market: CONTRACT_ADDRESSES_MARKET,
+  tokenFactory: CONTRACT_ADDRESSES_TOEKN_FACTORY,
+  pyth: CONTRACT_ADDRESSES_PYTH,
 };
 export interface Network {
   name: string;
@@ -38,7 +43,7 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
   {},
 );
 
-const URL = "indexer.bigdevenergy.link/12c97dd";
+const URL = INDEXER_URL;
 
 export const INDEXER_HTTP_URL = `https://${URL}/v1/graphql`;
 export const INDEXER_WS_URL = `wss://${URL}/v1/graphql`;
