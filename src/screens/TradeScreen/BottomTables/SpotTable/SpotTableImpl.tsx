@@ -185,7 +185,7 @@ const SpotTableImpl: React.FC = observer(() => {
   const columns = [ORDER_COLUMNS(vm, theme), BALANCE_COLUMNS, HISTORY_COLUMNS(theme)];
 
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([, balance]) => balance && balance.gt(0))
+    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
 

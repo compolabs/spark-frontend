@@ -56,9 +56,9 @@ const MobileMenu: React.FC<IProps> = observer(
     };
 
     const createEvents = (events: string) => {
-      switch (events) {
-        case EVENTS.OpenSideAssets:
-          quickAssetsStore.setQuickAssets(true);
+      if (events === EVENTS.OpenSideAssets)
+      {
+        quickAssetsStore.setQuickAssets(true);
       }
     };
 

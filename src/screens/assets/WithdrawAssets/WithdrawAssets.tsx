@@ -36,7 +36,7 @@ const DepositAssets = observer(({ setStep }: WithdrawAssets) => {
     setStep(0);
   };
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([, balance]) => balance && balance.gt(0))
+    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =

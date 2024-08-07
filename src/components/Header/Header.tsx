@@ -107,10 +107,11 @@ const Header: React.FC = observer(() => {
   };
 
   const renderDesktop = () => {
-    const createEvents = (events: string) => {
-      switch (events) {
-        case EVENTS.OpenSideAssets:
+    const createEvents = (events: string) => {{
+        if (events === EVENTS.OpenSideAssets)
+        {
           quickAssetsStore.setQuickAssets(true);
+        }
       }
     };
     return (

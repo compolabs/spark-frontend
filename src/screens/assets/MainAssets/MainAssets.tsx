@@ -27,7 +27,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const bcNetwork = FuelNetwork.getInstance();
 
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([, balance]) => balance && balance.gt(0))
+    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =
@@ -44,7 +44,10 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 
   const hasPositiveBalance = balanceData.some((item) => parseFloat(item.walletBalance) > 0);
 
-  const accumulateBalance = balanceData.reduce((acc, account) => acc + parseFloat(account.balance), 0);
+  const accumulateBalance = balanceData.reduce((acc, account) => {
+    return acc.plus(new BN(account.balance));
+  }, new BN(BN.ZERO));
+
   const closeAssets = () => {
     quickAssetsStore.setQuickAssets(false);
   };
@@ -85,20 +88,20 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
           </Column>
         </DepositedAssets>
       )}
-      <Row alignItems="center" gap="10px" justifyContent="center">
+      <SmartFlex alignItems="center" gap="10px" justifyContent="center">
         <Button onClick={() => setStep(1)}>Deposit</Button>
         <Button grey onClick={() => setStep(2)}>
           Withdraw
         </Button>
-      </Row>
+      </SmartFlex>
       <TextTitle style={{ margin: "30px 0px 10px 0px", padding: 16 }} type={TEXT_TYPES.BUTTON} primary>
         Wallet holdings
       </TextTitle>
-      <Column gap="10px" style={{ width: "100%" }}>
+      <SmartFlex gap="10px" style={{ width: "100%" }} column>
         {balanceData.map((el) => (
           <AssetBlock key={el.assetId} options={{ showBalance: "walletBalance" }} token={el} />
         ))}
-      </Column>
+      </SmartFlex>
       <Row justifyContent="space-between" style={{ padding: 16 }}>
         <Text type={TEXT_TYPES.BUTTON} primary>
           Overall
@@ -113,7 +116,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 
 export default MainAssets;
 
-const DepositedAssets = styled(Row)`
+const DepositedAssets = styled(SmartFlex)`
   margin: 20px 0px 20px 0px;
   width: 100%;
 `;

@@ -49,7 +49,7 @@ const PerpTableImpl: React.FC = observer(() => {
   const [isTpSlActive, setTpSlActive] = useState(false);
 
   const balanceData = Array.from(collateralStore.balances)
-    .filter(([, balance]) => balance && balance.gt(0))
+    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       return {
@@ -173,7 +173,7 @@ const PerpTableImpl: React.FC = observer(() => {
     ));
 
     const balanceData = Array.from(collateralStore.balances)
-      .filter(([, balance]) => balance && balance.gt(0))
+      .filter(([, balance]) => balance && balance.gt(BN.ZERO))
       .map(([assetId, balance], i) => {
         const token = bcNetwork!.getTokenByAssetId(assetId);
         return (

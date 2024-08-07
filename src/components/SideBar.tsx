@@ -41,15 +41,6 @@ const ModalDialog = styled.div`
   right: -340px;
   width: 320px;
   margin: 10px;
-  -webkit-transition:
-    opacity 0.3s linear,
-    right 0.3s ease-out;
-  -moz-transition:
-    opacity 0.3s linear,
-    right 0.3s ease-out;
-  -o-transition:
-    opacity 0.3s linear,
-    right 0.3s ease-out;
   transition:
     opacity 0.3s linear,
     right 0.3s ease-out;
