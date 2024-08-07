@@ -25,7 +25,7 @@ jobs:
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          cloudflare-project-name: ${{ github.event.repository.name }}
+          cloudflare-project-name: spark-frontend
           directory: build
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-environment: ${{ (github.ref == 'refs/heads/main' && 'production') || 'preview' }}
