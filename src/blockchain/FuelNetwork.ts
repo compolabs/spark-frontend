@@ -8,7 +8,7 @@ import SparkOrderBookSdk, {
   Order,
   OrderType,
   UserMarketBalance,
-  WriteTransactionResponse
+  WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
 import { Account, B256Address, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";

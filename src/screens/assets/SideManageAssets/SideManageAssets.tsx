@@ -3,12 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react";
 
 import ModalSheet from "@components/ModalSheet.tsx";
+import SideBar from "@components/SideBar.tsx";
 import DepositAssets from "@screens/assets/DepositAssets/DepositAssets.tsx";
 import MainAssets from "@screens/assets/MainAssets/MainAssets.tsx";
 import WithdrawAssets from "@screens/assets/WithdrawAssets/WithdrawAssets.tsx";
-import { useStores } from "@stores";
 import useIsMobile from "@src/hooks/useIsMobile.tsx";
-import SideBar from "@components/SideBar.tsx";
+import { useStores } from "@stores";
 
 interface ResolverDevice {
   children: React.ReactNode;

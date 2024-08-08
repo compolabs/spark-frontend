@@ -2,6 +2,7 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { SmartFlex } from "@components/SmartFlex.tsx";
 import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
 import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
 import CheckCircle from "@src/assets/icons/check-circle.svg?react";
@@ -12,7 +13,6 @@ import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 import { getExplorerLinkByHash } from "@src/utils/getExplorerLink";
-import { SmartFlex } from "@components/SmartFlex.tsx";
 
 type SuccessModalProps = {
   hash: string;
@@ -37,7 +37,7 @@ export const ActionModal: React.FC<SuccessModalProps> = ({ hash, onClose, transa
     <Overlay>
       <Modal>
         <Actions>
-          <a href="https://discord.com/invite/rsZnUY3kgm" target="_blank">
+          <a href="https://discord.com/invite/rsZnUY3kgm" rel="noreferrer" target="_blank">
             <Text type={TEXT_TYPES.BODY}>I NEED HELP</Text>
           </a>
           <CloseIcon onClick={onClose} />

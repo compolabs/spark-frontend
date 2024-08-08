@@ -3,8 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import Tab from "@components/Tab.tsx";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { EVENTS, MENU_ITEMS } from "@src/constants";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";

@@ -5,6 +5,7 @@ import AccountStore, { ISerializedAccountStore } from "@stores/AccountStore";
 import FaucetStore from "@stores/FaucetStore";
 import MixPanelStore from "@stores/MixPanelStore.ts";
 import NotificationStore from "@stores/NotificationStore";
+import QuickAssetsStore from "@stores/QuickAssetsStore.ts";
 import SettingsStore, { ISerializedSettingStore } from "@stores/SettingsStore";
 import TradeStore, { ISerializedTradeStore } from "@stores/TradeStore";
 
@@ -12,7 +13,6 @@ import { BalanceStore } from "./BalanceStore";
 import { CollateralStore } from "./CollateralStore";
 import { ModalStore } from "./ModalStore";
 import OracleStore from "./OracleStore";
-import QuickAssetsStore from "@stores/QuickAssetsStore.ts";
 import SwapStore from "./SwapStore";
 
 export interface ISerializedRootStore {
