@@ -148,7 +148,7 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>0.000001</Text>
+              <Text primary>{vm.matcherFee.toString()}</Text>
               <Text>&nbsp;ETH</Text>
             </Row>
           </Row>

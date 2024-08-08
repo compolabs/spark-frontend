@@ -4,7 +4,7 @@ import { Token } from "@src/entity/Token";
 import TOKENS_JSON from "./tokens.json";
 
 export const CONTRACT_ADDRESSES = {
-  market: "0x08ca18ed550d6229f001641d43aac58e00f9eb7e25c9bea6d33716af61e43b2a",
+  market: "0x7278edd30be6b982d3196ffb2790321d8546814226e51e82c8136c8f6d3c0c97",
   tokenFactory: "0x3141a3f11e3f784364d57860e3a4dcf9b73d42e23fd49038773cefb09c633348",
   pyth: "0x3cd5005f23321c8ae0ccfa98fb07d9a5ff325c483f21d2d9540d6897007600c9",
 };
