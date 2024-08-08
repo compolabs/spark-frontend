@@ -33,6 +33,7 @@ const Root = styled.input<{
   background: transparent;
   outline: none;
   width: 100%;
+  height: 100%;
 
   color: ${({ theme }) => theme.colors.textPrimary};
 

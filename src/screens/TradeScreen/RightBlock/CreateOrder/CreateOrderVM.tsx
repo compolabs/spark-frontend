@@ -139,7 +139,7 @@ class CreateOrderVM {
     const { market } = tradeStore;
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const balance = balanceStore.getBalance(token);
+    const balance = balanceStore.getContractBalanceInfo(token).amount;
     return balance ? amount.gt(balance) : false;
   }
 
@@ -177,7 +177,7 @@ class CreateOrderVM {
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
 
-    let balance = balanceStore.getBalance(assetId) ?? BN.ZERO;
+    let balance = balanceStore.getContractBalanceInfo(assetId).amount ?? BN.ZERO;
     if (assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
       balance = balance.minus(HALF_GWEI);
     }
@@ -255,7 +255,7 @@ class CreateOrderVM {
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const balance = balanceStore.getBalance(assetId);
+    const balance = balanceStore.getContractBalanceInfo(assetId).amount;
 
     if (balance.eq(BN.ZERO)) {
       this.inputPercent = BN.ZERO;
@@ -337,7 +337,9 @@ class CreateOrderVM {
     const assetId = isBuyMode ? order.quoteToken.assetId : order.baseToken.assetId;
     const orderSize = isBuyMode ? order.initialQuoteAmount : order.initialAmount;
 
-    const amount = accountStore.isConnected ? BN.min(balanceStore.getBalance(assetId), orderSize) : orderSize;
+    const amount = accountStore.isConnected
+      ? BN.min(balanceStore.getContractBalanceInfo(assetId).amount, orderSize)
+      : orderSize;
 
     isBuyMode ? this.setInputTotal(amount) : this.setInputAmount(amount);
   };

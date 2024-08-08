@@ -12,6 +12,8 @@ import { BalanceStore } from "./BalanceStore";
 import { CollateralStore } from "./CollateralStore";
 import { ModalStore } from "./ModalStore";
 import OracleStore from "./OracleStore";
+import QuickAssetsStore from "@stores/QuickAssetsStore.ts";
+import SwapStore from "./SwapStore";
 
 export interface ISerializedRootStore {
   accountStore?: ISerializedAccountStore;
@@ -30,7 +32,9 @@ export default class RootStore {
   balanceStore: BalanceStore;
   collateralStore: CollateralStore;
   modalStore: ModalStore;
+  swapStore: SwapStore;
   mixPanelStore: MixPanelStore;
+  quickAssetsStore: QuickAssetsStore;
 
   private constructor(initState?: ISerializedRootStore) {
     this.notificationStore = new NotificationStore(this);
@@ -42,7 +46,9 @@ export default class RootStore {
     this.balanceStore = new BalanceStore(this);
     this.collateralStore = new CollateralStore(this);
     this.modalStore = new ModalStore(this);
+    this.swapStore = new SwapStore(this);
     this.mixPanelStore = new MixPanelStore(this);
+    this.quickAssetsStore = new QuickAssetsStore(this);
 
     makeAutoObservable(this);
 

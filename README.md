@@ -2,12 +2,9 @@
 
 ## What is Spark?
 
-Spark is a DeFi super app on the Fuel.network, revolutionizing financial services with its integrated suite of
-offerings. It features perpetual contracts, an order book, as well as lending and borrowing features, setting a new
-standard for the DeFi ecosystem.
+Spark is an order book, the Fuel.network, revolutionizing financial services with its integrated suite of
+offerings.
 
-Spark V1 introduces a multi-collateral cross-margin system for its perpetual contracts, supporting deposits of diverse
-assets and implementing sophisticated liquidation protocols to ensure trading flexibility and risk management.
 
 ### Technology Stack
 
