@@ -71,7 +71,7 @@ class SwapStore {
       .getTokenList()
       .filter((token) => token.symbol !== "ETH")
       .map((v) => {
-        const balance = balanceStore.getBalance(v.assetId);
+        const balance = balanceStore.getContractBalanceInfo(v.assetId).amount;
         const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
         // console.log('formatBalance', vala)
         const token = bcNetwork!.getTokenByAssetId(v.assetId);

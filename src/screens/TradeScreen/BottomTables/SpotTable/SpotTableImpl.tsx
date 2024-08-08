@@ -185,13 +185,13 @@ const SpotTableImpl: React.FC = observer(() => {
   const columns = [ORDER_COLUMNS(vm, theme), BALANCE_COLUMNS, HISTORY_COLUMNS(theme)];
 
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([, balance]) => balance && balance.gt(0))
+    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
 
       // TODO: Remove when other markets appear
       const contractBalance =
-        token.symbol === "USDC" ? vm.myMarketBalance.liquid.quote : vm.myMarketBalance.liquid.base;
+        token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
       const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
 
       return {
@@ -295,7 +295,7 @@ const SpotTableImpl: React.FC = observer(() => {
     ));
 
     const mobileBalanceData = balanceData.map(({ assetId, balance, contractBalance, walletBalance, asset }, i) => {
-      const { amount } = vm.getContractBalanceInfo(assetId);
+      const { amount } = balanceStore.getContractBalanceInfo(assetId);
       const isHidden = amount.eq(BN.ZERO);
 
       return (
@@ -395,10 +395,10 @@ const SpotTableImpl: React.FC = observer(() => {
 
 const BalanceButtons: React.FC<{ assetId: string }> = observer(({ assetId }) => {
   const vm = useSpotTableVMProvider();
-
+  const { balanceStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
 
-  const { amount } = vm.getContractBalanceInfo(assetId);
+  const { amount } = balanceStore.getContractBalanceInfo(assetId);
 
   const token = bcNetwork.getTokenByAssetId(assetId);
   const isEth = token.symbol === "ETH";

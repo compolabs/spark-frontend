@@ -8,6 +8,8 @@ const Button = styled.button<{
   green?: boolean;
   red?: boolean;
   text?: boolean;
+  black?: boolean;
+  grey?: boolean;
   fitContent?: boolean;
   //этот active и &:active отлтчаются: это состояние нажатой кнопки, а &:active - это цвеь в момент нажатия
   active?: boolean;
@@ -33,7 +35,7 @@ const Button = styled.button<{
     height: 40px;
   }
 
-  ${({ green, red, text, theme, active }) =>
+  ${({ green, red, black, text, theme, active, grey }) =>
     (() => {
       switch (true) {
         case green:
@@ -74,6 +76,25 @@ const Button = styled.button<{
               color: ${theme.colors.textDisabled};
             }
           `;
+        case black:
+          return css`
+            border: 1px solid ${theme.colors.bgPrimary};
+            background: ${theme.colors.bgPrimary};
+
+            &:hover {
+              background: ${theme.colors.bgPrimary};
+            }
+
+            &:active {
+              background: ${theme.colors.bgPrimary};
+            }
+
+            &:disabled {
+              border-color: ${theme.colors.borderSecondary};
+              background: ${theme.colors.borderSecondary};
+              color: ${theme.colors.textDisabled};
+            }
+          `;
         case text:
           return css`
             color: ${active ? theme.colors.textPrimary : theme.colors.textSecondary};
@@ -88,6 +109,25 @@ const Button = styled.button<{
             }
 
             &:disabled {
+              color: ${theme.colors.textDisabled};
+            }
+          `;
+        case grey:
+          return css`
+            border: 1px solid ${theme.colors.borderPrimary};
+            background: ${theme.colors.borderPrimary};
+
+            &:hover {
+              background: ${theme.colors.borderSecondary};
+            }
+
+            &:active {
+              background: ${theme.colors.borderSecondary};
+            }
+
+            &:disabled {
+              border-color: ${theme.colors.borderSecondary};
+              background: ${theme.colors.borderSecondary};
               color: ${theme.colors.textDisabled};
             }
           `;

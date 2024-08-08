@@ -3,8 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import Text from "@components/Text";
-import { MENU_ITEMS } from "@src/constants";
+import Tab from "@components/Tab.tsx";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { EVENTS, MENU_ITEMS } from "@src/constants";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
@@ -26,7 +27,7 @@ interface IProps {
 
 const MobileMenu: React.FC<IProps> = observer(
   ({ isOpen, onAccountClick, onWalletConnect, onClose, onDepositWithdrawClick }) => {
-    const { accountStore, tradeStore } = useStores();
+    const { accountStore, tradeStore, quickAssetsStore } = useStores();
     const location = useLocation();
 
     const handleAccountClick = () => {
@@ -54,12 +55,24 @@ const MobileMenu: React.FC<IProps> = observer(
       );
     };
 
+    const createEvents = (events: string) => {
+      if (events === EVENTS.OpenSideAssets) {
+        quickAssetsStore.setQuickAssets(true);
+      }
+    };
+
     return (
       <MenuOverlay isOpen={isOpen} top={50} zIndex={300}>
         <Body>
           <Container>
-            {MENU_ITEMS.map(({ title, link, route }) => {
-              if (!link && !route) {
+            {MENU_ITEMS.map(({ title, link, route, events }) => {
+              if (events) {
+                return (
+                  <MenuItem key={title} onClick={() => createEvents(events)}>
+                    {title}
+                  </MenuItem>
+                );
+              } else if (!link && !route) {
                 return (
                   <MenuItem key={title}>
                     <Text>{title}</Text>
@@ -88,9 +101,7 @@ const MobileMenu: React.FC<IProps> = observer(
           </Container>
           <SizedBox height={8} />
           <FooterContainer gap="8px" column>
-            {tradeStore.isPerpAvailable ? (
-              <Button onClick={handleDepositWithdrawClick}>DEPOSIT / WITHDRAW</Button>
-            ) : null}
+            <Button onClick={() => createEvents(EVENTS.OpenSideAssets)}>ASSETS</Button>
             {renderWalletButton()}
           </FooterContainer>
         </Body>

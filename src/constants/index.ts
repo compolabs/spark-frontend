@@ -25,6 +25,11 @@ type TMenuItem = {
   title: string;
   route?: string;
   link?: string;
+  events?: string;
+};
+
+export const EVENTS = {
+  OpenSideAssets: "openSideAssets",
 };
 
 export const MENU_ITEMS: Array<TMenuItem> = [

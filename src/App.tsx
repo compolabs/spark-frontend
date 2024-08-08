@@ -13,6 +13,7 @@ import Faucet from "./screens/Faucet";
 import { SwapScreen } from "./screens/SwapScreen";
 import TradeScreen from "./screens/TradeScreen";
 import { ROUTES } from "./constants";
+import SideManageAssets from "@screens/assets/SideManageAssets/SideManageAssets";
 
 const isUnderConstruction = false;
 
@@ -35,7 +36,7 @@ const App: React.FC = observer(() => {
         <Route element={<SwapScreen />} path={ROUTES.SWAP} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
       </Routes>
-
+      <SideManageAssets />
       <PWAModal />
     </Root>
   );

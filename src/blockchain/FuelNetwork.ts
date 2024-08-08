@@ -1,4 +1,5 @@
 import SparkOrderBookSdk, {
+  Asset,
   AssetType,
   CreateOrderParams,
   DepositParams,
@@ -7,7 +8,7 @@ import SparkOrderBookSdk, {
   Order,
   OrderType,
   UserMarketBalance,
-  WriteTransactionResponse,
+  WriteTransactionResponse
 } from "@compolabs/spark-orderbook-ts-sdk";
 import { Account, B256Address, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
@@ -152,6 +153,10 @@ export class FuelNetwork {
 
   withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<void> => {
     await this.orderbookSdk.withdraw(amount, assetType);
+  };
+
+  depositSpotBalance = async (amount: string, asset: Asset): Promise<void> => {
+    await this.orderbookSdk.deposit(asset, amount);
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
