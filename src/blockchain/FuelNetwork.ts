@@ -1,10 +1,14 @@
 import SparkOrderBookSdk, {
+  Asset,
   AssetType,
   CreateOrderParams,
   DepositParams,
+  FulfillOrderManyParams,
+  GetActiveOrdersParams,
+  Order,
   OrderType,
   UserMarketBalance,
-  WriteTransactionResponse,
+  WriteTransactionResponse
 } from "@compolabs/spark-orderbook-ts-sdk";
 import { Account, B256Address, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
@@ -121,6 +125,10 @@ export class FuelNetwork {
     return this.orderbookSdk.createOrder(deposit, order);
   };
 
+  swapTokens = async (deposit: DepositParams, order: FulfillOrderManyParams): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.fulfillOrderMany(deposit, order);
+  };
+
   cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {
     const withdrawAmount = order.orderType === OrderType.Buy ? order.currentQuoteAmount : order.currentAmount;
     const assetType = order.orderType === OrderType.Buy ? AssetType.Quote : AssetType.Base;
@@ -145,6 +153,10 @@ export class FuelNetwork {
 
   withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<void> => {
     await this.orderbookSdk.withdraw(amount, assetType);
+  };
+
+  depositSpotBalance = async (amount: string, asset: Asset): Promise<void> => {
+    await this.orderbookSdk.deposit(asset, amount);
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
@@ -199,6 +211,22 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     return this.orderbookSdk.fetchMarketPrice(asset);
+  };
+
+  fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
+    const { data } = await this.orderbookSdk.fetchActiveOrders(params);
+
+    const formatOrder = (order: Order) =>
+      new SpotMarketOrder({
+        ...order,
+        quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+      });
+
+    if ("ActiveSellOrder" in data) {
+      return data.ActiveSellOrder.map(formatOrder);
+    } else {
+      return data.ActiveBuyOrder.map(formatOrder);
+    }
   };
 
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {

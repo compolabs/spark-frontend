@@ -7,6 +7,7 @@ export const ROUTES = {
   ROOT: "/",
   TRADE: "/:marketId",
   FAUCET: "/faucet",
+  SWAP: "/swap",
 };
 
 export const isProduction = window.location.host === "app.sprk.fi";
@@ -27,14 +28,20 @@ type TMenuItem = {
   title: string;
   route?: string;
   link?: string;
+  events?: string;
+};
+
+export const EVENTS = {
+  OpenSideAssets: "openSideAssets",
 };
 
 export const MENU_ITEMS: Array<TMenuItem> = [
   { title: "TRADE", route: ROUTES.ROOT },
   { title: "FAUCET", route: ROUTES.FAUCET },
-  { title: "DOCS", link: DOCS_LINK },
-  { title: "GITHUB", link: GITHUB_LINK },
-  { title: "TWITTER", link: TWITTER_LINK },
+  { title: "SWAP", route: ROUTES.SWAP },
+  { title: "DOCS", link: "https://docs.sprk.fi" },
+  { title: "GITHUB", link: "https://github.com/compolabs/spark" },
+  { title: "TWITTER", link: "https://twitter.com/Sprkfi" },
 ];
 
 const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
