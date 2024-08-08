@@ -1,11 +1,11 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import Sheet from "react-modal-sheet";
 import styled from "@emotion/styled";
 
 interface ModalSheet {
   children: React.ReactNode;
   isShow: boolean;
-  onClose: () => void
+  onClose: () => void;
 }
 
 const ModalSheet = ({ children, isShow, onClose }: ModalSheet) => {
@@ -23,4 +23,4 @@ export default ModalSheet;
 const SheetContainer = styled(Sheet.Container)`
   padding: 10px;
   overflow: auto;
-`
+`;

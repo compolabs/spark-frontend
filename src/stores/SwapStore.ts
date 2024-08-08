@@ -2,6 +2,7 @@ import {
   AssetType,
   FulfillOrderManyParams,
   GetOrdersParams,
+  LimitType,
   OrderType,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
@@ -92,6 +93,7 @@ class SwapStore {
 
   swapTokens = async ({ slippage }: { slippage: number }): Promise<WriteTransactionResponse> => {
     const bcNetwork = FuelNetwork.getInstance();
+    const ETH = bcNetwork.getTokenBySymbol("ETH");
     const isBuy = this.buyToken.symbol === "BTC"; // продумать если будет больше торговых пар, не будет работать
     const params: GetOrdersParams = {
       limit: 50, // or more if needed
@@ -106,21 +108,19 @@ class SwapStore {
 
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
     const formattedVolume = BN.parseUnits(this.receiveAmount, this.buyToken.decimals).toString();
-    const deposit = {
-      amount: formattedAmount,
-      asset: this.sellToken.assetId,
-    };
 
     const order: FulfillOrderManyParams = {
       amount: isBuy ? formattedVolume : formattedAmount,
       assetType: AssetType.Base,
       orderType: this.buyToken.symbol === "BTC" ? OrderType.Buy : OrderType.Sell,
+      limitType: LimitType.FOK, // TODO: Check is it correct
       price: sellOrders[sellOrders.length - 1].price.toString(),
       orders: sellOrders.map((el) => el.id),
       slippage: slippage.toString(),
+      feeAssetId: ETH.assetId,
     };
 
-    return await bcNetwork.swapTokens(deposit, order);
+    return await bcNetwork.swapTokens(order);
   };
 
   onSwitchTokens = () => {

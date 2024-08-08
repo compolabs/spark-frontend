@@ -10,7 +10,7 @@ interface BalanceSectionProps {
   isLoaded: boolean | null;
   balance: string;
   balanceUSD: number;
-  handleMaxAmount: () => void
+  handleMaxAmount: () => void;
 }
 
 export const BalanceSection = observer(({ isLoaded, balance, balanceUSD, handleMaxAmount }: BalanceSectionProps) => {

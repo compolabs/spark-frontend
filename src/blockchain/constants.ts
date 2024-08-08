@@ -20,7 +20,8 @@ export const NETWORK: Network = {
 
 export const EXPLORER_URL = "https://app.fuel.network/";
 
-export const TOKENS_LIST: Token[] = Object.values(TOKENS_JSON).map(({ name, symbol, decimals, assetId, priceFeed, precision }) => {
+export const TOKENS_LIST: Token[] = Object.values(TOKENS_JSON).map(
+  ({ name, symbol, decimals, assetId, priceFeed, precision }) => {
     return new Token({
       name,
       symbol,
