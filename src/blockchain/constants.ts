@@ -41,7 +41,7 @@ export const TOKENS_BY_ASSET_ID: Record<string, Token> = TOKENS_LIST.reduce(
   {},
 );
 
-const URL = "indexer.bigdevenergy.link/12c97dd";
+const URL = "indexer.bigdevenergy.link/7021b5d";
 
 export const INDEXER_HTTP_URL = `https://${URL}/v1/graphql`;
 export const INDEXER_WS_URL = `wss://${URL}/v1/graphql`;
