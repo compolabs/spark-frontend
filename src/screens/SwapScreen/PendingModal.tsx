@@ -27,7 +27,7 @@ export const PendingModal: React.FC<PendingModalProps> = ({ onClose, transaction
     <Overlay>
       <Modal>
         <Actions>
-          <a href="https://discord.com/invite/rsZnUY3kgm" target="_blank">
+          <a href="https://discord.com/invite/rsZnUY3kgm" rel="noreferrer" target="_blank">
             <Text type={TEXT_TYPES.BODY}>I NEED HELP</Text>
           </a>
           <CloseIcon onClick={onClose} />

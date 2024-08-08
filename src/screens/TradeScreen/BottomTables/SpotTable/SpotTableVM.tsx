@@ -1,5 +1,4 @@
 import React, { PropsWithChildren, useMemo } from "react";
-import { AssetType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -12,7 +11,6 @@ import { Subscription } from "@src/typings/utils";
 import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { RootStore, useStores } from "@stores";
-import { BalanceStore } from "@stores/BalanceStore.ts";
 
 const ctx = React.createContext<SpotTableVM | null>(null);
 

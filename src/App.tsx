@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
+import SideManageAssets from "@screens/assets/SideManageAssets/SideManageAssets";
 
 import Header from "./components/Header";
 import { PWAModal } from "./components/PWAModal";
@@ -13,7 +14,6 @@ import Faucet from "./screens/Faucet";
 import { SwapScreen } from "./screens/SwapScreen";
 import TradeScreen from "./screens/TradeScreen";
 import { ROUTES } from "./constants";
-import SideManageAssets from "@screens/assets/SideManageAssets/SideManageAssets";
 
 const isUnderConstruction = false;
 
