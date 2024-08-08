@@ -1,0 +1,53 @@
+name: Cloudflare Pages Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+jobs:
+  deploy:
+    permissions:
+      actions: read # Only required for private GitHub Repo
+      contents: read
+      deployments: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - name: Install Dependencies
+        run: |
+          pnpm install
+      - name: create env file
+        run: |
+          touch .env
+          echo VITE_CONTRACT_ADDRESSES_MARKET=${{ vars.VITE_CONTRACT_ADDRESSES_MARKET }} >> .env 
+          echo VITE_CONTRACT_ADDRESSES_PYTH=${{ vars.VITE_CONTRACT_ADDRESSES_PYTH }} >> .env 
+          echo VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY=${{ vars.VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY }} >> .env 
+          echo VITE_INDEXER_URL=${{ vars.VITE_INDEXER_URL }} >> .env 
+      - name: Build Project
+        run: |
+          npm run build
+      - name: 'Deploy to Cloudflare Pages'
+        uses: andykenward/github-actions-cloudflare-pages@v2.3.1
+        with:
+          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          cloudflare-project-name: ${{ github.event.repository.name }}
+          directory: build
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-environment: ${{ (github.ref == 'refs/heads/main' && 'production') || 'preview' }}
