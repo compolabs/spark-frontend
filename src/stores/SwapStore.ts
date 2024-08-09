@@ -120,8 +120,6 @@ class SwapStore {
       feeAssetId: ETH.assetId,
     };
 
-    console.log('order', order)
-
     return await bcNetwork.swapTokens(order);
   };
 

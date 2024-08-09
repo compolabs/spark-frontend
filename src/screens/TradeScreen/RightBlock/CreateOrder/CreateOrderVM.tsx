@@ -4,8 +4,8 @@ import {
   CreateOrderParams,
   FulfillOrderManyParams,
   GetOrdersParams,
-  OrderType,
   LimitType,
+  OrderType,
 } from "@compolabs/spark-orderbook-ts-sdk";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
