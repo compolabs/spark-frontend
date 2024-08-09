@@ -2,11 +2,9 @@ import SparkOrderBookSdk, {
   Asset,
   AssetType,
   CreateOrderParams,
-  DepositParams,
   FulfillOrderManyParams,
   GetActiveOrdersParams,
   Order,
-  OrderType,
   UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
@@ -118,28 +116,16 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (deposit: DepositParams, order: CreateOrderParams): Promise<WriteTransactionResponse> => {
-    // const token = this.getTokenByAssetId(assetAddress);
-    // const asset = this.getAssetFromToken(token);
-
-    return this.orderbookSdk.createOrder(deposit, order);
+  createSpotOrder = async (order: CreateOrderParams): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.createOrder(order);
   };
 
-  swapTokens = async (deposit: DepositParams, order: FulfillOrderManyParams): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.fulfillOrderMany(deposit, order);
+  swapTokens = async (order: FulfillOrderManyParams): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.fulfillOrderMany(order);
   };
 
   cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {
-    const withdrawAmount = order.orderType === OrderType.Buy ? order.currentQuoteAmount : order.currentAmount;
-    const assetType = order.orderType === OrderType.Buy ? AssetType.Quote : AssetType.Base;
-
-    await this.orderbookSdk.cancelOrder(
-      {
-        amount: withdrawAmount.toString(),
-        assetType: assetType,
-      },
-      order.id,
-    );
+    await this.orderbookSdk.cancelOrder(order.id);
   };
 
   mintToken = async (assetAddress: string): Promise<void> => {
@@ -237,6 +223,10 @@ export class FuelNetwork {
       high: new BN(data.high24h),
       volume: new BN(data.volume24h),
     };
+  };
+
+  fetchSpotMatcherFee = async (): Promise<number> => {
+    return this.orderbookSdk.fetchMatcherFee();
   };
 
   fetchSpotUserMarketBalance = async (accountAddress: Bech32Address): Promise<UserMarketBalance> => {
