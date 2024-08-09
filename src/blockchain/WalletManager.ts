@@ -1,7 +1,8 @@
-import { defaultConnectors } from "@fuels/connectors";
 import { Account, B256Address, Fuel, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
+
+import { FUEL_CONFIG } from "@src/constants";
 
 import { TOKENS_BY_ASSET_ID } from "./constants";
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
@@ -11,9 +12,7 @@ export class WalletManager {
   public wallet: Nullable<Account | WalletLocked | WalletUnlocked> = null;
   public privateKey: Nullable<string> = null;
 
-  private fuel = new Fuel({
-    connectors: defaultConnectors({ devMode: import.meta.env.DEV }),
-  });
+  private fuel = new Fuel(FUEL_CONFIG);
 
   constructor() {
     makeAutoObservable(this);

@@ -63,7 +63,7 @@ const CreateOrder: React.FC = observer(() => {
   const { baseToken, quoteToken } = market;
 
   const handlePercentChange = (v: number) => {
-    const balance = balanceStore.getBalance(vm.isSell ? baseToken.assetId : quoteToken.assetId);
+    const balance = balanceStore.getContractBalanceInfo(vm.isSell ? baseToken.assetId : quoteToken.assetId).amount;
 
     if (balance.eq(BN.ZERO)) return;
 
@@ -148,7 +148,7 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>0.000001</Text>
+              <Text primary>{vm.matcherFee.toString()}</Text>
               <Text>&nbsp;ETH</Text>
             </Row>
           </Row>
@@ -238,7 +238,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    return balanceStore.getFormatBalance(
+    return balanceStore.getFormatContractBalanceInfo(
       vm.isSell ? baseToken.assetId : quoteToken.assetId,
       vm.isSell ? baseToken.decimals : quoteToken.decimals,
     );

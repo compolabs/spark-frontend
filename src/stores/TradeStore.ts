@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
@@ -13,7 +13,7 @@ export interface ISerializedTradeStore {
   favMarkets: Nullable<string>;
 }
 
-// const MARKET_INFO_UPDATE_INTERVAL = 1 * 60 * 1000; // 1 min
+const MARKET_INFO_UPDATE_INTERVAL = 5 * 60 * 1000; // 5 min
 const MARKET_PRICES_UPDATE_INTERVAL = 10 * 1000; // 10 sec
 
 class TradeStore {
@@ -44,7 +44,7 @@ class TradeStore {
     volume24h: BN.ZERO,
   };
 
-  // private marketInfoUpdater: IntervalUpdater;
+  private marketInfoUpdater: IntervalUpdater;
   private marketPricesUpdater: IntervalUpdater;
 
   constructor(rootStore: RootStore, initState?: ISerializedTradeStore) {
@@ -60,18 +60,18 @@ class TradeStore {
 
     this.initMarket();
 
-    // this.marketInfoUpdater = new IntervalUpdater(this.updateMarketInfo, MARKET_INFO_UPDATE_INTERVAL);
+    this.marketInfoUpdater = new IntervalUpdater(this.updateMarketInfo, MARKET_INFO_UPDATE_INTERVAL);
     this.marketPricesUpdater = new IntervalUpdater(this.updateMarketPrices, MARKET_PRICES_UPDATE_INTERVAL);
 
-    // reaction(
-    //   () => [this.market, oracleStore.initialized],
-    //   () => {
-    //     this.updateMarketInfo();
-    //   },
-    //   { fireImmediately: true },
-    // );
+    reaction(
+      () => [this.market, oracleStore.initialized],
+      () => {
+        this.updateMarketInfo();
+      },
+      { fireImmediately: true },
+    );
 
-    // this.marketInfoUpdater.run(true);
+    this.marketInfoUpdater.run(true);
     this.marketPricesUpdater.run();
   }
 

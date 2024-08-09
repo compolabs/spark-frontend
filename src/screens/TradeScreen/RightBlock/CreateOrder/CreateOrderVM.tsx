@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
-import { AssetType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { AssetType, CreateOrderParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
@@ -51,22 +51,24 @@ export enum ORDER_TYPE {
 class CreateOrderVM {
   isLoading = false;
 
-  mode: ORDER_MODE = ORDER_MODE.BUY;
+  mode = ORDER_MODE.BUY;
 
-  activeInput: ACTIVE_INPUT = ACTIVE_INPUT.Amount;
+  activeInput = ACTIVE_INPUT.Amount;
 
-  inputPrice: BN = BN.ZERO;
-  inputAmount: BN = BN.ZERO;
-  inputPercent: BN = BN.ZERO;
-  inputTotal: BN = BN.ZERO;
+  inputPrice = BN.ZERO;
+  inputAmount = BN.ZERO;
+  inputPercent = BN.ZERO;
+  inputTotal = BN.ZERO;
 
-  inputLeverage: BN = BN.ZERO;
-  inputLeveragePercent: BN = BN.ZERO;
+  inputLeverage = BN.ZERO;
+  inputLeveragePercent = BN.ZERO;
 
   maxPositionSize: PerpMaxAbsPositionSize = {
     shortSize: BN.ZERO,
     longSize: BN.ZERO,
   };
+
+  matcherFee = BN.ZERO;
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
@@ -109,10 +111,14 @@ class CreateOrderVM {
         this.setInputPercent(0);
       },
     );
+
+    this.fetchMarketFee();
   }
 
   get canProceed() {
-    return this.inputAmount.gt(0) && this.inputPrice.gt(0) && this.inputTotal.gt(0) && !this.isInputError;
+    return (
+      this.inputAmount.gt(BN.ZERO) && this.inputPrice.gt(BN.ZERO) && this.inputTotal.gt(BN.ZERO) && !this.isInputError
+    );
   }
 
   get isInputError(): boolean {
@@ -133,7 +139,7 @@ class CreateOrderVM {
     const { market } = tradeStore;
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const balance = balanceStore.getBalance(token);
+    const balance = balanceStore.getContractBalanceInfo(token).amount;
     return balance ? amount.gt(balance) : false;
   }
 
@@ -171,7 +177,7 @@ class CreateOrderVM {
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
 
-    let balance = balanceStore.getBalance(assetId) ?? BN.ZERO;
+    let balance = balanceStore.getContractBalanceInfo(assetId).amount ?? BN.ZERO;
     if (assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
       balance = balance.minus(HALF_GWEI);
     }
@@ -249,7 +255,7 @@ class CreateOrderVM {
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const balance = balanceStore.getBalance(assetId);
+    const balance = balanceStore.getContractBalanceInfo(assetId).amount;
 
     if (balance.eq(BN.ZERO)) {
       this.inputPercent = BN.ZERO;
@@ -294,19 +300,15 @@ class CreateOrderVM {
         // )) as WriteTransactionResponse;
         // hash = data?.transactionId;
       } else {
-        const deposit = {
-          amount: this.mode === ORDER_MODE.BUY ? this.inputTotal.toString() : this.inputAmount.toString(),
-          asset: this.mode === ORDER_MODE.BUY ? market.quoteToken.assetId : market.baseToken.assetId,
-        };
-
-        const order = {
+        const order: CreateOrderParams = {
           amount: this.inputAmount.toString(),
-          tokenType: AssetType.Base,
+          assetType: AssetType.Base,
           price: this.inputPrice.toString(),
           type,
+          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
 
-        const data = await bcNetwork.createSpotOrder(deposit, order);
+        const data = await bcNetwork.createSpotOrder(order);
         hash = data.transactionId;
       }
 
@@ -335,9 +337,21 @@ class CreateOrderVM {
     const assetId = isBuyMode ? order.quoteToken.assetId : order.baseToken.assetId;
     const orderSize = isBuyMode ? order.initialQuoteAmount : order.initialAmount;
 
-    const amount = accountStore.isConnected ? BN.min(balanceStore.getBalance(assetId), orderSize) : orderSize;
+    const amount = accountStore.isConnected
+      ? BN.min(balanceStore.getContractBalanceInfo(assetId).amount, orderSize)
+      : orderSize;
 
     isBuyMode ? this.setInputTotal(amount) : this.setInputAmount(amount);
+  };
+
+  fetchMarketFee = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const fee = await bcNetwork.fetchSpotMatcherFee();
+
+    console.log(fee);
+
+    this.matcherFee = new BN(fee);
   };
 
   // PERP Logic

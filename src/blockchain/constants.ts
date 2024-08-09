@@ -25,16 +25,19 @@ export const NETWORK: Network = {
 
 export const EXPLORER_URL = "https://app.fuel.network/";
 
-export const TOKENS_LIST: Token[] = Object.values(TOKENS_JSON).map(({ name, symbol, decimals, assetId, priceFeed }) => {
-  return new Token({
-    name,
-    symbol,
-    decimals,
-    assetId,
-    logo: TOKEN_LOGOS[symbol],
-    priceFeed,
-  });
-});
+export const TOKENS_LIST: Token[] = Object.values(TOKENS_JSON).map(
+  ({ name, symbol, decimals, assetId, priceFeed, precision }) => {
+    return new Token({
+      name,
+      symbol,
+      decimals,
+      assetId,
+      logo: TOKEN_LOGOS[symbol],
+      priceFeed,
+      precision,
+    });
+  },
+);
 
 export const TOKENS_BY_SYMBOL: Record<string, Token> = TOKENS_LIST.reduce((acc, t) => ({ ...acc, [t.symbol]: t }), {});
 
@@ -47,5 +50,4 @@ const URL = INDEXER_URL;
 
 export const INDEXER_HTTP_URL = `https://${URL}/v1/graphql`;
 export const INDEXER_WS_URL = `wss://${URL}/v1/graphql`;
-
 export const PYTH_URL = "https://hermes.pyth.network";

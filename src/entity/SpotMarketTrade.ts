@@ -1,4 +1,4 @@
-import { BN, MatchOrderEvent, TradeOrderEvent } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, TradeOrderEvent } from "@compolabs/spark-orderbook-ts-sdk";
 import dayjs, { Dayjs } from "dayjs";
 
 import { FuelNetwork } from "@src/blockchain";
@@ -12,13 +12,13 @@ type SpotMarketTradeParams = {
 } & TradeOrderEvent;
 
 export class SpotMarketTrade {
-  readonly id: MatchOrderEvent["id"];
+  readonly id: TradeOrderEvent["id"];
 
   readonly baseToken: Token;
   readonly quoteToken: Token;
 
-  readonly tradeSize: MatchOrderEvent["match_size"];
-  readonly tradePrice: MatchOrderEvent["match_price"];
+  readonly tradeSize: TradeOrderEvent["trade_size"];
+  readonly tradePrice: TradeOrderEvent["trade_price"];
 
   readonly timestamp: Dayjs;
 

@@ -1,8 +1,10 @@
 import SparkOrderBookSdk, {
+  Asset,
   AssetType,
   CreateOrderParams,
-  DepositParams,
-  OrderType,
+  FulfillOrderManyParams,
+  GetActiveOrdersParams,
+  Order,
   UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
@@ -114,24 +116,16 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (deposit: DepositParams, order: CreateOrderParams): Promise<WriteTransactionResponse> => {
-    // const token = this.getTokenByAssetId(assetAddress);
-    // const asset = this.getAssetFromToken(token);
+  createSpotOrder = async (order: CreateOrderParams): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.createOrder(order);
+  };
 
-    return this.orderbookSdk.createOrder(deposit, order);
+  swapTokens = async (order: FulfillOrderManyParams): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.fulfillOrderMany(order);
   };
 
   cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {
-    const withdrawAmount = order.orderType === OrderType.Buy ? order.currentQuoteAmount : order.currentAmount;
-    const assetType = order.orderType === OrderType.Buy ? AssetType.Quote : AssetType.Base;
-
-    await this.orderbookSdk.cancelOrder(
-      {
-        amount: withdrawAmount.toString(),
-        assetType: assetType,
-      },
-      order.id,
-    );
+    await this.orderbookSdk.cancelOrder(order.id);
   };
 
   mintToken = async (assetAddress: string): Promise<void> => {
@@ -145,6 +139,10 @@ export class FuelNetwork {
 
   withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<void> => {
     await this.orderbookSdk.withdraw(amount, assetType);
+  };
+
+  depositSpotBalance = async (amount: string, asset: Asset): Promise<void> => {
+    await this.orderbookSdk.deposit(asset, amount);
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
@@ -201,6 +199,22 @@ export class FuelNetwork {
     return this.orderbookSdk.fetchMarketPrice(asset);
   };
 
+  fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
+    const { data } = await this.orderbookSdk.fetchActiveOrders(params);
+
+    const formatOrder = (order: Order) =>
+      new SpotMarketOrder({
+        ...order,
+        quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+      });
+
+    if ("ActiveSellOrder" in data) {
+      return data.ActiveSellOrder.map(formatOrder);
+    } else {
+      return data.ActiveBuyOrder.map(formatOrder);
+    }
+  };
+
   fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
     const data = await this.orderbookSdk.fetchVolume();
 
@@ -209,6 +223,10 @@ export class FuelNetwork {
       high: new BN(data.high24h),
       volume: new BN(data.volume24h),
     };
+  };
+
+  fetchSpotMatcherFee = async (): Promise<number> => {
+    return this.orderbookSdk.fetchMatcherFee();
   };
 
   fetchSpotUserMarketBalance = async (accountAddress: Bech32Address): Promise<UserMarketBalance> => {

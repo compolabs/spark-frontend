@@ -6,6 +6,7 @@ import MixPanelStore from "./MixPanelStore";
 import NotificationStore from "./NotificationStore";
 // import SpotOrdersStore from "./SpotOrdersStore";
 import OracleStore from "./OracleStore";
+import QuickAssetsStore from "./QuickAssetsStore";
 import RootStore from "./RootStore";
 import SettingsStore from "./SettingsStore";
 import TradeStore from "./TradeStore";
@@ -16,6 +17,7 @@ export {
   MixPanelStore,
   NotificationStore,
   OracleStore,
+  QuickAssetsStore,
   RootStore,
   SettingsStore,
   storesContext,

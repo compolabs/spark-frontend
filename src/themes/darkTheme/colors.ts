@@ -8,7 +8,7 @@ const colors = {
   iconDisabled: "#595959",
 
   borderPrimary: "#4B4B4B",
-  borderSecondary: "#1B1B1B",
+  borderSecondary: "#1b1b1b",
   borderAccent: "#969696",
 
   bgPrimary: "#050505",

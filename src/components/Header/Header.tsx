@@ -9,7 +9,7 @@ import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import Logo from "@src/assets/icons/logo.svg?react";
 import Menu from "@src/assets/icons/menu.svg?react";
-import { MENU_ITEMS } from "@src/constants";
+import { EVENTS, MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
 import { useWallet } from "@src/hooks/useWallet";
@@ -27,7 +27,7 @@ import DepositWithdrawModal from "./DepositWithdrawModal";
 import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
-  const { tradeStore, modalStore, accountStore, mixPanelStore } = useStores();
+  const { tradeStore, modalStore, accountStore, mixPanelStore, quickAssetsStore } = useStores();
   const { isConnected, wallet } = useWallet();
   const location = useLocation();
   const media = useMedia();
@@ -78,16 +78,6 @@ const Header: React.FC = observer(() => {
     );
   };
 
-  const renderDepositButton = () => {
-    if (!tradeStore.isPerpAvailable) return;
-
-    return (
-      <Button fitContent onClick={() => modalStore.open(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)}>
-        DEPOSIT / WITHDRAW
-      </Button>
-    );
-  };
-
   const renderMobile = () => {
     return (
       <>
@@ -107,6 +97,11 @@ const Header: React.FC = observer(() => {
   };
 
   const renderDesktop = () => {
+    const createEvents = (events: string) => {
+      if (events === EVENTS.OpenSideAssets) {
+        quickAssetsStore.setQuickAssets(true);
+      }
+    };
     return (
       <>
         <SmartFlex center="y">
@@ -115,8 +110,14 @@ const Header: React.FC = observer(() => {
           </a>
           <Divider />
           <SmartFlex gap="28px">
-            {MENU_ITEMS.map(({ title, link, route }) => {
-              if (!link && !route)
+            {MENU_ITEMS.map(({ title, link, route, events }) => {
+              if (events) {
+                return (
+                  <Tab key={title} type={TEXT_TYPES.BUTTON_SECONDARY} onClick={() => createEvents(events)}>
+                    {title}
+                  </Tab>
+                );
+              } else if (!link && !route)
                 return (
                   <Tab key={title} type={TEXT_TYPES.BUTTON_SECONDARY}>
                     {title}
@@ -153,7 +154,9 @@ const Header: React.FC = observer(() => {
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
-          {renderDepositButton()}
+          <Button fitContent onClick={() => createEvents(EVENTS.OpenSideAssets)}>
+            Assets
+          </Button>
           {renderWallet()}
         </SmartFlex>
       </>
