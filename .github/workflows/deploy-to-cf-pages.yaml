@@ -1,7 +1,4 @@
 name: Cloudflare Pages Deploy
-env:
-  # Setting an environment variable with the value of a configuration variable
-  env_var: ${{ vars.ENV_CONTEXT_VAR }}
   
 on:
   push:
@@ -13,13 +10,15 @@ on:
       - main
 jobs:
   deploy:
+    environment:
+      name: ${{ (github.ref == 'refs/heads/main' && 'production') || (github.ref == 'refs/heads/develop' && 'dev') || 'preview' }}   
     permissions:
       actions: read # Only required for private GitHub Repo
       contents: read
       deployments: write
       pull-requests: write
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 5 
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@v4
@@ -42,6 +41,7 @@ jobs:
           echo VITE_CONTRACT_ADDRESSES_PYTH=$VITE_CONTRACT_ADDRESSES_PYTH >> .env 
           echo VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY=$VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY >> .env 
           echo VITE_INDEXER_URL=$VITE_INDEXER_URL >> .env 
+          cat .env
       - name: Build Project
         run: |
           npm run build
