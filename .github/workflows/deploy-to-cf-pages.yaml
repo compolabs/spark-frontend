@@ -1,5 +1,5 @@
 name: Cloudflare Pages Deploy
-
+  
 on:
   push:
     branches:
@@ -10,13 +10,15 @@ on:
       - main
 jobs:
   deploy:
+    environment:
+      name: ${{ (github.ref == 'refs/heads/main' && 'production') || (github.ref == 'refs/heads/develop' && 'dev') || 'preview' }}   
     permissions:
       actions: read # Only required for private GitHub Repo
       contents: read
       deployments: write
       pull-requests: write
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 5 
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@v4
@@ -39,6 +41,7 @@ jobs:
           echo VITE_CONTRACT_ADDRESSES_PYTH=${{ vars.VITE_CONTRACT_ADDRESSES_PYTH }} >> .env 
           echo VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY=${{ vars.VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY }} >> .env 
           echo VITE_INDEXER_URL=${{ vars.VITE_INDEXER_URL }} >> .env 
+          cat .env
       - name: Build Project
         run: |
           npm run build
