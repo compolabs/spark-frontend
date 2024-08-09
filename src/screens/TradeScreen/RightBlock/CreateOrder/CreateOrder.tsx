@@ -104,7 +104,7 @@ const CreateOrder: React.FC = observer(() => {
     }
 
     return (
-      <CreateOrderButton disabled={false} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
+      <CreateOrderButton disabled={isButtonDisabled} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
           {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
         </Text>

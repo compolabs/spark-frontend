@@ -371,8 +371,6 @@ class CreateOrderVM {
 
     const fee = await bcNetwork.fetchSpotMatcherFee();
 
-    console.log(fee);
-
     this.matcherFee = new BN(fee);
   };
 
