@@ -37,10 +37,10 @@ jobs:
       - name: create env file
         run: |
           touch .env
-          echo VITE_CONTRACT_ADDRESSES_MARKET=$VITE_CONTRACT_ADDRESSES_MARKET >> .env 
-          echo VITE_CONTRACT_ADDRESSES_PYTH=$VITE_CONTRACT_ADDRESSES_PYTH >> .env 
-          echo VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY=$VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY >> .env 
-          echo VITE_INDEXER_URL=$VITE_INDEXER_URL >> .env 
+          echo VITE_CONTRACT_ADDRESSES_MARKET=${{ vars.VITE_CONTRACT_ADDRESSES_MARKET }} >> .env 
+          echo VITE_CONTRACT_ADDRESSES_PYTH=${{ vars.VITE_CONTRACT_ADDRESSES_PYTH }} >> .env 
+          echo VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY=${{ vars.VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY }} >> .env 
+          echo VITE_INDEXER_URL=${{ vars.VITE_INDEXER_URL }} >> .env 
           cat .env
       - name: Build Project
         run: |
