@@ -48,7 +48,7 @@ const AssetBlock: React.FC<IAssetBlock> = observer(
               {new BN(token[showBalance]).toSignificant(token.asset.decimals)}
             </Text>
             <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type={TEXT_TYPES.SUPPORTING}>
-              ${price.multipliedBy(token.balance).toSignificant(2)}
+              ${price.multipliedBy(token[showBalance]).toSignificant(2)}
             </Text>
           </div>
         )}

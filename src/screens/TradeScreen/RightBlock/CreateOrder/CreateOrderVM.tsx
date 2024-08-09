@@ -1,5 +1,12 @@
 import React, { PropsWithChildren, useMemo } from "react";
-import { AssetType, CreateOrderParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import {
+  AssetType,
+  CreateOrderParams,
+  FulfillOrderManyParams,
+  GetOrdersParams,
+  LimitType,
+  OrderType,
+} from "@compolabs/spark-orderbook-ts-sdk";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
@@ -274,7 +281,7 @@ class CreateOrderVM {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, mixPanelStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore } = this.rootStore;
     const { market } = tradeStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -287,29 +294,53 @@ class CreateOrderVM {
     }
 
     try {
-      const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
-
       let hash: Undefinable<string> = "";
-      if (tradeStore.isPerp) {
-        console.log("[PERP] Not implemented");
-        // const data = (await bcNetwork?.openPerpOrder(
-        //   baseToken.assetId,
-        //   baseSize.toString(),
-        //   this.inputPrice.toString(),
-        //   baseToken.priceFeed,
-        // )) as WriteTransactionResponse;
-        // hash = data?.transactionId;
-      } else {
-        const order: CreateOrderParams = {
+      const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
+      const typeMarket = this.mode === ORDER_MODE.BUY ? OrderType.Sell : OrderType.Buy;
+      if (ORDER_TYPE.Market === settingsStore.orderType) {
+        const params: GetOrdersParams = {
+          limit: 50,
+          asset: tradeStore?.market?.baseToken.assetId ?? "",
+          status: ["Active"],
+        };
+        const sellOrders = await bcNetwork!.fetchSpotOrders({
+          ...params,
+          orderType: typeMarket,
+        });
+
+        const order: FulfillOrderManyParams = {
           amount: this.inputAmount.toString(),
           assetType: AssetType.Base,
-          price: this.inputPrice.toString(),
-          type,
+          orderType: type,
+          limitType: LimitType.FOK, // TODO: Check is it correct
+          price: sellOrders[sellOrders.length - 1].price.toString(),
+          orders: sellOrders.map((el) => el.id),
+          slippage: "100",
           feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
-
-        const data = await bcNetwork.createSpotOrder(order);
+        const data = await bcNetwork.swapTokens(order);
         hash = data.transactionId;
+      } else {
+        if (tradeStore.isPerp) {
+          console.log("[PERP] Not implemented");
+          // const data = (await bcNetwork?.openPerpOrder(
+          //   baseToken.assetId,
+          //   baseSize.toString(),
+          //   this.inputPrice.toString(),
+          //   baseToken.priceFeed,
+          // )) as WriteTransactionResponse;
+          // hash = data?.transactionId;
+        } else {
+          const order: CreateOrderParams = {
+            amount: this.inputAmount.toString(),
+            assetType: AssetType.Base,
+            price: this.inputPrice.toString(),
+            type,
+            feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
+          };
+          const data = await bcNetwork.createSpotOrder(order);
+          hash = data.transactionId;
+        }
       }
 
       notificationStore.toast(createToast({ text: "Order Created", hash: hash }), {
@@ -327,29 +358,17 @@ class CreateOrderVM {
   };
 
   selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {
-    const { settingsStore, accountStore, balanceStore } = this.rootStore;
-    const isBuyMode = mode === ORDER_MODE.BUY;
+    const { settingsStore } = this.rootStore;
 
     settingsStore.setOrderType(ORDER_TYPE.Limit);
     this.setOrderMode(mode);
     this.setInputPrice(order.price);
-
-    const assetId = isBuyMode ? order.quoteToken.assetId : order.baseToken.assetId;
-    const orderSize = isBuyMode ? order.initialQuoteAmount : order.initialAmount;
-
-    const amount = accountStore.isConnected
-      ? BN.min(balanceStore.getContractBalanceInfo(assetId).amount, orderSize)
-      : orderSize;
-
-    isBuyMode ? this.setInputTotal(amount) : this.setInputAmount(amount);
   };
 
   fetchMarketFee = async () => {
     const bcNetwork = FuelNetwork.getInstance();
 
     const fee = await bcNetwork.fetchSpotMatcherFee();
-
-    console.log(fee);
 
     this.matcherFee = new BN(fee);
   };

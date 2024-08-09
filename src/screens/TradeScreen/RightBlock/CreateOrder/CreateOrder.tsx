@@ -30,7 +30,7 @@ import { useStores } from "@stores";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [
-  { title: "Market", key: ORDER_TYPE.Market, disabled: true },
+  { title: "Market", key: ORDER_TYPE.Market },
   { title: "Limit", key: ORDER_TYPE.Limit },
   // { title: "Stop Market", key: ORDER_TYPE.StopMarket, disabled: true },
   // { title: "Stop Limit", key: ORDER_TYPE.StopLimit, disabled: true },
