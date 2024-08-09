@@ -296,7 +296,7 @@ class CreateOrderVM {
     try {
       let hash: Undefinable<string> = "";
       const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
-
+      const typeMarket = this.mode === ORDER_MODE.BUY ? OrderType.Sell : OrderType.Buy;
       if (ORDER_TYPE.Market === settingsStore.orderType) {
         const params: GetOrdersParams = {
           limit: 50,
@@ -305,7 +305,7 @@ class CreateOrderVM {
         };
         const sellOrders = await bcNetwork!.fetchSpotOrders({
           ...params,
-          orderType: type,
+          orderType: typeMarket,
         });
 
         const order: FulfillOrderManyParams = {
@@ -321,7 +321,6 @@ class CreateOrderVM {
         const data = await bcNetwork.swapTokens(order);
         hash = data.transactionId;
       } else {
-
         if (tradeStore.isPerp) {
           console.log("[PERP] Not implemented");
           // const data = (await bcNetwork?.openPerpOrder(
