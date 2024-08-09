@@ -30,7 +30,7 @@ import { useStores } from "@stores";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [
-  { title: "Market", key: ORDER_TYPE.Market, disabled: true },
+  { title: "Market", key: ORDER_TYPE.Market },
   { title: "Limit", key: ORDER_TYPE.Limit },
   // { title: "Stop Market", key: ORDER_TYPE.StopMarket, disabled: true },
   // { title: "Stop Limit", key: ORDER_TYPE.StopLimit, disabled: true },
@@ -104,7 +104,7 @@ const CreateOrder: React.FC = observer(() => {
     }
 
     return (
-      <CreateOrderButton disabled={isButtonDisabled} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
+      <CreateOrderButton disabled={false} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
           {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
         </Text>
