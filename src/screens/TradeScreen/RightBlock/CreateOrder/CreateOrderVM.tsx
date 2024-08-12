@@ -53,6 +53,8 @@ export enum ORDER_TYPE {
   StopLimit,
   TakeProfit,
   TakeProfitLimit,
+  LimitFOK,
+  LimitIOC, // TODO: Когда TimeInForce будет переделана в отдельную вкладку оставить только тип limit
 }
 
 class CreateOrderVM {
@@ -297,30 +299,8 @@ class CreateOrderVM {
       let hash: Undefinable<string> = "";
       const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
       const typeMarket = this.mode === ORDER_MODE.BUY ? OrderType.Sell : OrderType.Buy;
-      if (ORDER_TYPE.Market === settingsStore.orderType) {
-        const params: GetOrdersParams = {
-          limit: 50,
-          asset: tradeStore?.market?.baseToken.assetId ?? "",
-          status: ["Active"],
-        };
-        const sellOrders = await bcNetwork!.fetchSpotOrders({
-          ...params,
-          orderType: typeMarket,
-        });
-
-        const order: FulfillOrderManyParams = {
-          amount: this.inputAmount.toString(),
-          assetType: AssetType.Base,
-          orderType: type,
-          limitType: LimitType.FOK, // TODO: Check is it correct
-          price: sellOrders[sellOrders.length - 1].price.toString(),
-          orders: sellOrders.map((el) => el.id),
-          slippage: "100",
-          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
-        };
-        const data = await bcNetwork.swapTokens(order);
-        hash = data.transactionId;
-      } else {
+      const timeInForce = settingsStore.timeInForce
+      if (timeInForce === LimitType.GTC) {
         if (tradeStore.isPerp) {
           console.log("[PERP] Not implemented");
           // const data = (await bcNetwork?.openPerpOrder(
@@ -341,6 +321,29 @@ class CreateOrderVM {
           const data = await bcNetwork.createSpotOrder(order);
           hash = data.transactionId;
         }
+      } else {
+        const params: GetOrdersParams = {
+          limit: 50,
+          asset: tradeStore?.market?.baseToken.assetId ?? "",
+          status: ["Active"],
+        };
+        const sellOrders = await bcNetwork!.fetchSpotOrders({
+          ...params,
+          orderType: typeMarket,
+        });
+
+        const order: FulfillOrderManyParams = {
+          amount: this.inputAmount.toString(),
+          assetType: AssetType.Base,
+          orderType: type,
+          limitType: timeInForce,
+          price: sellOrders[sellOrders.length - 1].price.toString(),
+          orders: sellOrders.map((el) => el.id),
+          slippage: "100",
+          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
+        };
+        const data = await bcNetwork.swapTokens(order);
+        hash = data.transactionId;
       }
 
       notificationStore.toast(createToast({ text: "Order Created", hash: hash }), {
