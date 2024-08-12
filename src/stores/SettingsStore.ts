@@ -1,9 +1,9 @@
+import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable } from "mobx";
 
 import { ORDER_TYPE } from "@src/screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
 import RootStore from "@stores/RootStore";
-import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 
 export interface ISerializedSettingStore {
   isUserAgreedWithTerms?: boolean;
@@ -44,7 +44,7 @@ class SettingsStore {
   orderType: ORDER_TYPE = ORDER_TYPE.Market;
   setOrderType = (v: ORDER_TYPE) => (this.orderType = v);
 
-  timeInForce: LimitType = LimitType.GTC;
+  timeInForce: LimitType = LimitType.FOK;
   setTimeInForce = (v: LimitType) => (this.timeInForce = v);
 
   serialize = (): ISerializedSettingStore => ({

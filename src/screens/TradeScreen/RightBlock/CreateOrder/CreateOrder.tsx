@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react";
@@ -28,7 +29,6 @@ import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
-import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 
 const ORDER_OPTIONS = [
   { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },

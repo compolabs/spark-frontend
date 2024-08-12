@@ -299,7 +299,7 @@ class CreateOrderVM {
       let hash: Undefinable<string> = "";
       const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
       const typeMarket = this.mode === ORDER_MODE.BUY ? OrderType.Sell : OrderType.Buy;
-      const timeInForce = settingsStore.timeInForce
+      const timeInForce = settingsStore.timeInForce;
       if (timeInForce === LimitType.GTC) {
         if (tradeStore.isPerp) {
           console.log("[PERP] Not implemented");
