@@ -28,6 +28,7 @@ import {
   TOKENS_LIST,
 } from "./constants";
 import {
+  Balances,
   FetchTradesParams,
   MarketCreateEvent,
   PerpMaxAbsPositionSize,
@@ -73,8 +74,8 @@ export class FuelNetwork {
     return this.walletManager.privateKey;
   }
 
-  getBalance = async (accountAddress: string, assetAddress: string): Promise<string> => {
-    return this.walletManager.getBalance(accountAddress, assetAddress);
+  getBalances = async (): Promise<Balances> => {
+    return this.walletManager.getBalances();
   };
 
   getWallet = (): Nullable<any> => {

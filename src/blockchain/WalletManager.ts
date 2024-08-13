@@ -6,6 +6,7 @@ import { FUEL_CONFIG } from "@src/constants";
 
 import { TOKENS_BY_ASSET_ID } from "./constants";
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
+import { Balances } from "./types";
 
 export class WalletManager {
   public address: Nullable<B256Address> = null;
@@ -65,13 +66,19 @@ export class WalletManager {
     await this.fuel.addAsset(asset);
   };
 
-  getBalance = async (address: string, assetId: string) => {
+  getBalances = async (): Promise<Balances> => {
     if (!this.wallet) {
       throw new NetworkError(NETWORK_ERROR.UNKNOWN_WALLET);
     }
 
-    const balance = await this.wallet.getBalance(assetId);
-    return balance.toString();
+    const response = await this.wallet.getBalances();
+
+    return response.balances.reduce((prev, balance) => {
+      return {
+        ...prev,
+        [balance.assetId]: balance.amount.toString(),
+      };
+    }, {});
   };
 
   disconnect = () => {
