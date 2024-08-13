@@ -29,7 +29,7 @@ import {
 } from "./constants";
 import {
   FetchTradesParams,
-  MarketCreateEvent,
+  Market,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
   SpotMarketVolume,
@@ -64,6 +64,10 @@ export class FuelNetwork {
     }
     return FuelNetwork.instance;
   }
+
+  setActiveMarket = (marketAddress: string) => {
+    this.orderbookSdk.setActiveMarketAddress(marketAddress);
+  };
 
   getAddress = (): Nullable<B256Address> => {
     return this.walletManager.address;
@@ -188,8 +192,23 @@ export class FuelNetwork {
     // await this.sdk.fulfillPerpOrder(gasAsset, orderId, amount, tokenPriceFeed);
   };
 
-  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.orderbookSdk.fetchMarkets(limit);
+  fetchSpotMarkets = async (): Promise<Market[]> => {
+    const quoteToken = this.getTokenBySymbol("USDC");
+    const assetIdList: [string, string][] = this.getTokenList().map((token) => [token.assetId, quoteToken.assetId]);
+    const markets = await this.orderbookSdk.fetchMarkets(assetIdList);
+    console.log(markets);
+    const marketIdList = assetIdList.map((pair) => markets[pair[0]]).filter(Boolean) as string[];
+
+    const marketConfigPromises = marketIdList.map((marketId) => this.orderbookSdk.fetchMarketConfig(marketId));
+
+    const marketConfigs = await Promise.all(marketConfigPromises);
+
+    return marketConfigs.map((info, index) => ({
+      id: String(index),
+      assetId: info.baseAssetId,
+      decimal: info.priceDecimals,
+      contractId: marketIdList[index],
+    }));
   };
 
   fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {

@@ -17,10 +17,11 @@ export type FetchTradesParams = {
   user?: string;
 };
 
-export type MarketCreateEvent = {
+export type Market = {
   id: string;
   assetId: string;
   decimal: number;
+  contractId: string;
 };
 
 export type SpotMarketVolume = {

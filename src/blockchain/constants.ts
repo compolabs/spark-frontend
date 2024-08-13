@@ -1,18 +1,22 @@
+import { OrderbookContracts } from "@compolabs/spark-orderbook-ts-sdk";
+
 import TOKEN_LOGOS from "@src/constants/tokenLogos";
 import { Token } from "@src/entity/Token";
 
 import TOKENS_JSON from "./tokens.json";
 
-const CONTRACT_ADDRESSES_MARKET = import.meta.env.VITE_CONTRACT_ADDRESSES_MARKET;
+const CONTRACT_ADDRESS_ORDERBOOK = import.meta.env.VITE_CONTRACT_ADDRESS_ORDERBOOK;
 const CONTRACT_ADDRESSES_TOKEN_FACTORY = import.meta.env.VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY;
 const CONTRACT_ADDRESSES_PYTH = import.meta.env.VITE_CONTRACT_ADDRESSES_PYTH;
 const INDEXER_URL = import.meta.env.VITE_INDEXER_URL;
 
-export const CONTRACT_ADDRESSES = {
-  market: CONTRACT_ADDRESSES_MARKET,
+export const CONTRACT_ADDRESSES: OrderbookContracts = {
+  market: "", // Markets will be retrieved from the order book
+  orderbook: CONTRACT_ADDRESS_ORDERBOOK,
   tokenFactory: CONTRACT_ADDRESSES_TOKEN_FACTORY,
   pyth: CONTRACT_ADDRESSES_PYTH,
 };
+
 export interface Network {
   name: string;
   url: string;
