@@ -248,6 +248,11 @@ const CreateOrder: React.FC = observer(() => {
     );
   };
 
+  const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {
+    handleSetOrderType(key);
+    const elementOption = ORDER_OPTIONS.find((el) => el.key === key);
+    elementOption && handleSetTimeInForce(elementOption.timeInForce);
+  };
   return (
     <Root column>
       <ButtonGroup>
@@ -269,12 +274,7 @@ const CreateOrder: React.FC = observer(() => {
               label="Order type"
               options={ORDER_OPTIONS}
               selected={settingsStore.orderType}
-              onSelect={({ key }) => {
-                console.log("el", key);
-                handleSetOrderType(key);
-                const elementOption = ORDER_OPTIONS.find((el) => el.key === key);
-                elementOption && handleSetTimeInForce(elementOption.timeInForce);
-              }}
+              onSelect={onSelectOrderType}
             />
             {renderOrderTooltip()}
           </StyledColumn>
