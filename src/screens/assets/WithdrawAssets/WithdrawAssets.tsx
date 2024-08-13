@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
@@ -28,13 +28,6 @@ const DepositAssets = observer(({ setStep }: WithdrawAssets) => {
     quickAssetsStore.setQuickAssets(false);
   };
 
-  const handleClick = async () => {
-    if (!selectAsset || !amount) return;
-    setIsloading(true);
-    await balanceStore.withdrawBalance(selectAsset.asset.assetId, amount.toNumber());
-    setIsloading(false);
-    setStep(0);
-  };
   const balanceData = Array.from(balanceStore.balances)
     .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
@@ -51,6 +44,23 @@ const DepositAssets = observer(({ setStep }: WithdrawAssets) => {
       };
     });
 
+  useEffect(() => {
+    setAssets(balanceData[0]);
+  }, []);
+
+  const handleClick = async () => {
+    if (!selectAsset || !amount) return;
+    setIsloading(true);
+    await balanceStore.withdrawBalance(selectAsset.asset.assetId, amount.toNumber());
+    setIsloading(false);
+    setStep(0);
+  };
+
+  const handleSetMax = () => {
+    console.log("selectAsset", selectAsset);
+    if (!selectAsset) return;
+    setAmount(new BN(selectAsset?.contractBalance));
+  };
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">
@@ -77,8 +87,9 @@ const DepositAssets = observer(({ setStep }: WithdrawAssets) => {
           />
           <TokenInputDeposit
             amount={amount}
-            assetId={selectAsset?.assetId}
             decimals={selectAsset?.asset?.decimals ?? 2}
+            handleMaxBalance={handleSetMax}
+            isShowMax={true}
             setAmount={setAmount}
             styleInputContainer={{ height: 56 }}
           />

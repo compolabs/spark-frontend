@@ -24,6 +24,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const { quickAssetsStore, balanceStore } = useStores();
   const theme = useTheme();
   const navigate = useNavigate();
+  const { oracleStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
 
   const balanceData = Array.from(balanceStore.balances)
@@ -45,7 +46,8 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const hasPositiveBalance = balanceData.some((item) => parseFloat(item.walletBalance) > 0);
 
   const accumulateBalance = balanceData.reduce((acc, account) => {
-    return acc.plus(new BN(account.balance));
+    const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), 9);
+    return acc.plus(new BN(account.balance).multipliedBy(price));
   }, new BN(BN.ZERO));
 
   const closeAssets = () => {

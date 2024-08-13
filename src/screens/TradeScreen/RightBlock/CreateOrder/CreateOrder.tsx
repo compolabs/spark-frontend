@@ -237,7 +237,12 @@ const CreateOrder: React.FC = observer(() => {
         vm.isSell ? baseToken.decimals : quoteToken.decimals,
       );
     }
+    const t = balanceStore.getFormatContractBalanceInfo(
+      vm.isSell ? baseToken.assetId : quoteToken.assetId,
+      vm.isSell ? baseToken.decimals : quoteToken.decimals,
+    );
 
+    console.log("t", t);
     return balanceStore.getFormatContractBalanceInfo(
       vm.isSell ? baseToken.assetId : quoteToken.assetId,
       vm.isSell ? baseToken.decimals : quoteToken.decimals,

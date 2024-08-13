@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
@@ -50,6 +50,10 @@ const WithdrawAssets = observer(({ setStep }: DepositAssets) => {
         assetId,
       };
     });
+
+  useEffect(() => {
+    setAssets(balanceData[0]);
+  }, []);
 
   return (
     <>
