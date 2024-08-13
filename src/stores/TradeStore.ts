@@ -181,8 +181,6 @@ class TradeStore {
     try {
       const markets = await bcNetwork!.fetchSpotMarkets();
 
-      console.log("wtf");
-
       const spotMarkets = markets
         .filter((market) => bcNetwork!.getTokenByAssetId(market.assetId) !== undefined)
         .map(

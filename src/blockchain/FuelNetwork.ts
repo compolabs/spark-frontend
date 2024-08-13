@@ -196,7 +196,6 @@ export class FuelNetwork {
     const quoteToken = this.getTokenBySymbol("USDC");
     const assetIdList: [string, string][] = this.getTokenList().map((token) => [token.assetId, quoteToken.assetId]);
     const markets = await this.orderbookSdk.fetchMarkets(assetIdList);
-    console.log(markets);
     const marketIdList = assetIdList.map((pair) => markets[pair[0]]).filter(Boolean) as string[];
 
     const marketConfigPromises = marketIdList.map((marketId) => this.orderbookSdk.fetchMarketConfig(marketId));
