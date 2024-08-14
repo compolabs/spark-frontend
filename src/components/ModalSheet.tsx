@@ -4,13 +4,13 @@ import styled from "@emotion/styled";
 
 interface ModalSheet {
   children: React.ReactNode;
-  isShow: boolean;
+  isVisible: boolean;
   onClose: () => void;
 }
 
-const ModalSheet = ({ children, isShow, onClose }: ModalSheet) => {
+const ModalSheet = ({ children, isVisible, onClose }: ModalSheet) => {
   return (
-    <Sheet initialSnap={1} isOpen={isShow} onClose={onClose}>
+    <Sheet initialSnap={0} isOpen={isVisible} snapPoints={[400, 100, 0]} onClose={onClose}>
       <SheetContainer>
         <Sheet.Content>{children}</Sheet.Content>
       </SheetContainer>

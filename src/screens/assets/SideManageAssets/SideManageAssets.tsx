@@ -2,62 +2,62 @@ import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react";
 
-import ModalSheet from "@components/ModalSheet.tsx";
-import SideBar from "@components/SideBar.tsx";
-import DepositAssets from "@screens/assets/DepositAssets/DepositAssets.tsx";
-import MainAssets from "@screens/assets/MainAssets/MainAssets.tsx";
-import WithdrawAssets from "@screens/assets/WithdrawAssets/WithdrawAssets.tsx";
-import useIsMobile from "@src/hooks/useIsMobile.tsx";
+import ModalSheet from "@components/ModalSheet";
+import SideBar from "@components/SideBar";
+import DepositAssets from "@screens/assets/DepositAssets/DepositAssets";
+import MainAssets from "@screens/assets/MainAssets/MainAssets";
+import WithdrawAssets from "@screens/assets/WithdrawAssets/WithdrawAssets";
 import { useStores } from "@stores";
+import { useMedia } from "@src/hooks/useMedia";
 
 interface ResolverDevice {
   children: React.ReactNode;
-  isShow: boolean;
+  isVisible: boolean;
   handleClose: () => void;
 }
 
-const ResolverDevice = ({ children, handleClose, isShow }: ResolverDevice) => {
-  const isMobile = useIsMobile();
+const ResolverDevice = ({ children, handleClose, isVisible }: ResolverDevice) => {
+  const media = useMedia();
 
   return (
     <>
-      {isMobile ? (
-        <ModalSheet isShow={isShow} onClose={handleClose}>
+      {media.mobile ? (
+        <ModalSheet isVisible={isVisible} onClose={handleClose}>
           {children}
         </ModalSheet>
       ) : (
-        <SideBar isShow={isShow} onClose={handleClose}>
+        <SideBar isVisible={isVisible} onClose={handleClose}>
           {children}
         </SideBar>
       )}
     </>
   );
 };
+
 const SideManageAssets = observer(() => {
   const { quickAssetsStore } = useStores();
-  const [currentStep, setCurrentStep] = useState(0);
   const [isFirstOpen, setIsFirstOpen] = useState(true);
 
   const setStep = (step: number) => {
     setIsFirstOpen(false);
-    setCurrentStep(step);
+    quickAssetsStore.setCurrentStep(step);
   };
   const MainAssetsComponent = () => <MainAssets setStep={setStep} />;
   const DepositAssetsComponent = () => <DepositAssets setStep={setStep} />;
   const WithdrawAssetsComponent = () => <WithdrawAssets setStep={setStep} />;
 
   const steps = [MainAssetsComponent, DepositAssetsComponent, WithdrawAssetsComponent];
-  const CurrentComponent = steps[currentStep];
+  const CurrentComponent = steps[quickAssetsStore.currentStep];
 
   const handleClose = () => {
     setIsFirstOpen(true);
     quickAssetsStore.setQuickAssets(false);
   };
   return (
-    <ResolverDevice handleClose={handleClose} isShow={quickAssetsStore.openQuickAssets}>
+    <ResolverDevice handleClose={handleClose} isVisible={quickAssetsStore.openQuickAssets}>
       <AnimatePresence>
         <motion.div
-          key={currentStep}
+          key={quickAssetsStore.currentStep}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -300, opacity: 0 }}
           initial={isFirstOpen ? { x: 0, opacity: 1 } : { x: 300, opacity: 0 }}

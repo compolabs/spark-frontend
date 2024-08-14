@@ -130,7 +130,7 @@ const MarketSelect = styled.div<{
 
   ${({ focused }) =>
     focused && {
-      background: "#1B1B1B",
+      background: "#141414",
       borderRadius: "10px 0 0 10px",
     }}
 

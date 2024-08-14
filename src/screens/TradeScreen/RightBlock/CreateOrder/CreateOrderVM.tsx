@@ -285,6 +285,7 @@ class CreateOrderVM {
   createOrder = async () => {
     const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore } = this.rootStore;
     const { market } = tradeStore;
+    const { orderType } = settingsStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (!market) return;
@@ -337,7 +338,10 @@ class CreateOrderVM {
           assetType: AssetType.Base,
           orderType: type,
           limitType: timeInForce,
-          price: sellOrders[sellOrders.length - 1].price.toString(),
+          price:
+            orderType === ORDER_TYPE.Market
+              ? this.inputPrice.toString()
+              : sellOrders[sellOrders.length - 1].price.toString(),
           orders: sellOrders.map((el) => el.id),
           slippage: "100",
           feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,

@@ -1,7 +1,7 @@
 import React, { HTMLAttributes, useState } from "react";
 import styled from "@emotion/styled";
 
-import AssetBlock, { IAssetBlock } from "@components/SelectAssets/AssetBlock.tsx";
+import AssetBlock, { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SizedBox from "@components/SizedBox";
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
 import { Token } from "@src/entity";
@@ -101,7 +101,7 @@ const Root = styled.div<{
   white-space: nowrap;
 
   ${media.mobile} {
-    height: 32px;
+    height: 56px;
   }
 `;
 
@@ -140,7 +140,6 @@ const Wrap = styled.div<{
   display: flex;
   flex-direction: column;
   width: 100%;
-
   .menu-arrow {
     transition: 0.4s;
     transform: ${({ focused }) => (focused ? "rotate(-180deg)" : "rotate(0deg)")};

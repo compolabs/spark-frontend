@@ -4,16 +4,16 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Button from "@components/Button.tsx";
-import { Column, Row } from "@components/Flex.tsx";
-import AssetBlock from "@components/SelectAssets/AssetBlock.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import Button from "@components/Button";
+import { Column, Row } from "@components/Flex";
+import AssetBlock from "@components/SelectAssets/AssetBlock";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
 // import closeThin from "@src/assets/icons/closeThin.svg"; // TODO: Ждем иконку
 // import depositAssets from "@src/assets/icons/depositAssets.svg"; // TODO: Ждем иконку
 import { FuelNetwork } from "@src/blockchain";
-import { ROUTES } from "@src/constants";
-import BN from "@src/utils/BN.ts";
+import { DEFAULT_DECIMALS, ROUTES } from "@src/constants";
+import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
 interface MainAssets {
@@ -24,6 +24,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const { quickAssetsStore, balanceStore } = useStores();
   const theme = useTheme();
   const navigate = useNavigate();
+  const { oracleStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
 
   const balanceData = Array.from(balanceStore.balances)
@@ -42,13 +43,15 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       };
     });
 
-  const hasPositiveBalance = balanceData.some((item) => parseFloat(item.walletBalance) > 0);
+  const hasPositiveBalance = balanceData.some((item) => new BN(item.walletBalance).isGreaterThan(BN.ZERO));
 
   const accumulateBalance = balanceData.reduce((acc, account) => {
-    return acc.plus(new BN(account.balance));
-  }, new BN(BN.ZERO));
+    const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
+    return acc.plus(new BN(account.balance).multipliedBy(price));
+  }, BN.ZERO);
 
   const closeAssets = () => {
+    quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
   };
 
@@ -60,7 +63,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">
-        <TextTitle type={TEXT_TYPES.BUTTON} primary>
+        <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
           Deposited Assets
         </TextTitle>
         {/* <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} /> */}
@@ -94,9 +97,9 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
           Withdraw
         </Button>
       </SmartFlex>
-      <TextTitle style={{ margin: "30px 0px 10px 0px", padding: 16 }} type={TEXT_TYPES.BUTTON} primary>
+      <TextTitleMargin type={TEXT_TYPES.BUTTON} primary>
         Wallet holdings
-      </TextTitle>
+      </TextTitleMargin>
       <SmartFlex gap="10px" style={{ width: "100%" }} column>
         {balanceData.map((el) => (
           <AssetBlock key={el.assetId} options={{ showBalance: "walletBalance" }} token={el} />
@@ -117,14 +120,14 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 export default MainAssets;
 
 const DepositedAssets = styled(SmartFlex)`
-  margin: 20px 0px 20px 0px;
+  margin: 20px 0;
   width: 100%;
 `;
 
 const CloseButton = styled.img`
   width: 30px;
   height: 30px;
-  background: #7676803d;
+  background: ${({ theme }) => theme.colors.bgIcon};
   padding: 8px;
   border-radius: 100px;
   &:hover {
@@ -133,12 +136,10 @@ const CloseButton = styled.img`
 `;
 
 const TextTitle = styled(Text)`
-  font-family:
-    Space Grotesk,
-    serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 14px;
-  letter-spacing: 0.02em;
   text-align: left;
+`;
+
+const TextTitleMargin = styled(TextTitle)`
+  margin: 30px 0px 10px 0px;
+  padding: 16px;
 `;
