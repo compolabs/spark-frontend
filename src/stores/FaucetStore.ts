@@ -9,7 +9,7 @@ import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import RootStore from "@stores/RootStore";
 
 export const FAUCET_AMOUNTS: Record<string, number> = {
-  ETH: 0.001,
+  ETH: 0.002,
   USDC: 3000,
   BTC: 0.01,
   UNI: 50,
