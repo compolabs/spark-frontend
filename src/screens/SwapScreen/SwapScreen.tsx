@@ -34,8 +34,8 @@ export const SwapScreen: React.FC = observer(() => {
   const sellTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
   const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
 
-  const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
-  const sellTokenPrice = swapStore.getPrice(swapStore.sellToken);
+  const buyTokenPrice = swapStore.getPrice(swapStore.sellToken);
+  const sellTokenPrice = swapStore.getPrice(swapStore.buyToken);
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
@@ -122,7 +122,7 @@ export const SwapScreen: React.FC = observer(() => {
     <Root>
       <TitleContainer>
         <Title>Swap</Title>
-        <Text type={TEXT_TYPES.H}>Easiest way to trade assets on Fuel</Text>
+        <Text type={TEXT_TYPES.BUTTON}>Easiest way to trade assets on Fuel</Text>
       </TitleContainer>
       <SwapContainer>
         <SwapBox>
@@ -204,7 +204,10 @@ export const SwapScreen: React.FC = observer(() => {
         disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
         onClick={swapTokens}
       >
-        Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}
+        <Text type={TEXT_TYPES.TITLE}>
+          {" "}
+          Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}{" "}
+        </Text>
       </SwapButton>
 
       {isSuccessModalVisible && (
@@ -259,6 +262,7 @@ const Root = styled.div`
 
 const TitleContainer = styled.div`
   margin-bottom: 16px;
+  margin-top: 48px;
 `;
 
 const textAnimation = keyframes`
@@ -415,6 +419,7 @@ const SwapButton = styled.button`
   border-radius: 16px;
   cursor: pointer;
   width: 100%;
+  height: 54px;
   border: 1px solid ${({ theme }) => theme.colors.greenLight};
   background-color: ${({ theme }) => theme.colors.greenDark};
   transition: all 0.2s;

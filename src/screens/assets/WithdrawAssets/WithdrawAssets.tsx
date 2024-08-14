@@ -18,13 +18,14 @@ interface WithdrawAssets {
   setStep: (value: number) => void;
 }
 
-const DepositAssets = observer(({ setStep }: WithdrawAssets) => {
+const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState<BN>(new BN(0));
   const [isLoading, setIsloading] = useState<boolean>(false);
   const { quickAssetsStore, balanceStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
   const closeAssets = () => {
+    quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
   };
 
@@ -57,9 +58,9 @@ const DepositAssets = observer(({ setStep }: WithdrawAssets) => {
   };
 
   const handleSetMax = () => {
-    console.log("selectAsset", selectAsset);
     if (!selectAsset) return;
-    setAmount(new BN(selectAsset?.contractBalance));
+    const factor = new BN(10).pow(new BN(selectAsset.asset.decimals));
+    setAmount(new BN(selectAsset?.contractBalance).multipliedBy(factor));
   };
   return (
     <>
@@ -102,7 +103,7 @@ const DepositAssets = observer(({ setStep }: WithdrawAssets) => {
   );
 });
 
-export default DepositAssets;
+export default WithdrawAssets;
 
 const TextTitle = styled(Text)`
   font-family:

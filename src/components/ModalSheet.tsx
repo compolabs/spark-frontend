@@ -10,7 +10,7 @@ interface ModalSheet {
 
 const ModalSheet = ({ children, isShow, onClose }: ModalSheet) => {
   return (
-    <Sheet initialSnap={1} isOpen={isShow} onClose={onClose}>
+    <Sheet initialSnap={0} isOpen={isShow} snapPoints={[400, 100, 0]} onClose={onClose}>
       <SheetContainer>
         <Sheet.Content>{children}</Sheet.Content>
       </SheetContainer>

@@ -9,6 +9,7 @@ import Input from "./Input";
 interface IProps {
   value: string;
   onChange: (v: string) => void;
+  placeholder?: string;
 }
 
 const Wrap = styled.div`
@@ -29,11 +30,15 @@ const Wrap = styled.div`
   }
 `;
 
-const SearchInput: React.FC<IProps> = ({ value, onChange }) => {
+const SearchInput: React.FC<IProps> = ({ value, onChange, placeholder }) => {
   return (
     <Wrap>
       <img alt="search" src={search} />
-      <Input placeholder="Search by name..." value={value} onChange={(e) => onChange(e.target.value)} />
+      <Input
+        placeholder={placeholder ? placeholder : "Search by name..."}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </Wrap>
   );
 };

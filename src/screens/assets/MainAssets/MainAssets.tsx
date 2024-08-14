@@ -51,6 +51,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   }, new BN(BN.ZERO));
 
   const closeAssets = () => {
+    quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
   };
 

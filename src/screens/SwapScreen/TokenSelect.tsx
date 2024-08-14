@@ -8,6 +8,8 @@ import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useMedia } from "@src/hooks/useMedia";
 import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
 import { media } from "@src/themes/breakpoints";
+import SearchInput from "@components/SearchInput.tsx";
+import { SmartFlex } from "@components/SmartFlex.tsx";
 
 export type TokenOption = {
   key: string;
@@ -32,11 +34,19 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
   const theme = useTheme();
   const [isSelectMenuVisible, setSelectMenuVisible] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [filterData, setFilterData] = useState<TokenOption[]>(options);
   useOnClickOutside(selectRef, () => setSelectMenuVisible(false));
 
   const selectOption = (option: TokenOption) => {
     setSelectMenuVisible(false);
     onSelect(option);
+  };
+
+  const handleChangeSearch = (text: string) => {
+    setSearchValue(text);
+    const filteredArray = options.filter((item) => item.symbol.toLowerCase().includes(text.toLowerCase()));
+    setFilterData(filteredArray);
   };
 
   return (
@@ -54,39 +64,43 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
         <MobileOverlay>
           <OptionsContainer ref={selectRef}>
             <Container>
-              {media.mobile && (
-                <MobileHeader>
-                  <Text type={TEXT_TYPES.H} primary>
-                    {selectType}
-                  </Text>
-                  <CloseIcon onClick={() => setSelectMenuVisible(false)} />
-                </MobileHeader>
-              )}
-              {/* TODO add when there will be more tokens */}
-              {/* <SearchInput value={searchTerm} onChange={handleSearchChange} /> */}
-            </Container>
-
-            <OptionsHeader>
-              <Text type={TEXT_TYPES.BODY}>Asset</Text>
-              <Text type={TEXT_TYPES.BODY}>Balance</Text>
-            </OptionsHeader>
-            {options.map((option) => (
-              <Option key={option.key} onClick={() => selectOption(option)}>
-                <OptionRightPart key={option.key}>
-                  <img alt={option.symbol} src={option.img} />
-                  <OptionTitle>
-                    <TokenSymbol color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-                      {option.symbol}
-                    </TokenSymbol>
-                    <Text type={TEXT_TYPES.BODY}>{option.title}</Text>
-                  </OptionTitle>
-                </OptionRightPart>
-
-                <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                  {option.balance ?? "0.00"}
+              <Header>
+                <Text type={TEXT_TYPES.TITLE} primary>
+                  {selectType}
                 </Text>
-              </Option>
-            ))}
+                <CloseIconStyled onClick={() => setSelectMenuVisible(false)} />
+              </Header>
+              <SearchInput placeholder=" " value={searchValue} onChange={handleChangeSearch} />
+            </Container>
+            {filterData.length > 0 ? (
+              <>
+                <OptionsHeader>
+                  <Text type={TEXT_TYPES.BODY}>Asset</Text>
+                  <Text type={TEXT_TYPES.BODY}>Balance</Text>
+                </OptionsHeader>
+                {filterData.map((option) => (
+                  <Option key={option.key} onClick={() => selectOption(option)}>
+                    <OptionRightPart key={option.key}>
+                      <img alt={option.symbol} src={option.img} />
+                      <OptionTitle>
+                        <TokenSymbol color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+                          {option.symbol}
+                        </TokenSymbol>
+                        <Text type={TEXT_TYPES.BODY}>{option.title}</Text>
+                      </OptionTitle>
+                    </OptionRightPart>
+
+                    <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+                      {option.balance ?? "0.00"}
+                    </Text>
+                  </Option>
+                ))}
+              </>
+            ) : (
+              <NotFoundContainer justifyContent="center">
+                <Text> Nothing found </Text>
+              </NotFoundContainer>
+            )}
           </OptionsContainer>
         </MobileOverlay>
       )}
@@ -152,11 +166,11 @@ const MobileOverlay = styled.div`
   }
 `;
 
-const MobileHeader = styled.div`
+const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 26px;
+  margin-bottom: 20px;
 `;
 
 const OptionsContainer = styled.div`
@@ -166,7 +180,7 @@ const OptionsContainer = styled.div`
   width: 300px;
   right: 0;
   background-color: ${({ theme }) => theme.colors.bgSecondary};
-  padding: 8px 0 8px;
+  padding: 16px 0 0px;
   border-radius: 10px;
   max-height: 336px;
   display: flex;
@@ -222,4 +236,16 @@ const OptionTitle = styled.div`
 
 const TokenSymbol = styled(Text)`
   font-size: 16px;
+`;
+
+const CloseIconStyled = styled(CloseIcon)`
+  background: #7676803d;
+  width: 30px;
+  height: 30px;
+  padding: 8px;
+  border-radius: 100px;
+`;
+
+const NotFoundContainer = styled(SmartFlex)`
+  padding-bottom: 10px;
 `;

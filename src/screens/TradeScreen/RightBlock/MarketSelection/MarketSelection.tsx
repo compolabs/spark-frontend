@@ -139,6 +139,7 @@ const TitleContainer = styled.div`
   margin-bottom: 4px;
   padding: 12px;
   background: ${({ theme }) => theme.colors.bgSecondary};
+  border-radius: 12px;
 `;
 
 const CloseIcon = styled.div`

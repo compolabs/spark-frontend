@@ -6,6 +6,8 @@ import CloseIcon from "@src/assets/icons/close.svg?react";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { media } from "@src/themes/breakpoints";
 import { isValidAmountInput } from "@src/utils/swapUtils";
+import useIsMobile from "@src/hooks/useIsMobile.tsx";
+import ModalSheet from "@components/ModalSheet.tsx";
 
 // TODO: update fee numbers ?
 const SLIPPAGE_PERCENTAGES = [0.5, 1, 1.5];
@@ -15,10 +17,30 @@ type SlippageSettingsProps = {
   saveSlippage: (percentage: number) => void;
 };
 
+interface ResolverDevice {
+  children: React.ReactNode;
+  handleClose: () => void;
+}
+
+const ResolverDevice = ({ children, handleClose }: ResolverDevice) => {
+  const isMobile = useIsMobile();
+  return (
+    <>
+      {isMobile ? (
+        <ModalSheet isShow={true} onClose={handleClose}>
+          {children}
+        </ModalSheet>
+      ) : (
+        <Overlay>{children}</Overlay>
+      )}
+    </>
+  );
+};
+
 export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, saveSlippage }) => {
   const [slippagePercentageInput, setSlippagePercentageInput] = useState("0");
   const [selectedPercent, setSelectedPercent] = useState<null | number>(null);
-
+  const isMobile = useIsMobile();
   const onChangeSlippage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSlippageValue = e.target.value;
     if (!isValidAmountInput(newSlippageValue)) {
@@ -28,7 +50,7 @@ export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, sav
   };
 
   return (
-    <Overlay>
+    <ResolverDevice handleClose={onClose}>
       <Container>
         <Header>
           <Text type={TEXT_TYPES.BODY} primary>
@@ -76,7 +98,7 @@ export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, sav
           Confirm
         </ConfirmButton>
       </Container>
-    </Overlay>
+    </ResolverDevice>
   );
 };
 

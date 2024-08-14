@@ -25,6 +25,7 @@ const WithdrawAssets = observer(({ setStep }: DepositAssets) => {
   const { quickAssetsStore, balanceStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
   const closeAssets = () => {
+    quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
   };
 
@@ -55,6 +56,12 @@ const WithdrawAssets = observer(({ setStep }: DepositAssets) => {
     setAssets(balanceData[0]);
   }, []);
 
+  const handleSetMax = () => {
+    if (!selectAsset) return;
+    const factor = new BN(10).pow(new BN(selectAsset.asset.decimals));
+    setAmount(new BN(selectAsset?.walletBalance).multipliedBy(factor));
+  };
+
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">
@@ -81,8 +88,9 @@ const WithdrawAssets = observer(({ setStep }: DepositAssets) => {
           />
           <TokenInputDeposit
             amount={amount}
-            assetId={selectAsset?.assetId}
             decimals={selectAsset?.asset?.decimals ?? 2}
+            handleMaxBalance={handleSetMax}
+            isShowMax={true}
             setAmount={setAmount}
             styleInputContainer={{ height: 56 }}
           />
