@@ -2,14 +2,13 @@ import React, { useRef, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import SearchInput from "@components/SearchInput";
+import { SmartFlex } from "@components/SmartFlex";
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
 import CloseIcon from "@src/assets/icons/close.svg?react";
 import Text, { TEXT_TYPES } from "@src/components/Text";
-import { useMedia } from "@src/hooks/useMedia";
 import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
 import { media } from "@src/themes/breakpoints";
-import SearchInput from "@components/SearchInput";
-import { SmartFlex } from "@components/SmartFlex";
 
 export type TokenOption = {
   key: string;
@@ -30,7 +29,6 @@ interface TokenSelectProps {
 }
 
 export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSelect, selectType }) => {
-  const media = useMedia();
   const theme = useTheme();
   const [isSelectMenuVisible, setSelectMenuVisible] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
@@ -98,7 +96,7 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSele
               </>
             ) : (
               <NotFoundContainer justifyContent="center">
-                <Text> Nothing found </Text>
+                <Text>Nothing found</Text>
               </NotFoundContainer>
             )}
           </OptionsContainer>
@@ -180,7 +178,7 @@ const OptionsContainer = styled.div`
   width: 300px;
   right: 0;
   background-color: ${({ theme }) => theme.colors.bgSecondary};
-  padding: 16px 0 0px;
+  padding: 16px 0 0;
   border-radius: 10px;
   max-height: 336px;
   display: flex;

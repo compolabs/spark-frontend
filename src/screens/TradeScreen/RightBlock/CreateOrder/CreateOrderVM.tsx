@@ -319,7 +319,6 @@ class CreateOrderVM {
             type,
             feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
           };
-          console.log("order1", order);
           const data = await bcNetwork.createSpotOrder(order);
           hash = data.transactionId;
         }
@@ -334,7 +333,6 @@ class CreateOrderVM {
           orderType: typeMarket,
         });
 
-        console.log("orderType", orderType);
         const order: FulfillOrderManyParams = {
           amount: this.inputAmount.toString(),
           assetType: AssetType.Base,
@@ -348,7 +346,6 @@ class CreateOrderVM {
           slippage: "100",
           feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
-        console.log("order2", order);
         const data = await bcNetwork.swapTokens(order);
         hash = data.transactionId;
       }

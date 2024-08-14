@@ -11,24 +11,17 @@ import { SpotMarket } from "@src/entity";
 import { useStores } from "@stores";
 
 import { MarketTitle } from "./MarketTitle";
-import BN from "@src/utils/BN.ts";
-import { DEFAULT_DECIMALS } from "@src/constants";
 
 interface IProps {
   market: SpotMarket;
 }
 
 const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
-  const { oracleStore } = useStores();
   const { tradeStore } = useStores();
   const navigate = useNavigate();
 
   const isFavorite = tradeStore.favMarkets.includes(market.symbol);
 
-  const tokenPrice = BN.formatUnits(
-    oracleStore.getTokenIndexPrice(market.baseToken.priceFeed),
-    DEFAULT_DECIMALS,
-  ).toFormat(2);
   const handleFavoriteClick = (e: MouseEvent<HTMLImageElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -55,7 +48,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
       </SmartFlex>
       <SmartFlex alignSelf="flex-end" justifyContent="flex-end" width="100%">
         <Text color="primary" type={TEXT_TYPES.H} nowrap>
-          $ {tokenPrice}
+          $ {market.priceUnits.toFormat(2)}
         </Text>
       </SmartFlex>
     </Root>

@@ -13,7 +13,7 @@ import Text, { TEXT_TYPES } from "@components/Text";
 // import depositAssets from "@src/assets/icons/depositAssets.svg"; // TODO: Ждем иконку
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS, ROUTES } from "@src/constants";
-import BN from "@src/utils/BN.ts";
+import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
 interface MainAssets {

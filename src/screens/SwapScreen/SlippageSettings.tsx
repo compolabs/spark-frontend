@@ -2,12 +2,12 @@ import React from "react";
 import { useState } from "react";
 import styled from "@emotion/styled";
 
+import ModalSheet from "@components/ModalSheet";
 import CloseIcon from "@src/assets/icons/close.svg?react";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
+import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 import { isValidAmountInput } from "@src/utils/swapUtils";
-import ModalSheet from "@components/ModalSheet";
-import { useMedia } from "@src/hooks/useMedia.ts";
 
 // TODO: update fee numbers ?
 const SLIPPAGE_PERCENTAGES = [0.5, 1, 1.5];

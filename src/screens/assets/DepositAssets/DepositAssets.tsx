@@ -11,7 +11,7 @@ import TokenInput from "@components/TokenInput";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
 import closeThin from "@src/assets/icons/closeThin.svg";
 import { FuelNetwork } from "@src/blockchain";
-import BN from "@src/utils/BN.ts";
+import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
 interface DepositAssets {
@@ -20,7 +20,7 @@ interface DepositAssets {
 
 const DepositAssets = observer(({ setStep }: DepositAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
-  const [amount, setAmount] = useState(new BN(0));
+  const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsloading] = useState(false);
   const { quickAssetsStore, balanceStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
