@@ -6,7 +6,6 @@ import CloseIcon from "@src/assets/icons/close.svg?react";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { media } from "@src/themes/breakpoints";
 import { isValidAmountInput } from "@src/utils/swapUtils";
-import useIsMobile from "@src/hooks/useIsMobile";
 import ModalSheet from "@components/ModalSheet";
 import { useMedia } from "@src/hooks/useMedia.ts";
 

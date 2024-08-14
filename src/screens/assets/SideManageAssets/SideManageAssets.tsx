@@ -7,7 +7,6 @@ import SideBar from "@components/SideBar";
 import DepositAssets from "@screens/assets/DepositAssets/DepositAssets";
 import MainAssets from "@screens/assets/MainAssets/MainAssets";
 import WithdrawAssets from "@screens/assets/WithdrawAssets/WithdrawAssets";
-import useIsMobile from "@src/hooks/useIsMobile";
 import { useStores } from "@stores";
 import { useMedia } from "@src/hooks/useMedia";
 
