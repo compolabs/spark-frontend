@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react";
@@ -30,12 +31,10 @@ import { useStores } from "@stores";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [
-  { title: "Market", key: ORDER_TYPE.Market },
-  { title: "Limit", key: ORDER_TYPE.Limit },
-  // { title: "Stop Market", key: ORDER_TYPE.StopMarket, disabled: true },
-  // { title: "Stop Limit", key: ORDER_TYPE.StopLimit, disabled: true },
-  // { title: "Take Profit", key: ORDER_TYPE.TakeProfit, disabled: true },
-  // { title: "Take Profit Limit", key: ORDER_TYPE.TakeProfitLimit, disabled: true },
+  { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
+  { title: "Limit (GTC)", key: ORDER_TYPE.Limit, timeInForce: LimitType.GTC },
+  { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },
+  { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
 ];
 
 const LEVERAGE_OPTIONS = [5, 10, 20];
@@ -80,6 +79,10 @@ const CreateOrder: React.FC = observer(() => {
     settingsStore.setOrderType(type);
   };
 
+  const handleSetTimeInForce = (timeInForce: LimitType) => {
+    settingsStore.setTimeInForce(timeInForce);
+  };
+
   const handleSetPrice = (amount: BN) => {
     if (settingsStore.orderType === ORDER_TYPE.Market) return;
 
@@ -90,7 +93,8 @@ const CreateOrder: React.FC = observer(() => {
     setIsTpSlActive((state) => !state);
   };
 
-  const isInputPriceDisabled = settingsStore.orderType !== ORDER_TYPE.Limit;
+  const disabledOrderTypes = [ORDER_TYPE.Limit, ORDER_TYPE.LimitFOK, ORDER_TYPE.LimitIOC];
+  const isInputPriceDisabled = !disabledOrderTypes.includes(settingsStore.orderType);
 
   const renderButton = () => {
     const isEnoughGas = balanceStore.getNativeBalance().gt(MINIMAL_ETH_REQUIRED);
@@ -249,6 +253,11 @@ const CreateOrder: React.FC = observer(() => {
     );
   };
 
+  const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {
+    handleSetOrderType(key);
+    const elementOption = ORDER_OPTIONS.find((el) => el.key === key);
+    elementOption && handleSetTimeInForce(elementOption.timeInForce);
+  };
   return (
     <Root column>
       <ButtonGroup>
@@ -270,7 +279,7 @@ const CreateOrder: React.FC = observer(() => {
               label="Order type"
               options={ORDER_OPTIONS}
               selected={settingsStore.orderType}
-              onSelect={({ key }) => handleSetOrderType(key)}
+              onSelect={onSelectOrderType}
             />
             {renderOrderTooltip()}
           </StyledColumn>

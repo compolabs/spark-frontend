@@ -74,7 +74,6 @@ class SwapStore {
       .map((v) => {
         const balance = balanceStore.getContractBalanceInfo(v.assetId).amount;
         const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
-        // console.log('formatBalance', vala)
         const token = bcNetwork!.getTokenByAssetId(v.assetId);
 
         return {

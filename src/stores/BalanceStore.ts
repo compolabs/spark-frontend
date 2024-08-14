@@ -5,6 +5,7 @@ import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { createToast } from "@components/Toast.tsx";
 import { FuelNetwork } from "@src/blockchain";
 import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
+import { Balances } from "@src/blockchain/types";
 import BN from "@src/utils/BN";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors.ts";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -12,14 +13,12 @@ import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import RootStore from "./RootStore";
 
 const UPDATE_INTERVAL = 5 * 1000;
-const MARKET_BALANCE_UPDATE_INTERVAL = 15 * 1000; // 15 sec
 
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
   public initialized = false;
 
   private balancesUpdater: IntervalUpdater;
-  private marketBalanceUpdater: IntervalUpdater;
 
   myMarketBalance = {
     locked: {
@@ -41,8 +40,6 @@ export class BalanceStore {
 
     const { accountStore } = rootStore;
 
-    this.marketBalanceUpdater = new IntervalUpdater(this.fetchUserMarketBalance, MARKET_BALANCE_UPDATE_INTERVAL);
-    this.marketBalanceUpdater.run(true);
     reaction(
       () => [accountStore.isConnected, accountStore.address],
       ([isConnected]) => {
@@ -82,11 +79,16 @@ export class BalanceStore {
 
     if (!accountStore.address || !wallet) return;
 
+    const [balances] = await Promise.all([this.fetchBalances(), this.fetchUserMarketBalance()]);
+
     try {
-      for (const token of bcNetwork!.getTokenList()) {
-        const balance = await this.fetchBalance(token.assetId);
+      for (const [tokenAddress, balance] of Object.entries(balances)) {
+        const isTokenExist = !!bcNetwork.getTokenByAssetId(tokenAddress);
+
+        if (!isTokenExist) continue;
+
         runInAction(() => {
-          this.balances.set(token.assetId, new BN(balance));
+          this.balances.set(tokenAddress, new BN(balance));
         });
       }
     } catch (error) {
@@ -167,13 +169,10 @@ export class BalanceStore {
     }
   };
 
-  private fetchBalance = async (assetId: string): Promise<string> => {
-    const { accountStore } = this.rootStore;
+  private fetchBalances = async (): Promise<Balances> => {
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!accountStore.address) return "0";
-
-    return await bcNetwork!.getBalance(accountStore.address!, assetId);
+    return bcNetwork.getBalances();
   };
 
   private fetchUserMarketBalance = async () => {
