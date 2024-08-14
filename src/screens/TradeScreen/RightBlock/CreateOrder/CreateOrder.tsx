@@ -32,9 +32,9 @@ import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderT
 
 const ORDER_OPTIONS = [
   { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
-  { title: "Limit (GTC)", key: ORDER_TYPE.Limit, timeInForce: LimitType.GTC },
-  { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },
-  { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
+  { title: "Limit", key: ORDER_TYPE.Limit, timeInForce: LimitType.GTC },
+  // { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },
+  // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
 ];
 
 const LEVERAGE_OPTIONS = [5, 10, 20];
