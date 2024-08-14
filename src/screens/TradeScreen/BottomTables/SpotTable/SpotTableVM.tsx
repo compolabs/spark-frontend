@@ -50,6 +50,7 @@ class SpotTableVM {
       ([market, initialized, isConnected]) => {
         if (!initialized || !market || !isConnected) {
           this.setMyOrders([]);
+          this.setMyOrdersHistory([]);
           return;
         }
 

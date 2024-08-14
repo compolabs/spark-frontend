@@ -198,7 +198,7 @@ const SpotTableImpl: React.FC = observer(() => {
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toSignificant(2),
         contractBalance: BN.formatUnits(contractBalance, token.decimals).toSignificant(2),
-        balance: BN.formatUnits(totalBalance, token.decimals).toSignificant(2),
+        balance: BN.formatUnits(contractBalance, token.decimals).toSignificant(2),
         assetId,
       };
     });

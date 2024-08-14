@@ -140,7 +140,7 @@ export class BalanceStore {
     };
     try {
       await bcNetwork?.depositSpotBalance(amount.toString(), asset);
-      notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
+      notificationStore.toast(createToast({ text: "Deposit request has been sent!" }), { type: "success" });
     } catch (error) {
       console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
