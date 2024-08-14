@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { SmartFlex } from "@components/SmartFlex.tsx";
+import { SmartFlex } from "@components/SmartFlex";
 import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
 import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
 import CheckCircle from "@src/assets/icons/check-circle.svg?react";

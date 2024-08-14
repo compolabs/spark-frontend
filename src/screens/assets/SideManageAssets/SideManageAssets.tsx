@@ -2,31 +2,32 @@ import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react";
 
-import ModalSheet from "@components/ModalSheet.tsx";
-import SideBar from "@components/SideBar.tsx";
-import DepositAssets from "@screens/assets/DepositAssets/DepositAssets.tsx";
-import MainAssets from "@screens/assets/MainAssets/MainAssets.tsx";
-import WithdrawAssets from "@screens/assets/WithdrawAssets/WithdrawAssets.tsx";
-import useIsMobile from "@src/hooks/useIsMobile.tsx";
+import ModalSheet from "@components/ModalSheet";
+import SideBar from "@components/SideBar";
+import DepositAssets from "@screens/assets/DepositAssets/DepositAssets";
+import MainAssets from "@screens/assets/MainAssets/MainAssets";
+import WithdrawAssets from "@screens/assets/WithdrawAssets/WithdrawAssets";
+import useIsMobile from "@src/hooks/useIsMobile";
 import { useStores } from "@stores";
+import { useMedia } from "@src/hooks/useMedia";
 
 interface ResolverDevice {
   children: React.ReactNode;
-  isShow: boolean;
+  isVisible: boolean;
   handleClose: () => void;
 }
 
-const ResolverDevice = ({ children, handleClose, isShow }: ResolverDevice) => {
-  const isMobile = useIsMobile();
+const ResolverDevice = ({ children, handleClose, isVisible }: ResolverDevice) => {
+  const media = useMedia();
 
   return (
     <>
-      {isMobile ? (
-        <ModalSheet isShow={isShow} onClose={handleClose}>
+      {media.mobile ? (
+        <ModalSheet isVisible={isVisible} onClose={handleClose}>
           {children}
         </ModalSheet>
       ) : (
-        <SideBar isShow={isShow} onClose={handleClose}>
+        <SideBar isVisible={isVisible} onClose={handleClose}>
           {children}
         </SideBar>
       )}
@@ -54,7 +55,7 @@ const SideManageAssets = observer(() => {
     quickAssetsStore.setQuickAssets(false);
   };
   return (
-    <ResolverDevice handleClose={handleClose} isShow={quickAssetsStore.openQuickAssets}>
+    <ResolverDevice handleClose={handleClose} isVisible={quickAssetsStore.openQuickAssets}>
       <AnimatePresence>
         <motion.div
           key={quickAssetsStore.currentStep}

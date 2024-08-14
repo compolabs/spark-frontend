@@ -7,8 +7,6 @@ import Text, { TEXT_TYPES } from "@src/components/Text";
 import { media } from "@src/themes/breakpoints";
 
 import { SlippageSettings } from "./SlippageSettings";
-import useIsMobile from "@src/hooks/useIsMobile.tsx";
-
 interface InfoBlockProps {
   slippage: number;
   updateSlippage: (percent: number) => void;
@@ -17,7 +15,6 @@ interface InfoBlockProps {
 export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }) => {
   const theme = useTheme();
   const [isSlippageSettingOpen, setSlippageSettingOpen] = useState(false);
-  const isMobile = useIsMobile();
   return (
     <Root>
       <InfoLine>
@@ -72,7 +69,7 @@ const InfoLine = styled.div`
   height: 30px;
   padding: 25px 0px;
   &:not(:last-child) {
-    border-bottom: 1px solid #0b0b0b; /* Замените #ccc на нужный вам цвет */
+    border-bottom: 1px solid #0b0b0b;
   }
 `;
 

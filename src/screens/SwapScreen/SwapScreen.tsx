@@ -13,7 +13,7 @@ import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
 
-import { ActionModal } from "./ActionModal.tsx";
+import { ActionModal } from "./ActionModal";
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
@@ -34,8 +34,8 @@ export const SwapScreen: React.FC = observer(() => {
   const sellTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
   const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
 
-  const buyTokenPrice = swapStore.getPrice(swapStore.sellToken);
-  const sellTokenPrice = swapStore.getPrice(swapStore.buyToken);
+  const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
+  const sellTokenPrice = swapStore.getPrice(swapStore.sellToken);
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
@@ -194,7 +194,7 @@ export const SwapScreen: React.FC = observer(() => {
             isLoaded={isLoaded}
           />
           <ExchangeRate>
-            1 {swapStore.sellToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.buyToken.symbol} (${buyTokenPrice})
+            1 {swapStore.sellToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.buyToken.symbol} (${sellTokenPrice})
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
@@ -205,7 +205,6 @@ export const SwapScreen: React.FC = observer(() => {
         onClick={swapTokens}
       >
         <Text type={TEXT_TYPES.TITLE}>
-          {" "}
           Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}{" "}
         </Text>
       </SwapButton>

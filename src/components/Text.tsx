@@ -18,6 +18,7 @@ export enum TEXT_TYPES {
   SUPPORTING = 5,
   SUPPORTING_NUMBERS = 6,
   TITLE = 7,
+  TITLE_MODAL = 8,
 }
 
 interface IProps {
@@ -35,6 +36,14 @@ export const titleStyle = `
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
+  line-height: 14px;
+`;
+
+export const titleModalStyle = `
+  font-family: Space Grotesk;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
   line-height: 14px;
 `;
 
@@ -98,6 +107,7 @@ export const TEXT_TYPES_MAP = {
   [TEXT_TYPES.SUPPORTING]: supportStyle,
   [TEXT_TYPES.SUPPORTING_NUMBERS]: supportNumbersStyle,
   [TEXT_TYPES.TITLE]: titleStyle,
+  [TEXT_TYPES.TITLE_MODAL]: titleModalStyle,
 };
 
 const Text = styled.div<IProps>`

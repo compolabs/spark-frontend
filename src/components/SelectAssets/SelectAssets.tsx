@@ -1,7 +1,7 @@
 import React, { HTMLAttributes, useState } from "react";
 import styled from "@emotion/styled";
 
-import AssetBlock, { IAssetBlock } from "@components/SelectAssets/AssetBlock.tsx";
+import AssetBlock, { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SizedBox from "@components/SizedBox";
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
 import { Token } from "@src/entity";

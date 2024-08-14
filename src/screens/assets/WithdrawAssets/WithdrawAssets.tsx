@@ -2,17 +2,18 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Button from "@components/Button.tsx";
-import { IAssetBlock } from "@components/SelectAssets/AssetBlock.tsx";
-import SelectAssets from "@components/SelectAssets/SelectAssets.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import Button from "@components/Button";
+import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
+import SelectAssets from "@components/SelectAssets/SelectAssets";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
 import closeThin from "@src/assets/icons/closeThin.svg";
 import { FuelNetwork } from "@src/blockchain";
 import BN from "@src/utils/BN.ts";
 import { useStores } from "@stores";
+import { DEFAULT_DECIMALS } from "@src/constants";
 
 interface WithdrawAssets {
   setStep: (value: number) => void;
@@ -20,8 +21,8 @@ interface WithdrawAssets {
 
 const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
-  const [amount, setAmount] = useState<BN>(new BN(0));
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [amount, setAmount] = useState(new BN(0));
+  const [isLoading, setIsloading] = useState(false);
   const { quickAssetsStore, balanceStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
   const closeAssets = () => {
@@ -52,31 +53,25 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const handleClick = async () => {
     if (!selectAsset || !amount) return;
     setIsloading(true);
-    await balanceStore.withdrawBalance(selectAsset.asset.assetId, amount.toNumber());
+    await balanceStore.withdrawBalance(selectAsset.asset.assetId, amount.toString());
     setIsloading(false);
     setStep(0);
   };
 
   const handleSetMax = () => {
     if (!selectAsset) return;
-    const factor = new BN(10).pow(new BN(selectAsset.asset.decimals));
-    setAmount(new BN(selectAsset?.contractBalance).multipliedBy(factor));
+    setAmount(BN.parseUnits(selectAsset?.contractBalance, selectAsset.asset.decimals));
   };
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">
         <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
-        <TextTitle type={TEXT_TYPES.BUTTON} primary>
+        <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
           Select asset to withdraw
         </TextTitle>
         <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
       </SmartFlex>
-      <SmartFlex
-        gap="10px"
-        justifyContent="space-between"
-        style={{ width: "100%", marginTop: 20, height: "calc(100% - 54px)" }}
-        column
-      >
+      <SmartFlexContainer column>
         <SmartFlex gap="10px" column>
           <SelectAssets
             dataAssets={balanceData}
@@ -98,7 +93,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
         <Button disabled={isLoading || !selectAsset || !amount.toNumber()} green onClick={handleClick}>
           Confirm
         </Button>
-      </SmartFlex>
+      </SmartFlexContainer>
     </>
   );
 });
@@ -106,13 +101,6 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
 export default WithdrawAssets;
 
 const TextTitle = styled(Text)`
-  font-family:
-    Space Grotesk,
-    serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 14px;
-  letter-spacing: 0.02em;
   text-align: left;
 `;
 
@@ -125,7 +113,7 @@ const BackButton = styled.img`
 const CloseButton = styled.img`
   width: 30px;
   height: 30px;
-  background: #7676803d;
+  background: ${({ theme }) => theme.colors.bgIcon};
   padding: 8px;
   border-radius: 100px;
   &:hover {
@@ -135,4 +123,12 @@ const CloseButton = styled.img`
 
 const TokenInputDeposit = styled(TokenInput)`
   height: 65px;
+`;
+
+const SmartFlexContainer = styled(SmartFlex)`
+  width: 100%;
+  margin-top: 20px;
+  height: calc(100% - 54px);
+  gap: 10px;
+  justify-content: space-between;
 `;

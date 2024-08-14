@@ -3,11 +3,12 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
 import { Token } from "@src/entity";
 import BN from "@src/utils/BN.ts";
 import { useStores } from "@stores";
+import { DEFAULT_DECIMALS } from "@src/constants";
 
 export interface IAssetBlock {
   options: {
@@ -28,9 +29,9 @@ export interface IAssetBlock {
 const AssetBlock: React.FC<IAssetBlock> = observer(
   ({ styleToken, options: { showBalance = "balance", showNullBalance = true, isShowBalance = true }, token }) => {
     const { oracleStore } = useStores();
-    const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.asset.priceFeed), 9);
+    const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.asset.priceFeed), DEFAULT_DECIMALS);
     const theme = useTheme();
-    if (!showNullBalance && parseFloat(token[showBalance]) <= 0) return <></>;
+    if (!showNullBalance && new BN(token[showBalance]).isLessThanOrEqualTo(BN.ZERO)) return <></>;
     return (
       <TokenContainer center="y" gap="4px" style={styleToken}>
         <SmartFlex gap="10px">

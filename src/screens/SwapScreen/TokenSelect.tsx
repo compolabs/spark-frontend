@@ -8,8 +8,8 @@ import Text, { TEXT_TYPES } from "@src/components/Text";
 import { useMedia } from "@src/hooks/useMedia";
 import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
 import { media } from "@src/themes/breakpoints";
-import SearchInput from "@components/SearchInput.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
+import SearchInput from "@components/SearchInput";
+import { SmartFlex } from "@components/SmartFlex";
 
 export type TokenOption = {
   key: string;
@@ -239,7 +239,7 @@ const TokenSymbol = styled(Text)`
 `;
 
 const CloseIconStyled = styled(CloseIcon)`
-  background: #7676803d;
+  background: ${({ theme }) => theme.colors.bgIcon};
   width: 30px;
   height: 30px;
   padding: 8px;

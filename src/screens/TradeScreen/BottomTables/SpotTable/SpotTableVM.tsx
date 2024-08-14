@@ -93,7 +93,7 @@ class SpotTableVM {
     this.withdrawingAssetId = assetId;
 
     const { amount } = this.rootStore.balanceStore.getContractBalanceInfo(assetId);
-    await this.rootStore.balanceStore.withdrawBalance(assetId, amount.toNumber());
+    await this.rootStore.balanceStore.withdrawBalance(assetId, amount.toString());
 
     this.isWithdrawing = false;
     this.withdrawingAssetId = null;

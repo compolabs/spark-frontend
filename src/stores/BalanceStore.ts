@@ -2,12 +2,12 @@ import { AssetType, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk"
 import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
-import { createToast } from "@components/Toast.tsx";
+import { createToast } from "@components/Toast";
 import { FuelNetwork } from "@src/blockchain";
 import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { Balances } from "@src/blockchain/types";
 import BN from "@src/utils/BN";
-import { handleWalletErrors } from "@src/utils/handleWalletErrors.ts";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
 import RootStore from "./RootStore";
@@ -125,11 +125,9 @@ export class BalanceStore {
     return BN.formatUnits(this.getContractBalanceInfo(assetId).amount, decimals).toSignificant(2) ?? "-";
   };
 
-  depositBalance = async (assetId: string, amount: number) => {
+  depositBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
-
-    // if (!this.rootStore.tradeStore.market) return;
 
     if (bcNetwork?.getIsExternalWallet()) {
       notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
@@ -141,7 +139,7 @@ export class BalanceStore {
       decimals: data.decimals,
     };
     try {
-      await bcNetwork?.depositSpotBalance(amount.toString(), asset);
+      await bcNetwork?.depositSpotBalance(amount, asset);
       notificationStore.toast(createToast({ text: "Deposit request has been sent!" }), { type: "success" });
     } catch (error) {
       console.error(error);
@@ -149,11 +147,9 @@ export class BalanceStore {
     }
   };
 
-  withdrawBalance = async (assetId: string, amount: number) => {
+  withdrawBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
-
-    // if (!this.rootStore.tradeStore.market) return;
 
     if (bcNetwork?.getIsExternalWallet()) {
       notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
@@ -161,7 +157,7 @@ export class BalanceStore {
     const { type } = this.getContractBalanceInfo(assetId);
 
     try {
-      await bcNetwork?.withdrawSpotBalance(amount.toString(), type);
+      await bcNetwork?.withdrawSpotBalance(amount, type);
       notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
     } catch (error) {
       console.error(error);

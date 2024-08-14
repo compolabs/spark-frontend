@@ -13,6 +13,7 @@ const colors = {
 
   bgPrimary: "#050505",
   bgSecondary: "#141414",
+  bgIcon: "#7676803d",
 
   //accent
   greenLight: "#00E388",
