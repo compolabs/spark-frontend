@@ -18,7 +18,7 @@ import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
 import { TokenSelect } from "./TokenSelect";
-import { MINIMAL_ETH_REQUIRED } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrder.tsx";
+import { MINIMAL_ETH_REQUIRED } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrder";
 import { FuelNetwork } from "@src/blockchain";
 
 const INPUT_FILL_OPTIONS = ["Half", "Max"];
