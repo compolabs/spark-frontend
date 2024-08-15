@@ -3,7 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import SettingsIcon from "@src/assets/icons/gear.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
+import Text, { infoStyle, TEXT_TYPES } from "@src/components/Text";
 import { media } from "@src/themes/breakpoints";
 
 import { SlippageSettings } from "./SlippageSettings";
@@ -20,7 +20,7 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
       <InfoLine>
         <Text type={TEXT_TYPES.BUTTON}>Slippage tolerance</Text>
         <LeftBlock>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.INFO}>
             {slippage}%
           </Text>
           <Icon onClick={() => setSlippageSettingOpen(!isSlippageSettingOpen)} />
@@ -28,13 +28,13 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
       </InfoLine>
       <InfoLine>
         <Text type={TEXT_TYPES.BUTTON}>Exchange fee</Text>
-        <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+        <Text color={theme.colors.textPrimary} type={TEXT_TYPES.INFO}>
           0.00003 ETH (0,1$)
         </Text>
       </InfoLine>
       <InfoLine>
         <Text type={TEXT_TYPES.BUTTON}>Network fee</Text>
-        <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+        <Text color={theme.colors.textPrimary} type={TEXT_TYPES.INFO}>
           0.0001 ETH (4$)
         </Text>
       </InfoLine>
@@ -81,4 +81,9 @@ const LeftBlock = styled.div`
 
 const Icon = styled(SettingsIcon)`
   cursor: pointer;
+  color: #969696;
+  transition: 0.4s;
+  &:hover {
+    color: white;
+  }
 `;

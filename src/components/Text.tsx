@@ -19,6 +19,7 @@ export enum TEXT_TYPES {
   SUPPORTING_NUMBERS = 6,
   TITLE = 7,
   TITLE_MODAL = 8,
+  INFO = 9,
 }
 
 interface IProps {
@@ -29,6 +30,7 @@ interface IProps {
   color?: string;
   nowrap?: boolean;
   pointer?: boolean;
+  attention?: boolean;
 }
 
 export const titleStyle = `
@@ -62,6 +64,14 @@ export const bodyStyle = `
   font-weight: 400;
   line-height: 14px;
   letter-spacing: 0.2px;
+`;
+
+export const infoStyle = `
+  font-family: JetBrains Mono;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
 `;
 
 export const buttonStyle = `
@@ -108,13 +118,18 @@ export const TEXT_TYPES_MAP = {
   [TEXT_TYPES.SUPPORTING_NUMBERS]: supportNumbersStyle,
   [TEXT_TYPES.TITLE]: titleStyle,
   [TEXT_TYPES.TITLE_MODAL]: titleModalStyle,
+  [TEXT_TYPES.INFO]: infoStyle,
 };
 
 const Text = styled.div<IProps>`
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "normal")};
-  ${({ primary, secondary, disabled, theme, color }) =>
+  ${({ attention, primary, secondary, disabled, theme, color }) =>
     (() => {
       switch (true) {
+        case attention:
+          return css`
+            color: ${theme.colors?.attention};
+          `;
         case primary:
           return css`
             color: ${theme.colors?.textPrimary};
