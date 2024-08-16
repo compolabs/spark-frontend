@@ -81,9 +81,9 @@ const LeftBlock = styled.div`
 
 const Icon = styled(SettingsIcon)`
   cursor: pointer;
-  color: #969696;
+  color: ${({ theme }) => `${theme.colors.textSecondary}`};
   transition: 0.4s;
   &:hover {
-    color: white;
+    color: ${({ theme }) => `${theme.colors.textPrimary}`};
   }
 `;
