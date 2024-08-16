@@ -195,7 +195,7 @@ const ONBOARDING_SWAP_STEPS: Step[] = [
 ];
 
 const Root = styled(SmartFlex)`
-  position: absolute;
+  position: fixed;
 
   gap: 4px;
   width: 100%;

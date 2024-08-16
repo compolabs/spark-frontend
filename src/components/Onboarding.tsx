@@ -120,7 +120,7 @@ export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
 };
 
 const OverlayContainer = styled(SmartFlex)`
-  position: absolute;
+  position: fixed;
 
   width: 100%;
   height: 100%;
