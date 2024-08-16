@@ -26,6 +26,7 @@ export const DOCS_LINK = "https://docs.sprk.fi";
 
 type TMenuItem = {
   title: string;
+  dataOnboardingKey?: string;
   route?: string;
   link?: string;
   events?: string;
@@ -37,7 +38,7 @@ export const EVENTS = {
 
 export const MENU_ITEMS: Array<TMenuItem> = [
   { title: "TRADE", route: ROUTES.ROOT },
-  { title: "FAUCET", route: ROUTES.FAUCET },
+  { title: "FAUCET", route: ROUTES.FAUCET, dataOnboardingKey: "mint" },
   { title: "SWAP", route: ROUTES.SWAP },
   { title: "DOCS", link: "https://docs.sprk.fi" },
   { title: "GITHUB", link: "https://github.com/compolabs/spark" },
