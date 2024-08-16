@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 
 import CheckIcon from "@src/assets/icons/check.svg?react";
 import Logo from "@src/assets/icons/logo-small.svg?react";
-import spacemanImage from "@src/assets/images/spaceman.jpg";
+import spacemanImage from "@src/assets/images/spaceman.webp";
 import splashScreenOrderbook from "@src/assets/splash/splash-screen-orderbook.svg";
 import splashScreenSwap from "@src/assets/splash/splash-screen-swap.svg";
 import { useMedia } from "@src/hooks/useMedia";
