@@ -51,6 +51,8 @@ const CreateOrder: React.FC = observer(() => {
 
   const media = useMedia();
 
+  const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
+
   const isButtonDisabled = vm.isLoading || !vm.canProceed;
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
@@ -108,7 +110,13 @@ const CreateOrder: React.FC = observer(() => {
     }
 
     return (
-      <CreateOrderButton disabled={isButtonDisabled} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
+      <CreateOrderButton
+        data-onboarding={dataOnboardingTradingKey}
+        disabled={isButtonDisabled}
+        green={!vm.isSell}
+        red={vm.isSell}
+        onClick={vm.createOrder}
+      >
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
           {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
         </Text>

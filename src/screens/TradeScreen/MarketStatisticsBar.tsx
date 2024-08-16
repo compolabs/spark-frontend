@@ -128,9 +128,9 @@ const MarketSelect = styled.div<{
     height: 40px;
   }
 
-  ${({ focused }) =>
+  ${({ focused, theme }) =>
     focused && {
-      background: "#141414",
+      background: theme.colors.bgSecondary,
       borderRadius: "10px 0 0 10px",
     }}
 

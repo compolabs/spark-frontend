@@ -7,6 +7,7 @@ import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { DEFAULT_DECIMALS } from "@src/constants";
+import { useMedia } from "@src/hooks/useMedia";
 import { useWallet } from "@src/hooks/useWallet";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
@@ -25,6 +26,7 @@ const INITIAL_SLIPPAGE = 1;
 export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
+  const media = useMedia();
   const { swapStore, oracleStore, balanceStore } = useStores();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [typeModal, setTypeModal] = useState<ModalEnums>(ModalEnums.Success);
@@ -39,6 +41,8 @@ export const SwapScreen: React.FC = observer(() => {
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
+
+  const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
 
   useEffect(() => {
     const updateToken = setInterval(async () => {
@@ -201,6 +205,7 @@ export const SwapScreen: React.FC = observer(() => {
       <InfoBlock slippage={slippage} updateSlippage={setSlippage} />
 
       <SwapButton
+        data-onboarding={dataOnboardingSwapKey}
         disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
         onClick={swapTokens}
       >
