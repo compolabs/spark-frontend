@@ -26,6 +26,8 @@ const colors = {
 
   attention: "#FF6F06",
   favorite: "#FFEC06",
+
+  overlayBackground: "#93939338",
 };
 
 export default colors;

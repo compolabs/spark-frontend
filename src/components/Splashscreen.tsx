@@ -14,7 +14,7 @@ import { useStores } from "@src/stores";
 import Button from "./Button";
 import { Onboarding, Step } from "./Onboarding";
 import { SmartFlex } from "./SmartFlex";
-import Text from "./Text";
+import Text, { TEXT_TYPES } from "./Text";
 
 enum SPLASH_SCREEN_TYPE {
   SWAP,
@@ -105,7 +105,9 @@ export const SplashScreen: React.FC = observer(() => {
             </TitleContainer>
             <ModeContainer>{SPLASH_SCREEN_INFO.map(renderModeButton)}</ModeContainer>
             <StyledButton green onClick={handleGoClick}>
-              <ButtonText>Let&apos;s go!</ButtonText>
+              <ButtonText type={TEXT_TYPES.TITLE} primary>
+                Let&apos;s go!
+              </ButtonText>
             </StyledButton>
           </SelectModeContainer>
           {!media.mobile && (
@@ -203,7 +205,7 @@ const Root = styled(SmartFlex)`
   align-items: center;
   justify-content: center;
 
-  background-color: #93939338;
+  background-color: ${({ theme }) => theme.colors.overlayBackground};
   backdrop-filter: blur(16px);
 
   z-index: 1000;
@@ -318,13 +320,7 @@ const BannerImage = styled.img`
 `;
 
 const ButtonText = styled(Text)`
-  font-family: Space Grotesk;
-  font-size: 20px;
   font-weight: 500;
-  line-height: 16px;
-  text-align: center;
-
-  color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const StyledButton = styled(Button)`

@@ -125,7 +125,7 @@ const OverlayContainer = styled(SmartFlex)`
   width: 100%;
   height: 100%;
 
-  background-color: #93939338;
+  background-color: ${({ theme }) => theme.colors.overlayBackground};
 
   z-index: 1000;
 `;

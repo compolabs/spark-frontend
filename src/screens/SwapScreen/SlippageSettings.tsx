@@ -112,7 +112,7 @@ const Overlay = styled.div`
     bottom: 0;
     right: 0;
     left: 0;
-    background-color: #93939338;
+    background-color: ${({ theme }) => theme.colors.overlayBackground};
     backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
