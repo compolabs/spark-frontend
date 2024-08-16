@@ -41,7 +41,7 @@ const LEVERAGE_OPTIONS = [5, 10, 20];
 
 const IS_TP_SL_FEATURE_DISABLED = true;
 
-const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
+export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore, collateralStore } = useStores();

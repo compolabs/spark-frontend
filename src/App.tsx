@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
-import SideManageAssets from "@screens/assets/SideManageAssets/SideManageAssets";
+import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets";
 
 import Header from "./components/Header";
 import { PWAModal } from "./components/PWAModal";

@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 
 import ModalSheet from "@components/ModalSheet";
 import SideBar from "@components/SideBar";
-import DepositAssets from "@screens/assets/DepositAssets/DepositAssets";
-import MainAssets from "@screens/assets/MainAssets/MainAssets";
-import WithdrawAssets from "@screens/assets/WithdrawAssets/WithdrawAssets";
+import DepositAssets from "@screens/Assets/DepositAssets/DepositAssets";
+import MainAssets from "@screens/Assets/MainAssets/MainAssets";
+import WithdrawAssets from "@screens/Assets/WithdrawAssets/WithdrawAssets";
 import { useStores } from "@stores";
 import { useMedia } from "@src/hooks/useMedia";
 

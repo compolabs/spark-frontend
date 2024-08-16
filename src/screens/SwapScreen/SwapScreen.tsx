@@ -19,6 +19,8 @@ import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
 import { TokenSelect } from "./TokenSelect";
+import { MINIMAL_ETH_REQUIRED } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrder";
+import { FuelNetwork } from "@src/blockchain";
 
 const INPUT_FILL_OPTIONS = ["Half", "Max"];
 const INITIAL_SLIPPAGE = 1;
@@ -28,6 +30,7 @@ export const SwapScreen: React.FC = observer(() => {
   const theme = useTheme();
   const media = useMedia();
   const { swapStore, oracleStore, balanceStore } = useStores();
+  const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [typeModal, setTypeModal] = useState<ModalEnums>(ModalEnums.Success);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
@@ -41,6 +44,11 @@ export const SwapScreen: React.FC = observer(() => {
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
+  const nativeBalanceContract = balanceStore.getFormatContractBalanceInfo(
+    bcNetwork.getTokenBySymbol("ETH").assetId,
+    DEFAULT_DECIMALS,
+  );
+  const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(nativeBalanceContract);
 
   const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
 
@@ -109,6 +117,7 @@ export const SwapScreen: React.FC = observer(() => {
       setTransactionId(data?.transactionId);
       setTypeModal(ModalEnums.Success);
     } catch (err) {
+      console.log("er", err);
       setTypeModal(ModalEnums.Error);
     } finally {
       setPendingModalVisible(false);
@@ -132,12 +141,12 @@ export const SwapScreen: React.FC = observer(() => {
         <SwapBox>
           <BoxHeader>
             <ActionContainer>
-              <Text type={TEXT_TYPES.BODY}>Sell</Text>
+              <Text type={TEXT_TYPES.BUTTON}>Sell</Text>
               {isLoaded && !isBalanceZero && (
                 <Actions>
                   {INPUT_FILL_OPTIONS.map((option) => (
                     <ActionTag key={option} onClick={() => fillPayAmount(option)}>
-                      <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+                      <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
                         {option}
                       </Text>
                     </ActionTag>
@@ -176,7 +185,7 @@ export const SwapScreen: React.FC = observer(() => {
 
         <SwapBox>
           <BoxHeader>
-            <Text type={TEXT_TYPES.BODY}>Buy</Text>
+            <Text type={TEXT_TYPES.BUTTON}>Buy</Text>
             <TokenSelect
               options={buyTokenOptions}
               selectType="Buy"
@@ -213,6 +222,12 @@ export const SwapScreen: React.FC = observer(() => {
           Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}{" "}
         </Text>
       </SwapButton>
+
+      {isHaveExchangeFee && (
+        <Text type={TEXT_TYPES.BUTTON} attention>
+          Not enough ETH to pay an exchange fee
+        </Text>
+      )}
 
       {isSuccessModalVisible && (
         <ActionModal
