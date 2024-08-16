@@ -53,8 +53,9 @@ const Header: React.FC = observer(() => {
   };
 
   const renderWallet = () => {
+    const dataOnboardingConnectKey = `connect-${media.mobile ? "mobile" : "desktop"}`;
+
     if (!accountStore.address) {
-      const dataOnboardingConnectKey = `connect-${media.mobile ? "mobile" : "desktop"}`;
       return (
         <WalletContainer data-onboarding={dataOnboardingConnectKey}>
           <Button fitContent green onClick={openConnectDialog}>
@@ -66,14 +67,14 @@ const Header: React.FC = observer(() => {
 
     if (media.mobile) {
       return (
-        <WalletContainer isVisible={!isMobileMenuOpen}>
+        <WalletContainer data-onboarding={dataOnboardingConnectKey} isVisible={!isMobileMenuOpen}>
           <ConnectedWalletButton onClick={openAccountInfo} />
         </WalletContainer>
       );
     }
 
     return (
-      <WalletContainer>
+      <WalletContainer data-onboarding={dataOnboardingConnectKey}>
         <ConnectedWallet />
       </WalletContainer>
     );
