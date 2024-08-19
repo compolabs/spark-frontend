@@ -3,7 +3,7 @@ import { breakpoints, BreakPointTypes } from "@src/themes/breakpoints";
 import { useWindowSize } from "./useWindowSize";
 
 type TMediaBreakpoints = Record<BreakPointTypes, boolean>;
-interface IMedia extends TMediaBreakpoints {
+export interface IMedia extends TMediaBreakpoints {
   currentMedia: BreakPointTypes;
 }
 

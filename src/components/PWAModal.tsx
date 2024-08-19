@@ -6,6 +6,7 @@ import IOSScreen1Icon from "@src/assets/pwa/ios-pwa-1.svg?react";
 import IOSScreen2Icon from "@src/assets/pwa/ios-pwa-2.svg?react";
 import CircleIcon from "@src/assets/pwa/ios-pwa-3.svg?react";
 import ArrowIcon from "@src/assets/pwa/ios-pwa-4.svg?react";
+import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 import { getDeviceInfo } from "@src/utils/getDeviceInfo";
 
@@ -16,12 +17,13 @@ import Text, { TEXT_TYPES } from "./Text";
 
 export const PWAModal: React.FC = () => {
   const theme = useTheme();
+  const media = useMedia();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const { isAndroid, isIOS, isPWA } = getDeviceInfo();
 
-    if ((!isAndroid && !isIOS) || isPWA) return;
+    if ((!isAndroid && !isIOS) || isPWA || media.desktop) return;
 
     setIsVisible(true);
   }, []);

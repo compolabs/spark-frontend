@@ -7,6 +7,7 @@ import RootStore from "@stores/RootStore";
 
 export interface ISerializedSettingStore {
   isUserAgreedWithTerms?: boolean;
+  isCompleteOnboardingProcess?: boolean;
   tradeTableSize?: number;
   orderType?: ORDER_TYPE;
 }
@@ -27,6 +28,7 @@ class SettingsStore {
     makeAutoObservable(this);
     if (initState) {
       this.setIsUserAgreedWithTerms(initState.isUserAgreedWithTerms ?? false);
+      this.setIsCompletedOnboardingProcess(initState.isCompleteOnboardingProcess ?? false);
       this.setTradeTableSize(initState.tradeTableSize ?? TRADE_TABLE_SIZE.S);
       this.setOrderType(initState.orderType ?? ORDER_TYPE.Limit);
     }
@@ -34,6 +36,9 @@ class SettingsStore {
 
   isUserAgreedWithTerms = false;
   setIsUserAgreedWithTerms = (value: boolean) => (this.isUserAgreedWithTerms = value);
+
+  isCompleteOnboardingProcess = false;
+  setIsCompletedOnboardingProcess = (value: boolean) => (this.isCompleteOnboardingProcess = value);
 
   depositModalOpened: boolean = false;
   setDepositModal = (s: boolean) => (this.depositModalOpened = s);
@@ -49,6 +54,7 @@ class SettingsStore {
 
   serialize = (): ISerializedSettingStore => ({
     isUserAgreedWithTerms: this.isUserAgreedWithTerms,
+    isCompleteOnboardingProcess: this.isCompleteOnboardingProcess,
     tradeTableSize: this.tradeTableSize,
     orderType: this.orderType,
   });

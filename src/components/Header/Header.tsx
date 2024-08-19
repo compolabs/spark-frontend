@@ -53,9 +53,11 @@ const Header: React.FC = observer(() => {
   };
 
   const renderWallet = () => {
+    const dataOnboardingConnectKey = `connect-${media.mobile ? "mobile" : "desktop"}`;
+
     if (!accountStore.address) {
       return (
-        <WalletContainer>
+        <WalletContainer data-onboarding={dataOnboardingConnectKey}>
           <Button fitContent green onClick={openConnectDialog}>
             Connect wallet
           </Button>
@@ -65,14 +67,14 @@ const Header: React.FC = observer(() => {
 
     if (media.mobile) {
       return (
-        <WalletContainer isVisible={!isMobileMenuOpen}>
+        <WalletContainer data-onboarding={dataOnboardingConnectKey} isVisible={!isMobileMenuOpen}>
           <ConnectedWalletButton onClick={openAccountInfo} />
         </WalletContainer>
       );
     }
 
     return (
-      <WalletContainer>
+      <WalletContainer data-onboarding={dataOnboardingConnectKey}>
         <ConnectedWallet />
       </WalletContainer>
     );
@@ -88,7 +90,7 @@ const Header: React.FC = observer(() => {
         </SmartFlex>
         <SmartFlex center="y" gap="8px">
           {renderWallet()}
-          <MenuContainer onClick={toggleMenu}>
+          <MenuContainer data-onboarding="menu-mobile" onClick={toggleMenu}>
             <Menu />
           </MenuContainer>
         </SmartFlex>
@@ -110,7 +112,9 @@ const Header: React.FC = observer(() => {
           </a>
           <Divider />
           <SmartFlex gap="28px">
-            {MENU_ITEMS.map(({ title, link, route, events }) => {
+            {MENU_ITEMS.map(({ title, link, route, events, dataOnboardingKey }) => {
+              const dataOnboardingDeviceKey = `${dataOnboardingKey}-${media.mobile ? "mobile" : "desktop"}`;
+
               if (events) {
                 return (
                   <Tab key={title} type={TEXT_TYPES.BUTTON_SECONDARY} onClick={() => createEvents(events)}>
@@ -125,12 +129,8 @@ const Header: React.FC = observer(() => {
                 );
               else if (route)
                 return (
-                  <Link key={title} to={route}>
-                    <Tab
-                      key={title}
-                      active={isRoutesEquals(route, location.pathname)}
-                      type={TEXT_TYPES.BUTTON_SECONDARY}
-                    >
+                  <Link key={title} data-onboarding={dataOnboardingDeviceKey} to={route}>
+                    <Tab active={isRoutesEquals(route, location.pathname)} type={TEXT_TYPES.BUTTON_SECONDARY}>
                       {title}
                     </Tab>
                   </Link>
@@ -144,9 +144,7 @@ const Header: React.FC = observer(() => {
                     target="_blank"
                     onClick={() => mixPanelStore.trackEvent("desktopHeaderClick", { route: title })}
                   >
-                    <Tab key={title} type={TEXT_TYPES.BUTTON_SECONDARY}>
-                      {title}
-                    </Tab>
+                    <Tab type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</Tab>
                   </a>
                 );
               else return null;
@@ -154,7 +152,7 @@ const Header: React.FC = observer(() => {
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
-          <Button fitContent onClick={() => createEvents(EVENTS.OpenSideAssets)}>
+          <Button data-onboarding="assets-desktop" fitContent onClick={() => createEvents(EVENTS.OpenSideAssets)}>
             Assets
           </Button>
           {renderWallet()}
