@@ -19,6 +19,7 @@ export type TokenOption = {
   priceFeed: string;
   assetId: string;
   decimals: number;
+  precision: number;
 };
 
 interface TokenSelectProps {

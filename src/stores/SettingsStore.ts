@@ -49,7 +49,7 @@ class SettingsStore {
   orderType: ORDER_TYPE = ORDER_TYPE.Market;
   setOrderType = (v: ORDER_TYPE) => (this.orderType = v);
 
-  timeInForce: LimitType = LimitType.GTC;
+  timeInForce: LimitType = LimitType.FOK;
   setTimeInForce = (v: LimitType) => (this.timeInForce = v);
 
   serialize = (): ISerializedSettingStore => ({

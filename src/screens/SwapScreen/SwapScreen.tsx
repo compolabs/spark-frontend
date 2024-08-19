@@ -95,10 +95,10 @@ export const SwapScreen: React.FC = observer(() => {
   const fillPayAmount = (option: string) => {
     let newPayAmount = "";
     if (option === "Half") {
-      const half = parseNumberWithCommas(swapStore.sellToken.balance) / 2;
+      const half = (parseNumberWithCommas(swapStore.sellToken.balance) / 2).toFixed(swapStore.sellToken.precision);
       newPayAmount = half.toString();
     } else if (option === "Max") {
-      newPayAmount = parseNumberWithCommas(swapStore.sellToken.balance).toFixed(4);
+      newPayAmount = parseNumberWithCommas(swapStore.sellToken.balance).toFixed(swapStore.sellToken.precision);
     }
 
     swapStore.setPayAmount(newPayAmount);
