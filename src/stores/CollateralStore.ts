@@ -66,7 +66,7 @@ export class CollateralStore {
     this.isLoading = true;
 
     try {
-      const t = await bcNetwork!.depositPerpCollateral(token.assetId, amount.toString());
+      await bcNetwork!.depositPerpCollateral(token.assetId, amount.toString());
       notificationStore.toast("Success deposit", { type: "success" });
     } catch (error) {
       notificationStore.toast("Error with deposit", { type: "error" });

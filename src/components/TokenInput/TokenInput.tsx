@@ -25,6 +25,8 @@ interface IProps {
   onFocus?: () => void;
   readOnly?: boolean;
   styleInputContainer?: CSSProperties;
+  handleMaxBalance?: () => void;
+  isShowMax?: boolean;
 }
 
 const TokenInput: React.FC<IProps> = observer((props) => {
@@ -82,6 +84,7 @@ const TokenInput: React.FC<IProps> = observer((props) => {
           onChange={handleChangeAmount}
         />
         {props.assetId && <Chip>{bcNetwork?.getTokenByAssetId(props.assetId).symbol}</Chip>}
+        {props.isShowMax && <Chip onClick={props.handleMaxBalance}>MAX</Chip>}
       </InputContainer>
       {props.error && props.errorMessage && <Text>{props.errorMessage}</Text>}
     </Root>

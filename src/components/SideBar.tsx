@@ -3,15 +3,15 @@ import styled from "@emotion/styled";
 
 interface SideBar {
   children: React.ReactNode;
-  isShow: boolean;
+  isVisible: boolean;
   onClose: () => void;
 }
 
-const SideBar: React.FC<SideBar> = ({ children, isShow, onClose }) => {
+const SideBar: React.FC<SideBar> = ({ children, isVisible, onClose }) => {
   return (
     <>
-      {isShow && <Backdrop onClick={onClose} />}
-      <ModalDialog className={isShow ? "show" : ""} role="document">
+      {isVisible && <Backdrop onClick={onClose} />}
+      <ModalDialog className={isVisible ? "show" : ""} role="document">
         <div style={{ position: "relative", height: "100%" }}>{children}</div>
       </ModalDialog>
     </>

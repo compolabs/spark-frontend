@@ -20,6 +20,9 @@ class QuickAssetsStore {
   openQuickAssets: boolean = false;
   setQuickAssets = (v: boolean) => (this.openQuickAssets = v);
 
+  currentStep: number = 0;
+  setCurrentStep = (v: number) => (this.currentStep = v);
+
   serialize = (): ISerializedQuickAssetsStore => ({
     quickAssets: this.openQuickAssets,
   });

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
@@ -9,6 +9,7 @@ import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { SmartFlex } from "@src/components/SmartFlex";
+import { PerpMarket, SpotMarket } from "@src/entity";
 import { useMedia } from "@src/hooks/useMedia";
 import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
 import SpotMarketRow from "@src/screens/TradeScreen/RightBlock/MarketSelection/SpotMarketRow";
@@ -19,6 +20,10 @@ import { MarketTitle } from "./MarketTitle";
 import PerpMarketRow from "./PerpMarketRow";
 
 interface IProps {}
+
+const useFilteredMarkets = <T extends SpotMarket | PerpMarket>(markets: T[], searchValue: string) => {
+  return markets.filter((market) => market.symbol.includes(searchValue));
+};
 
 const MarketSelection: React.FC<IProps> = observer(() => {
   const { tradeStore } = useStores();
@@ -33,21 +38,8 @@ const MarketSelection: React.FC<IProps> = observer(() => {
     }
   });
 
-  const spotMarketsFiltered = useMemo(
-    () =>
-      tradeStore.spotMarkets.filter((market) => {
-        return searchValue.length ? market.symbol.includes(searchValue) : true;
-      }),
-    [tradeStore.spotMarkets, searchValue],
-  );
-
-  const perpMarketsFiltered = useMemo(
-    () =>
-      tradeStore.perpMarkets.filter((market) => {
-        return searchValue.length ? market.symbol.includes(searchValue) : true;
-      }),
-    [tradeStore.perpMarkets, searchValue],
-  );
+  const spotMarketsFiltered = useFilteredMarkets(tradeStore.spotMarkets, searchValue);
+  const perpMarketsFiltered = useFilteredMarkets(tradeStore.perpMarkets, searchValue);
 
   const renderSpotMarketList = () => {
     if (!isSpotMarket) return;
@@ -139,6 +131,7 @@ const TitleContainer = styled.div`
   margin-bottom: 4px;
   padding: 12px;
   background: ${({ theme }) => theme.colors.bgSecondary};
+  border-radius: 12px;
 `;
 
 const CloseIcon = styled.div`

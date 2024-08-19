@@ -13,7 +13,7 @@ import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
 
-import { ActionModal } from "./ActionModal.tsx";
+import { ActionModal } from "./ActionModal";
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
@@ -122,7 +122,7 @@ export const SwapScreen: React.FC = observer(() => {
     <Root>
       <TitleContainer>
         <Title>Swap</Title>
-        <Text type={TEXT_TYPES.H}>Easiest way to trade assets on Fuel</Text>
+        <Text type={TEXT_TYPES.BUTTON}>Easiest way to trade assets on Fuel</Text>
       </TitleContainer>
       <SwapContainer>
         <SwapBox>
@@ -194,7 +194,7 @@ export const SwapScreen: React.FC = observer(() => {
             isLoaded={isLoaded}
           />
           <ExchangeRate>
-            1 {swapStore.sellToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.buyToken.symbol} (${buyTokenPrice})
+            1 {swapStore.sellToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.buyToken.symbol} (${sellTokenPrice})
           </ExchangeRate>
         </SwapBox>
       </SwapContainer>
@@ -204,7 +204,9 @@ export const SwapScreen: React.FC = observer(() => {
         disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
         onClick={swapTokens}
       >
-        Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}
+        <Text type={TEXT_TYPES.TITLE}>
+          Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}{" "}
+        </Text>
       </SwapButton>
 
       {isSuccessModalVisible && (
@@ -259,6 +261,7 @@ const Root = styled.div`
 
 const TitleContainer = styled.div`
   margin-bottom: 16px;
+  margin-top: 48px;
 `;
 
 const textAnimation = keyframes`
@@ -415,6 +418,7 @@ const SwapButton = styled.button`
   border-radius: 16px;
   cursor: pointer;
   width: 100%;
+  height: 54px;
   border: 1px solid ${({ theme }) => theme.colors.greenLight};
   background-color: ${({ theme }) => theme.colors.greenDark};
   transition: all 0.2s;

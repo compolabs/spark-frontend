@@ -50,3 +50,5 @@ export type PerpPendingFundingPayment = {
 export type GetSpotTradesParams = {
   market: SpotMarket;
 } & GetTradeOrderEventsParams;
+
+export type Balances = Record<string, string>;

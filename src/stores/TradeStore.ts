@@ -14,7 +14,7 @@ export interface ISerializedTradeStore {
 }
 
 const MARKET_INFO_UPDATE_INTERVAL = 5 * 60 * 1000; // 5 min
-const MARKET_PRICES_UPDATE_INTERVAL = 10 * 1000; // 10 sec
+const MARKET_PRICES_UPDATE_INTERVAL = 5 * 1000; // 5 sec
 
 class TradeStore {
   private readonly rootStore: RootStore;
@@ -66,6 +66,7 @@ class TradeStore {
       () => [this.market, oracleStore.initialized],
       () => {
         this.updateMarketInfo();
+        this.updateMarketPrices();
       },
       { fireImmediately: true },
     );
@@ -152,13 +153,15 @@ class TradeStore {
   };
 
   updateMarketPrices = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const { oracleStore } = this.rootStore;
 
-    const spotMarketPriceUpdates = this.spotMarkets.map((market) =>
-      bcNetwork!.fetchSpotMarketPrice(market.baseToken.assetId),
-    );
+    this.spotMarkets.forEach((market) => {
+      const indexPriceBn = market.baseToken.priceFeed
+        ? new BN(oracleStore.getTokenIndexPrice(market.baseToken.priceFeed))
+        : BN.ZERO;
 
-    await Promise.all(spotMarketPriceUpdates);
+      market.setPrice(indexPriceBn);
+    });
   };
 
   serialize = (): ISerializedTradeStore => ({
