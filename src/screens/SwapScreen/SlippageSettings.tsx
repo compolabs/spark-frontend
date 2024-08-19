@@ -40,6 +40,7 @@ const ResolverDevice = ({ children, handleClose }: ResolverDevice) => {
 export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, saveSlippage }) => {
   const [slippagePercentageInput, setSlippagePercentageInput] = useState("0");
   const [selectedPercent, setSelectedPercent] = useState<null | number>(null);
+  const media = useMedia();
   const onChangeSlippage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSlippageValue = e.target.value;
     if (!isValidAmountInput(newSlippageValue)) {
@@ -52,15 +53,11 @@ export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, sav
     <ResolverDevice handleClose={onClose}>
       <Container>
         <Header>
-          <Text type={TEXT_TYPES.BODY} primary>
+          <Text type={TEXT_TYPES.BUTTON} primary>
             Sleepage tolerance, %
           </Text>
-          <CloseIcon onClick={onClose} />
+          <CloseIconStyled onClick={onClose} />
         </Header>
-        <Text type={TEXT_TYPES.BODY}>
-          Maximum price slippage you’re willing to accept for your order to be executed, indicating the difference
-          between expected and actual trade prices.
-        </Text>
         <Content>
           <SlippageInput
             autoComplete="off"
@@ -85,7 +82,10 @@ export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, sav
             ))}
           </ButtonsContainer>
         </Content>
-
+        <Text type={TEXT_TYPES.INFO}>
+          Maximum price slippage you’re willing to accept for your order to be executed, indicating the difference
+          between expected and actual trade prices.
+        </Text>
         <ConfirmButton
           disabled={Number(slippagePercentageInput) === 0}
           value={slippagePercentageInput}
@@ -101,10 +101,23 @@ export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, sav
   );
 };
 
+const CloseIconStyled = styled(CloseIcon)`
+  width: 30px;
+  height: 30px;
+  padding: 8px;
+  border-radius: 50px;
+  &:hover {
+    background: ${({ theme }) => theme.colors.bgIcon};
+    cursor: pointer;
+  }
+`;
 const Overlay = styled.div`
   position: absolute;
-  bottom: calc(100% - 16px);
+  bottom: calc(100% - 8px);
   right: 16px;
+  box-shadow:
+    0px 0px 14px -4px rgba(0, 0, 0, 0.2),
+    0px 32px 48px -8px rgba(0, 0, 0, 0.35);
 
   ${media.mobile} {
     position: fixed;
@@ -112,7 +125,7 @@ const Overlay = styled.div`
     bottom: 0;
     right: 0;
     left: 0;
-    background-color: #93939338;
+    background-color: ${({ theme }) => theme.colors.overlayBackground};
     backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
@@ -172,13 +185,18 @@ const ConfirmButton = styled.button`
   border: 1px solid ${({ theme }) => theme.colors.borderAccent};
   border-radius: 32px;
   padding: 12px 0;
+  height: 38px;
   width: 100%;
   text-transform: uppercase;
   color: white;
   cursor: pointer;
   background-color: transparent;
   transition: all 0.2s ease;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON]}
+  ${media.mobile} {
+    ${TEXT_TYPES_MAP[TEXT_TYPES.TITLE]}
+    height: 54px;
+  }
 
   &:hover {
     border: 1px solid ${({ theme }) => theme.colors.borderAccent};

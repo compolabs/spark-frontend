@@ -64,7 +64,9 @@ const MobileMenu: React.FC<IProps> = observer(
       <MenuOverlay isOpen={isOpen} top={50} zIndex={300}>
         <Body>
           <Container>
-            {MENU_ITEMS.map(({ title, link, route, events }) => {
+            {MENU_ITEMS.map(({ title, link, route, events, dataOnboardingKey }) => {
+              const dataOnboardingDeviceKey = `${dataOnboardingKey}-${media.mobile ? "mobile" : "desktop"}`;
+
               if (events) {
                 return (
                   <MenuItem key={title} onClick={() => createEvents(events)}>
@@ -80,15 +82,15 @@ const MobileMenu: React.FC<IProps> = observer(
               } else if (route) {
                 return (
                   <Link key={title} to={route} onClick={onClose}>
-                    <MenuItem key={title} isSelected={isRoutesEquals(route, location.pathname)}>
-                      <Text>{title}</Text>
+                    <MenuItem isSelected={isRoutesEquals(route, location.pathname)}>
+                      <Text data-onboarding={dataOnboardingDeviceKey}>{title}</Text>
                     </MenuItem>
                   </Link>
                 );
               } else if (link) {
                 return (
                   <a key={title} href={link} rel="noopener noreferrer" target="_blank">
-                    <MenuItem key={title}>
+                    <MenuItem>
                       <Text>{title}</Text>
                     </MenuItem>
                   </a>
@@ -100,7 +102,9 @@ const MobileMenu: React.FC<IProps> = observer(
           </Container>
           <SizedBox height={8} />
           <FooterContainer gap="8px" column>
-            <Button onClick={() => createEvents(EVENTS.OpenSideAssets)}>ASSETS</Button>
+            <Button data-onboarding="assets-mobile" onClick={() => createEvents(EVENTS.OpenSideAssets)}>
+              ASSETS
+            </Button>
             {renderWalletButton()}
           </FooterContainer>
         </Body>
@@ -124,6 +128,7 @@ const MenuItem = styled.div<{ isSelected?: boolean }>`
   padding: 12px 32px;
 
   ${Text} {
+    width: fit-content;
     color: ${({ theme, isSelected }) => (isSelected ? theme.colors.textPrimary : theme.colors.textSecondary)};
     ${media.mobile} {
       font-size: 16px;

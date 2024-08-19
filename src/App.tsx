@@ -4,10 +4,11 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
-import SideManageAssets from "@screens/assets/SideManageAssets/SideManageAssets";
+import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets";
 
 import Header from "./components/Header";
 import { PWAModal } from "./components/PWAModal";
+import { SplashScreen } from "./components/Splashscreen";
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
 import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
@@ -38,6 +39,7 @@ const App: React.FC = observer(() => {
       </Routes>
       <SideManageAssets />
       <PWAModal />
+      <SplashScreen />
     </Root>
   );
 });

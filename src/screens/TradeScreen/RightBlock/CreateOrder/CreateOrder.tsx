@@ -41,7 +41,7 @@ const LEVERAGE_OPTIONS = [5, 10, 20];
 
 const IS_TP_SL_FEATURE_DISABLED = true;
 
-const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
+export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore, collateralStore } = useStores();
@@ -50,6 +50,8 @@ const CreateOrder: React.FC = observer(() => {
   const isPerp = tradeStore.isPerp;
 
   const media = useMedia();
+
+  const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
 
   const isButtonDisabled = vm.isLoading || !vm.canProceed;
 
@@ -108,7 +110,13 @@ const CreateOrder: React.FC = observer(() => {
     }
 
     return (
-      <CreateOrderButton disabled={isButtonDisabled} green={!vm.isSell} red={vm.isSell} onClick={vm.createOrder}>
+      <CreateOrderButton
+        data-onboarding={dataOnboardingTradingKey}
+        disabled={isButtonDisabled}
+        green={!vm.isSell}
+        red={vm.isSell}
+        onClick={vm.createOrder}
+      >
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
           {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
         </Text>
