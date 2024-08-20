@@ -4,10 +4,9 @@ import { makeAutoObservable } from "mobx";
 import { createToast, ToastProps } from "@src/components/Toast";
 import RootStore from "@stores/RootStore";
 
-interface NotificationParams {
-  content: ToastProps;
+type NotificationParams = ToastProps & {
   options?: ToastOptions;
-}
+};
 
 class NotificationStore {
   private readonly rootStore: RootStore;
@@ -17,15 +16,29 @@ class NotificationStore {
     makeAutoObservable(this);
   }
 
-  notify = (params: NotificationParams) => {
-    const defaultOptions: ToastOptions = {
+  private getDefaultToastOptions = (options?: ToastOptions): ToastOptions => ({
+    autoClose: false,
+    ...options,
+  });
+
+  private notify = (params: NotificationParams, type: "success" | "error" | "info") => {
+    const options = this.getDefaultToastOptions({
       ...params.options,
-      autoClose: false,
-    };
+      type,
+    });
+    toast(createToast(params), options);
+  };
 
-    const customToast = createToast(params.content);
+  success = (params: NotificationParams) => {
+    this.notify(params, "success");
+  };
 
-    toast(customToast, defaultOptions);
+  error = (params: NotificationParams) => {
+    this.notify(params, "error");
+  };
+
+  info = (params: NotificationParams) => {
+    this.notify(params, "info");
   };
 }
 

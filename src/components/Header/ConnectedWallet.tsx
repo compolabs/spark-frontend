@@ -33,7 +33,7 @@ const ConnectedWallet: React.FC = observer(() => {
 
   const handleAddressCopy = () => {
     accountStore.address && copy(accountStore.address);
-    notificationStore.notify({ content: { text: "Your address was copied" }, options: { type: "info" } });
+    notificationStore.info({ text: "Your address was copied" });
   };
 
   const actions = [

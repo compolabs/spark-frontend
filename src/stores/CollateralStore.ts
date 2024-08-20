@@ -68,14 +68,11 @@ export class CollateralStore {
 
     try {
       await bcNetwork!.depositPerpCollateral(token.assetId, amount.toString());
-      notificationStore.notify({
-        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", "") },
-        options: {
-          type: "success",
-        },
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", ""),
       });
     } catch (error) {
-      notificationStore.notify({ content: { text: "Error with deposit" }, options: { type: "error" } });
+      notificationStore.error({ text: "Error with deposit" });
     }
     this.isLoading = false;
   };
@@ -90,13 +87,12 @@ export class CollateralStore {
 
     try {
       await bcNetwork!.withdrawPerpCollateral(token.assetId, amount.toString(), token.priceFeed);
-      notificationStore.notify({
-        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", "") },
-        options: { type: "success" },
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", ""),
       });
     } catch (error) {
       console.log(error, "error");
-      notificationStore.notify({ content: { text: "Error with withdraw" }, options: { type: "error" } });
+      notificationStore.error({ text: "Error with withdraw" });
     }
     this.isLoading = false;
   };

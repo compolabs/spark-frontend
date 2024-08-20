@@ -41,9 +41,8 @@ class AccountStore {
     try {
       await bcNetwork?.connect(wallet);
     } catch (error: any) {
-      notificationStore.notify({
-        content: { text: "Unexpected error. Please try again." },
-        options: { type: "error" },
+      notificationStore.error({
+        text: "Unexpected error. Please try again.",
       });
     }
   };
@@ -56,9 +55,8 @@ class AccountStore {
     try {
       await bcNetwork?.connectWalletByPrivateKey(privateKey);
     } catch (error: any) {
-      notificationStore.notify({
-        content: { text: "Unexpected error. Please try again." },
-        options: { type: "error" },
+      notificationStore.error({
+        text: "Unexpected error. Please try again.",
       });
     }
   };

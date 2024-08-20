@@ -7,12 +7,12 @@ export const handleWalletErrors = (notificationStore: NotificationStore, error: 
   if (message.includes("assets already exist in wallet settings")) return;
 
   if (message.includes("not enough coins to fit the target")) {
-    notificationStore.notify({ content: { text: "Not enough funds to pay gas" }, options: { type: "error" } });
+    notificationStore.error({ text: "Not enough funds to pay gas" });
     return;
   }
   if (message.includes("insufficient funds for intrinsic transaction cost")) {
-    notificationStore.notify({ content: { text: "Not enough funds to pay gas" }, options: { type: "error" } });
+    notificationStore.error({ text: "Not enough funds to pay gas" });
     return;
   }
-  notificationStore.notify({ content: { text: defaultMessage ?? error.toString() }, options: { type: "error" } });
+  notificationStore.error({ text: defaultMessage ?? error.toString() });
 };

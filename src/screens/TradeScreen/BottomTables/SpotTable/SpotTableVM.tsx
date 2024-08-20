@@ -73,19 +73,15 @@ class SpotTableVM {
     this.isOrderCancelling = true;
     this.cancelingOrderId = order.id;
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.notify({
-        content: { text: "Please, confirm operation in your wallet" },
-        options: { type: "info" },
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
       });
     }
 
     try {
       await bcNetwork?.cancelSpotOrder(order);
-      notificationStore.notify({
-        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)("", "") },
-        options: {
-          type: "success",
-        },
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)("", ""),
       });
     } catch (error) {
       console.error(error);

@@ -293,9 +293,8 @@ class CreateOrderVM {
     this.isLoading = true;
 
     if (bcNetwork.getIsExternalWallet()) {
-      notificationStore.notify({
-        content: { text: "Please, confirm operation in your wallet" },
-        options: { type: "info" },
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
       });
     }
 
@@ -353,11 +352,9 @@ class CreateOrderVM {
         hash = data.transactionId;
       }
 
-      notificationStore.notify({
-        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)("", ""), hash: hash },
-        options: {
-          type: "success",
-        },
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)("", ""),
+        hash: hash,
       });
       mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {

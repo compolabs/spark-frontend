@@ -130,9 +130,8 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.notify({
-        content: { text: "Please, confirm operation in your wallet" },
-        options: { type: "info" },
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
       });
     }
     const data = bcNetwork.getTokenByAssetId(assetId);
@@ -143,11 +142,8 @@ export class BalanceStore {
     };
     try {
       await bcNetwork?.depositSpotBalance(amount, asset);
-      notificationStore.notify({
-        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", "") },
-        options: {
-          type: "success",
-        },
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", ""),
       });
     } catch (error) {
       console.error(error);
@@ -160,18 +156,16 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.notify({
-        content: { text: "Please, confirm operation in your wallet" },
-        options: { type: "info" },
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
       });
     }
     const { type } = this.getContractBalanceInfo(assetId);
 
     try {
       await bcNetwork?.withdrawSpotBalance(amount, type);
-      notificationStore.notify({
-        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", "") },
-        options: { type: "success" },
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", ""),
       });
     } catch (error) {
       console.error(error);
