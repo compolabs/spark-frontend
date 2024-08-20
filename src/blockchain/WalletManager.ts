@@ -81,10 +81,11 @@ export class WalletManager {
     }, {});
   };
 
-  disconnect = () => {
+  disconnect = async () => {
     this.address = null;
     this.privateKey = null;
+    this.wallet = null;
 
-    void this.fuel.disconnect();
+    await this.fuel.disconnect();
   };
 }

@@ -38,11 +38,6 @@ const ConnectedWallet: React.FC = observer(() => {
     notificationStore.toast(createToast({ text: "Your address was copied" }), { type: "info" });
   };
 
-  const disconnectWallet = () => {
-    disconnect();
-    accountStore.disconnect();
-  };
-
   const actions = [
     {
       icon: copyIcon,
@@ -58,7 +53,7 @@ const ConnectedWallet: React.FC = observer(() => {
     },
     {
       icon: logoutIcon,
-      action: () => disconnectWallet(),
+      action: () => disconnect(),
       title: "Disconnect",
       active: true,
     },

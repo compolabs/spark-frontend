@@ -1,6 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
+import { createToast } from "@src/components/Toast";
 import { Token } from "@src/entity";
 import BN from "@src/utils/BN";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
@@ -67,9 +68,9 @@ export class CollateralStore {
 
     try {
       await bcNetwork!.depositPerpCollateral(token.assetId, amount.toString());
-      notificationStore.toast("Success deposit", { type: "success" });
+      notificationStore.toast(createToast({ text: "Success deposit" }), { type: "success" });
     } catch (error) {
-      notificationStore.toast("Error with deposit", { type: "error" });
+      notificationStore.toast(createToast({ text: "Error with deposit" }), { type: "error" });
     }
     this.isLoading = false;
   };
@@ -84,10 +85,10 @@ export class CollateralStore {
 
     try {
       await bcNetwork!.withdrawPerpCollateral(token.assetId, amount.toString(), token.priceFeed);
-      notificationStore.toast("Success withdraw", { type: "success" });
+      notificationStore.toast(createToast({ text: "Success withdraw" }), { type: "success" });
     } catch (error) {
       console.log(error, "error");
-      notificationStore.toast("Error with withdraw", { type: "error" });
+      notificationStore.toast(createToast({ text: "Error with withdraw" }), { type: "error" });
     }
     this.isLoading = false;
   };

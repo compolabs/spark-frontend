@@ -64,10 +64,10 @@ class AccountStore {
     await bcNetwork!.addAssetToWallet(assetId);
   };
 
-  disconnect = () => {
+  disconnect = async () => {
     const bcNetwork = FuelNetwork.getInstance();
 
-    bcNetwork?.disconnectWallet();
+    await bcNetwork?.disconnectWallet();
   };
 
   get address(): Nullable<B256Address> {

@@ -108,9 +108,9 @@ export class FuelNetwork {
     this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
-  disconnectWallet = (): void => {
-    this.walletManager.disconnect();
-    this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
+  disconnectWallet = async (): Promise<void> => {
+    await this.walletManager.disconnect();
+    this.orderbookSdk.setActiveWallet(undefined);
   };
 
   addAssetToWallet = async (assetId: string): Promise<void> => {

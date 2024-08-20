@@ -16,7 +16,6 @@ import Table from "@src/components/Table";
 import Tooltip from "@src/components/Tooltip";
 import { SpotMarketOrder, Token } from "@src/entity";
 import { useMedia } from "@src/hooks/useMedia";
-import MintButtons from "@src/screens/Faucet/MintButtons";
 import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { toCurrency } from "@src/utils/toCurrency";
@@ -84,6 +83,7 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
     id: "action",
     cell: (props) => (
       <CancelButton
+        data-order-id={props.getValue()}
         style={{
           minWidth: "92px",
         }}
@@ -165,10 +165,6 @@ const BALANCE_COLUMNS = [
         </SmartFlex>
       </Tooltip>
     ),
-  }),
-  balanceColumnHelper.accessor("assetId", {
-    header: "",
-    cell: (props) => <BalanceButtons assetId={props.getValue()} />,
   }),
 ];
 
@@ -309,6 +305,7 @@ const SpotTableImpl: React.FC = observer(() => {
               </Text>
             </SmartFlex>
           </MobileTableRowColumn>
+          <div />
           <MobileTableRowColumn>
             <Text type={TEXT_TYPES.SUPPORTING}>Balance</Text>
             <Tooltip
@@ -316,7 +313,7 @@ const SpotTableImpl: React.FC = observer(() => {
                 placement: "top",
                 trigger: "hover",
               }}
-              containerStyles={{ width: "fit-content" }}
+              containerStyles={{ display: "flex", justifyContent: "flex-end" }}
               content={
                 <SmartFlex gap="4px" padding="4px 8px" width="fit-content" column>
                   <Text>
@@ -333,18 +330,6 @@ const SpotTableImpl: React.FC = observer(() => {
                 <InfoIcon />
               </SmartFlex>
             </Tooltip>
-          </MobileTableRowColumn>
-          <MobileTableRowColumn>
-            <SmartFlex gap="4px">
-              {!isHidden && (
-                <CancelButton disabled={vm.isWithdrawing} onClick={() => vm.withdrawBalance(assetId)}>
-                  {vm.withdrawingAssetId === assetId ? "Loading..." : "Withdraw"}
-                </CancelButton>
-              )}
-              <CancelButton onClick={() => faucetStore.mintByAssetId(assetId)}>
-                {faucetStore.loading && faucetStore.actionTokenAssetId === assetId ? "Loading..." : "Mint"}
-              </CancelButton>
-            </SmartFlex>
           </MobileTableRowColumn>
         </MobileTableOrderRow>
       );
@@ -390,30 +375,6 @@ const SpotTableImpl: React.FC = observer(() => {
         <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
       )}
     </>
-  );
-});
-
-const BalanceButtons: React.FC<{ assetId: string }> = observer(({ assetId }) => {
-  const vm = useSpotTableVMProvider();
-  const { balanceStore } = useStores();
-  const bcNetwork = FuelNetwork.getInstance();
-
-  const { amount } = balanceStore.getContractBalanceInfo(assetId);
-
-  const token = bcNetwork.getTokenByAssetId(assetId);
-  const isEth = token.symbol === "ETH";
-
-  const isHidden = isEth || amount.eq(BN.ZERO);
-
-  return (
-    <SmartFlex gap="8px" justifyContent="flex-end" width="100%">
-      {!isHidden && (
-        <WithdrawButtonStyled disabled={vm.isWithdrawing} onClick={() => vm.withdrawBalance(assetId)}>
-          {vm.withdrawingAssetId === assetId ? "Loading..." : "Withdraw"}
-        </WithdrawButtonStyled>
-      )}
-      <MintButtons assetId={assetId} />
-    </SmartFlex>
   );
 });
 

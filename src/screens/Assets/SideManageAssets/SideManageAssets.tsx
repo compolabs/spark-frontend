@@ -7,8 +7,8 @@ import SideBar from "@components/SideBar";
 import DepositAssets from "@screens/Assets/DepositAssets/DepositAssets";
 import MainAssets from "@screens/Assets/MainAssets/MainAssets";
 import WithdrawAssets from "@screens/Assets/WithdrawAssets/WithdrawAssets";
-import { useStores } from "@stores";
 import { useMedia } from "@src/hooks/useMedia";
+import { useStores } from "@stores";
 
 interface ResolverDevice {
   children: React.ReactNode;

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Text from "@components/Text";
 import XIcon from "@src/assets/social/x.svg?react";
 import { SmartFlex } from "@src/components/SmartFlex";
-import { TWITTER_LINK } from "@src/constants";
+import { FUEL_LINK, TWITTER_LINK } from "@src/constants";
 import { useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 import { getDeviceInfo } from "@src/utils/getDeviceInfo";
@@ -30,7 +30,9 @@ const StatusBar: React.FC = observer(() => {
           <XIconStyled />
         </LinkStyled>
       )}
-      <FooterText>Powered by Fuel</FooterText>
+      <FooterText>
+        Powered by&nbsp;<LinkStyled href={FUEL_LINK}>Fuel</LinkStyled>
+      </FooterText>
     </StatusBarContainer>
   );
 });
@@ -60,11 +62,18 @@ const XIconStyled = styled(XIcon)`
 `;
 
 const FooterText = styled(Text)`
+  display: flex;
+  align-items: center;
+
   font-size: 14px;
   color: ${({ theme }) => theme.colors.textPrimary};
 
   ${media.mobile} {
     font-size: 14px;
+  }
+
+  ${LinkStyled} {
+    color: ${({ theme }) => theme.colors.greenLight};
   }
 `;
 

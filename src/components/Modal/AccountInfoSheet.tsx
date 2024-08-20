@@ -40,7 +40,6 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   const handleDisconnect = () => {
-    accountStore.disconnect();
     disconnect();
     onClose();
   };

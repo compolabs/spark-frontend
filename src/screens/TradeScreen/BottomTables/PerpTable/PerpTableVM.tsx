@@ -3,6 +3,7 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
+import { createToast } from "@src/components/Toast";
 import { PerpMarket, PerpOrder, PerpPosition } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
@@ -84,13 +85,13 @@ class PerpTableVM {
     if (!tradeStore.market || !accountStore.address) return;
 
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast("Please, confirm operation in your wallet", { type: "info" });
+      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
     }
 
     this.cancelingOrderId = orderId;
     try {
       await bcNetwork?.removePerpOrder(orderId);
-      notificationStore.toast("Order canceled!", { type: "success" });
+      notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
     } catch (error) {
       handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
     }

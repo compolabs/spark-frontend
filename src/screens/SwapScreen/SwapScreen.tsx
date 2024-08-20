@@ -4,7 +4,9 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
+import { MINIMAL_ETH_REQUIRED } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrder";
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
+import { FuelNetwork } from "@src/blockchain";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { useMedia } from "@src/hooks/useMedia";
@@ -19,8 +21,6 @@ import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
 import { PendingModal } from "./PendingModal";
 import { TokenSelect } from "./TokenSelect";
-import { MINIMAL_ETH_REQUIRED } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrder";
-import { FuelNetwork } from "@src/blockchain";
 
 const INPUT_FILL_OPTIONS = ["Half", "Max"];
 const INITIAL_SLIPPAGE = 1;

@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast, ToastContent, ToastOptions } from "react-toastify";
 import { makeAutoObservable } from "mobx";
 
 import RootStore from "@stores/RootStore";
@@ -11,7 +11,14 @@ class NotificationStore {
     makeAutoObservable(this);
   }
 
-  toast = toast;
+  toast = <TData = unknown>(content: ToastContent<TData>, options?: ToastOptions) => {
+    const defaultOptions: ToastOptions = {
+      ...options,
+      autoClose: false,
+    };
+
+    toast(content, options);
+  };
 }
 
 export default NotificationStore;
