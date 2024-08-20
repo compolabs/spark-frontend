@@ -11,7 +11,6 @@ const Button = styled.button<{
   black?: boolean;
   grey?: boolean;
   fitContent?: boolean;
-  //этот active и &:active отлтчаются: это состояние нажатой кнопки, а &:active - это цвеь в момент нажатия
   active?: boolean;
 }>`
   text-decoration: none;

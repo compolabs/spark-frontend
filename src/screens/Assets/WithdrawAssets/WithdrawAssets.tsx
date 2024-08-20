@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 
 import Button from "@components/Button";
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
-import SelectAssets from "@components/SelectAssets/SelectAssets";
+import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
@@ -72,7 +72,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
       </SmartFlex>
       <SmartFlexContainer column>
         <SmartFlex gap="10px" column>
-          <SelectAssets
+          <SelectAssetsInput
             dataAssets={balanceData}
             selected={selectAsset?.assetId}
             showBalance="contractBalance"

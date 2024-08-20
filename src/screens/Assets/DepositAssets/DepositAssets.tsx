@@ -4,13 +4,14 @@ import { observer } from "mobx-react";
 
 import Button from "@components/Button";
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
-import SelectAssets from "@components/SelectAssets/SelectAssets";
+import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
 import closeThin from "@src/assets/icons/closeThin.svg";
 import { FuelNetwork } from "@src/blockchain";
+import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
@@ -22,7 +23,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsloading] = useState(false);
-  const { quickAssetsStore, balanceStore } = useStores();
+  const { quickAssetsStore, balanceStore, oracleStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
@@ -36,6 +37,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
     setIsloading(false);
     setStep(0);
   };
+
   const balanceData = Array.from(balanceStore.balances)
     .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
@@ -43,7 +45,9 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
       const contractBalance =
         token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
       const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
+      const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed ?? ""), DEFAULT_DECIMALS);
       return {
+        price: price.toString(),
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toString(),
         contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
@@ -64,29 +68,23 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">
-        <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
-        <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
-          Select asset to deposit
-        </TextTitle>
+        <SmartFlex alignItems="center" gap="10px">
+          <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
+          <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
+            Deposit
+          </TextTitle>
+        </SmartFlex>
         <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
       </SmartFlex>
       <SmartFlexContainer column>
         <SmartFlex gap="10px" column>
-          <SelectAssets
+          <SelectAssetsInput
             dataAssets={balanceData}
             selected={selectAsset?.assetId}
             showBalance="walletBalance"
             onSelect={(el) => {
               setAssets(el);
             }}
-          />
-          <TokenInputDeposit
-            amount={amount}
-            decimals={selectAsset?.asset?.decimals ?? 2}
-            handleMaxBalance={handleSetMax}
-            isShowMax={true}
-            setAmount={setAmount}
-            styleInputContainer={{ height: 56 }}
           />
         </SmartFlex>
         <Button disabled={isLoading || !selectAsset || !amount.toNumber()} green onClick={handleClick}>

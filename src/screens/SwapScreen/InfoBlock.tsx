@@ -3,7 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import SettingsIcon from "@src/assets/icons/gear.svg?react";
-import Text, { infoStyle, TEXT_TYPES } from "@src/components/Text";
+import Text, { TEXT_TYPES } from "@src/components/Text";
 import { media } from "@src/themes/breakpoints";
 
 import { SlippageSettings } from "./SlippageSettings";

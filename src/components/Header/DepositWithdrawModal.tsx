@@ -16,7 +16,6 @@ import MaxButton from "../MaxButton";
 import Select from "../Select";
 import { SmartFlex } from "../SmartFlex";
 import Text, { TEXT_TYPES } from "../Text";
-import TokenInput from "../TokenInput";
 
 export interface IProps extends IDialogPropTypes {}
 

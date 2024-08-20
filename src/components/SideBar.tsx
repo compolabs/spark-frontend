@@ -31,16 +31,16 @@ const Backdrop = styled.div`
   z-index: 2;
 `;
 const ModalDialog = styled.div`
-  padding: 16px;
+  padding: 20px;
   backdrop-filter: blur(20px);
-  background-color: rgba(34, 34, 34, 0.3);
+  background-color: #222222;
   position: fixed;
   display: block;
   top: 0;
   bottom: 0;
-  right: -340px;
-  width: 320px;
-  margin: 10px;
+  right: -380px;
+  width: 360px;
+  margin: 20px;
   transition:
     opacity 0.3s linear,
     right 0.3s ease-out;
