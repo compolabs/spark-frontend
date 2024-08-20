@@ -298,6 +298,8 @@ class CreateOrderVM {
       });
     }
 
+    const token = this.mode === ORDER_MODE.BUY ? market.baseToken : market.quoteToken;
+
     try {
       let hash: Undefinable<string> = "";
       const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
@@ -355,7 +357,7 @@ class CreateOrderVM {
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           this.inputAmount.toString(),
-          "",
+          token.symbol,
           this.inputPrice.toString(),
         ),
         hash,

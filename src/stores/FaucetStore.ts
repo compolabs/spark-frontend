@@ -73,9 +73,10 @@ class FaucetStore {
     try {
       const amount = FAUCET_AMOUNTS[token.symbol].toString();
 
-      await bcNetwork?.mintToken(amount, assetId);
+      const tx = await bcNetwork?.mintToken(amount, assetId);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS)(amount, token.symbol),
+        hash: tx.transactionId,
       });
     } catch (error: any) {
       handleWalletErrors(

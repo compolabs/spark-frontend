@@ -95,6 +95,7 @@ class PerpTableVM {
       await bcNetwork?.removePerpOrder(orderId);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
+        hash: "",
       });
     } catch (error: any) {
       handleWalletErrors(

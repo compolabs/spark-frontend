@@ -40,7 +40,8 @@ const MESSAGE_TEMPLATES: { [K in ACTION_MESSAGE_TYPE]: string } = {
 };
 
 const formatMessage = <T extends ACTION_MESSAGE_TYPE>(template: string, args: ActionMessageArgs[T]): string => {
-  return template.replace(/{(\S+)}/g, (_, index) => args[index] || "");
+  let index = 0;
+  return template.replace(/{(\S+)}/g, () => args[index++] || "");
 };
 
 export const getActionMessage = <T extends ACTION_MESSAGE_TYPE>(messageType: T): ActionMessageCreator<T> => {

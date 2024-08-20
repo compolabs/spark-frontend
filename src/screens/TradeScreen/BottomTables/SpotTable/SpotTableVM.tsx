@@ -79,9 +79,10 @@ class SpotTableVM {
     }
 
     try {
-      await bcNetwork?.cancelSpotOrder(order);
+      const tx = await bcNetwork?.cancelSpotOrder(order);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
+        hash: tx.transactionId,
       });
     } catch (error: any) {
       handleWalletErrors(

@@ -41,7 +41,7 @@ root.render(
       <ToastContainer
         autoClose={5000}
         closeOnClick={false}
-        icon={<div />}
+        icon={false}
         newestOnTop={true}
         position="bottom-right"
         rtl={false}

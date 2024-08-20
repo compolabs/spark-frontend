@@ -141,9 +141,10 @@ export class BalanceStore {
       decimals: data.decimals,
     };
     try {
-      await bcNetwork?.depositSpotBalance(amount, asset);
+      const tx = await bcNetwork?.depositSpotBalance(amount, asset);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amount, data.symbol),
+        hash: tx.transactionId,
       });
     } catch (error: any) {
       handleWalletErrors(
@@ -168,9 +169,10 @@ export class BalanceStore {
     const { type } = this.getContractBalanceInfo(assetId);
 
     try {
-      await bcNetwork?.withdrawSpotBalance(amount, type);
+      const tx = await bcNetwork?.withdrawSpotBalance(amount, type);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amount, token.symbol),
+        hash: tx.transactionId,
       });
     } catch (error: any) {
       handleWalletErrors(

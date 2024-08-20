@@ -123,23 +123,23 @@ export class FuelNetwork {
     return this.orderbookSdk.fulfillOrderMany(order);
   };
 
-  cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {
-    await this.orderbookSdk.cancelOrder(order.id);
+  cancelSpotOrder = async (order: SpotMarketOrder): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.cancelOrder(order.id);
   };
 
-  mintToken = async (amount: string, assetAddress: string): Promise<void> => {
+  mintToken = async (amount: string, assetAddress: string): Promise<WriteTransactionResponse> => {
     const token = this.getTokenByAssetId(assetAddress);
     const asset = this.getAssetFromToken(token);
 
-    await this.orderbookSdk.mintToken(asset, amount);
+    return this.orderbookSdk.mintToken(asset, amount);
   };
 
-  withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<void> => {
-    await this.orderbookSdk.withdraw(amount, assetType);
+  withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.withdraw(amount, assetType);
   };
 
-  depositSpotBalance = async (amount: string, asset: Asset): Promise<void> => {
-    await this.orderbookSdk.deposit(asset, amount);
+  depositSpotBalance = async (amount: string, asset: Asset): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.deposit(asset, amount);
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {

@@ -71,6 +71,7 @@ export class CollateralStore {
       await bcNetwork!.depositPerpCollateral(token.assetId, amount.toString());
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", ""),
+        hash: "",
       });
     } catch (error: any) {
       handleWalletErrors(
@@ -98,6 +99,7 @@ export class CollateralStore {
       await bcNetwork!.withdrawPerpCollateral(token.assetId, amount.toString(), token.priceFeed);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", ""),
+        hash: "",
       });
     } catch (error: any) {
       handleWalletErrors(
