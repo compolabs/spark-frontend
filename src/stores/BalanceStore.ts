@@ -140,17 +140,18 @@ export class BalanceStore {
       symbol: data.symbol,
       decimals: data.decimals,
     };
+    const amountFormatted = BN.formatUnits(amount, data.decimals).toSignificant(2);
     try {
       const tx = await bcNetwork?.depositSpotBalance(amount, asset);
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amount, data.symbol),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, data.symbol),
         hash: tx.transactionId,
       });
     } catch (error: any) {
       handleWalletErrors(
         notificationStore,
         error,
-        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amount, data.symbol, error.toString()),
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amountFormatted, data.symbol, error.toString()),
       );
     }
   };
@@ -167,18 +168,23 @@ export class BalanceStore {
       });
     }
     const { type } = this.getContractBalanceInfo(assetId);
+    const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
 
     try {
       const tx = await bcNetwork?.withdrawSpotBalance(amount, type);
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amount, token.symbol),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
       });
     } catch (error: any) {
       handleWalletErrors(
         notificationStore,
         error,
-        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amount, token.symbol, error.toString()),
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(
+          amountFormatted,
+          token.symbol,
+          error.toString(),
+        ),
       );
     }
   };

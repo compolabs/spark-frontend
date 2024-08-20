@@ -33,7 +33,7 @@ const MESSAGE_TEMPLATES: { [K in ACTION_MESSAGE_TYPE]: string } = {
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED]: "Deposit of {amount} {symbol} failed: {reason}",
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS]: "{amount} {symbol} withdrawn successfully.",
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED]: "Withdrawal of {amount} {symbol} failed: {reason}",
-  [ACTION_MESSAGE_TYPE.CREATING_ORDER]: "Order created successfully to sell {amount} {symbol} at {price}.",
+  [ACTION_MESSAGE_TYPE.CREATING_ORDER]: "Order created successfully to sell {amount} {symbol} at ${price}.",
   [ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED]: "Order creation failed: {reason}",
   [ACTION_MESSAGE_TYPE.CANCELING_ORDER]: "Order closed successfully.",
   [ACTION_MESSAGE_TYPE.CANCELING_ORDER_FAILED]: "Order canceling failed: {reason}.",

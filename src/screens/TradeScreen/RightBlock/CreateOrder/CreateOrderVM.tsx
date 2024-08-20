@@ -298,8 +298,6 @@ class CreateOrderVM {
       });
     }
 
-    const token = this.mode === ORDER_MODE.BUY ? market.baseToken : market.quoteToken;
-
     try {
       let hash: Undefinable<string> = "";
       const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
@@ -354,11 +352,14 @@ class CreateOrderVM {
         hash = data.transactionId;
       }
 
+      const token = this.mode === ORDER_MODE.BUY ? market.quoteToken : market.baseToken;
+      const amount = this.mode === ORDER_MODE.BUY ? this.inputTotal : this.inputAmount;
+
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
-          this.inputAmount.toString(),
+          BN.formatUnits(amount, token.decimals).toSignificant(2),
           token.symbol,
-          this.inputPrice.toString(),
+          BN.formatUnits(this.inputPrice, DEFAULT_DECIMALS).toSignificant(2),
         ),
         hash,
       });
