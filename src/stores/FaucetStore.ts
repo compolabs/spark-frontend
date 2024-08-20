@@ -2,9 +2,9 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { createToast } from "@src/components/Toast";
 import { FUEL_FAUCET } from "@src/constants";
 import BN from "@src/utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import RootStore from "@stores/RootStore";
 
@@ -61,12 +61,18 @@ class FaucetStore {
     this.setActionTokenAssetId(assetId);
     this.setLoading(true);
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.notify({
+        content: { text: "Please, confirm operation in your wallet" },
+        options: { type: "info" },
+      });
     }
 
     try {
       await bcNetwork?.mintToken(assetId);
-      notificationStore.toast(createToast({ text: "Minting successful!" }), { type: "success" });
+      notificationStore.notify({
+        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS)("", "") },
+        options: { type: "success" },
+      });
     } catch (error: any) {
       console.log(error);
       handleWalletErrors(notificationStore, error, "We were unable to mint tokens at this time");

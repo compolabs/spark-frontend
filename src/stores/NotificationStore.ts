@@ -1,7 +1,13 @@
-import { toast, ToastContent, ToastOptions } from "react-toastify";
+import { toast, ToastOptions } from "react-toastify";
 import { makeAutoObservable } from "mobx";
 
+import { createToast, ToastProps } from "@src/components/Toast";
 import RootStore from "@stores/RootStore";
+
+interface NotificationParams {
+  content: ToastProps;
+  options?: ToastOptions;
+}
 
 class NotificationStore {
   private readonly rootStore: RootStore;
@@ -11,13 +17,15 @@ class NotificationStore {
     makeAutoObservable(this);
   }
 
-  toast = <TData = unknown>(content: ToastContent<TData>, options?: ToastOptions) => {
+  notify = (params: NotificationParams) => {
     const defaultOptions: ToastOptions = {
-      ...options,
+      ...params.options,
       autoClose: false,
     };
 
-    toast(content, options);
+    const customToast = createToast(params.content);
+
+    toast(customToast, defaultOptions);
   };
 }
 

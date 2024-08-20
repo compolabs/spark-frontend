@@ -13,11 +13,11 @@ import { Undefinable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { PerpMaxAbsPositionSize } from "@src/blockchain/types";
-import { createToast } from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import Math from "@src/utils/Math";
 import { RootStore, useStores } from "@stores";
@@ -293,7 +293,10 @@ class CreateOrderVM {
     this.isLoading = true;
 
     if (bcNetwork.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.notify({
+        content: { text: "Please, confirm operation in your wallet" },
+        options: { type: "info" },
+      });
     }
 
     try {
@@ -350,8 +353,11 @@ class CreateOrderVM {
         hash = data.transactionId;
       }
 
-      notificationStore.toast(createToast({ text: "Order Created", hash: hash }), {
-        type: "success",
+      notificationStore.notify({
+        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)("", ""), hash: hash },
+        options: {
+          type: "success",
+        },
       });
       mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {

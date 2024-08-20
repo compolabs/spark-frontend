@@ -2,11 +2,11 @@ import { AssetType, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk"
 import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
-import { createToast } from "@components/Toast";
 import { FuelNetwork } from "@src/blockchain";
 import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { Balances } from "@src/blockchain/types";
 import BN from "@src/utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
@@ -130,7 +130,10 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.notify({
+        content: { text: "Please, confirm operation in your wallet" },
+        options: { type: "info" },
+      });
     }
     const data = bcNetwork.getTokenByAssetId(assetId);
     const asset = {
@@ -140,7 +143,12 @@ export class BalanceStore {
     };
     try {
       await bcNetwork?.depositSpotBalance(amount, asset);
-      notificationStore.toast(createToast({ text: "Deposit request has been sent!" }), { type: "success" });
+      notificationStore.notify({
+        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", "") },
+        options: {
+          type: "success",
+        },
+      });
     } catch (error) {
       console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
@@ -152,13 +160,19 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.notify({
+        content: { text: "Please, confirm operation in your wallet" },
+        options: { type: "info" },
+      });
     }
     const { type } = this.getContractBalanceInfo(assetId);
 
     try {
       await bcNetwork?.withdrawSpotBalance(amount, type);
-      notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
+      notificationStore.notify({
+        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", "") },
+        options: { type: "success" },
+      });
     } catch (error) {
       console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");

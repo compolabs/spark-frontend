@@ -15,7 +15,6 @@ import Divider from "../Divider";
 import Sheet from "../Sheet";
 import { SmartFlex } from "../SmartFlex";
 import Text, { TEXT_TYPES } from "../Text";
-import { createToast } from "../Toast";
 
 interface Props {
   isOpen: boolean;
@@ -35,7 +34,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const handleAddressCopy = () => {
     accountStore.address && copy(accountStore.address);
-    notificationStore.toast(createToast({ text: "Your address was copied" }), { type: "info" });
+    notificationStore.notify({ content: { text: "Your address was copied" }, options: { type: "info" } });
     onClose();
   };
 

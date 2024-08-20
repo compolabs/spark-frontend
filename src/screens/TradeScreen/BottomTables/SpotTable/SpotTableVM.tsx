@@ -4,11 +4,11 @@ import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
-import { createToast } from "@src/components/Toast";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { Subscription } from "@src/typings/utils";
 import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { RootStore, useStores } from "@stores";
 
@@ -73,12 +73,20 @@ class SpotTableVM {
     this.isOrderCancelling = true;
     this.cancelingOrderId = order.id;
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.notify({
+        content: { text: "Please, confirm operation in your wallet" },
+        options: { type: "info" },
+      });
     }
 
     try {
       await bcNetwork?.cancelSpotOrder(order);
-      notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
+      notificationStore.notify({
+        content: { text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)("", "") },
+        options: {
+          type: "success",
+        },
+      });
     } catch (error) {
       console.error(error);
       handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
