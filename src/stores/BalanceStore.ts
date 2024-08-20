@@ -143,17 +143,22 @@ export class BalanceStore {
     try {
       await bcNetwork?.depositSpotBalance(amount, asset);
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", ""),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amount, data.symbol),
       });
-    } catch (error) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amount, data.symbol, error.toString()),
+      );
     }
   };
 
   withdrawBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
+
+    const token = bcNetwork.getTokenByAssetId(assetId);
 
     if (bcNetwork?.getIsExternalWallet()) {
       notificationStore.info({
@@ -165,11 +170,14 @@ export class BalanceStore {
     try {
       await bcNetwork?.withdrawSpotBalance(amount, type);
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", ""),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amount, token.symbol),
       });
-    } catch (error) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amount, token.symbol, error.toString()),
+      );
     }
   };
 

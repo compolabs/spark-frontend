@@ -51,15 +51,19 @@ class FaucetStore {
   private mint = async (assetId: string) => {
     const { accountStore, balanceStore, notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
+    const token = bcNetwork.getTokenByAssetId(assetId);
+
+    if (!token || !accountStore.address) return;
+
     try {
       await bcNetwork!.addAssetToWallet(assetId);
     } catch (error: any) {
       console.error(error);
     }
-    if (!bcNetwork!.getTokenByAssetId(assetId) || !accountStore.address) return;
 
     this.setActionTokenAssetId(assetId);
     this.setLoading(true);
+
     if (bcNetwork?.getIsExternalWallet()) {
       notificationStore.info({
         text: "Please, confirm operation in your wallet",
@@ -67,17 +71,22 @@ class FaucetStore {
     }
 
     try {
-      await bcNetwork?.mintToken(assetId);
+      const amount = FAUCET_AMOUNTS[token.symbol].toString();
+
+      await bcNetwork?.mintToken(amount, assetId);
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS)("", ""),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS)(amount, token.symbol),
       });
     } catch (error: any) {
-      console.log(error);
-      handleWalletErrors(notificationStore, error, "We were unable to mint tokens at this time");
-    } finally {
-      this.setLoading(false);
-      await balanceStore.update();
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS_FAILED)(error.message),
+      );
     }
+
+    this.setLoading(false);
+    await balanceStore.update();
   };
 
   mintByAssetId = (assetId: string) => {

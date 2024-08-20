@@ -12,9 +12,7 @@ import { Account, B256Address, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, Token } from "@src/entity";
-import { PerpMarketTrade } from "@src/entity/PerpMarketTrade";
-import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
+import { PerpMarket, PerpMarketTrade, PerpOrder, PerpPosition, SpotMarketOrder, Token } from "@src/entity";
 import BN from "@src/utils/BN";
 
 import {
@@ -129,11 +127,9 @@ export class FuelNetwork {
     await this.orderbookSdk.cancelOrder(order.id);
   };
 
-  mintToken = async (assetAddress: string): Promise<void> => {
+  mintToken = async (amount: string, assetAddress: string): Promise<void> => {
     const token = this.getTokenByAssetId(assetAddress);
     const asset = this.getAssetFromToken(token);
-
-    const amount = FAUCET_AMOUNTS[token.symbol].toString();
 
     await this.orderbookSdk.mintToken(asset, amount);
   };
@@ -254,7 +250,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpCollateralBalance(accountAddress, asset);
-    return new BN("0");
+    return BN.ZERO;
   };
 
   fetchPerpAllTraderPositions = async (
@@ -307,7 +303,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpFundingRate(asset);
-    return new BN("0");
+    return BN.ZERO;
   };
 
   fetchPerpMaxAbsPositionSize = async (
@@ -319,7 +315,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpMaxAbsPositionSize(accountAddress, asset, tradePrice);
-    return { shortSize: new BN("0"), longSize: new BN("0") };
+    return { shortSize: BN.ZERO, longSize: BN.ZERO };
   };
 
   fetchPerpPendingFundingPayment = async (
@@ -330,7 +326,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpPendingFundingPayment(accountAddress, asset);
-    return { fundingGrowthPayment: new BN("0"), fundingPayment: new BN("0") };
+    return { fundingGrowthPayment: BN.ZERO, fundingPayment: BN.ZERO };
   };
 
   fetchPerpMarkPrice = async (assetAddress: string): Promise<BN> => {
@@ -338,7 +334,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpMarkPrice(asset);
-    return new BN("0");
+    return BN.ZERO;
   };
 
   private getAssetFromToken = (token: Token) => {

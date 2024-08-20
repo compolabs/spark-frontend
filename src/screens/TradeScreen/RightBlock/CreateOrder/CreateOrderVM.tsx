@@ -353,13 +353,20 @@ class CreateOrderVM {
       }
 
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)("", ""),
-        hash: hash,
+        text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
+          this.inputAmount.toString(),
+          "",
+          this.inputPrice.toString(),
+        ),
+        hash,
       });
       mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to process your order at this time");
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED)(error.toString()),
+      );
     }
 
     await balanceStore.update();

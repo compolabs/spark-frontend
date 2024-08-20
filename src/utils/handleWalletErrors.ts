@@ -1,6 +1,8 @@
 import { NotificationStore } from "@src/stores";
 
 export const handleWalletErrors = (notificationStore: NotificationStore, error: any, defaultMessage?: string) => {
+  console.error(`Error: ${error}`);
+
   const message = error?.message.toLowerCase();
 
   if (message.includes("user rejected action") || message.includes("user rejected the transaction")) return;

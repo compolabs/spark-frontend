@@ -4,6 +4,7 @@ import { FuelNetwork } from "@src/blockchain";
 import { Token } from "@src/entity";
 import BN from "@src/utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
 import RootStore from "./RootStore";
@@ -71,8 +72,16 @@ export class CollateralStore {
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", ""),
       });
-    } catch (error) {
-      notificationStore.error({ text: "Error with deposit" });
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(
+          amount.toString(),
+          token.symbol,
+          error.toString(),
+        ),
+      );
     }
     this.isLoading = false;
   };
@@ -90,9 +99,16 @@ export class CollateralStore {
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", ""),
       });
-    } catch (error) {
-      console.log(error, "error");
-      notificationStore.error({ text: "Error with withdraw" });
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(
+          amount.toString(),
+          token.symbol,
+          error.toString(),
+        ),
+      );
     }
     this.isLoading = false;
   };

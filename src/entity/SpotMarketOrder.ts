@@ -5,8 +5,6 @@ import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 
-import "./test";
-
 import { Token } from "./Token";
 
 export type SpotMarketOrderParams = {
