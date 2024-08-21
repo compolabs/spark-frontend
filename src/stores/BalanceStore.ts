@@ -7,7 +7,6 @@ import { FuelNetwork } from "@src/blockchain";
 import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { Balances } from "@src/blockchain/types";
 import BN from "@src/utils/BN";
-import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
 import RootStore from "./RootStore";
@@ -138,13 +137,7 @@ export class BalanceStore {
       symbol: data.symbol,
       decimals: data.decimals,
     };
-    try {
-      await bcNetwork?.depositSpotBalance(amount, asset);
-      notificationStore.toast(createToast({ text: "Deposit request has been sent!" }), { type: "success" });
-    } catch (error) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
-    }
+    return bcNetwork?.depositSpotBalance(amount, asset);
   };
 
   withdrawBalance = async (assetId: string, amount: string) => {
@@ -156,13 +149,7 @@ export class BalanceStore {
     }
     const { type } = this.getContractBalanceInfo(assetId);
 
-    try {
-      await bcNetwork?.withdrawSpotBalance(amount, type);
-      notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
-    } catch (error) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
-    }
+    return bcNetwork?.withdrawSpotBalance(amount, type);
   };
 
   private fetchBalances = async (): Promise<Balances> => {

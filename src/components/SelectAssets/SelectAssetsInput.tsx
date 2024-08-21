@@ -3,6 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import Button from "@components/Button";
+import SearchInput from "@components/SearchInput.tsx";
 import AssetBlock, { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
@@ -29,9 +30,11 @@ export interface AssetBlockData {
 interface IProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   selected?: T;
   onSelect: (option: AssetBlockData, index: number) => void;
+  onChangeValue: (value: BN) => void;
   label?: string;
   dataAssets: AssetBlockData[];
   showBalance: IAssetBlock["options"]["showBalance"];
+  amount: BN;
 }
 
 const presentData = [
@@ -53,33 +56,50 @@ const presentData = [
   },
 ];
 
-const SelectAssetsInput = <T,>({ showBalance, selected, onSelect, label, dataAssets, ...rest }: IProps<T>) => {
+const SelectAssetsInput = <T,>({
+  showBalance,
+  selected,
+  onSelect,
+  label,
+  dataAssets,
+  onChangeValue,
+  amount,
+  ...rest
+}: IProps<T>) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [amount, setAmount] = useState(BN.ZERO);
   const theme = useTheme();
   const selectedOption = dataAssets.find(({ assetId }) => selected === assetId);
+  const [searchValue, setSearchValue] = useState<string>("");
   const handleSelectClick = (v: AssetBlockData, index: number) => {
     onSelect(v, index);
     setIsVisible(false);
-    setAmount(BN.ZERO);
+    onChangeValue(BN.ZERO);
   };
   const handleSetAmount = (el: number) => {
+    if (!showBalance || !selectedOption) return;
     const amount = BN.parseUnits(
-      new BN(selectedOption?.balance ?? 0).multipliedBy(el).div(new BN(100)),
+      new BN(selectedOption[showBalance] ?? 0).multipliedBy(el).div(new BN(100)),
       DEFAULT_DECIMALS,
     );
-    setAmount(amount);
+    onChangeValue(amount);
   };
+  const handleChangeSearch = (e: string) => {
+    setSearchValue(e);
+  };
+  if (!selectedOption || !showBalance) return;
+  const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(selectedOption[showBalance] ?? 0);
   return (
     <SmartFlex gap="10px" column>
       <SmartFlexInput>
-        <TransparentInput
-          placeholder="0.01"
-          value={amount}
-          onChange={(value: BN) => {
-            setAmount(value);
-          }}
-        />
+        <InputContainer error={isInputError}>
+          <TransparentInput
+            placeholder="0.01"
+            value={amount}
+            onChange={(value: BN) => {
+              onChangeValue(value);
+            }}
+          />
+        </InputContainer>
         <TooltipAssetsContainer>
           <Tooltip
             config={{
@@ -88,22 +108,39 @@ const SelectAssetsInput = <T,>({ showBalance, selected, onSelect, label, dataAss
               visible: isVisible,
               onVisibleChange: setIsVisible,
             }}
+            containerStyles={{ padding: 0 }}
             content={
-              <Column crossAxisSize="max">
-                {dataAssets.map((v, index) => {
-                  const active = selected === v.assetId;
-                  return (
-                    <Option key={v.assetId + "_option"} active={active} onClick={() => handleSelectClick(v, index)}>
-                      <AssetBlock
-                        key={v.assetId}
-                        options={{ showBalance }}
-                        styleToken={{ background: "transparent", padding: "10px 5px" }}
-                        token={v}
-                      />
-                    </Option>
-                  );
-                })}
-              </Column>
+              <ColumnContent crossAxisSize="max">
+                <Container>
+                  <SearchInput
+                    placeholder=" "
+                    value={searchValue}
+                    variant="transparent"
+                    onChange={handleChangeSearch}
+                  />
+                </Container>
+                <OptionsHeader>
+                  <Text type={TEXT_TYPES.BODY}>Asset</Text>
+                  <Text type={TEXT_TYPES.BODY}>Wallet Balance</Text>
+                </OptionsHeader>
+                {dataAssets
+                  .filter((item) => item.asset.name.toLowerCase().includes(searchValue.toLowerCase()))
+                  .map((v, index) => {
+                    const active = selected === v.assetId;
+                    return (
+                      <>
+                        <Option key={v.assetId + "_option"} active={active} onClick={() => handleSelectClick(v, index)}>
+                          <AssetBlock
+                            key={v.assetId}
+                            options={{ showBalance }}
+                            styleToken={{ background: "transparent", padding: "4px 2px" }}
+                            token={v}
+                          />
+                        </Option>
+                      </>
+                    );
+                  })}
+              </ColumnContent>
             }
           >
             <Wrap focused={isVisible}>
@@ -140,7 +177,38 @@ const SelectAssetsInput = <T,>({ showBalance, selected, onSelect, label, dataAss
 };
 
 export default SelectAssetsInput;
+
+const InputContainer = styled.div<{
+  error?: boolean;
+}>`
+  input {
+    color: ${({ error, theme }) =>
+      (() => {
+        if (error) return theme.colors.attention;
+        return theme.colors.textSecondary;
+      })()};
+  }
+`;
+
+const ColumnContent = styled(Column)`
+  width: 280px;
+`;
+
+const OptionsHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 12px;
+  height: 32px;
+  width: 100%;
+`;
+
 const TextPrecent = styled(Text)``;
+
+const Container = styled.div`
+  padding: 0 14px;
+  width: 100%;
+`;
 
 const ButtonPrecent = styled(Button)`
   padding: 5px !important;

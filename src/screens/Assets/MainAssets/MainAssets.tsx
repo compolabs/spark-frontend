@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -15,14 +14,17 @@ import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
+import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
+import closeThin from "@src/assets/icons/closeThin.svg";
 
 interface MainAssets {
   setStep: (value: number) => void;
 }
 
 const MainAssets = observer(({ setStep }: MainAssets) => {
-  const { quickAssetsStore, balanceStore } = useStores();
-  const { oracleStore, settingsStore } = useStores();
+  const { balanceStore } = useStores();
+  const { oracleStore, settingsStore, quickAssetsStore } = useStores();
+  const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = settingsStore?.isShowDepositInfo ?? true;
 
@@ -42,11 +44,11 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       };
     });
 
-  const hasPositiveBalance = balanceData.some((item) => new BN(item.walletBalance).isGreaterThan(BN.ZERO));
+  const hasPositiveBalance = balanceData.some((item) => new BN(item.contractBalance).isGreaterThan(BN.ZERO));
 
-  const accumulateBalance = balanceData.reduce((acc, account) => {
+  const accumulateBalanceContract = balanceData.reduce((acc, account) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
-    return acc.plus(new BN(account.balance).multipliedBy(price));
+    return acc.plus(new BN(account.contractBalance).multipliedBy(price));
   }, BN.ZERO);
 
   const closeAssets = () => {
@@ -56,26 +58,42 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 
   return (
     <AssetsContainer justifyContent="space-between" column>
-      <SmartFlex alignItems="center" justifyContent="space-between">
-        <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
-          Deposited Assets
-        </TextTitle>
+      <SmartFlex alignItems="center" justifyContent="space-between" column>
+        <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
+          <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
+            Deposited Assets
+          </TextTitle>
+          <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
+        </HeaderBlock>
+        {hasPositiveBalance && (
+          <WalletBlock gap="8px" column>
+            {balanceData.map((el) => (
+              <AssetItem key={el.assetId}>
+                <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
+              </AssetItem>
+            ))}
+            <OverallBlock justifyContent="space-between">
+              <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+                Overall
+              </Text>
+              <Text color={theme.colors.greenLight}>${new BN(accumulateBalanceContract).toSignificant(2)}</Text>
+            </OverallBlock>
+          </WalletBlock>
+        )}
       </SmartFlex>
-
-      <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
-        <DepositAssets />
-        <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
-      </DepositedAssets>
-
-      <SmartFlex gap="10px" style={{ width: "100%" }} column>
-        {balanceData.map((el) => (
-          <AssetBlock key={el.assetId} options={{ showBalance: "walletBalance" }} token={el} />
-        ))}
-      </SmartFlex>
+      {!hasPositiveBalance && (
+        <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
+          <DepositAssets />
+          <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
+        </DepositedAssets>
+      )}
       <ButtomClolumn justifyContent="space-between">
         {isShowDepositInfo && <InfoBlockAssets />}
         <Button green onClick={() => setStep(1)}>
           Deposit
+        </Button>
+        <Button black onClick={() => setStep(2)}>
+          Withdraw
         </Button>
       </ButtomClolumn>
     </AssetsContainer>
@@ -84,13 +102,32 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 
 export default MainAssets;
 
+const HeaderBlock = styled(SmartFlex)`
+  width: 100%;
+`;
+const OverallBlock = styled(SmartFlex)`
+  margin: 0px 15px;
+`;
+const AssetItem = styled(SmartFlex)`
+  padding: 12px;
+  background: #00000026;
+  border-radius: 8px;
+`;
+
+const WalletBlock = styled(SmartFlex)`
+  width: 100%;
+  margin-top: 40px;
+`;
 const ButtomClolumn = styled(Column)`
+  gap: 15px;
   width: 100%;
 `;
 const TextTitle = styled(Text)`
   width: 182px;
   line-height: 20px;
   letter-spacing: 0.32px;
+  text-align: left;
+  width: 100%;
 `;
 
 const TextTitleDeposit = styled(TextTitle)`
@@ -106,4 +143,15 @@ const AssetsContainer = styled(SmartFlex)`
 const DepositedAssets = styled(SmartFlex)`
   height: 100%;
   width: 100%;
+`;
+
+const CloseButton = styled.img`
+  width: 30px;
+  height: 30px;
+  background: ${({ theme }) => theme.colors.bgIcon};
+  padding: 8px;
+  border-radius: 100px;
+  &:hover {
+    cursor: pointer;
+  }
 `;

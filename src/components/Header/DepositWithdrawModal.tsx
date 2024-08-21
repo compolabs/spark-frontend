@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
+import TokenInput from "@components/TokenInput";
 import LeftCaretIcon from "@src/assets/icons/arrowUp.svg?react";
 import { FuelNetwork } from "@src/blockchain";
 import { useStores } from "@src/stores";

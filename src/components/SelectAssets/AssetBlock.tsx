@@ -40,14 +40,15 @@ const AssetBlock: React.FC<IAssetBlock> = observer(
             <Text type={TEXT_TYPES.BUTTON} primary>
               {token.asset.symbol}
             </Text>
+            {isShowBalance && <Text type={TEXT_TYPES.BODY}>{token.asset.name}</Text>}
           </div>
         </SmartFlex>
         {isShowBalance && (
           <div>
-            <Text style={{ textAlign: "right" }} type={TEXT_TYPES.BUTTON} primary>
+            <Text style={{ textAlign: "right" }} type={TEXT_TYPES.INFO} primary>
               {new BN(token[showBalance]).toSignificant(token.asset.decimals)}
             </Text>
-            <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type={TEXT_TYPES.SUPPORTING}>
+            <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type={TEXT_TYPES.BODY}>
               ${price.multipliedBy(token[showBalance]).toSignificant(2)}
             </Text>
           </div>
