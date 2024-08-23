@@ -46,7 +46,8 @@ export const ActionModal: React.FC<ActionModalProps> = ({ hash, onClose, transac
   const theme = useTheme();
   const { token, type, amount } = transactionInfo;
 
-  const descriptionAction = (type: ModalEnums, link: string) => {
+  console.log("123typeModal", type);
+  const descriptionAction = (type: ModalEnums, link: string, transactionType: string) => {
     switch (type) {
       case ModalEnums.Pending:
         return "Approve transaction in your wallet";
@@ -62,7 +63,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ hash, onClose, transac
           </SmartFlex>
         );
       case ModalEnums.Error:
-        return "Swap declined";
+        return transactionType + " failed";
     }
   };
   const link = getExplorerLinkByHash(hash);
@@ -91,7 +92,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ hash, onClose, transac
             {iconTitle(typeModal)}
             <Description>
               <ModalTitle color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
-                {descriptionAction(typeModal, link)}
+                {descriptionAction(typeModal, link, transactionInfo.type)}
               </ModalTitle>
             </Description>
           </ActionBlock>
@@ -122,15 +123,14 @@ const Overlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: ${({ theme }) => theme.colors.overlayBackground};
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(2px);
 `;
 
 const Modal = styled(motion.div)`
-  background-color: ${({ theme }) => theme.colors.bgPrimary};
+  background-color: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 16px;
   width: 100%;
   height: 309px;

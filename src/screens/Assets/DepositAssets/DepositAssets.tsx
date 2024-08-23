@@ -18,6 +18,9 @@ import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
+import ErrorWallet from "@src/assets/icons/errorWallet.svg?react";
+import { useTheme } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
 
 interface DepositAssets {
   setStep: (value: number) => void;
@@ -39,6 +42,8 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
   const { quickAssetsStore, balanceStore, oracleStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
   const [showAction, setShowAction] = useState<ShowAction | null>();
+  const theme = useTheme();
+  const navigate = useNavigate();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
@@ -100,6 +105,8 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
     setAssets(balanceData[0]);
   }, []);
 
+  const hasPositiveBalance = balanceData.some((item) => new BN(item.contractBalance).isGreaterThan(BN.ZERO));
+
   const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(selectAsset?.walletBalance ?? 0);
   return (
     <>
@@ -113,29 +120,47 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
         <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
       </SmartFlex>
       <SmartFlexContainer column>
-        <SmartFlex gap="20px" column>
-          <SelectAssetsInput
-            amount={amount}
-            dataAssets={balanceData}
-            selected={selectAsset?.assetId}
-            showBalance="walletBalance"
-            onChangeValue={(el) => {
-              setAmount(el);
-            }}
-            onSelect={(el) => {
-              setAssets(el);
-            }}
-          />
-          {selectAsset && (
-            <BalanceBlock
-              icon={<WalletIcon />}
-              nameWallet="Wallet baalnce"
+        {hasPositiveBalance ? (
+          <SmartFlex gap="20px" column>
+            <SelectAssetsInput
+              amount={amount}
+              dataAssets={balanceData}
+              selected={selectAsset?.assetId}
               showBalance="walletBalance"
-              token={selectAsset}
+              onChangeValue={(el) => {
+                setAmount(el);
+              }}
+              onSelect={(el) => {
+                setAssets(el);
+              }}
             />
-          )}
-        </SmartFlex>
-        <Button disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()} black onClick={handleClick}>
+            {selectAsset && (
+              <BalanceBlock
+                icon={<WalletIcon />}
+                nameWallet="Wallet balnce"
+                showBalance="walletBalance"
+                token={selectAsset}
+              />
+            )}
+          </SmartFlex>
+        ) : (
+          <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
+            <ErrorWallet />
+            <TextTitleDeposit>
+              You wallet is empty.
+              <br /> To get test tokens use{" "}
+              <LinkStyled
+                onClick={() => {
+                  navigate("/faucet");
+                  closeAssets();
+                }}
+              >
+                faucet
+              </LinkStyled>
+            </TextTitleDeposit>
+          </DepositedAssets>
+        )}
+        <Button disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()} onClick={handleClick}>
           Confirm
         </Button>
         <AnimatePresence>
@@ -155,8 +180,28 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
 
 export default DepositAssets;
 
+const LinkStyled = styled.a`
+  color: ${({ theme }) => theme.colors.greenLight};
+  text-decoration: underline;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 const TextTitle = styled(Text)`
   text-align: left;
+`;
+
+const TextTitleDeposit = styled(Text)`
+  text-align: center;
+  font-size: 14px;
+  width: 400px;
+  line-height: 20px;
+`;
+
+const DepositedAssets = styled(SmartFlex)`
+  height: 100%;
+  width: 100%;
 `;
 
 const BackButton = styled.img`
@@ -178,8 +223,8 @@ const CloseButton = styled.img`
 
 const SmartFlexContainer = styled(SmartFlex)`
   width: 100%;
-  margin-top: 20px;
-  height: calc(100% - 54px);
+  margin-top: 72px;
+  height: calc(100% - 104px);
   gap: 10px;
   justify-content: space-between;
 `;

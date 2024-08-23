@@ -24,7 +24,7 @@ interface WithdrawAssets {
   setStep: (value: number) => void;
 }
 
-interface ShowAction {
+export interface ShowAction {
   hash: string;
   transactionInfo: {
     token: IAssetBlock["token"];
@@ -65,7 +65,6 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
       );
       data.typeModal = ModalEnums.Success;
       setShowAction(data);
-      console.log("ok");
       setTimeout(() => {
         setStep(0);
         setAmount(BN.ZERO);
@@ -76,6 +75,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
       setShowAction(data);
     }
   };
+
   const handleCloseAction = () => {
     if (!showAction) return;
     setShowAction(null);

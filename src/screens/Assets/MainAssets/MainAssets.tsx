@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
-import { Column, Row } from "@components/Flex";
+import { Column } from "@components/Flex";
 import AssetBlock from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -20,6 +20,9 @@ import { assetsMock } from "@screens/Assets/MainAssets/const.ts";
 import SizedBox from "@components/SizedBox.tsx";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 import useFlag from "@src/hooks/useFlag.ts";
+import { ActionModal } from "@screens/Assets/ActionModal.tsx";
+import { AnimatePresence } from "framer-motion";
+import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets.tsx";
 
 interface MainAssets {
   setStep: (value: number) => void;
@@ -30,6 +33,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const { oracleStore, settingsStore, quickAssetsStore } = useStores();
   const { isConnected, wallet } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
+  const [showAction, setShowAction] = useState<ShowAction | null>();
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = settingsStore?.isShowDepositInfo ?? true;
@@ -50,6 +54,11 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     });
 
   const hasPositiveBalance = balanceData.some((item) => new BN(item.contractBalance).isGreaterThan(BN.ZERO));
+
+  const handleCloseAction = () => {
+    if (!showAction) return;
+    setShowAction(null);
+  };
 
   const accumulateBalanceContract = balanceData.reduce((acc, account) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
@@ -136,18 +145,42 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             Connect wallet
           </Button>
         )}
-        {!accumulateBalanceContract && (
-          <Button black onClick={() => setStep(2)}>
-            Withdraw
-          </Button>
+        {hasPositiveBalance && (
+          <SmartFlexBlock>
+            <Button black onClick={() => setStep(2)}>
+              Withdraw
+            </Button>
+            <Button
+              black
+              onClick={() => {
+                // нужно принять правки в sdk для вывода
+              }}
+            >
+              Withdraw All
+            </Button>
+          </SmartFlexBlock>
         )}
       </ButtomClolumn>
+      <AnimatePresence>
+        {showAction && (
+          <ActionModal
+            hash={showAction.hash}
+            transactionInfo={showAction.transactionInfo}
+            typeModal={showAction.typeModal}
+            onClose={handleCloseAction}
+          />
+        )}
+      </AnimatePresence>
     </AssetsContainer>
   );
 });
 
 export default MainAssets;
 
+const SmartFlexBlock = styled(SmartFlex)`
+  width: 100%;
+  gap: 10px;
+`;
 const SizedBoxStyled = styled(SizedBox)`
   margin: auto;
   text-align: center;
@@ -156,7 +189,7 @@ const HeaderBlock = styled(SmartFlex)`
   width: 100%;
 `;
 const OverallBlock = styled(SmartFlex)`
-  margin: 0px 15px;
+  margin: 10px 15px;
 `;
 const AssetItem = styled(SmartFlex)`
   padding: 12px;
