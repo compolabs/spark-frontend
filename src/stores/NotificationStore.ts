@@ -1,4 +1,4 @@
-import { toast, ToastOptions } from "react-toastify";
+import { toast, ToastOptions, TypeOptions } from "react-toastify";
 import { makeAutoObservable } from "mobx";
 
 import { createToast, NotificationProps } from "@src/components/Toast";
@@ -37,7 +37,7 @@ class NotificationStore {
     };
   };
 
-  private notify = (params: NotificationParams, type: "success" | "error" | "info") => {
+  private notify = (params: NotificationParams, type: TypeOptions) => {
     const options = this.getDefaultToastOptions({
       ...params.options,
       type,
