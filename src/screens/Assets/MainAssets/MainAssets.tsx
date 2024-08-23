@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
-import { Column } from "@components/Flex";
+import { Column, Row } from "@components/Flex";
 import AssetBlock from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -14,8 +14,12 @@ import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
-import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
 import closeThin from "@src/assets/icons/closeThin.svg";
+import { useWallet } from "@src/hooks/useWallet.ts";
+import { assetsMock } from "@screens/Assets/MainAssets/const.ts";
+import SizedBox from "@components/SizedBox.tsx";
+import ConnectWalletDialog from "@screens/ConnectWallet";
+import useFlag from "@src/hooks/useFlag.ts";
 
 interface MainAssets {
   setStep: (value: number) => void;
@@ -24,10 +28,11 @@ interface MainAssets {
 const MainAssets = observer(({ setStep }: MainAssets) => {
   const { balanceStore } = useStores();
   const { oracleStore, settingsStore, quickAssetsStore } = useStores();
+  const { isConnected, wallet } = useWallet();
+  const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = settingsStore?.isShowDepositInfo ?? true;
-
   const balanceData = Array.from(balanceStore.balances)
     .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
@@ -58,43 +63,84 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 
   return (
     <AssetsContainer justifyContent="space-between" column>
+      {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
       <SmartFlex alignItems="center" justifyContent="space-between" column>
+        {!isConnected && <BoxShadow />}
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
           <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
             Deposited Assets
           </TextTitle>
           <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
-        {hasPositiveBalance && (
-          <WalletBlock gap="8px" column>
-            {balanceData.map((el) => (
-              <AssetItem key={el.assetId}>
-                <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
-              </AssetItem>
-            ))}
-            <OverallBlock justifyContent="space-between">
-              <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
-                Overall
-              </Text>
-              <Text color={theme.colors.greenLight}>${new BN(accumulateBalanceContract).toSignificant(2)}</Text>
-            </OverallBlock>
-          </WalletBlock>
-        )}
+        <WalletBlock gap="8px" column>
+          {isConnected ? (
+            <>
+              {hasPositiveBalance && (
+                <>
+                  {balanceData.map((el) => (
+                    <AssetItem key={el.assetId}>
+                      <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
+                    </AssetItem>
+                  ))}
+                  <OverallBlock justifyContent="space-between">
+                    <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+                      Overall
+                    </Text>
+                    <Text color={theme.colors.greenLight}>
+                      ${new BN(isConnected ? accumulateBalanceContract : BN.ZERO).toSignificant(2)}
+                    </Text>
+                  </OverallBlock>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              {assetsMock.map((el) => (
+                <>
+                  <AssetItem key={el.assetId}>
+                    <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
+                  </AssetItem>
+                  <OverallBlock justifyContent="space-between">
+                    <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+                      Overall
+                    </Text>
+                    <Text color={theme.colors.greenLight}>
+                      ${new BN(isConnected ? accumulateBalanceContract : BN.ZERO).toSignificant(2)}
+                    </Text>
+                  </OverallBlock>
+                </>
+              ))}
+            </>
+          )}
+        </WalletBlock>
       </SmartFlex>
-      {!hasPositiveBalance && (
+      {!hasPositiveBalance && isConnected && (
         <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
           <DepositAssets />
           <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
         </DepositedAssets>
       )}
       <ButtomClolumn justifyContent="space-between">
-        {isShowDepositInfo && <InfoBlockAssets />}
-        <Button green onClick={() => setStep(1)}>
-          Deposit
-        </Button>
-        <Button black onClick={() => setStep(2)}>
-          Withdraw
-        </Button>
+        {isShowDepositInfo && isConnected && <InfoBlockAssets />}
+        {!isConnected && (
+          <SizedBoxStyled width={150}>
+            <Text type={TEXT_TYPES.BUTTON}>Connect wallet to see your assets and trade</Text>
+          </SizedBoxStyled>
+        )}
+        {isConnected ? (
+          <Button green onClick={() => setStep(1)}>
+            Deposit
+          </Button>
+        ) : (
+          <Button green onClick={() => openConnectDialog()}>
+            Connect wallet
+          </Button>
+        )}
+        {!accumulateBalanceContract && (
+          <Button black onClick={() => setStep(2)}>
+            Withdraw
+          </Button>
+        )}
       </ButtomClolumn>
     </AssetsContainer>
   );
@@ -102,6 +148,10 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 
 export default MainAssets;
 
+const SizedBoxStyled = styled(SizedBox)`
+  margin: auto;
+  text-align: center;
+`;
 const HeaderBlock = styled(SmartFlex)`
   width: 100%;
 `;
@@ -138,6 +188,15 @@ const TextTitleDeposit = styled(TextTitle)`
 
 const AssetsContainer = styled(SmartFlex)`
   height: 100%;
+`;
+
+const BoxShadow = styled(SmartFlex)`
+  height: 100%;
+  width: calc(100% + 40px);
+  position: absolute;
+  left: -20px;
+  top: -120px;
+  background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
 `;
 
 const DepositedAssets = styled(SmartFlex)`

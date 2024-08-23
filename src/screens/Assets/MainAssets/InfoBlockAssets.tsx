@@ -25,7 +25,7 @@ export const InfoBlockAssets = () => {
       </TextTitle>
       <TextInfo type={TEXT_TYPES.INFO}>
         Deposited assets stores on-chain in a smart-contract for quick order execution. Spark doesn’t store anything. We
-        are not CEX.
+        are not a CEX.
       </TextInfo>
     </InfoContainer>
   );

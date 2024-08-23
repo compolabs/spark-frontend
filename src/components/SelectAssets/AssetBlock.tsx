@@ -68,7 +68,6 @@ const TokenIcon = styled.img`
 
 const TokenContainer = styled(SmartFlex)`
   width: 100%;
-  background: #00000026;
   border-radius: 8px;
   justify-content: space-between;
 `;

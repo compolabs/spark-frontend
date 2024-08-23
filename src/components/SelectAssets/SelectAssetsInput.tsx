@@ -69,13 +69,15 @@ const SelectAssetsInput = <T,>({
   const [isVisible, setIsVisible] = useState(false);
   const theme = useTheme();
   const selectedOption = dataAssets.find(({ assetId }) => selected === assetId);
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchValue, setSearchValue] = useState("");
+  const [selectPresent, setSelectPresent] = useState(0);
   const handleSelectClick = (v: AssetBlockData, index: number) => {
     onSelect(v, index);
     setIsVisible(false);
     onChangeValue(BN.ZERO);
   };
   const handleSetAmount = (el: number) => {
+    setSelectPresent(el);
     if (!showBalance || !selectedOption) return;
     const amount = BN.parseUnits(
       new BN(selectedOption[showBalance] ?? 0).multipliedBy(el).div(new BN(100)),
@@ -166,9 +168,15 @@ const SelectAssetsInput = <T,>({
         </Text>
         <SmartFlex gap="5px">
           {presentData.map((el) => (
-            <ButtonPrecent key={el.text} text onClick={() => handleSetAmount(el.value)}>
-              <TextPrecent color={theme.colors.textSecondary}>{el.text}</TextPrecent>
-            </ButtonPrecent>
+            <ButtonPresent
+              key={el.text}
+              el={el.value}
+              selectPresent={selectPresent}
+              text
+              onClick={() => handleSetAmount(el.value)}
+            >
+              <TextPresent color={theme.colors.textSecondary}>{el.text}</TextPresent>
+            </ButtonPresent>
           ))}
         </SmartFlex>
       </SmartFlex>
@@ -181,6 +189,8 @@ export default SelectAssetsInput;
 const InputContainer = styled.div<{
   error?: boolean;
 }>`
+  display: flex;
+  align-items: center;
   input {
     color: ${({ error, theme }) =>
       (() => {
@@ -191,34 +201,37 @@ const InputContainer = styled.div<{
 `;
 
 const ColumnContent = styled(Column)`
-  width: 280px;
+  width: 320px;
 `;
 
 const OptionsHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 12px;
+  padding: 10px 12px;
   height: 32px;
   width: 100%;
 `;
 
-const TextPrecent = styled(Text)``;
+const TextPresent = styled(Text)``;
 
 const Container = styled.div`
   padding: 0 14px;
   width: 100%;
 `;
 
-const ButtonPrecent = styled(Button)`
+const ButtonPresent = styled(Button)<{ el: number; selectPresent: number }>`
   padding: 5px !important;
   height: auto !important;
   width: auto !important;
-  background: #53535326;
+  background: ${({ theme, el, selectPresent }) => (el === selectPresent ? "#535353" : "#53535326")};
   border-radius: 4px;
+  ${TextPresent} {
+    color: ${({ theme, el, selectPresent }) => (el === selectPresent ? "white" : theme.colors.textSecondary)};
+  }
   &:hover {
     background: ${({ theme }) => theme.colors.textDisabled};
-    ${TextPrecent} {
+    ${TextPresent} {
       color: ${({ theme }) => theme.colors.textPrimary};
     }
   }

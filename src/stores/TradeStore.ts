@@ -165,7 +165,6 @@ class TradeStore {
       const spotMarkets = markets
         .filter((market) => bcNetwork!.getTokenByAssetId(market.assetId) !== undefined)
         .map((market) => new SpotMarket(market.assetId, bcNetwork!.getTokenBySymbol("USDC").assetId));
-
       this.setSpotMarkets(spotMarkets);
       await this.updateMarketPrices();
     } catch (error) {
