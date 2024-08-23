@@ -79,11 +79,7 @@ class FaucetStore {
         hash: tx.transactionId,
       });
     } catch (error: any) {
-      handleWalletErrors(
-        notificationStore,
-        error,
-        getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS_FAILED)(error.message),
-      );
+      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS_FAILED)());
     }
 
     this.setLoading(false);

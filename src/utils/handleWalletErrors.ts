@@ -1,6 +1,10 @@
 import { NotificationStore } from "@src/stores";
 
-export const handleWalletErrors = (notificationStore: NotificationStore, error: any, defaultMessage?: string) => {
+export const handleWalletErrors = (
+  notificationStore: NotificationStore,
+  error: any,
+  defaultMessage?: React.ReactNode,
+) => {
   console.error(`Error: ${error}`);
 
   const message = error?.message.toLowerCase();
@@ -16,5 +20,5 @@ export const handleWalletErrors = (notificationStore: NotificationStore, error: 
     notificationStore.error({ text: "Not enough funds to pay gas" });
     return;
   }
-  notificationStore.error({ text: defaultMessage ?? error.toString() });
+  notificationStore.error({ text: defaultMessage ?? error.toString(), error });
 };

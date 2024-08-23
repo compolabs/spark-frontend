@@ -1,10 +1,11 @@
 import { toast, ToastOptions } from "react-toastify";
 import { makeAutoObservable } from "mobx";
 
-import { createToast, ToastProps } from "@src/components/Toast";
+import { createToast, NotificationProps } from "@src/components/Toast";
+import { getDeviceInfo } from "@src/utils/getDeviceInfo";
 import RootStore from "@stores/RootStore";
 
-type NotificationParams = ToastProps & {
+type NotificationParams = Omit<NotificationProps, "type"> & {
   options?: ToastOptions;
 };
 
@@ -16,17 +17,32 @@ class NotificationStore {
     makeAutoObservable(this);
   }
 
-  private getDefaultToastOptions = (options?: ToastOptions): ToastOptions => ({
-    autoClose: false,
-    ...options,
-  });
+  private getDefaultToastOptions = (options?: ToastOptions): ToastOptions => {
+    const { isMobile } = getDeviceInfo();
+    const position = isMobile ? "top-center" : "bottom-left";
+
+    return {
+      autoClose: 5000,
+      closeOnClick: false,
+      icon: false,
+      position,
+      theme: "dark",
+      draggable: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      hideProgressBar: true,
+      closeButton: false,
+
+      ...options,
+    };
+  };
 
   private notify = (params: NotificationParams, type: "success" | "error" | "info") => {
     const options = this.getDefaultToastOptions({
       ...params.options,
       type,
     });
-    toast(createToast(params), options);
+    toast((toastProps) => createToast({ ...params, ...toastProps }), options);
   };
 
   success = (params: NotificationParams) => {

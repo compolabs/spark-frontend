@@ -85,11 +85,7 @@ class SpotTableVM {
         hash: tx.transactionId,
       });
     } catch (error: any) {
-      handleWalletErrors(
-        notificationStore,
-        error,
-        getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER_FAILED)(error.toString()),
-      );
+      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER_FAILED)());
     }
 
     this.isOrderCancelling = false;

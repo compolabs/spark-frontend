@@ -352,24 +352,21 @@ class CreateOrderVM {
         hash = data.transactionId;
       }
 
-      const token = this.mode === ORDER_MODE.BUY ? market.quoteToken : market.baseToken;
-      const amount = this.mode === ORDER_MODE.BUY ? this.inputTotal : this.inputAmount;
+      const token = this.mode === ORDER_MODE.BUY ? market.baseToken : market.quoteToken;
+      const amount = this.mode === ORDER_MODE.BUY ? this.inputAmount : this.inputTotal;
 
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           BN.formatUnits(amount, token.decimals).toSignificant(2),
           token.symbol,
           BN.formatUnits(this.inputPrice, DEFAULT_DECIMALS).toSignificant(2),
+          this.mode === ORDER_MODE.BUY ? "buy" : "sell",
         ),
         hash,
       });
       mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
-      handleWalletErrors(
-        notificationStore,
-        error,
-        getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED)(error.toString()),
-      );
+      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED)());
     }
 
     await balanceStore.update();

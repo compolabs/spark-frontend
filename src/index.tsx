@@ -38,18 +38,7 @@ root.render(
           </Router>
         </FuelProvider>
       </QueryClientProvider>
-      <ToastContainer
-        autoClose={5000}
-        closeOnClick={false}
-        icon={false}
-        newestOnTop={true}
-        position="bottom-right"
-        rtl={false}
-        theme="dark"
-        draggable
-        pauseOnFocusLoss
-        pauseOnHover
-      />
+      <ToastContainer />
       <GlobalStyles />
     </ThemeWrapper>
   </storesContext.Provider>,

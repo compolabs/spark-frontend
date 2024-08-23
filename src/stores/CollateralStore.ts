@@ -77,11 +77,7 @@ export class CollateralStore {
       handleWalletErrors(
         notificationStore,
         error,
-        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(
-          amount.toString(),
-          token.symbol,
-          error.toString(),
-        ),
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amount.toString(), token.symbol),
       );
     }
     this.isLoading = false;
@@ -105,11 +101,7 @@ export class CollateralStore {
       handleWalletErrors(
         notificationStore,
         error,
-        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(
-          amount.toString(),
-          token.symbol,
-          error.toString(),
-        ),
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amount.toString(), token.symbol),
       );
     }
     this.isLoading = false;
