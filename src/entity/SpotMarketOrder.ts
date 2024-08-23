@@ -15,7 +15,6 @@ export class SpotMarketOrder {
   readonly id: Order["id"];
   readonly user: Order["user"];
   readonly orderType: Order["order_type"];
-  readonly assetType: Order["asset_type"];
   readonly status: Order["status"];
 
   readonly baseToken: Token;
@@ -41,7 +40,6 @@ export class SpotMarketOrder {
     this.quoteToken = bcNetwork.getTokenByAssetId(order.quoteAssetId);
 
     this.orderType = order.order_type;
-    this.assetType = order.asset_type;
 
     this.price = new BN(order.price);
 
