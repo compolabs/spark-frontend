@@ -1,6 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
 import {
-  AssetType,
   CreateOrderParams,
   FulfillOrderManyParams,
   GetOrdersParams,
@@ -316,7 +315,6 @@ class CreateOrderVM {
         } else {
           const order: CreateOrderParams = {
             amount: this.inputAmount.toString(),
-            assetType: AssetType.Base,
             price: this.inputPrice.toString(),
             type,
             feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
@@ -337,7 +335,6 @@ class CreateOrderVM {
 
         const order: FulfillOrderManyParams = {
           amount: this.inputAmount.toString(),
-          assetType: AssetType.Base,
           orderType: type,
           limitType: timeInForce,
           price:

@@ -25,8 +25,7 @@ class TradeStore {
   spotMarkets: SpotMarket[] = [];
   perpMarkets: PerpMarket[] = [];
   marketSelectionOpened = false;
-  marketSymbol: Nullable<string> = null;
-  readonly defaultMarketSymbol = "BTC-USDC";
+  marketSymbol: string = "BTC-USDC";
 
   isPerp = false;
   setIsPerp = (value: boolean) => (this.isPerp = value);
@@ -88,6 +87,28 @@ class TradeStore {
   }
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
+
+  selectActiveMarket = (isPerp: boolean, marketId?: string) => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const getMarket = <T extends SpotMarket | PerpMarket>(markets: T[]) =>
+      markets.find((market) => market.symbol === marketId);
+
+    const spotMarket = getMarket<SpotMarket>(this.spotMarkets);
+    const perpMarket = getMarket<PerpMarket>(this.perpMarkets);
+
+    if (spotMarket || perpMarket) {
+      this.setMarketSymbol(marketId!);
+    }
+
+    if (spotMarket) {
+      bcNetwork.setActiveMarket(spotMarket.contractAddress);
+    } else if (perpMarket) {
+      bcNetwork.setActiveMarket(perpMarket.contractAddress);
+    }
+
+    this.setIsPerp(isPerp && this.isPerpAvailable);
+  };
 
   addToFav = (marketId: string) => {
     if (!this.favMarkets.includes(marketId)) {
@@ -161,10 +182,15 @@ class TradeStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     try {
-      const markets = await bcNetwork!.fetchSpotMarkets(100);
+      const markets = await bcNetwork!.fetchSpotMarkets();
+
       const spotMarkets = markets
         .filter((market) => bcNetwork!.getTokenByAssetId(market.assetId) !== undefined)
-        .map((market) => new SpotMarket(market.assetId, bcNetwork!.getTokenBySymbol("USDC").assetId));
+        .map(
+          (market) => new SpotMarket(market.assetId, bcNetwork!.getTokenBySymbol("USDC").assetId, market.contractId),
+        );
+
+      bcNetwork.setActiveMarket(markets[0].contractId);
 
       this.setSpotMarkets(spotMarkets);
       await this.updateMarketPrices();
