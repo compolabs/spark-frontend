@@ -20,5 +20,5 @@ export const handleWalletErrors = (
     notificationStore.error({ text: "Not enough funds to pay gas" });
     return;
   }
-  notificationStore.error({ text: defaultMessage ?? error.toString(), error });
+  notificationStore.error({ text: defaultMessage ?? error.toString() });
 };
