@@ -20,7 +20,7 @@ import ConnectedWalletButton from "./ConnectedWalletButton";
 
 const ConnectedWallet: React.FC = observer(() => {
   const { accountStore, notificationStore, balanceStore } = useStores();
-  const { disconnect } = useWallet();
+  const { disconnect: disconnectWallet } = useWallet();
 
   const [isFocused, setIsFocused] = useState(false);
 
@@ -51,7 +51,7 @@ const ConnectedWallet: React.FC = observer(() => {
     },
     {
       icon: logoutIcon,
-      action: () => disconnect(),
+      action: () => disconnectWallet(),
       title: "Disconnect",
       active: true,
     },
