@@ -3,10 +3,10 @@ import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
-import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { Balances } from "@src/blockchain/types";
 import BN from "@src/utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
+import { CONFIG } from "@src/utils/getConfig";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
@@ -105,7 +105,7 @@ export class BalanceStore {
   };
 
   getNativeBalance = () => {
-    return this.balances.get(TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
+    return this.balances.get(CONFIG.TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
   };
 
   getContractBalanceInfo = (assetId: string) => {

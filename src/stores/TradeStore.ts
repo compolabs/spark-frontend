@@ -6,6 +6,7 @@ import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
+import { CONFIG } from "@src/utils/getConfig";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import RootStore from "@stores/RootStore";
 
@@ -182,17 +183,13 @@ class TradeStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     try {
-      const markets = await bcNetwork!.fetchSpotMarkets();
+      const markets = CONFIG.APP.markets.map(
+        (market) => new SpotMarket(market.baseAssetId, market.quoteAssetId, market.contractId),
+      );
 
-      const spotMarkets = markets
-        .filter((market) => bcNetwork!.getTokenByAssetId(market.assetId) !== undefined)
-        .map(
-          (market) => new SpotMarket(market.assetId, bcNetwork!.getTokenBySymbol("USDC").assetId, market.contractId),
-        );
+      bcNetwork.setActiveMarket(markets[0].contractAddress);
 
-      bcNetwork.setActiveMarket(markets[0].contractId);
-
-      this.setSpotMarkets(spotMarkets);
+      this.setSpotMarkets(markets);
       await this.updateMarketPrices();
     } catch (error) {
       console.error("Error init spot market", error);

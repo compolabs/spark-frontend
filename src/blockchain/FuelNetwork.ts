@@ -14,26 +14,18 @@ import { Nullable } from "tsdef";
 
 import { PerpMarket, PerpMarketTrade, PerpOrder, PerpPosition, SpotMarketOrder, Token } from "@src/entity";
 import BN from "@src/utils/BN";
+import { CONFIG } from "@src/utils/getConfig";
 
-import {
-  CONTRACT_ADDRESSES,
-  INDEXER_HTTP_URL,
-  INDEXER_WS_URL,
-  NETWORK,
-  PYTH_URL,
-  TOKENS_BY_ASSET_ID,
-  TOKENS_BY_SYMBOL,
-  TOKENS_LIST,
-} from "./constants";
 import {
   Balances,
   FetchTradesParams,
-  Market,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
   SpotMarketVolume,
 } from "./types";
 import { WalletManager } from "./WalletManager";
+
+const MARKET = "0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa";
 
 export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
@@ -41,19 +33,20 @@ export class FuelNetwork {
   private walletManager = new WalletManager();
   orderbookSdk: SparkOrderBookSdk;
 
-  public network = NETWORK;
-
   private constructor() {
     makeObservable(this.walletManager);
 
     this.orderbookSdk = new SparkOrderBookSdk({
-      networkUrl: NETWORK.url,
-      contractAddresses: CONTRACT_ADDRESSES,
-      indexerConfig: {
-        httpUrl: INDEXER_HTTP_URL,
-        wsUrl: INDEXER_WS_URL,
+      networkUrl: CONFIG.APP.networkUrl,
+      contractAddresses: {
+        market: MARKET, // Temporary solution
+        orderbook: CONFIG.APP.contracts.orderbook,
+        multiAsset: CONFIG.APP.contracts.multiAsset,
       },
-      pythUrl: PYTH_URL,
+      indexerConfig: {
+        httpUrl: CONFIG.APP.indexers[MARKET].httpUrl,
+        wsUrl: CONFIG.APP.indexers[MARKET].wsUrl,
+      },
     });
   }
 
@@ -88,15 +81,15 @@ export class FuelNetwork {
   getIsExternalWallet = () => false;
 
   getTokenList = (): Token[] => {
-    return TOKENS_LIST;
+    return CONFIG.TOKENS;
   };
 
   getTokenBySymbol = (symbol: string): Token => {
-    return TOKENS_BY_SYMBOL[symbol];
+    return CONFIG.TOKENS_BY_SYMBOL[symbol];
   };
 
   getTokenByAssetId = (assetId: string): Token => {
-    return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
+    return CONFIG.TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
   connect = async (wallet: Account): Promise<void> => {
@@ -189,24 +182,6 @@ export class FuelNetwork {
     // await this.sdk.fulfillPerpOrder(gasAsset, orderId, amount, tokenPriceFeed);
   };
 
-  fetchSpotMarkets = async (): Promise<Market[]> => {
-    const quoteToken = this.getTokenBySymbol("USDC");
-    const assetIdList: [string, string][] = this.getTokenList().map((token) => [token.assetId, quoteToken.assetId]);
-    const markets = await this.orderbookSdk.fetchMarkets(assetIdList);
-    const marketIdList = assetIdList.map((pair) => markets[pair[0]]).filter(Boolean) as string[];
-
-    const marketConfigPromises = marketIdList.map((marketId) => this.orderbookSdk.fetchMarketConfig(marketId));
-
-    const marketConfigs = await Promise.all(marketConfigPromises);
-
-    return marketConfigs.map((info, index) => ({
-      id: String(index),
-      assetId: info.baseAssetId,
-      decimal: info.priceDecimals,
-      contractId: marketIdList[index],
-    }));
-  };
-
   fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
     const token = this.getTokenByAssetId(baseTokenAddress);
     const asset = this.getAssetFromToken(token);
@@ -220,7 +195,7 @@ export class FuelNetwork {
     const formatOrder = (order: Order) =>
       new SpotMarketOrder({
         ...order,
-        quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.USDC.assetId,
       });
 
     if ("ActiveSellOrder" in data) {
