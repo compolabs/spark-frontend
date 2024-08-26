@@ -94,6 +94,8 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       ...el,
     };
   });
+
+  console.log("!isConnected", accumulateBalanceContract.gt(0));
   return (
     <AssetsContainer justifyContent="space-between" column>
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
@@ -147,13 +149,12 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
           )}
         </WalletBlock>
       </SmartFlex>
-      {(!hasPositiveBalance && isConnected) ||
-        (!accumulateBalanceContract.gt(0) && isConnected && (
-          <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
-            <DepositAssets />
-            <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
-          </DepositedAssets>
-        ))}
+      {!hasPositiveBalance && isConnected && (
+        <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
+          <DepositAssets />
+          <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
+        </DepositedAssets>
+      )}
       <BottomColumn justifyContent="space-between">
         {isShowDepositInfo && isConnected && <InfoBlockAssets />}
         {!isConnected && (
