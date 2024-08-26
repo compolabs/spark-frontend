@@ -29,14 +29,14 @@ interface MainAssets {
 }
 
 const MainAssets = observer(({ setStep }: MainAssets) => {
-  const { balanceStore } = useStores();
+  const { balanceStore, accountStore } = useStores();
   const { oracleStore, settingsStore, quickAssetsStore } = useStores();
   const { isConnected, wallet } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [showAction, setShowAction] = useState<ShowAction | null>();
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
-  const isShowDepositInfo = settingsStore?.isShowDepositInfo ?? true;
+  const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
   const balanceData = Array.from(balanceStore.balances)
     .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {

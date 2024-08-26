@@ -8,10 +8,10 @@ import StartsIcon from "@src/assets/icons/starts.svg?react";
 import { useStores } from "@stores";
 
 export const InfoBlockAssets = () => {
-  const { settingsStore } = useStores();
+  const { settingsStore, accountStore } = useStores();
 
   const handleClose = () => {
-    settingsStore.setIsShowDepositInfo(false);
+    settingsStore.setIsShowDepositInfo([...settingsStore.isShowDepositInfo, accountStore.address as string]);
   };
 
   return (
