@@ -38,7 +38,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
+    .filter(([, contractBalance]) => contractBalance && contractBalance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =
@@ -53,7 +53,8 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       };
     });
 
-  const hasPositiveBalance = balanceData.some((item) => new BN(item.contractBalance).isGreaterThan(BN.ZERO));
+  console.log("balanceData", balanceData);
+  const hasPositiveBalance = balanceData.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
 
   const handleCloseAction = () => {
     if (!showAction) return;
@@ -64,6 +65,8 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
     return acc.plus(new BN(account.contractBalance).multipliedBy(price));
   }, BN.ZERO);
+
+  console.log("accumulateBalanceContract", accumulateBalanceContract.toString());
 
   const handleWithdraw = () => {
     // TODO: нужно обновить контракт
@@ -99,7 +102,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
         <WalletBlock gap="8px" column>
           {isConnected ? (
             <>
-              {hasPositiveBalance && (
+              {hasPositiveBalance && accumulateBalanceContract.gt(0) && (
                 <>
                   {balanceData.map((el) => (
                     <AssetItem key={el.assetId}>
@@ -139,12 +142,13 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
           )}
         </WalletBlock>
       </SmartFlex>
-      {!hasPositiveBalance && isConnected && (
-        <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
-          <DepositAssets />
-          <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
-        </DepositedAssets>
-      )}
+      {(!hasPositiveBalance && isConnected) ||
+        (!accumulateBalanceContract.gt(0) && (
+          <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
+            <DepositAssets />
+            <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
+          </DepositedAssets>
+        ))}
       <BottomColumn justifyContent="space-between">
         {isShowDepositInfo && isConnected && <InfoBlockAssets />}
         {!isConnected && (
@@ -161,7 +165,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             Connect wallet
           </Button>
         )}
-        {hasPositiveBalance && (
+        {accumulateBalanceContract.gt(0) && (
           <SmartFlexBlock>
             <ButtonConfirm fitContent onClick={() => setStep(2)}>
               Withdraw

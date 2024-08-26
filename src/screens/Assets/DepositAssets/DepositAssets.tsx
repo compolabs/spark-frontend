@@ -74,6 +74,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
         setAmount(BN.ZERO);
       }, 5000);
     } catch (err) {
+      console.log("er", err);
       data.typeModal = ModalEnums.Error;
       setShowAction(data);
     }
@@ -105,7 +106,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
     setAssets(balanceData[0]);
   }, []);
 
-  const hasPositiveBalance = balanceData.some((item) => new BN(item.contractBalance).isGreaterThan(BN.ZERO));
+  const hasPositiveBalance = balanceData.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
 
   const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(selectAsset?.walletBalance ?? 0);
   return (
