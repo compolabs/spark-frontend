@@ -7,6 +7,7 @@ import RootStore from "@stores/RootStore";
 
 export interface ISerializedSettingStore {
   isUserAgreedWithTerms?: boolean;
+  isShowDepositInfo?: string[];
   isCompleteOnboardingProcess?: boolean;
   tradeTableSize?: number;
   orderType?: ORDER_TYPE;
@@ -31,11 +32,15 @@ class SettingsStore {
       this.setIsCompletedOnboardingProcess(initState.isCompleteOnboardingProcess ?? false);
       this.setTradeTableSize(initState.tradeTableSize ?? TRADE_TABLE_SIZE.S);
       this.setOrderType(initState.orderType ?? ORDER_TYPE.Limit);
+      this.setIsShowDepositInfo(initState.isShowDepositInfo ?? []);
     }
   }
 
   isUserAgreedWithTerms = false;
   setIsUserAgreedWithTerms = (value: boolean) => (this.isUserAgreedWithTerms = value);
+
+  isShowDepositInfo = [""];
+  setIsShowDepositInfo = (value: string[]) => (this.isShowDepositInfo = value);
 
   isCompleteOnboardingProcess = false;
   setIsCompletedOnboardingProcess = (value: boolean) => (this.isCompleteOnboardingProcess = value);
@@ -55,6 +60,7 @@ class SettingsStore {
   serialize = (): ISerializedSettingStore => ({
     isUserAgreedWithTerms: this.isUserAgreedWithTerms,
     isCompleteOnboardingProcess: this.isCompleteOnboardingProcess,
+    isShowDepositInfo: this.isShowDepositInfo,
     tradeTableSize: this.tradeTableSize,
     orderType: this.orderType,
   });

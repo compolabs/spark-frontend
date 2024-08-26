@@ -11,7 +11,6 @@ const Button = styled.button<{
   black?: boolean;
   grey?: boolean;
   fitContent?: boolean;
-  //этот active и &:active отлтчаются: это состояние нажатой кнопки, а &:active - это цвеь в момент нажатия
   active?: boolean;
 }>`
   text-decoration: none;
@@ -134,7 +133,7 @@ const Button = styled.button<{
         default:
           return css`
             border: 1px solid ${active ? theme.colors.borderAccent : theme.colors.borderPrimary};
-            color: ${active ? theme.colors.textPrimary : theme.colors.textSecondary};
+            color: ${theme.colors.textPrimary};
 
             &:hover {
               border: 1px solid ${theme.colors.borderAccent};
@@ -146,7 +145,7 @@ const Button = styled.button<{
             }
 
             &:disabled {
-              border-color: ${theme.colors.borderSecondary};
+              border-color: ${theme.colors.borderPrimary};
               color: ${theme.colors.textDisabled};
             }
           `;

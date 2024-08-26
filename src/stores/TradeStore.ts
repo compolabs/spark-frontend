@@ -188,7 +188,6 @@ class TradeStore {
       );
 
       bcNetwork.setActiveMarket(markets[0].contractAddress);
-
       this.setSpotMarkets(markets);
       await this.updateMarketPrices();
     } catch (error) {

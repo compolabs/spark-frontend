@@ -10,7 +10,7 @@ interface ModalSheet {
 
 const ModalSheet = ({ children, isVisible, onClose }: ModalSheet) => {
   return (
-    <Sheet initialSnap={0} isOpen={isVisible} snapPoints={[400, 100, 0]} onClose={onClose}>
+    <Sheet initialSnap={0} isOpen={isVisible} snapPoints={[600, 100, 0]} onClose={onClose}>
       <SheetContainer>
         <Sheet.Content>{children}</Sheet.Content>
       </SheetContainer>
@@ -23,4 +23,5 @@ export default ModalSheet;
 const SheetContainer = styled(Sheet.Container)`
   padding: 10px;
   overflow: auto;
+  background: #222222;
 `;

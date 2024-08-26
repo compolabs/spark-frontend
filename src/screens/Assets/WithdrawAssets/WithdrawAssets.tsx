@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
+import { AnimatePresence } from "framer-motion";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
-import SelectAssets from "@components/SelectAssets/SelectAssets";
+import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import TokenInput from "@components/TokenInput";
+import { ActionModal } from "@screens/Assets/ActionModal";
+import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
+import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
 import closeThin from "@src/assets/icons/closeThin.svg";
+import DataBase from "@src/assets/icons/dataBase.svg?react";
+import WalletIcon from "@src/assets/icons/wallet.svg?react";
 import { FuelNetwork } from "@src/blockchain";
+import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
@@ -18,25 +24,74 @@ interface WithdrawAssets {
   setStep: (value: number) => void;
 }
 
+export interface ShowAction {
+  hash: string;
+  transactionInfo: {
+    token: IAssetBlock["token"];
+    type: TypeTranaction;
+    amount: string;
+  };
+  typeModal: ModalEnums;
+}
 const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsloading] = useState(false);
-  const { quickAssetsStore, balanceStore } = useStores();
+  const { quickAssetsStore, balanceStore, oracleStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
+  const [showAction, setShowAction] = useState<ShowAction | null>();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
   };
 
+  const handleClick = async () => {
+    if (!selectAsset || !amount) return;
+    setIsloading(true);
+    const data = {
+      hash: "",
+      transactionInfo: {
+        amount: BN.formatUnits(amount, selectAsset.asset.decimals).toString(),
+        token: selectAsset,
+        type: TypeTranaction.WITHDRAWAL,
+      },
+      typeModal: ModalEnums.Pending,
+    };
+    setShowAction(data);
+    try {
+      await balanceStore.withdrawBalance(
+        selectAsset.asset.assetId,
+        BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
+      );
+      data.typeModal = ModalEnums.Success;
+      setShowAction(data);
+      setTimeout(() => {
+        setStep(0);
+        setAmount(BN.ZERO);
+      }, 5000);
+    } catch (err) {
+      console.log("err");
+      data.typeModal = ModalEnums.Error;
+      setShowAction(data);
+    }
+  };
+
+  const handleCloseAction = () => {
+    if (!showAction) return;
+    setShowAction(null);
+    setIsloading(false);
+  };
+  const ETH = bcNetwork.getTokenBySymbol("ETH");
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
+    .filter(([assetId, balance]) => balance && balance.gt(BN.ZERO) && assetId !== ETH.assetId)
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =
         token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
       const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
+      const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed ?? ""), DEFAULT_DECIMALS);
       return {
+        price: price.toString(),
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toString(),
         contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
@@ -49,55 +104,80 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     setAssets(balanceData[0]);
   }, []);
 
-  const handleClick = async () => {
-    if (!selectAsset || !amount) return;
-    setIsloading(true);
-    await balanceStore.withdrawBalance(selectAsset.asset.assetId, amount.toString());
-    setIsloading(false);
-    setStep(0);
-  };
+  const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(
+    selectAsset?.contractBalance ?? 0,
+  );
 
-  const handleSetMax = () => {
-    if (!selectAsset) return;
-    setAmount(BN.parseUnits(selectAsset?.contractBalance, selectAsset.asset.decimals));
-  };
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">
-        <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
-        <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
-          Select asset to withdraw
-        </TextTitle>
+        <SmartFlex alignItems="center" gap="10px">
+          <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
+          <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
+            Withdraw
+          </TextTitle>
+        </SmartFlex>
         <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
       </SmartFlex>
       <SmartFlexContainer column>
-        <SmartFlex gap="10px" column>
-          <SelectAssets
+        <SmartFlex gap="20px" column>
+          <SelectAssetsInput
+            amount={amount}
             dataAssets={balanceData}
+            decimals={selectAsset?.asset?.decimals}
             selected={selectAsset?.assetId}
             showBalance="contractBalance"
+            onChangeValue={(el) => {
+              setAmount(el);
+            }}
             onSelect={(el) => {
               setAssets(el);
             }}
           />
-          <TokenInputDeposit
-            amount={amount}
-            decimals={selectAsset?.asset?.decimals ?? 2}
-            handleMaxBalance={handleSetMax}
-            isShowMax={true}
-            setAmount={setAmount}
-            styleInputContainer={{ height: 56 }}
-          />
+          {selectAsset && (
+            <SmartFlex gap="2px" column>
+              <BalanceBlock
+                icon={<DataBase />}
+                nameWallet="Deposited"
+                showBalance="contractBalance"
+                token={selectAsset}
+              />
+              <BalanceBlock
+                icon={<WalletIcon />}
+                nameWallet="Wallet balnce"
+                showBalance="walletBalance"
+                token={selectAsset}
+              />
+            </SmartFlex>
+          )}
         </SmartFlex>
-        <Button disabled={isLoading || !selectAsset || !amount.toNumber()} green onClick={handleClick}>
+        <ButtonConfirm
+          disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()}
+          fitContent
+          onClick={handleClick}
+        >
           Confirm
-        </Button>
+        </ButtonConfirm>
+        <AnimatePresence>
+          {showAction && (
+            <ActionModal
+              hash={showAction.hash}
+              transactionInfo={showAction.transactionInfo}
+              typeModal={showAction.typeModal}
+              onClose={handleCloseAction}
+            />
+          )}
+        </AnimatePresence>
       </SmartFlexContainer>
     </>
   );
 });
 
 export default WithdrawAssets;
+
+const ButtonConfirm = styled(Button)`
+  width: 100%;
+`;
 
 const TextTitle = styled(Text)`
   text-align: left;
@@ -120,14 +200,10 @@ const CloseButton = styled.img`
   }
 `;
 
-const TokenInputDeposit = styled(TokenInput)`
-  height: 65px;
-`;
-
 const SmartFlexContainer = styled(SmartFlex)`
   width: 100%;
-  margin-top: 20px;
-  height: calc(100% - 54px);
+  margin-top: 72px;
+  height: calc(100% - 104px);
   gap: 10px;
   justify-content: space-between;
 `;
