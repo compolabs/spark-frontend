@@ -97,6 +97,7 @@ const SelectAssetsInput = <T,>({
   };
   if (!selectedOption || !showBalance) return;
   const isInputError = new BN(BN.formatUnits(amount.toString(), decimals)).gt(selectedOption[showBalance] ?? 0);
+  const filteredItem = dataAssets.filter((item) => item.asset.name.toLowerCase().includes(searchValue.toLowerCase()));
   return (
     <SmartFlex gap="10px" column>
       <SmartFlex gap="4px" column>
@@ -135,9 +136,8 @@ const SelectAssetsInput = <T,>({
                     <Text type={TEXT_TYPES.BUTTON}>Asset</Text>
                     <Text type={TEXT_TYPES.BUTTON}>Wallet Balance</Text>
                   </OptionsHeader>
-                  {dataAssets
-                    .filter((item) => item.asset.name.toLowerCase().includes(searchValue.toLowerCase()))
-                    .map((v, index) => {
+                  {filteredItem.length > 0 ? (
+                    filteredItem.map((v, index) => {
                       const active = selected === v.assetId;
                       return (
                         <>
@@ -150,7 +150,12 @@ const SelectAssetsInput = <T,>({
                           </Option>
                         </>
                       );
-                    })}
+                    })
+                  ) : (
+                    <NoFoundAssets>
+                      <TextNoFoundAssets>No assets found</TextNoFoundAssets>
+                    </NoFoundAssets>
+                  )}
                 </ColumnContent>
               }
             >
@@ -201,6 +206,15 @@ const SelectAssetsInput = <T,>({
 
 export default SelectAssetsInput;
 
+const TextNoFoundAssets = styled(Text)`
+  text-align: center;
+  margin: auto;
+`;
+const NoFoundAssets = styled(SmartFlex)`
+  width: 100%;
+  margin: auto;
+  text-align: center;
+`;
 const PriceText = styled(Text)`
   overflow: clip;
   width: 164px;
@@ -215,8 +229,8 @@ const InputContainer = styled.div`
 const ColumnContent = styled(Column)`
   width: 320px;
   ${media.mobile} {
-      width: 100vw;
-    }
+    width: 100vw;
+  }
 `;
 
 const OptionsHeader = styled.div`

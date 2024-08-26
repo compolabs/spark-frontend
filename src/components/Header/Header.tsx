@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -34,6 +34,12 @@ const Header: React.FC = observer(() => {
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
+
+  useEffect(() => {
+    if (media.desktop) {
+      closeMobileMenu();
+    }
+  }, [media]);
 
   const toggleMenu = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

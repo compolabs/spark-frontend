@@ -189,20 +189,21 @@ export class BalanceStore {
     return bcNetwork?.withdrawSpotBalance(amount, type);
   };
 
-  // withdrawBalanceAll = async (withdrawAssets) => {
+  // withdrawBalanceAll = async (withdrawAssets: any) => {
   //   const { notificationStore } = this.rootStore;
   //   const bcNetwork = FuelNetwork.getInstance();
-  //
   //   if (bcNetwork?.getIsExternalWallet()) {
-  //     notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+  //     notificationStore.info({ text: "Please, confirm operation in your wallet" });
   //   }
-  //   const assets = withdrawAssets.map((el: { assetId: string; amount: number }) => {
+  //   const assets = withdrawAssets.map((el: { assetId: string; balance: number }) => {
+  //     console.log("el", el);
   //     const { type } = this.getContractBalanceInfo(el.assetId);
   //     return {
-  //       amount: el.amount,
+  //       amount: el.balance,
   //       type: type,
   //     };
   //   });
+  //   console.log("assets", assets);
   //   return bcNetwork?.withdrawSpotBalanceAll(assets);
   // };
 

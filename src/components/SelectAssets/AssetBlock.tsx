@@ -28,6 +28,7 @@ export interface IAssetBlock {
 
 const AssetBlock: React.FC<IAssetBlock> = observer(
   ({ styleToken, options: { showBalance = "balance", showNullBalance = true, isShowBalance = true }, token }) => {
+    if (!token?.asset?.priceFeed) return <></>;
     const { oracleStore } = useStores();
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.asset.priceFeed), DEFAULT_DECIMALS);
     const theme = useTheme();

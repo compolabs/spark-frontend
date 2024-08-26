@@ -37,8 +37,9 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
+  const ETH = bcNetwork.getTokenBySymbol("ETH");
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([, contractBalance]) => contractBalance && contractBalance.gt(BN.ZERO))
+    .filter(([assetId, balance]) => balance && balance.gt(BN.ZERO) && assetId !== ETH.assetId)
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =
@@ -53,7 +54,6 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       };
     });
 
-  console.log("balanceData", balanceData);
   const hasPositiveBalance = balanceData.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
 
   const handleCloseAction = () => {
@@ -66,15 +66,20 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     return acc.plus(new BN(account.contractBalance).multipliedBy(price));
   }, BN.ZERO);
 
-  console.log("accumulateBalanceContract", accumulateBalanceContract.toString());
-
-  const handleWithdraw = () => {
-    // TODO: нужно обновить контракт
-    // const assets = balanceData.map((el) => {
-    //   id: el.assetId;
-    //   balance: el.contractBalance;
-    // });
-    // balanceStore.withdrawBalanceAll(assets);
+  const handleWithdraw = async () => {
+    // const ETH = bcNetwork.getTokenBySymbol("ETH");
+    // const assets = balanceData
+    //   .filter((el) => el.assetId !== ETH.assetId)
+    //   .map((el) => ({
+    //     assetId: el.assetId,
+    //     balance: el.contractBalance,
+    //   }));
+    // try {
+    //   console.log("ass", assets);
+    //   // await balanceStore.withdrawBalanceAll(assets);
+    // } catch (err) {
+    //   console.log("err", err);
+    // }
   };
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
@@ -170,9 +175,9 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             <ButtonConfirm fitContent onClick={() => setStep(2)}>
               Withdraw
             </ButtonConfirm>
-            <ButtonConfirm fitContent onClick={handleWithdraw}>
-              Withdraw All
-            </ButtonConfirm>
+            {/*<ButtonConfirm fitContent onClick={handleWithdraw}>*/}
+            {/*  Withdraw All*/}
+            {/*</ButtonConfirm>*/}
           </SmartFlexBlock>
         )}
       </BottomColumn>
