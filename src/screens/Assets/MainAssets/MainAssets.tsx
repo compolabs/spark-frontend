@@ -228,11 +228,11 @@ const AssetsContainer = styled(SmartFlex)`
 `;
 
 const BoxShadow = styled(SmartFlex)`
-  height: 250px;
+  height: 220px;
   width: calc(100% + 40px);
   position: absolute;
   left: -20px;
-  top: 0px;
+  top: 30px;
   background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
 `;
 
