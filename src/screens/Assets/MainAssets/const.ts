@@ -3,7 +3,7 @@ export const assetsMock = [
     walletBalance: "0",
     contractBalance: "0",
     balance: "0",
-    assetId: "0xccceae45a7c23dcd4024f4083e959a0686a191694e76fa4fb76c449361ca01f7",
+    assetId: "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
   },
   {
     walletBalance: "0",
