@@ -46,7 +46,6 @@ export const ActionModal: React.FC<ActionModalProps> = ({ hash, onClose, transac
   const theme = useTheme();
   const { token, type, amount } = transactionInfo;
 
-  console.log("123typeModal", type);
   const descriptionAction = (type: ModalEnums, link: string, transactionType: string) => {
     switch (type) {
       case ModalEnums.Pending:

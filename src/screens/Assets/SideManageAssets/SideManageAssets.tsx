@@ -37,10 +37,13 @@ const ResolverDevice = ({ children, handleClose, isVisible }: ResolverDevice) =>
 const SideManageAssets = observer(() => {
   const { quickAssetsStore } = useStores();
   const [isFirstOpen, setIsFirstOpen] = useState(true);
-
+  const [isBack, setIsBack] = useState(true);
   const setStep = (step: number) => {
+    setIsBack(step > quickAssetsStore.currentStep);
     setIsFirstOpen(false);
-    quickAssetsStore.setCurrentStep(step);
+    setTimeout(() => {
+      quickAssetsStore.setCurrentStep(step);
+    }, 100);
   };
   const MainAssetsComponent = () => <MainAssets setStep={setStep} />;
   const DepositAssetsComponent = () => <DepositAssets setStep={setStep} />;
@@ -59,8 +62,8 @@ const SideManageAssets = observer(() => {
         <motion.div
           key={quickAssetsStore.currentStep}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -300, opacity: 0 }}
-          initial={isFirstOpen ? { x: 0, opacity: 1 } : { x: 300, opacity: 0 }}
+          exit={{ x: isBack ? -300 : 300, opacity: 0 }}
+          initial={isFirstOpen ? { x: 0, opacity: 1 } : { x: isBack ? 300 : -300, opacity: 0 }}
           style={{ position: "absolute", width: "100%", height: "100%" }}
           transition={{ duration: 0.5 }}
         >

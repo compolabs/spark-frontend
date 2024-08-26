@@ -142,6 +142,10 @@ export class FuelNetwork {
     await this.orderbookSdk.withdraw(amount, assetType);
   };
 
+  // withdrawSpotBalanceAll = async (assets: [{ amount: string; assetType: AssetType }]): Promise<void> => {
+  //   await this.orderbookSdk.withdrawAll(assets);
+  // };
+
   depositSpotBalance = async (amount: string, asset: Asset): Promise<void> => {
     await this.orderbookSdk.deposit(asset, amount);
   };

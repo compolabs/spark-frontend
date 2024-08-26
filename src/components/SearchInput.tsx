@@ -20,14 +20,21 @@ const Wrap = styled.div<{ variant: IProps["variant"] }>`
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  gap: 8px;
 
   ${({ theme, variant }) => {
     switch (variant) {
       case "transparent":
         return css`
           height: 40px;
-          border-bottom: 1px solid ${theme.colors.textSecondary};
+          border-bottom: 1px solid ${theme.colors.textDisabled};
           padding: 4px;
+          &:hover {
+            border-bottom: 1px solid ${theme.colors.textPrimary};
+          }
+          &:focus-within {
+            border-bottom: 1px solid ${theme.colors.textPrimary};
+          }
 
           input {
             ${TEXT_TYPES_MAP[TEXT_TYPES.INFO]}
@@ -53,7 +60,7 @@ const Wrap = styled.div<{ variant: IProps["variant"] }>`
 const SearchInput: React.FC<IProps> = ({ value, onChange, placeholder, variant = "default" }) => {
   return (
     <Wrap variant={variant}>
-      <img alt="search" width={20} src={search} />
+      <img alt="search" width={24} src={search} />
       <Input
         placeholder={placeholder ? placeholder : "Search by name..."}
         value={value}

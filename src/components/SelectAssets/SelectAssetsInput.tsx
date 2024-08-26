@@ -17,6 +17,7 @@ import BN from "@src/utils/BN";
 import { Column } from "../Flex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
 import Tooltip from "../Tooltip";
+import BigNumber from "bignumber.js";
 
 export interface AssetBlockData {
   asset: Token;
@@ -35,6 +36,7 @@ interface IProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   dataAssets: AssetBlockData[];
   showBalance: IAssetBlock["options"]["showBalance"];
   amount: BN;
+  decimals?: number;
 }
 
 const presentData = [
@@ -64,6 +66,7 @@ const SelectAssetsInput = <T,>({
   dataAssets,
   onChangeValue,
   amount,
+  decimals = DEFAULT_DECIMALS,
   ...rest
 }: IProps<T>) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -78,94 +81,106 @@ const SelectAssetsInput = <T,>({
   };
   const handleSetAmount = (el: number) => {
     setSelectPresent(el);
-    if (!showBalance || !selectedOption) return;
-    const amount = BN.parseUnits(
-      new BN(selectedOption[showBalance] ?? 0).multipliedBy(el).div(new BN(100)),
-      DEFAULT_DECIMALS,
+    if (!showBalance || !selectedOption || !decimals) return;
+    const amount1 = BN.parseUnits(
+      new BN(selectedOption[showBalance] ?? 0)
+        .multipliedBy(el)
+        .div(new BN(100))
+        .toFixed(decimals, BigNumber.ROUND_DOWN),
+      decimals,
     );
+    const amount = BN.parseUnits(new BN(selectedOption[showBalance] ?? 0).multipliedBy(el).div(new BN(100)), decimals);
     onChangeValue(amount);
   };
   const handleChangeSearch = (e: string) => {
     setSearchValue(e);
   };
   if (!selectedOption || !showBalance) return;
-  const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(selectedOption[showBalance] ?? 0);
+  const isInputError = new BN(BN.formatUnits(amount.toString(), decimals)).gt(selectedOption[showBalance] ?? 0);
   return (
     <SmartFlex gap="10px" column>
-      <SmartFlexInput>
-        <InputContainer error={isInputError}>
-          <TransparentInput
-            placeholder="0.01"
-            value={amount}
-            onChange={(value: BN) => {
-              onChangeValue(value);
-            }}
-          />
-        </InputContainer>
-        <TooltipAssetsContainer>
-          <Tooltip
-            config={{
-              placement: "bottom-start",
-              trigger: "click",
-              visible: isVisible,
-              onVisibleChange: setIsVisible,
-            }}
-            containerStyles={{ padding: 0 }}
-            content={
-              <ColumnContent crossAxisSize="max">
-                <Container>
-                  <SearchInput
-                    placeholder=" "
-                    value={searchValue}
-                    variant="transparent"
-                    onChange={handleChangeSearch}
-                  />
-                </Container>
-                <OptionsHeader>
-                  <Text type={TEXT_TYPES.BODY}>Asset</Text>
-                  <Text type={TEXT_TYPES.BODY}>Wallet Balance</Text>
-                </OptionsHeader>
-                {dataAssets
-                  .filter((item) => item.asset.name.toLowerCase().includes(searchValue.toLowerCase()))
-                  .map((v, index) => {
-                    const active = selected === v.assetId;
-                    return (
-                      <>
-                        <Option key={v.assetId + "_option"} active={active} onClick={() => handleSelectClick(v, index)}>
-                          <AssetBlock
-                            key={v.assetId}
-                            options={{ showBalance }}
-                            styleToken={{ background: "transparent", padding: "4px 2px" }}
-                            token={v}
-                          />
-                        </Option>
-                      </>
-                    );
-                  })}
-              </ColumnContent>
-            }
-          >
-            <Wrap focused={isVisible}>
-              <Text>{label}</Text>
-              <SizedBox height={2} />
-              <Root onBlur={() => setIsVisible(false)} onClick={() => setIsVisible(true)} {...rest}>
-                {selectedOption && (
-                  <AssetBlock
-                    key={selectedOption.assetId}
-                    options={{ isShowBalance: false, showBalance }}
-                    token={selectedOption}
-                  />
-                )}
-                <img alt="arrow" className="menu-arrow" src={arrowIcon} />
-              </Root>
-            </Wrap>
-          </Tooltip>
-        </TooltipAssetsContainer>
-      </SmartFlexInput>
+      <SmartFlex gap="4px" column>
+        <SmartFlexInput error={isInputError}>
+          <InputContainer>
+            <TransparentInput
+              decimals={decimals}
+              placeholder="0.01"
+              value={amount}
+              onChange={(value: BN) => {
+                setSelectPresent(0);
+                onChangeValue(value);
+              }}
+            />
+          </InputContainer>
+          <TooltipAssetsContainer>
+            <Tooltip
+              config={{
+                placement: "bottom-start",
+                trigger: "click",
+                visible: isVisible,
+                onVisibleChange: setIsVisible,
+              }}
+              containerStyles={{ padding: 0 }}
+              content={
+                <ColumnContent crossAxisSize="max">
+                  <Container>
+                    <SearchInput
+                      placeholder=" "
+                      value={searchValue}
+                      variant="transparent"
+                      onChange={handleChangeSearch}
+                    />
+                  </Container>
+                  <OptionsHeader>
+                    <Text type={TEXT_TYPES.BUTTON}>Asset</Text>
+                    <Text type={TEXT_TYPES.BUTTON}>Wallet Balance</Text>
+                  </OptionsHeader>
+                  {dataAssets
+                    .filter((item) => item.asset.name.toLowerCase().includes(searchValue.toLowerCase()))
+                    .map((v, index) => {
+                      const active = selected === v.assetId;
+                      return (
+                        <>
+                          <Option
+                            key={v.assetId + "_option"}
+                            active={active}
+                            onClick={() => handleSelectClick(v, index)}
+                          >
+                            <AssetBlock key={v.assetId} options={{ showBalance }} token={v} />
+                          </Option>
+                        </>
+                      );
+                    })}
+                </ColumnContent>
+              }
+            >
+              <Wrap focused={isVisible}>
+                <Text>{label}</Text>
+                <SizedBox height={2} />
+                <Root onBlur={() => setIsVisible(false)} onClick={() => setIsVisible(true)} {...rest}>
+                  {selectedOption && (
+                    <AssetBlock
+                      key={selectedOption.assetId}
+                      options={{ isShowBalance: false, showBalance }}
+                      token={selectedOption}
+                    />
+                  )}
+                  <img alt="arrow" className="menu-arrow" src={arrowIcon} />
+                </Root>
+              </Wrap>
+            </Tooltip>
+          </TooltipAssetsContainer>
+        </SmartFlexInput>
+        {isInputError && (
+          <Text color={theme.colors.attention} type={TEXT_TYPES.BUTTON}>
+            Not enough {selectedOption.asset.symbol}
+          </Text>
+        )}
+      </SmartFlex>
       <SmartFlex alignItems="center" justifyContent="space-between">
-        <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type={TEXT_TYPES.BODY}>
-          ${BN.formatUnits(new BN(selectedOption?.price ?? 0).multipliedBy(amount), DEFAULT_DECIMALS).toFormat(2)}
-        </Text>
+        <PriceText color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+          ${BN.formatUnits(new BN(selectedOption?.price ?? 0).multipliedBy(amount), decimals).toFormat(2)}
+        </PriceText>
         <SmartFlex gap="5px">
           {presentData.map((el) => (
             <ButtonPresent
@@ -186,37 +201,37 @@ const SelectAssetsInput = <T,>({
 
 export default SelectAssetsInput;
 
-const InputContainer = styled.div<{
-  error?: boolean;
-}>`
+const PriceText = styled(Text)`
+  overflow: clip;
+  width: 164px;
+  text-align: left;
+`;
+
+const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  input {
-    color: ${({ error, theme }) =>
-      (() => {
-        if (error) return theme.colors.attention;
-        return theme.colors.textSecondary;
-      })()};
-  }
 `;
 
 const ColumnContent = styled(Column)`
   width: 320px;
+  ${media.mobile} {
+      width: 100vw;
+    }
 `;
 
 const OptionsHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
-  height: 32px;
+  padding: 4px 16px;
+  height: 40px;
   width: 100%;
 `;
 
 const TextPresent = styled(Text)``;
 
 const Container = styled.div`
-  padding: 0 14px;
+  padding: 0 16px;
   width: 100%;
 `;
 
@@ -236,10 +251,26 @@ const ButtonPresent = styled(Button)<{ el: number; selectPresent: number }>`
     }
   }
 `;
-const SmartFlexInput = styled(SmartFlex)`
+const SmartFlexInput = styled(SmartFlex)<{
+  error?: boolean;
+}>`
   padding: 8px 0px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.textDisabled};
+  border-bottom: 1px solid ${({ error, theme }) => (error ? theme.colors.attention : theme.colors.textDisabled)};
+  input {
+    color: ${({ error, theme }) =>
+      (() => {
+        if (error) return theme.colors.attention;
+        return theme.colors.textPrimary;
+      })()};
+  }
+  &:hover {
+    border-bottom: 1px solid ${({ error, theme }) => (error ? theme.colors.attention : theme.colors.textPrimary)};
+  }
+  &:focus-within {
+    border-bottom: 1px solid ${({ error, theme }) => (error ? theme.colors.attention : theme.colors.textPrimary)};
+  }
 `;
+
 const TooltipAssetsContainer = styled(SmartFlex)`
   width: auto;
 `;
@@ -293,7 +324,7 @@ export const Option = styled.div<{
   align-items: center;
   background: ${({ active, theme }) => (active ? theme.colors.borderPrimary : "transparent")};
   color: ${({ disabled, theme }) => (disabled ? theme.colors.textDisabled : theme.colors.textPrimary)};
-  padding: 8px 10px;
+  padding: 5px 16px;
   box-sizing: border-box;
   white-space: nowrap;
   transition: 0.4s;
@@ -306,6 +337,10 @@ export const Option = styled.div<{
 
   :active {
     background: ${({ theme, disabled }) => (!disabled ? theme.colors.borderPrimary : "transparent")};
+  }
+
+  :last-child {
+    border-radius: 0px 0px 10px 10px;
   }
 
   ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]};

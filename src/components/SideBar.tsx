@@ -31,10 +31,10 @@ const Backdrop = styled.div`
   z-index: 2;
 `;
 const ModalDialog = styled.div`
+  position: fixed;
   padding: 20px;
   backdrop-filter: blur(20px);
   background-color: #222222;
-  position: fixed;
   display: block;
   top: 0;
   bottom: 0;

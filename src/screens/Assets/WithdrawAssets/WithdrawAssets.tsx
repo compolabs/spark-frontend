@@ -51,7 +51,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     const data = {
       hash: "",
       transactionInfo: {
-        amount: BN.formatUnits(amount, DEFAULT_DECIMALS).toString(),
+        amount: BN.formatUnits(amount, selectAsset.asset.decimals).toString(),
         token: selectAsset,
         type: TypeTranaction.WITHDRAWAL,
       },
@@ -61,14 +61,14 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     try {
       await balanceStore.withdrawBalance(
         selectAsset.asset.assetId,
-        BN.parseUnits(BN.formatUnits(amount, DEFAULT_DECIMALS), selectAsset.asset.decimals).toString(),
+        BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
       );
       data.typeModal = ModalEnums.Success;
       setShowAction(data);
       setTimeout(() => {
         setStep(0);
         setAmount(BN.ZERO);
-      }, 1500);
+      }, 5000);
     } catch (err) {
       console.log("err");
       data.typeModal = ModalEnums.Error;
@@ -123,9 +123,12 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
           <SelectAssetsInput
             amount={amount}
             dataAssets={balanceData}
+            decimals={selectAsset?.asset?.decimals}
             selected={selectAsset?.assetId}
             showBalance="contractBalance"
             onChangeValue={(el) => {
+              console.log("el", el.toString());
+              console.log("selectAsset.asset.assetId", selectAsset?.asset);
               setAmount(el);
             }}
             onSelect={(el) => {
@@ -133,7 +136,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
             }}
           />
           {selectAsset && (
-            <>
+            <SmartFlex gap="2px" column>
               <BalanceBlock
                 icon={<DataBase />}
                 nameWallet="Deposited"
@@ -146,12 +149,16 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
                 showBalance="walletBalance"
                 token={selectAsset}
               />
-            </>
+            </SmartFlex>
           )}
         </SmartFlex>
-        <Button disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()} black onClick={handleClick}>
+        <ButtonConfirm
+          disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()}
+          fitContent
+          onClick={handleClick}
+        >
           Confirm
-        </Button>
+        </ButtonConfirm>
         <AnimatePresence>
           {showAction && (
             <ActionModal
@@ -168,6 +175,10 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
 });
 
 export default WithdrawAssets;
+
+const ButtonConfirm = styled(Button)`
+  width: 100%;
+`;
 
 const TextTitle = styled(Text)`
   text-align: left;
@@ -192,8 +203,8 @@ const CloseButton = styled.img`
 
 const SmartFlexContainer = styled(SmartFlex)`
   width: 100%;
-  margin-top: 20px;
-  height: calc(100% - 54px);
+  margin-top: 72px;
+  height: calc(100% - 104px);
   gap: 10px;
   justify-content: space-between;
 `;

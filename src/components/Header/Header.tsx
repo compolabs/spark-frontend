@@ -9,6 +9,7 @@ import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import Logo from "@src/assets/icons/logo.svg?react";
 import Menu from "@src/assets/icons/menu.svg?react";
+import DataBase from "@src/assets/icons/dataBase.svg?react";
 import { EVENTS, MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
@@ -153,7 +154,10 @@ const Header: React.FC = observer(() => {
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
           <Button data-onboarding="assets-desktop" fitContent onClick={() => createEvents(EVENTS.OpenSideAssets)}>
-            Assets
+            <SmartFlex center="y" gap="8px">
+              <DataBase />
+              Assets
+            </SmartFlex>
           </Button>
           {renderWallet()}
         </SmartFlex>

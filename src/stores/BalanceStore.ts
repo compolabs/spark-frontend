@@ -152,6 +152,23 @@ export class BalanceStore {
     return bcNetwork?.withdrawSpotBalance(amount, type);
   };
 
+  // withdrawBalanceAll = async (withdrawAssets) => {
+  //   const { notificationStore } = this.rootStore;
+  //   const bcNetwork = FuelNetwork.getInstance();
+  //
+  //   if (bcNetwork?.getIsExternalWallet()) {
+  //     notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+  //   }
+  //   const assets = withdrawAssets.map((el: { assetId: string; amount: number }) => {
+  //     const { type } = this.getContractBalanceInfo(el.assetId);
+  //     return {
+  //       amount: el.amount,
+  //       type: type,
+  //     };
+  //   });
+  //   return bcNetwork?.withdrawSpotBalanceAll(assets);
+  // };
+
   private fetchBalances = async (): Promise<Balances> => {
     const bcNetwork = FuelNetwork.getInstance();
 

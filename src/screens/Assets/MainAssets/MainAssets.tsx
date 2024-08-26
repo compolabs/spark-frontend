@@ -65,6 +65,14 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     return acc.plus(new BN(account.contractBalance).multipliedBy(price));
   }, BN.ZERO);
 
+  const handleWithdraw = () => {
+    // TODO: нужно обновить контракт
+    // const assets = balanceData.map((el) => {
+    //   id: el.assetId;
+    //   balance: el.contractBalance;
+    // });
+    // balanceStore.withdrawBalanceAll(assets);
+  };
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
@@ -74,7 +82,6 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     <AssetsContainer justifyContent="space-between" column>
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
       <SmartFlex alignItems="center" justifyContent="space-between" column>
-        {!isConnected && <BoxShadow />}
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
           <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
             Deposited Assets
@@ -109,16 +116,17 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
                   <AssetItem key={el.assetId}>
                     <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
                   </AssetItem>
-                  <OverallBlock justifyContent="space-between">
-                    <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
-                      Overall
-                    </Text>
-                    <Text color={theme.colors.greenLight}>
-                      ${new BN(isConnected ? accumulateBalanceContract : BN.ZERO).toSignificant(2)}
-                    </Text>
-                  </OverallBlock>
                 </>
               ))}
+              <OverallBlock justifyContent="space-between">
+                <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+                  Overall
+                </Text>
+                <Text color={theme.colors.greenLight}>
+                  ${new BN(isConnected ? accumulateBalanceContract : BN.ZERO).toSignificant(2)}
+                </Text>
+              </OverallBlock>
+              <BoxShadow />
             </>
           )}
         </WalletBlock>
@@ -129,7 +137,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
           <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
         </DepositedAssets>
       )}
-      <ButtomClolumn justifyContent="space-between">
+      <BottomColumn justifyContent="space-between">
         {isShowDepositInfo && isConnected && <InfoBlockAssets />}
         {!isConnected && (
           <SizedBoxStyled width={150}>
@@ -147,20 +155,15 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
         )}
         {hasPositiveBalance && (
           <SmartFlexBlock>
-            <Button black onClick={() => setStep(2)}>
+            <ButtonConfirm fitContent onClick={() => setStep(2)}>
               Withdraw
-            </Button>
-            <Button
-              black
-              onClick={() => {
-                // нужно принять правки в sdk для вывода
-              }}
-            >
+            </ButtonConfirm>
+            <ButtonConfirm fitContent onClick={handleWithdraw}>
               Withdraw All
-            </Button>
+            </ButtonConfirm>
           </SmartFlexBlock>
         )}
-      </ButtomClolumn>
+      </BottomColumn>
       <AnimatePresence>
         {showAction && (
           <ActionModal
@@ -176,7 +179,9 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 });
 
 export default MainAssets;
-
+const ButtonConfirm = styled(Button)`
+  width: 100%;
+`;
 const SmartFlexBlock = styled(SmartFlex)`
   width: 100%;
   gap: 10px;
@@ -189,7 +194,7 @@ const HeaderBlock = styled(SmartFlex)`
   width: 100%;
 `;
 const OverallBlock = styled(SmartFlex)`
-  margin: 10px 15px;
+  margin: 16px 15px;
 `;
 const AssetItem = styled(SmartFlex)`
   padding: 12px;
@@ -201,7 +206,7 @@ const WalletBlock = styled(SmartFlex)`
   width: 100%;
   margin-top: 40px;
 `;
-const ButtomClolumn = styled(Column)`
+const BottomColumn = styled(Column)`
   gap: 15px;
   width: 100%;
 `;
@@ -210,7 +215,6 @@ const TextTitle = styled(Text)`
   line-height: 20px;
   letter-spacing: 0.32px;
   text-align: left;
-  width: 100%;
 `;
 
 const TextTitleDeposit = styled(TextTitle)`
@@ -224,11 +228,11 @@ const AssetsContainer = styled(SmartFlex)`
 `;
 
 const BoxShadow = styled(SmartFlex)`
-  height: 100%;
+  height: 250px;
   width: calc(100% + 40px);
   position: absolute;
   left: -20px;
-  top: -120px;
+  top: 0px;
   background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
 `;
 

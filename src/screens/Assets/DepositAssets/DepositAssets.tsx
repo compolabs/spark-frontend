@@ -55,7 +55,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
     const data = {
       hash: "",
       transactionInfo: {
-        amount: BN.formatUnits(amount, DEFAULT_DECIMALS).toString(),
+        amount: BN.formatUnits(amount, selectAsset.asset.decimals).toString(),
         token: selectAsset,
         type: TypeTranaction.DEPOSIT,
       },
@@ -65,14 +65,14 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
     try {
       await balanceStore.depositBalance(
         selectAsset.asset.assetId,
-        BN.parseUnits(BN.formatUnits(amount, DEFAULT_DECIMALS), selectAsset.asset.decimals).toString(),
+        BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
       );
       data.typeModal = ModalEnums.Success;
       setShowAction(data);
       setTimeout(() => {
         setStep(0);
         setAmount(BN.ZERO);
-      }, 1500);
+      }, 5000);
     } catch (err) {
       data.typeModal = ModalEnums.Error;
       setShowAction(data);
@@ -125,6 +125,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
             <SelectAssetsInput
               amount={amount}
               dataAssets={balanceData}
+              decimals={selectAsset?.asset.decimals}
               selected={selectAsset?.assetId}
               showBalance="walletBalance"
               onChangeValue={(el) => {
@@ -160,9 +161,13 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
             </TextTitleDeposit>
           </DepositedAssets>
         )}
-        <Button disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()} onClick={handleClick}>
+        <ButtonConfirm
+          disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()}
+          fitContent
+          onClick={handleClick}
+        >
           Confirm
-        </Button>
+        </ButtonConfirm>
         <AnimatePresence>
           {showAction && (
             <ActionModal
@@ -180,6 +185,9 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
 
 export default DepositAssets;
 
+const ButtonConfirm = styled(Button)`
+  width: 100%;
+`;
 const LinkStyled = styled.a`
   color: ${({ theme }) => theme.colors.greenLight};
   text-decoration: underline;
