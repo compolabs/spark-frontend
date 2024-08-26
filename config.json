@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "contractVer": 257,
+  "tokens": [
+    {
+      "name": "Ethereum",
+      "symbol": "ETH",
+      "decimals": 9,
+      "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+      "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+      "precision": 9
+    },
+    {
+      "name": "Bitcoin",
+      "symbol": "BTC",
+      "decimals": 8,
+      "assetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
+      "priceFeed": "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
+      "precision": 8
+    },
+    {
+      "name": "USDC",
+      "symbol": "USDC",
+      "decimals": 6,
+      "assetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+      "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+      "precision": 2
+    }
+  ],
+  "markets": [
+    {
+      "marketName": "BTCUSDC",
+      "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
+      "baseAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
+      "baseAssetDecimals": 8,
+      "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+      "quoteAssetDecimals": 6,
+      "priceDecimals": 9,
+      "feeAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+      "contractId": "0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa"
+    }
+  ],
+  "indexers": {
+    "0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa": {
+      "httpUrl": "https://indexer.bigdevenergy.link/c940d97/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/c940d97/v1/graphql"
+    }
+  },
+  "contracts": {
+    "orderbook": "0x0713334e61ed73ba9421a3a49891953f9ccb7353828566b569752a82a39803e8",
+    "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
+  },
+  "networkUrl": "https://testnet.fuel.network/v1/graphql",
+  "explorerUrl": "https://app.fuel.network"
+}
