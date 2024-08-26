@@ -10,6 +10,10 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=9.7.0"
+  },
   "dependencies": {
     "@compolabs/spark-orderbook-ts-sdk": "^1.4.8",
     "@emotion/react": "^11.11.3",
