@@ -16,11 +16,13 @@ interface PerpMarketParams {
   pausedIndexPrice?: BN;
   pausedTimestamp?: number;
   closedPrice?: BN;
+  contractAddress: string;
 }
 
 export class PerpMarket {
   readonly baseToken: Token;
   readonly quoteToken: Token;
+  readonly contractAddress: string;
 
   readonly imRatio: BN;
   readonly mmRatio: BN;
@@ -44,6 +46,7 @@ export class PerpMarket {
     this.pausedIndexPrice = params.pausedIndexPrice;
     this.pausedTimestamp = params.pausedTimestamp;
     this.closedPrice = params.closedPrice;
+    this.contractAddress = params.contractAddress;
 
     makeAutoObservable(this);
   }

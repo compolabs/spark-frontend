@@ -30,6 +30,7 @@ interface IProps {
   color?: string;
   nowrap?: boolean;
   pointer?: boolean;
+  greenLight?: boolean;
   attention?: boolean;
 }
 
@@ -123,12 +124,16 @@ export const TEXT_TYPES_MAP = {
 
 const Text = styled.div<IProps>`
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "normal")};
-  ${({ attention, primary, secondary, disabled, theme, color }) =>
+  ${({ attention, primary, secondary, greenLight, disabled, theme, color }) =>
     (() => {
       switch (true) {
         case attention:
           return css`
             color: ${theme.colors?.attention};
+          `;
+        case greenLight:
+          return css`
+            color: ${theme.colors?.greenLight};
           `;
         case primary:
           return css`

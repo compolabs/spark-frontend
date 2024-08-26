@@ -16,13 +16,11 @@ import BN from "@src/utils/BN";
 import { getExplorerLinkByAddress } from "@src/utils/getExplorerLink";
 import { useStores } from "@stores";
 
-import { createToast } from "../Toast";
-
 import ConnectedWalletButton from "./ConnectedWalletButton";
 
 const ConnectedWallet: React.FC = observer(() => {
   const { accountStore, notificationStore, balanceStore } = useStores();
-  const { disconnect } = useWallet();
+  const { disconnect: disconnectWallet } = useWallet();
 
   const [isFocused, setIsFocused] = useState(false);
 
@@ -35,12 +33,7 @@ const ConnectedWallet: React.FC = observer(() => {
 
   const handleAddressCopy = () => {
     accountStore.address && copy(accountStore.address);
-    notificationStore.toast(createToast({ text: "Your address was copied" }), { type: "info" });
-  };
-
-  const disconnectWallet = () => {
-    disconnect();
-    accountStore.disconnect();
+    notificationStore.info({ text: "Your address was copied" });
   };
 
   const actions = [

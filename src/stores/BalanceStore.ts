@@ -2,11 +2,11 @@ import { AssetType, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk"
 import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
-import { createToast } from "@components/Toast";
 import { FuelNetwork } from "@src/blockchain";
-import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { Balances } from "@src/blockchain/types";
 import BN from "@src/utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
+import { CONFIG } from "@src/utils/getConfig";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
@@ -105,7 +105,7 @@ export class BalanceStore {
   };
 
   getNativeBalance = () => {
-    return this.balances.get(TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
+    return this.balances.get(CONFIG.TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
   };
 
   getContractBalanceInfo = (assetId: string) => {
@@ -130,7 +130,9 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
+      });
     }
     const data = bcNetwork.getTokenByAssetId(assetId);
     const asset = {
@@ -138,12 +140,19 @@ export class BalanceStore {
       symbol: data.symbol,
       decimals: data.decimals,
     };
+    const amountFormatted = BN.formatUnits(amount, data.decimals).toSignificant(2);
     try {
-      await bcNetwork?.depositSpotBalance(amount, asset);
-      notificationStore.toast(createToast({ text: "Deposit request has been sent!" }), { type: "success" });
-    } catch (error) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
+      const tx = await bcNetwork?.depositSpotBalance(amount, asset);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, data.symbol),
+        hash: tx.transactionId,
+      });
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amountFormatted, data.symbol),
+      );
     }
   };
 
@@ -151,17 +160,28 @@ export class BalanceStore {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
+    const token = bcNetwork.getTokenByAssetId(assetId);
+
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
+      });
     }
     const { type } = this.getContractBalanceInfo(assetId);
+    const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
 
     try {
-      await bcNetwork?.withdrawSpotBalance(amount, type);
-      notificationStore.toast(createToast({ text: "Withdrawal request has been sent!" }), { type: "success" });
-    } catch (error) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to withdraw your token at this time");
+      const tx = await bcNetwork?.withdrawSpotBalance(amount, type);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
+        hash: tx.transactionId,
+      });
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amountFormatted, token.symbol),
+      );
     }
   };
 

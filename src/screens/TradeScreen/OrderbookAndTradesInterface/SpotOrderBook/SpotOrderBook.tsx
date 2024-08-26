@@ -229,13 +229,10 @@ const PlugContainer = styled(SmartFlex)`
   width: 100%;
   padding: 0 12px;
   text-align: center;
+  gap: 10px;
 
   ${Text} {
     text-align: start;
-  }
-
-  ${Text}:last-of-type {
-    text-align: end;
   }
 
   ${media.mobile} {
@@ -321,7 +318,6 @@ const OrderBookHeader = styled.div`
 const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
   position: relative;
   cursor: pointer;
-  margin-bottom: 1px;
   height: 16px;
   width: 100%;
   justify-content: space-between;
@@ -346,10 +342,6 @@ const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
     }
   }
 
-  & > ${Text}:nth-of-type(3) {
-    text-align: left;
-  }
-
   & > div {
     flex: 1;
     text-align: left;
@@ -362,6 +354,9 @@ const OrderbookContainer = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
+
+  gap: 2px;
+
   ${media.mobile} {
     height: fit-content;
   }

@@ -1,6 +1,5 @@
 import React, { PropsWithChildren, useMemo } from "react";
 import {
-  AssetType,
   CreateOrderParams,
   FulfillOrderManyParams,
   GetOrdersParams,
@@ -13,11 +12,11 @@ import { Undefinable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { PerpMaxAbsPositionSize } from "@src/blockchain/types";
-import { createToast } from "@src/components/Toast";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import Math from "@src/utils/Math";
 import { RootStore, useStores } from "@stores";
@@ -293,7 +292,9 @@ class CreateOrderVM {
     this.isLoading = true;
 
     if (bcNetwork.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
+      });
     }
 
     try {
@@ -314,7 +315,6 @@ class CreateOrderVM {
         } else {
           const order: CreateOrderParams = {
             amount: this.inputAmount.toString(),
-            assetType: AssetType.Base,
             price: this.inputPrice.toString(),
             type,
             feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
@@ -335,7 +335,6 @@ class CreateOrderVM {
 
         const order: FulfillOrderManyParams = {
           amount: this.inputAmount.toString(),
-          assetType: AssetType.Base,
           orderType: type,
           limitType: timeInForce,
           price:
@@ -350,13 +349,21 @@ class CreateOrderVM {
         hash = data.transactionId;
       }
 
-      notificationStore.toast(createToast({ text: "Order Created", hash: hash }), {
-        type: "success",
+      const token = this.mode === ORDER_MODE.BUY ? market.baseToken : market.quoteToken;
+      const amount = this.mode === ORDER_MODE.BUY ? this.inputAmount : this.inputTotal;
+
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
+          BN.formatUnits(amount, token.decimals).toSignificant(2),
+          token.symbol,
+          BN.formatUnits(this.inputPrice, DEFAULT_DECIMALS).toSignificant(2),
+          this.mode === ORDER_MODE.BUY ? "buy" : "sell",
+        ),
+        hash,
       });
       mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to process your order at this time");
+      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED)());
     }
 
     await balanceStore.update();

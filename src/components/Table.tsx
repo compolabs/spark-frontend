@@ -94,6 +94,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       position: sticky;
       top: 0;
       background: ${({ theme }) => theme.colors.bgPrimary};
+      z-index: 2;
     }
 
     tr {
@@ -115,6 +116,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
     }
 
     td {
+      height: 42px;
       ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]};
       color: ${({ theme }) => `${theme.colors.textPrimary}`};
       padding: 11px 12px;

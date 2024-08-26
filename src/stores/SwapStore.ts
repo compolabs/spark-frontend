@@ -1,5 +1,4 @@
 import {
-  AssetType,
   FulfillOrderManyParams,
   GetOrdersParams,
   LimitType,
@@ -110,7 +109,6 @@ class SwapStore {
 
     const order: FulfillOrderManyParams = {
       amount: isBuy ? formattedVolume : formattedAmount,
-      assetType: AssetType.Base,
       orderType: this.buyToken.symbol === "BTC" ? OrderType.Buy : OrderType.Sell,
       limitType: LimitType.FOK, // TODO: Check is it correct
       price: sellOrders[sellOrders.length - 1].price.toString(),

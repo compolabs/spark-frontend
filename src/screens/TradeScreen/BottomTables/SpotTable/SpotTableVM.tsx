@@ -3,12 +3,12 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
-import { createToast } from "@src/components/Toast";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { Subscription } from "@src/typings/utils";
 import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
+import { CONFIG } from "@src/utils/getConfig";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { RootStore, useStores } from "@stores";
 
@@ -73,15 +73,19 @@ class SpotTableVM {
     this.isOrderCancelling = true;
     this.cancelingOrderId = order.id;
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
+      });
     }
 
     try {
-      await bcNetwork?.cancelSpotOrder(order);
-      notificationStore.toast(createToast({ text: "Order canceled!" }), { type: "success" });
-    } catch (error) {
-      console.error(error);
-      handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
+      const tx = await bcNetwork?.cancelSpotOrder(order);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
+        hash: tx.transactionId,
+      });
+    } catch (error: any) {
+      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER_FAILED)());
     }
 
     this.isOrderCancelling = false;
@@ -118,7 +122,7 @@ class SpotTableVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(data.Order, TOKENS_BY_SYMBOL.USDC.assetId).sort(sortDesc);
+          const sortedOrder = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId).sort(sortDesc);
           this.setMyOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -147,7 +151,9 @@ class SpotTableVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, TOKENS_BY_SYMBOL.USDC.assetId).sort(sortDesc);
+          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId).sort(
+            sortDesc,
+          );
           this.setMyOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {

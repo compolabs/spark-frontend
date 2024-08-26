@@ -5,6 +5,7 @@ import { Nullable } from "tsdef";
 import { FuelNetwork } from "@src/blockchain";
 import { PerpMarket, PerpOrder, PerpPosition } from "@src/entity";
 import useVM from "@src/hooks/useVM";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import { RootStore, useStores } from "@stores";
@@ -84,15 +85,20 @@ class PerpTableVM {
     if (!tradeStore.market || !accountStore.address) return;
 
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast("Please, confirm operation in your wallet", { type: "info" });
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
+      });
     }
 
     this.cancelingOrderId = orderId;
     try {
       await bcNetwork?.removePerpOrder(orderId);
-      notificationStore.toast("Order canceled!", { type: "success" });
-    } catch (error) {
-      handleWalletErrors(notificationStore, error, "We were unable to cancel your order at this time");
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
+        hash: "",
+      });
+    } catch (error: any) {
+      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER_FAILED)());
     }
 
     this.cancelingOrderId = null;

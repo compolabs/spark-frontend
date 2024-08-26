@@ -1,9 +1,9 @@
-import { EXPLORER_URL as FUEL_EXPLORER_URL } from "@src/blockchain/constants";
+import { CONFIG } from "./getConfig";
 
 export const getExplorerLinkByHash = (hash: string) => {
-  return `${FUEL_EXPLORER_URL}/tx/${hash}`;
+  return `${CONFIG.APP.explorerUrl}/tx/${hash}`;
 };
 
 export const getExplorerLinkByAddress = (address: string) => {
-  return `${FUEL_EXPLORER_URL}/account/${address}`;
+  return `${CONFIG.APP.explorerUrl}/account/${address}`;
 };

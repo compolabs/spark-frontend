@@ -3,9 +3,10 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { PYTH_URL } from "@src/blockchain/constants";
 import BN from "@src/utils/BN";
 import RootStore from "@stores/RootStore";
+
+const PYTH_URL = "https://hermes.pyth.network";
 
 class OracleStore {
   private readonly rootStore: RootStore;

@@ -12,30 +12,20 @@ import { Account, B256Address, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { PerpMarket, PerpOrder, PerpPosition, SpotMarketOrder, Token } from "@src/entity";
-import { PerpMarketTrade } from "@src/entity/PerpMarketTrade";
-import { FAUCET_AMOUNTS } from "@src/stores/FaucetStore";
+import { PerpMarket, PerpMarketTrade, PerpOrder, PerpPosition, SpotMarketOrder, Token } from "@src/entity";
 import BN from "@src/utils/BN";
+import { CONFIG } from "@src/utils/getConfig";
 
-import {
-  CONTRACT_ADDRESSES,
-  INDEXER_HTTP_URL,
-  INDEXER_WS_URL,
-  NETWORK,
-  PYTH_URL,
-  TOKENS_BY_ASSET_ID,
-  TOKENS_BY_SYMBOL,
-  TOKENS_LIST,
-} from "./constants";
 import {
   Balances,
   FetchTradesParams,
-  MarketCreateEvent,
   PerpMaxAbsPositionSize,
   PerpPendingFundingPayment,
   SpotMarketVolume,
 } from "./types";
 import { WalletManager } from "./WalletManager";
+
+const MARKET = "0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa";
 
 export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
@@ -43,19 +33,20 @@ export class FuelNetwork {
   private walletManager = new WalletManager();
   orderbookSdk: SparkOrderBookSdk;
 
-  public network = NETWORK;
-
   private constructor() {
     makeObservable(this.walletManager);
 
     this.orderbookSdk = new SparkOrderBookSdk({
-      networkUrl: NETWORK.url,
-      contractAddresses: CONTRACT_ADDRESSES,
-      indexerConfig: {
-        httpUrl: INDEXER_HTTP_URL,
-        wsUrl: INDEXER_WS_URL,
+      networkUrl: CONFIG.APP.networkUrl,
+      contractAddresses: {
+        market: MARKET, // Temporary solution
+        orderbook: CONFIG.APP.contracts.orderbook,
+        multiAsset: CONFIG.APP.contracts.multiAsset,
       },
-      pythUrl: PYTH_URL,
+      indexerConfig: {
+        httpUrl: CONFIG.APP.indexers[MARKET].httpUrl,
+        wsUrl: CONFIG.APP.indexers[MARKET].wsUrl,
+      },
     });
   }
 
@@ -65,6 +56,10 @@ export class FuelNetwork {
     }
     return FuelNetwork.instance;
   }
+
+  setActiveMarket = (marketAddress: string) => {
+    this.orderbookSdk.setActiveMarketAddress(marketAddress);
+  };
 
   getAddress = (): Nullable<B256Address> => {
     return this.walletManager.address;
@@ -86,15 +81,15 @@ export class FuelNetwork {
   getIsExternalWallet = () => false;
 
   getTokenList = (): Token[] => {
-    return TOKENS_LIST;
+    return CONFIG.TOKENS;
   };
 
   getTokenBySymbol = (symbol: string): Token => {
-    return TOKENS_BY_SYMBOL[symbol];
+    return CONFIG.TOKENS_BY_SYMBOL[symbol];
   };
 
   getTokenByAssetId = (assetId: string): Token => {
-    return TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
+    return CONFIG.TOKENS_BY_ASSET_ID[assetId.toLowerCase()];
   };
 
   connect = async (wallet: Account): Promise<void> => {
@@ -108,9 +103,9 @@ export class FuelNetwork {
     this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
-  disconnectWallet = (): void => {
-    this.walletManager.disconnect();
-    this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
+  disconnectWallet = async (): Promise<void> => {
+    await this.walletManager.disconnect();
+    this.orderbookSdk.setActiveWallet(undefined);
   };
 
   addAssetToWallet = async (assetId: string): Promise<void> => {
@@ -125,25 +120,23 @@ export class FuelNetwork {
     return this.orderbookSdk.fulfillOrderMany(order);
   };
 
-  cancelSpotOrder = async (order: SpotMarketOrder): Promise<void> => {
-    await this.orderbookSdk.cancelOrder(order.id);
+  cancelSpotOrder = async (order: SpotMarketOrder): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.cancelOrder(order.id);
   };
 
-  mintToken = async (assetAddress: string): Promise<void> => {
+  mintToken = async (amount: string, assetAddress: string): Promise<WriteTransactionResponse> => {
     const token = this.getTokenByAssetId(assetAddress);
     const asset = this.getAssetFromToken(token);
 
-    const amount = FAUCET_AMOUNTS[token.symbol].toString();
-
-    await this.orderbookSdk.mintToken(asset, amount);
+    return this.orderbookSdk.mintToken(asset, amount);
   };
 
-  withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<void> => {
-    await this.orderbookSdk.withdraw(amount, assetType);
+  withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.withdraw(amount, assetType);
   };
 
-  depositSpotBalance = async (amount: string, asset: Asset): Promise<void> => {
-    await this.orderbookSdk.deposit(asset, amount);
+  depositSpotBalance = async (amount: string, asset: Asset): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.deposit(asset, amount);
   };
 
   depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
@@ -189,10 +182,6 @@ export class FuelNetwork {
     // await this.sdk.fulfillPerpOrder(gasAsset, orderId, amount, tokenPriceFeed);
   };
 
-  fetchSpotMarkets = async (limit: number): Promise<MarketCreateEvent[]> => {
-    return this.orderbookSdk.fetchMarkets(limit);
-  };
-
   fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
     const token = this.getTokenByAssetId(baseTokenAddress);
     const asset = this.getAssetFromToken(token);
@@ -206,7 +195,7 @@ export class FuelNetwork {
     const formatOrder = (order: Order) =>
       new SpotMarketOrder({
         ...order,
-        quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.USDC.assetId,
       });
 
     if ("ActiveSellOrder" in data) {
@@ -254,7 +243,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpCollateralBalance(accountAddress, asset);
-    return new BN("0");
+    return BN.ZERO;
   };
 
   fetchPerpAllTraderPositions = async (
@@ -307,7 +296,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpFundingRate(asset);
-    return new BN("0");
+    return BN.ZERO;
   };
 
   fetchPerpMaxAbsPositionSize = async (
@@ -319,7 +308,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpMaxAbsPositionSize(accountAddress, asset, tradePrice);
-    return { shortSize: new BN("0"), longSize: new BN("0") };
+    return { shortSize: BN.ZERO, longSize: BN.ZERO };
   };
 
   fetchPerpPendingFundingPayment = async (
@@ -330,7 +319,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpPendingFundingPayment(accountAddress, asset);
-    return { fundingGrowthPayment: new BN("0"), fundingPayment: new BN("0") };
+    return { fundingGrowthPayment: BN.ZERO, fundingPayment: BN.ZERO };
   };
 
   fetchPerpMarkPrice = async (assetAddress: string): Promise<BN> => {
@@ -338,7 +327,7 @@ export class FuelNetwork {
     const asset = this.getAssetFromToken(token);
 
     // return this.sdk.fetchPerpMarkPrice(asset);
-    return new BN("0");
+    return BN.ZERO;
   };
 
   private getAssetFromToken = (token: Token) => {
