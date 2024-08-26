@@ -78,6 +78,14 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     quickAssetsStore.setQuickAssets(false);
   };
 
+  const assetsMockData = assetsMock.map((el) => {
+    const token = bcNetwork!.getTokenByAssetId(el.assetId);
+    return {
+      asset: token,
+      ...el,
+    };
+  });
+
   return (
     <AssetsContainer justifyContent="space-between" column>
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
@@ -111,7 +119,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             </>
           ) : (
             <>
-              {assetsMock.map((el) => (
+              {assetsMockData.map((el) => (
                 <>
                   <AssetItem key={el.assetId}>
                     <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
