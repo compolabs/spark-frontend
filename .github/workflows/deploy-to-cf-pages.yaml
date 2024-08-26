@@ -1,5 +1,5 @@
 name: Cloudflare Pages Deploy
-  
+
 on:
   push:
     branches:
@@ -11,16 +11,18 @@ on:
 jobs:
   deploy:
     environment:
-      name: ${{ (github.ref == 'refs/heads/main' && 'production') || (github.ref == 'refs/heads/develop' && 'dev') || 'preview' }}   
+      name:
+        ${{ (github.ref == 'refs/heads/main' && 'production') || (github.ref == 'refs/heads/develop' && 'dev') ||
+        'preview' }}
     permissions:
       actions: read # Only required for private GitHub Repo
       contents: read
       deployments: write
       pull-requests: write
     runs-on: ubuntu-latest
-    timeout-minutes: 5 
+    timeout-minutes: 5
     steps:
-      - name: 'Checkout Github Action'
+      - name: "Checkout Github Action"
         uses: actions/checkout@v4
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -34,18 +36,10 @@ jobs:
       - name: Install Dependencies
         run: |
           pnpm install
-      - name: create env file
-        run: |
-          touch .env
-          echo VITE_CONTRACT_ADDRESSES_MARKET=${{ vars.VITE_CONTRACT_ADDRESSES_MARKET }} >> .env 
-          echo VITE_CONTRACT_ADDRESSES_PYTH=${{ vars.VITE_CONTRACT_ADDRESSES_PYTH }} >> .env 
-          echo VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY=${{ vars.VITE_CONTRACT_ADDRESSES_TOKEN_FACTORY }} >> .env 
-          echo VITE_INDEXER_URL=${{ vars.VITE_INDEXER_URL }} >> .env 
-          cat .env
       - name: Build Project
         run: |
           npm run build
-      - name: 'Deploy to Cloudflare Pages'
+      - name: "Deploy to Cloudflare Pages"
         uses: andykenward/github-actions-cloudflare-pages@v2.3.1
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}

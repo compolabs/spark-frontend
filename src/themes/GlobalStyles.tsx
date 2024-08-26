@@ -93,6 +93,34 @@ const globalModalStyles = (theme: Theme) => css`
     // background-color: ${theme.colors.bgSecondary};
   }
   // END react-modal-sheet
+
+  // BEGIN Toastify
+  .Toastify__toast-container {
+    padding: 0;
+    min-height: unset;
+    width: fit-content;
+  }
+  .Toastify__toast {
+    padding: 0;
+    margin: 0 0 8px 0;
+    border-radius: 8px;
+    min-height: unset;
+
+    box-shadow:
+      0px 4px 4px 0px #00000026,
+      0px 12px 22px 0px #00000047;
+  }
+
+  .Toastify__toast-body {
+    padding: 0;
+    align-items: stretch;
+    background-color: ${theme.colors.borderSecondary};
+  }
+
+  .Toastify__toast-icon {
+    display: none;
+  }
+  // END Toast
 `;
 
 const GlobalStyles: React.FC = () => {

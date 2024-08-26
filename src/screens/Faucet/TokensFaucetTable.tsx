@@ -5,16 +5,28 @@ import { observer } from "mobx-react-lite";
 import Chip from "@components/Chip";
 import { TableText } from "@components/Table";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { FuelNetwork } from "@src/blockchain";
 import { SmartFlex } from "@src/components/SmartFlex";
 import { useMedia } from "@src/hooks/useMedia";
 import { useStores } from "@stores";
 
+import { MINIMAL_ETH_REQUIRED } from "../TradeScreen/RightBlock/CreateOrder/CreateOrder";
+
 import MintButtons from "./MintButtons";
 
 const TokensFaucetTable: React.FC = observer(() => {
-  const { faucetStore } = useStores();
+  const { faucetStore, balanceStore } = useStores();
 
   const media = useMedia();
+
+  const bcNetwork = FuelNetwork.getInstance();
+
+  const isEnoughGas = balanceStore.getNativeBalance().gt(MINIMAL_ETH_REQUIRED);
+  const ETH = bcNetwork.getTokenBySymbol("ETH");
+
+  const shouldButtonBeDisabled = (tokenAddress: string) => {
+    return !isEnoughGas && ETH.assetId !== tokenAddress;
+  };
 
   const renderDesktop = () => {
     return (
@@ -37,7 +49,7 @@ const TokensFaucetTable: React.FC = observer(() => {
               <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
                 {token.formatBalance?.toSignificant(3)} &nbsp;<Chip>{token.symbol}</Chip>
               </TableText>
-              <MintButtons assetId={token.assetId} />
+              <MintButtons assetId={token.assetId} disabled={shouldButtonBeDisabled(token.assetId)} />
             </TableRow>
           ))}
         </TableBody>
@@ -54,7 +66,7 @@ const TokensFaucetTable: React.FC = observer(() => {
               <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
                 {token.name}
               </Text>
-              <MintButtons assetId={token.assetId} />
+              <MintButtons assetId={token.assetId} disabled={shouldButtonBeDisabled(token.assetId)} />
             </SmartFlex>
             <SmartFlex gap="64px">
               <SmartFlex gap="8px" column>

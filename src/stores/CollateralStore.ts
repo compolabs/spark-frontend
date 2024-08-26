@@ -3,6 +3,8 @@ import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { FuelNetwork } from "@src/blockchain";
 import { Token } from "@src/entity";
 import BN from "@src/utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
 import RootStore from "./RootStore";
@@ -67,9 +69,16 @@ export class CollateralStore {
 
     try {
       await bcNetwork!.depositPerpCollateral(token.assetId, amount.toString());
-      notificationStore.toast("Success deposit", { type: "success" });
-    } catch (error) {
-      notificationStore.toast("Error with deposit", { type: "error" });
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)("", ""),
+        hash: "",
+      });
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amount.toString(), token.symbol),
+      );
     }
     this.isLoading = false;
   };
@@ -84,10 +93,16 @@ export class CollateralStore {
 
     try {
       await bcNetwork!.withdrawPerpCollateral(token.assetId, amount.toString(), token.priceFeed);
-      notificationStore.toast("Success withdraw", { type: "success" });
-    } catch (error) {
-      console.log(error, "error");
-      notificationStore.toast("Error with withdraw", { type: "error" });
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", ""),
+        hash: "",
+      });
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amount.toString(), token.symbol),
+      );
     }
     this.isLoading = false;
   };

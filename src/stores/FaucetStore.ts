@@ -2,9 +2,9 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { createToast } from "@src/components/Toast";
 import { FUEL_FAUCET } from "@src/constants";
 import BN from "@src/utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import RootStore from "@stores/RootStore";
 
@@ -51,29 +51,39 @@ class FaucetStore {
   private mint = async (assetId: string) => {
     const { accountStore, balanceStore, notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
+    const token = bcNetwork.getTokenByAssetId(assetId);
+
+    if (!token || !accountStore.address) return;
+
     try {
       await bcNetwork!.addAssetToWallet(assetId);
     } catch (error: any) {
       console.error(error);
     }
-    if (!bcNetwork!.getTokenByAssetId(assetId) || !accountStore.address) return;
 
     this.setActionTokenAssetId(assetId);
     this.setLoading(true);
+
     if (bcNetwork?.getIsExternalWallet()) {
-      notificationStore.toast(createToast({ text: "Please, confirm operation in your wallet" }), { type: "info" });
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
+      });
     }
 
     try {
-      await bcNetwork?.mintToken(assetId);
-      notificationStore.toast(createToast({ text: "Minting successful!" }), { type: "success" });
+      const amount = FAUCET_AMOUNTS[token.symbol].toString();
+
+      const tx = await bcNetwork?.mintToken(amount, assetId);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS)(amount, token.symbol),
+        hash: tx.transactionId,
+      });
     } catch (error: any) {
-      console.log(error);
-      handleWalletErrors(notificationStore, error, "We were unable to mint tokens at this time");
-    } finally {
-      this.setLoading(false);
-      await balanceStore.update();
+      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS_FAILED)());
     }
+
+    this.setLoading(false);
+    await balanceStore.update();
   };
 
   mintByAssetId = (assetId: string) => {

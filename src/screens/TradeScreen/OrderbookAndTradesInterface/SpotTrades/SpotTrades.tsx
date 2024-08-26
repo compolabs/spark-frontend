@@ -8,6 +8,7 @@ import Text, { TEXT_TYPES } from "@components/Text";
 import { useSpotTradesVM } from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
 import Loader from "@src/components/Loader";
 import { SmartFlex } from "@src/components/SmartFlex";
+import { media } from "@src/themes/breakpoints";
 
 export const SpotTrades: React.FC = observer(() => {
   const vm = useSpotTradesVM();
@@ -29,8 +30,8 @@ export const SpotTrades: React.FC = observer(() => {
   return (
     <Root>
       <Header>
-        <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
         <Text type={TEXT_TYPES.SUPPORTING}>Qty</Text>
+        <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
         <Text type={TEXT_TYPES.SUPPORTING}>Time</Text>
       </Header>
 
@@ -38,10 +39,10 @@ export const SpotTrades: React.FC = observer(() => {
         {vm.trades.map((trade) => (
           <Row key={"trade" + trade.id}>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-              {trade.formatPrice}
+              {trade.formatTradeAmount}
             </Text>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-              {trade.formatTradeAmount}
+              {trade.formatPrice}
             </Text>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
               {trade.timestamp.format("HH:mm:ss")}
@@ -66,17 +67,23 @@ const Header = styled.div`
   text-align: center;
   height: 26px;
   align-items: center;
-  margin: 8px 0;
+  gap: 10px;
 
-  ${Text}:first-of-type {
+  ${Text} {
     text-align: start;
   }
 
-  ${Text}:last-of-type {
-    text-align: end;
+  ${media.mobile} {
+    grid-template-columns: 1fr min-content;
+
+    ${Text}:nth-of-type(2) {
+      text-align: end;
+    }
+    ${Text}:nth-of-type(3) {
+      display: none;
+    }
   }
 `;
-
 const Container = styled.div`
   display: grid;
   width: 100%;
@@ -91,12 +98,10 @@ const Row = styled(SmartFlex)`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 
+  height: 16px;
+
+  gap: 10px;
+
   align-items: center;
   justify-content: space-between;
-
-  margin-bottom: 2px;
-
-  ${Text}:last-of-type {
-    text-align: end;
-  }
 `;

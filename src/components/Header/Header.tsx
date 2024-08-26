@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -13,7 +13,6 @@ import DataBase from "@src/assets/icons/dataBase.svg?react";
 import { EVENTS, MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
-import { useWallet } from "@src/hooks/useWallet";
 import ConnectWalletDialog from "@src/screens/ConnectWallet";
 import { MODAL_TYPE } from "@src/stores/ModalStore";
 import { media } from "@src/themes/breakpoints";
@@ -28,20 +27,13 @@ import DepositWithdrawModal from "./DepositWithdrawModal";
 import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
-  const { tradeStore, modalStore, accountStore, mixPanelStore, quickAssetsStore } = useStores();
-  const { isConnected, wallet } = useWallet();
+  const { modalStore, accountStore, mixPanelStore, quickAssetsStore } = useStores();
   const location = useLocation();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
-
-  useEffect(() => {
-    if (!isConnected || !wallet) return;
-
-    accountStore.connect(wallet);
-  }, [isConnected, wallet]);
 
   const toggleMenu = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -191,7 +183,7 @@ const Root = styled(SmartFlex)`
   justify-content: space-between;
   width: 100%;
   height: 56px;
-  min-height: 48px;
+  min-height: 56px;
   padding: 0 12px;
 
   ${media.mobile} {

@@ -1,6 +1,6 @@
 {
   "name": "spark-frontend",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "homepage": "https://app.sprk.fi",
   "scripts": {
@@ -15,7 +15,7 @@
     "pnpm": ">=9.7.0"
   },
   "dependencies": {
-    "@compolabs/spark-orderbook-ts-sdk": "^1.4.8",
+    "@compolabs/spark-orderbook-ts-sdk": "^1.6.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fuels/connectors": "^0.9.1",

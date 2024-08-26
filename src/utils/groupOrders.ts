@@ -1,8 +1,8 @@
-import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 
 import BN from "./BN";
+import { CONFIG } from "./getConfig";
 
 const roundPrice = (price: BN, decimals: number): BN => {
   const factor = new BN(10).pow(decimals);
@@ -26,8 +26,7 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
         initial_amount: BN.ZERO.toString(),
         order_type: order.orderType,
         asset: order.baseToken.assetId,
-        asset_type: order.assetType,
-        quoteAssetId: TOKENS_BY_SYMBOL.USDC.assetId,
+        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.USDC.assetId,
         timestamp: order.timestamp.toString(),
       });
     }

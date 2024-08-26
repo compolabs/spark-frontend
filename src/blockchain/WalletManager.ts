@@ -3,8 +3,8 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FUEL_CONFIG } from "@src/constants";
+import { CONFIG } from "@src/utils/getConfig";
 
-import { TOKENS_BY_ASSET_ID } from "./constants";
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
 import { Balances } from "./types";
 
@@ -42,7 +42,7 @@ export class WalletManager {
       throw new NetworkError(NETWORK_ERROR.NOT_CONNECTED);
     }
 
-    const token = TOKENS_BY_ASSET_ID[assetId];
+    const token = CONFIG.TOKENS_BY_ASSET_ID[assetId];
 
     if (!token) {
       throw new NetworkError(NETWORK_ERROR.INVALID_TOKEN);
@@ -81,10 +81,11 @@ export class WalletManager {
     }, {});
   };
 
-  disconnect = () => {
+  disconnect = async () => {
     this.address = null;
     this.privateKey = null;
+    this.wallet = null;
 
-    void this.fuel.disconnect();
+    await this.fuel.disconnect();
   };
 }

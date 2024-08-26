@@ -6,9 +6,10 @@ import { useStores } from "@stores";
 
 interface IProps {
   assetId: string;
+  disabled?: boolean;
 }
 
-const MintButtons: React.FC<IProps> = observer(({ assetId }) => {
+const MintButtons: React.FC<IProps> = observer(({ assetId, disabled }) => {
   const { faucetStore, mixPanelStore } = useStores();
 
   if (!faucetStore.initialized) {
@@ -21,7 +22,7 @@ const MintButtons: React.FC<IProps> = observer(({ assetId }) => {
 
   return (
     <Button
-      disabled={faucetStore.disabled(assetId)}
+      disabled={disabled || faucetStore.disabled(assetId)}
       style={{ width: 120 }}
       onClick={() => {
         mixPanelStore.trackEvent("mintTokenInFaucet", { assetId });

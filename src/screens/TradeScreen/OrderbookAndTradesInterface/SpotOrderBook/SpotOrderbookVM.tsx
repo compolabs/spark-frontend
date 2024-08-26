@@ -4,13 +4,13 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { TOKENS_BY_SYMBOL } from "@src/blockchain/constants";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { Subscription } from "@src/typings/utils";
 import BN from "@src/utils/BN";
 import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
+import { CONFIG } from "@src/utils/getConfig";
 import { groupOrders } from "@src/utils/groupOrders";
 import { RootStore, useStores } from "@stores";
 
@@ -146,7 +146,7 @@ class SpotOrderbookVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, TOKENS_BY_SYMBOL.USDC.assetId);
+          const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId);
           const buyOrdersCombinedByDecimal = groupOrders(buyOrders, this.decimalGroup);
           this.allBuyOrders = buyOrdersCombinedByDecimal;
         },
@@ -164,7 +164,7 @@ class SpotOrderbookVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, TOKENS_BY_SYMBOL.USDC.assetId);
+          const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId);
           const sellOrdersCombinedByDecimal = groupOrders(sellOrders, this.decimalGroup);
           this.allSellOrders = sellOrdersCombinedByDecimal;
         },

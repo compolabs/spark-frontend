@@ -6,6 +6,7 @@ import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
+import { CONFIG } from "@src/utils/getConfig";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import RootStore from "@stores/RootStore";
 
@@ -25,8 +26,7 @@ class TradeStore {
   spotMarkets: SpotMarket[] = [];
   perpMarkets: PerpMarket[] = [];
   marketSelectionOpened = false;
-  marketSymbol: Nullable<string> = null;
-  readonly defaultMarketSymbol = "BTC-USDC";
+  marketSymbol: string = "BTC-USDC";
 
   isPerp = false;
   setIsPerp = (value: boolean) => (this.isPerp = value);
@@ -88,6 +88,28 @@ class TradeStore {
   }
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
+
+  selectActiveMarket = (isPerp: boolean, marketId?: string) => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const getMarket = <T extends SpotMarket | PerpMarket>(markets: T[]) =>
+      markets.find((market) => market.symbol === marketId);
+
+    const spotMarket = getMarket<SpotMarket>(this.spotMarkets);
+    const perpMarket = getMarket<PerpMarket>(this.perpMarkets);
+
+    if (spotMarket || perpMarket) {
+      this.setMarketSymbol(marketId!);
+    }
+
+    if (spotMarket) {
+      bcNetwork.setActiveMarket(spotMarket.contractAddress);
+    } else if (perpMarket) {
+      bcNetwork.setActiveMarket(perpMarket.contractAddress);
+    }
+
+    this.setIsPerp(isPerp && this.isPerpAvailable);
+  };
 
   addToFav = (marketId: string) => {
     if (!this.favMarkets.includes(marketId)) {
@@ -161,11 +183,12 @@ class TradeStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     try {
-      const markets = await bcNetwork!.fetchSpotMarkets(100);
-      const spotMarkets = markets
-        .filter((market) => bcNetwork!.getTokenByAssetId(market.assetId) !== undefined)
-        .map((market) => new SpotMarket(market.assetId, bcNetwork!.getTokenBySymbol("USDC").assetId));
-      this.setSpotMarkets(spotMarkets);
+      const markets = CONFIG.APP.markets.map(
+        (market) => new SpotMarket(market.baseAssetId, market.quoteAssetId, market.contractId),
+      );
+
+      bcNetwork.setActiveMarket(markets[0].contractAddress);
+      this.setSpotMarkets(markets);
       await this.updateMarketPrices();
     } catch (error) {
       console.error("Error init spot market", error);

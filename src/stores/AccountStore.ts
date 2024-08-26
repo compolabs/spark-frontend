@@ -4,7 +4,6 @@ import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { createToast } from "@src/components/Toast";
 
 import RootStore from "./RootStore";
 
@@ -42,7 +41,9 @@ class AccountStore {
     try {
       await bcNetwork?.connect(wallet);
     } catch (error: any) {
-      notificationStore.toast(createToast({ text: "Unexpected error. Please try again." }), { type: "error" });
+      notificationStore.error({
+        text: "Unexpected error. Please try again.",
+      });
     }
   };
 
@@ -54,7 +55,9 @@ class AccountStore {
     try {
       await bcNetwork?.connectWalletByPrivateKey(privateKey);
     } catch (error: any) {
-      notificationStore.toast(createToast({ text: "Unexpected error. Please try again." }), { type: "error" });
+      notificationStore.error({
+        text: "Unexpected error. Please try again.",
+      });
     }
   };
 
@@ -64,10 +67,10 @@ class AccountStore {
     await bcNetwork!.addAssetToWallet(assetId);
   };
 
-  disconnect = () => {
+  disconnect = async () => {
     const bcNetwork = FuelNetwork.getInstance();
 
-    bcNetwork?.disconnectWallet();
+    await bcNetwork?.disconnectWallet();
   };
 
   get address(): Nullable<B256Address> {
