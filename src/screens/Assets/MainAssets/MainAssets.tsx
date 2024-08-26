@@ -95,7 +95,6 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     };
   });
 
-  console.log("!isConnected", accumulateBalanceContract.gt(0));
   return (
     <AssetsContainer justifyContent="space-between" column>
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
