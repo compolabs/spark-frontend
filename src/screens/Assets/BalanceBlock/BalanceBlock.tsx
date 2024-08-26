@@ -2,9 +2,9 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN.ts";
 import { useStores } from "@stores";

@@ -3,7 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import Button from "@components/Button";
-import SearchInput from "@components/SearchInput.tsx";
+import SearchInput from "@components/SearchInput";
 import AssetBlock, { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";

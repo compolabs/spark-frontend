@@ -17,12 +17,12 @@ import { useStores } from "@stores";
 import closeThin from "@src/assets/icons/closeThin.svg";
 import { useWallet } from "@src/hooks/useWallet.ts";
 import { assetsMock } from "@screens/Assets/MainAssets/const.ts";
-import SizedBox from "@components/SizedBox.tsx";
+import SizedBox from "@components/SizedBox";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 import useFlag from "@src/hooks/useFlag.ts";
-import { ActionModal } from "@screens/Assets/ActionModal.tsx";
+import { ActionModal } from "@screens/Assets/ActionModal";
 import { AnimatePresence } from "framer-motion";
-import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets.tsx";
+import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets";
 
 interface MainAssets {
   setStep: (value: number) => void;
@@ -62,14 +62,10 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     setShowAction(null);
   };
 
-  console.log("balanceData", balanceData);
   const accumulateBalanceContract = balanceData.reduce((acc, account) => {
-    console.log("asd", account.contractBalance);
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
-    console.log("price", price.toString());
     return acc.plus(new BN(account.contractBalance).multipliedBy(price));
   }, BN.ZERO);
-  console.log("accumulateBalanceContract", accumulateBalanceContract.toString());
 
   const handleWithdraw = async () => {
     // const ETH = bcNetwork.getTokenBySymbol("ETH");
@@ -98,19 +94,6 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       ...el,
     };
   });
-
-  console.log(
-    "!hasPositiveBalance && isConnected",
-    !hasPositiveBalance,
-    isConnected,
-    !hasPositiveBalance && isConnected,
-  );
-  console.log("accumulateBalanceContract", accumulateBalanceContract.toString());
-  console.log(
-    "!accumulateBalanceContract.gt(0)",
-    !accumulateBalanceContract.gt(0),
-    (!hasPositiveBalance && isConnected) || !accumulateBalanceContract.gt(0),
-  );
   return (
     <AssetsContainer justifyContent="space-between" column>
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}

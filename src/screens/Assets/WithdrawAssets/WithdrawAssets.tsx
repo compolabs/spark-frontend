@@ -8,9 +8,9 @@ import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { ActionModal } from "@screens/Assets/ActionModal.tsx";
-import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock.tsx";
-import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums.tsx";
+import { ActionModal } from "@screens/Assets/ActionModal";
+import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
+import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
 import closeThin from "@src/assets/icons/closeThin.svg";
 import DataBase from "@src/assets/icons/dataBase.svg?react";
@@ -128,8 +128,6 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
             selected={selectAsset?.assetId}
             showBalance="contractBalance"
             onChangeValue={(el) => {
-              console.log("el", el.toString());
-              console.log("selectAsset.asset.assetId", selectAsset?.asset);
               setAmount(el);
             }}
             onSelect={(el) => {

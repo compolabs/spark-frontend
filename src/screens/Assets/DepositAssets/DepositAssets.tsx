@@ -8,9 +8,9 @@ import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { ActionModal } from "@screens/Assets/ActionModal.tsx";
-import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock.tsx";
-import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums.tsx";
+import { ActionModal } from "@screens/Assets/ActionModal";
+import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
+import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
 import closeThin from "@src/assets/icons/closeThin.svg";
 import WalletIcon from "@src/assets/icons/wallet.svg?react";
@@ -103,7 +103,6 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
         assetId,
       };
     });
-  console.log("balanceData", balanceData);
 
   useEffect(() => {
     setAssets(balanceData[0]);

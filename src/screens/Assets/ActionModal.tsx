@@ -3,9 +3,9 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 
-import { IAssetBlock } from "@components/SelectAssets/AssetBlock.tsx";
+import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
-import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums.tsx";
+import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
 import CheckCircle from "@src/assets/icons/check-circle.svg?react";
 import CloseIcon from "@src/assets/icons/close.svg?react";
 import ErrorCircle from "@src/assets/icons/error-circle.svg?react";
