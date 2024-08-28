@@ -62,7 +62,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
         setAmount(BN.ZERO);
       }
     } catch (err) {
-      console.log("er", err);
+      console.error("er", err);
     }
   };
 

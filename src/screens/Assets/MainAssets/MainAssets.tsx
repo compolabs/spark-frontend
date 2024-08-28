@@ -73,7 +73,6 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       }));
     setIsLoading(true);
     await balanceStore.withdrawBalanceAll(assets);
-    console.log("end");
     setIsLoading(false);
   };
   const closeAssets = () => {

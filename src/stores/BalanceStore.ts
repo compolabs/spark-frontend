@@ -202,12 +202,10 @@ export class BalanceStore {
         assetType: type,
       };
     });
-    console.log("assets", amountFormatted);
     try {
-      const tx = await bcNetwork?.withdrawSpotBalanceAll(amountFormatted);
-      console.log("tx", tx);
+      await bcNetwork?.withdrawSpotBalanceAll(amountFormatted);
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)("", ""),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS)(),
         hash: "",
       });
       return true;
