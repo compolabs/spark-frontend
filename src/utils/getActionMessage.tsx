@@ -9,6 +9,7 @@ export const enum ACTION_MESSAGE_TYPE {
   DEPOSITING_TOKENS,
   DEPOSITING_TOKENS_FAILED,
   WITHDRAWING_TOKENS,
+  WITHDRAWING_ALL_TOKENS,
   WITHDRAWING_TOKENS_FAILED,
   CREATING_ORDER,
   CREATING_ORDER_FAILED,
@@ -16,10 +17,13 @@ export const enum ACTION_MESSAGE_TYPE {
   CANCELING_ORDER_FAILED,
   CREATING_SWAP,
   CREATING_SWAP_FAILED,
+  WITHDRAWING_ALL_TOKENS_FAILED,
 }
 
 type ActionMessageArgs = {
   [ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS]: [amount: string, symbol: string];
+  [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS]: [];
+  [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS_FAILED]: [];
   [ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS_FAILED]: [];
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS]: [amount: string, symbol: string];
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED]: [amount: string, symbol: string];
@@ -73,12 +77,22 @@ const MESSAGE_TEMPLATES: ActionMessage = {
       &nbsp; failed
     </TextContainer>
   ),
+  [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS]: () => (
+    <TextContainer type={TEXT_TYPES.BUTTON} greenLight>
+      Withdrawn all successfully
+    </TextContainer>
+  ),
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS]: (amount, symbol) => (
     <TextContainer type={TEXT_TYPES.BUTTON} greenLight>
       Withdrawn&nbsp;
       <Text type={TEXT_TYPES.BUTTON} primary>
         {amount} {symbol}
       </Text>
+    </TextContainer>
+  ),
+  [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS_FAILED]: () => (
+    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+      Withdrawal failed
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED]: (amount, symbol) => (

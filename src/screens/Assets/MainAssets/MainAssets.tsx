@@ -20,9 +20,8 @@ import { assetsMock } from "@screens/Assets/MainAssets/const.ts";
 import SizedBox from "@components/SizedBox";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 import useFlag from "@src/hooks/useFlag.ts";
-import { ActionModal } from "@screens/Assets/ActionModal";
-import { AnimatePresence } from "framer-motion";
 import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets";
+import Spinner from "@src/assets/icons/spinner.svg?react";
 
 interface MainAssets {
   setStep: (value: number) => void;
@@ -31,16 +30,15 @@ interface MainAssets {
 const MainAssets = observer(({ setStep }: MainAssets) => {
   const { balanceStore, accountStore } = useStores();
   const { oracleStore, settingsStore, quickAssetsStore } = useStores();
-  const { isConnected, wallet } = useWallet();
+  const { isConnected } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
-  const [showAction, setShowAction] = useState<ShowAction | null>();
+  const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
   const ETH = bcNetwork.getTokenBySymbol("ETH");
 
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([assetId, balance]) => balance && balance.gt(BN.ZERO) && assetId !== ETH.assetId)
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =
@@ -53,14 +51,12 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
         balance: BN.formatUnits(totalBalance, token.decimals).toString(),
         assetId,
       };
+    })
+    .filter((el) => {
+      return el.contractBalance && new BN(el.contractBalance).gt(BN.ZERO) && el.assetId !== ETH.assetId;
     });
 
   const hasPositiveBalance = balanceData.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
-
-  const handleCloseAction = () => {
-    if (!showAction) return;
-    setShowAction(null);
-  };
 
   const accumulateBalanceContract = balanceData.reduce((acc, account) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
@@ -68,19 +64,16 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   }, BN.ZERO);
 
   const handleWithdraw = async () => {
-    // const ETH = bcNetwork.getTokenBySymbol("ETH");
-    // const assets = balanceData
-    //   .filter((el) => el.assetId !== ETH.assetId)
-    //   .map((el) => ({
-    //     assetId: el.assetId,
-    //     balance: el.contractBalance,
-    //   }));
-    // try {
-    //   console.log("ass", assets);
-    //   // await balanceStore.withdrawBalanceAll(assets);
-    // } catch (err) {
-    //   console.log("err", err);
-    // }
+    const ETH = bcNetwork.getTokenBySymbol("ETH");
+    const assets = balanceData
+      .filter((el) => el.assetId !== ETH.assetId)
+      .map((el) => ({
+        assetId: el.assetId,
+        balance: BN.parseUnits(el.contractBalance, el.asset.decimals).toString(),
+      }));
+    setIsLoading(true);
+    await balanceStore.withdrawBalanceAll(assets);
+    setIsLoading(false);
   };
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
@@ -175,22 +168,12 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             <ButtonConfirm fitContent onClick={() => setStep(2)}>
               Withdraw
             </ButtonConfirm>
-            {/*<ButtonConfirm fitContent onClick={handleWithdraw}>*/}
-            {/*  Withdraw All*/}
-            {/*</ButtonConfirm>*/}
+            <ButtonConfirm fitContent onClick={handleWithdraw}>
+              {isLoading ? <Spinner height={14} /> : "Withdraw All"}
+            </ButtonConfirm>
           </SmartFlexBlock>
         )}
       </BottomColumn>
-      <AnimatePresence>
-        {showAction && (
-          <ActionModal
-            hash={showAction.hash}
-            transactionInfo={showAction.transactionInfo}
-            typeModal={showAction.typeModal}
-            onClose={handleCloseAction}
-          />
-        )}
-      </AnimatePresence>
     </AssetsContainer>
   );
 });

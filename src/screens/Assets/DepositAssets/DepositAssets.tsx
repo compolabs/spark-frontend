@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import { AnimatePresence } from "framer-motion";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
@@ -8,7 +7,6 @@ import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { ActionModal } from "@screens/Assets/ActionModal";
 import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
 import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
@@ -21,6 +19,7 @@ import { useStores } from "@stores";
 import ErrorWallet from "@src/assets/icons/errorWallet.svg?react";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
+import Spinner from "@src/assets/icons/spinner.svg?react";
 
 interface DepositAssets {
   setStep: (value: number) => void;
@@ -52,37 +51,19 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
   const handleClick = async () => {
     if (!selectAsset || !amount) return;
     setIsloading(true);
-    const data = {
-      hash: "",
-      transactionInfo: {
-        amount: BN.formatUnits(amount, selectAsset.asset.decimals).toString(),
-        token: selectAsset,
-        type: TypeTranaction.DEPOSIT,
-      },
-      typeModal: ModalEnums.Pending,
-    };
-    setShowAction(data);
     try {
-      await balanceStore.depositBalance(
+      const response = await balanceStore.depositBalance(
         selectAsset.asset.assetId,
         BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
       );
-      data.typeModal = ModalEnums.Success;
-      setShowAction(data);
-      setTimeout(() => {
+      setIsloading(false);
+      if (response) {
         setStep(0);
         setAmount(BN.ZERO);
-      }, 5000);
+      }
     } catch (err) {
-      console.log("er", err);
-      data.typeModal = ModalEnums.Error;
-      setShowAction(data);
+      console.error("er", err);
     }
-  };
-  const handleCloseAction = () => {
-    if (!showAction) return;
-    setShowAction(null);
-    setIsloading(false);
   };
 
   const ETH = bcNetwork.getTokenBySymbol("ETH");
@@ -169,18 +150,8 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
           fitContent
           onClick={handleClick}
         >
-          Confirm
+          {isLoading ? <Spinner height={14} /> : "Confirm"}
         </ButtonConfirm>
-        <AnimatePresence>
-          {showAction && (
-            <ActionModal
-              hash={showAction.hash}
-              transactionInfo={showAction.transactionInfo}
-              typeModal={showAction.typeModal}
-              onClose={handleCloseAction}
-            />
-          )}
-        </AnimatePresence>
       </SmartFlexContainer>
     </>
   );
