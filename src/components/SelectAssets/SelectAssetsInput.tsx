@@ -1,6 +1,7 @@
 import React, { HTMLAttributes, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import BigNumber from "bignumber.js";
 
 import Button from "@components/Button";
 import SearchInput from "@components/SearchInput";
@@ -17,7 +18,6 @@ import BN from "@src/utils/BN";
 import { Column } from "../Flex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
 import Tooltip from "../Tooltip";
-import BigNumber from "bignumber.js";
 
 export interface AssetBlockData {
   asset: Token;

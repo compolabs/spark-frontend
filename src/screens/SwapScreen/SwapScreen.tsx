@@ -303,6 +303,7 @@ const Title = styled.h1`
   font-weight: 500;
   text-align: center;
   background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: ${textAnimation} 3s infinite;

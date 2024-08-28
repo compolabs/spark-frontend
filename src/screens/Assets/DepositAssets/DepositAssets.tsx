@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { AnimatePresence } from "framer-motion";
 import { observer } from "mobx-react";
@@ -13,14 +15,12 @@ import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
 import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
 import closeThin from "@src/assets/icons/closeThin.svg";
+import ErrorWallet from "@src/assets/icons/errorWallet.svg?react";
 import WalletIcon from "@src/assets/icons/wallet.svg?react";
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
-import ErrorWallet from "@src/assets/icons/errorWallet.svg?react";
-import { useTheme } from "@emotion/react";
-import { useNavigate } from "react-router-dom";
 
 interface DepositAssets {
   setStep: (value: number) => void;

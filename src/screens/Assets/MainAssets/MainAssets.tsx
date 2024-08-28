@@ -1,28 +1,28 @@
 import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import { AnimatePresence } from "framer-motion";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
 import { Column } from "@components/Flex";
 import AssetBlock from "@components/SelectAssets/AssetBlock";
+import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { ActionModal } from "@screens/Assets/ActionModal";
+import { assetsMock } from "@screens/Assets/MainAssets/const.ts";
 import { InfoBlockAssets } from "@screens/Assets/MainAssets/InfoBlockAssets";
+import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets";
+import ConnectWalletDialog from "@screens/ConnectWallet";
+import closeThin from "@src/assets/icons/closeThin.svg";
 import DepositAssets from "@src/assets/icons/depositAssets.svg?react";
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
+import useFlag from "@src/hooks/useFlag.ts";
+import { useWallet } from "@src/hooks/useWallet.ts";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
-import closeThin from "@src/assets/icons/closeThin.svg";
-import { useWallet } from "@src/hooks/useWallet.ts";
-import { assetsMock } from "@screens/Assets/MainAssets/const.ts";
-import SizedBox from "@components/SizedBox";
-import ConnectWalletDialog from "@screens/ConnectWallet";
-import useFlag from "@src/hooks/useFlag.ts";
-import { ActionModal } from "@screens/Assets/ActionModal";
-import { AnimatePresence } from "framer-motion";
-import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets";
 
 interface MainAssets {
   setStep: (value: number) => void;

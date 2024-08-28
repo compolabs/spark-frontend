@@ -5,7 +5,7 @@ import { sepolia } from "@wagmi/core/chains";
 
 export const ROUTES = {
   ROOT: "/",
-  TRADE: "/:marketId",
+  SPOT: "/spot/:marketId",
   FAUCET: "/faucet",
   SWAP: "/swap",
 };
@@ -25,26 +25,11 @@ export const GITHUB_LINK = "https://github.com/compolabs";
 export const DOCS_LINK = "https://docs.sprk.fi";
 export const FUEL_LINK = "https://fuel.network";
 
-type TMenuItem = {
-  title: string;
-  dataOnboardingKey?: string;
-  route?: string;
-  link?: string;
-  events?: string;
-};
-
 export const EVENTS = {
   OpenSideAssets: "openSideAssets",
 };
 
-export const MENU_ITEMS: Array<TMenuItem> = [
-  { title: "TRADE", route: ROUTES.ROOT },
-  { title: "FAUCET", route: ROUTES.FAUCET, dataOnboardingKey: "mint" },
-  { title: "SWAP", route: ROUTES.SWAP },
-  { title: "DOCS", link: DOCS_LINK },
-  { title: "GITHUB", link: GITHUB_LINK },
-  { title: "TWITTER", link: TWITTER_LINK },
-];
+export const DEFAULT_MARKET = "BTC-USDC";
 
 const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 

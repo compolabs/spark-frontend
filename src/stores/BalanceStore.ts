@@ -5,9 +5,7 @@ import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { FuelNetwork } from "@src/blockchain";
 import { Balances } from "@src/blockchain/types";
 import BN from "@src/utils/BN";
-import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { CONFIG } from "@src/utils/getConfig";
-import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 
 import RootStore from "./RootStore";

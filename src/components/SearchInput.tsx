@@ -60,7 +60,7 @@ const Wrap = styled.div<{ variant: IProps["variant"] }>`
 const SearchInput: React.FC<IProps> = ({ value, onChange, placeholder, variant = "default" }) => {
   return (
     <Wrap variant={variant}>
-      <img alt="search" width={24} src={search} />
+      <img alt="search" src={search} width={24} />
       <Input
         placeholder={placeholder ? placeholder : "Search by name..."}
         value={value}
