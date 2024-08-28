@@ -34,7 +34,7 @@ const TokensFaucetTable: React.FC = observer(() => {
         <TableRow>
           <TableTitle>Asset</TableTitle>
           <TableTitle>Mint amount</TableTitle>
-          <TableTitle>My balance</TableTitle>
+          <TableTitle>Wallet balance</TableTitle>
           <TableTitle></TableTitle>
         </TableRow>
         <TableBody>

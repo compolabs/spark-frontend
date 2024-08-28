@@ -138,22 +138,22 @@ export class BalanceStore {
       symbol: data.symbol,
       decimals: data.decimals,
     };
-    // TODO: когда нотификации будут в assets будут переделываться - расскоментировать, return удалить
-    // const amountFormatted = BN.formatUnits(amount, data.decimals).toSignificant(2);
-    // try {
-    //   const tx = await bcNetwork?.depositSpotBalance(amount, asset);
-    //   notificationStore.success({
-    //     text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, data.symbol),
-    //     hash: tx.transactionId,
-    //   });
-    // } catch (error: any) {
-    //   handleWalletErrors(
-    //     notificationStore,
-    //     error,
-    //     getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amountFormatted, data.symbol),
-    //   );
-    // }
-    return bcNetwork?.depositSpotBalance(amount, asset);
+    const amountFormatted = BN.formatUnits(amount, data.decimals).toSignificant(2);
+    try {
+      const tx = await bcNetwork?.depositSpotBalance(amount, asset);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, data.symbol),
+        hash: tx.transactionId,
+      });
+      return true;
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amountFormatted, data.symbol),
+      );
+      return false;
+    }
   };
 
   withdrawBalance = async (assetId: string, amount: string) => {
@@ -170,40 +170,52 @@ export class BalanceStore {
     const { type } = this.getContractBalanceInfo(assetId);
     const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
 
-    // TODO: когда нотификации будут в assets будут переделываться - расскоментировать, return удалить
-    // try {
-    //   const tx = await bcNetwork?.withdrawSpotBalance(amount, type);
-    //   notificationStore.success({
-    //     text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
-    //     hash: tx.transactionId,
-    //   });
-    // } catch (error: any) {
-    //   handleWalletErrors(
-    //     notificationStore,
-    //     error,
-    //     getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amountFormatted, token.symbol),
-    //   );
-    // }
-    return bcNetwork?.withdrawSpotBalance(amount, type);
+    try {
+      const tx = await bcNetwork?.withdrawSpotBalance(amount, type);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
+        hash: tx.transactionId,
+      });
+      return true;
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amountFormatted, token.symbol),
+      );
+      return false;
+    }
   };
 
-  // withdrawBalanceAll = async (withdrawAssets: any) => {
-  //   const { notificationStore } = this.rootStore;
-  //   const bcNetwork = FuelNetwork.getInstance();
-  //   if (bcNetwork?.getIsExternalWallet()) {
-  //     notificationStore.info({ text: "Please, confirm operation in your wallet" });
-  //   }
-  //   const assets = withdrawAssets.map((el: { assetId: string; balance: number }) => {
-  //     console.log("el", el);
-  //     const { type } = this.getContractBalanceInfo(el.assetId);
-  //     return {
-  //       amount: el.balance,
-  //       type: type,
-  //     };
-  //   });
-  //   console.log("assets", assets);
-  //   return bcNetwork?.withdrawSpotBalanceAll(assets);
-  // };
+  withdrawBalanceAll = async (withdrawAssets: any) => {
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+    if (bcNetwork?.getIsExternalWallet()) {
+      notificationStore.info({ text: "Please, confirm operation in your wallet" });
+    }
+    const amountFormatted = withdrawAssets.map((el: { assetId: string; balance: number }) => {
+      const { type } = this.getContractBalanceInfo(el.assetId);
+      return {
+        amount: el.balance,
+        assetType: type,
+      };
+    });
+    try {
+      await bcNetwork?.withdrawSpotBalanceAll(amountFormatted);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS)(),
+        hash: "",
+      });
+      return true;
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS_FAILED)(),
+      );
+      return false;
+    }
+  };
 
   private fetchBalances = async (): Promise<Balances> => {
     const bcNetwork = FuelNetwork.getInstance();

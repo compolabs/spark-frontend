@@ -2,7 +2,7 @@ import mixpanel, { Mixpanel } from "mixpanel-browser";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import RootStore from "@stores/RootStore.ts";
+import RootStore from "@stores/RootStore";
 
 class MixPanelStore {
   private readonly rootStore: RootStore;

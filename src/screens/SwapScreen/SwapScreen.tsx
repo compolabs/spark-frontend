@@ -117,7 +117,7 @@ export const SwapScreen: React.FC = observer(() => {
       setTransactionId(data?.transactionId);
       setTypeModal(ModalEnums.Success);
     } catch (err) {
-      console.log("er", err);
+      console.error("er", err);
       setTypeModal(ModalEnums.Error);
     } finally {
       setPendingModalVisible(false);
