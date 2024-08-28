@@ -168,7 +168,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             <ButtonConfirm fitContent onClick={() => setStep(2)}>
               Withdraw
             </ButtonConfirm>
-            <ButtonConfirm fitContent onClick={handleWithdraw}>
+            <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdraw}>
               {isLoading ? <Spinner height={14} /> : "Withdraw All"}
             </ButtonConfirm>
           </SmartFlexBlock>
