@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import { AnimatePresence } from "framer-motion";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
@@ -8,7 +7,6 @@ import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { ActionModal } from "@screens/Assets/ActionModal";
 import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
 import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
 import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
@@ -19,6 +17,7 @@ import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
+import Spinner from "@src/assets/icons/spinner.svg?react";
 
 interface WithdrawAssets {
   setStep: (value: number) => void;
@@ -36,10 +35,9 @@ export interface ShowAction {
 const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
-  const [isLoading, setIsloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { quickAssetsStore, balanceStore, oracleStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
-  const [showAction, setShowAction] = useState<ShowAction | null>();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
@@ -47,40 +45,18 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
 
   const handleClick = async () => {
     if (!selectAsset || !amount) return;
-    setIsloading(true);
-    const data = {
-      hash: "",
-      transactionInfo: {
-        amount: BN.formatUnits(amount, selectAsset.asset.decimals).toString(),
-        token: selectAsset,
-        type: TypeTranaction.WITHDRAWAL,
-      },
-      typeModal: ModalEnums.Pending,
-    };
-    setShowAction(data);
-    try {
-      await balanceStore.withdrawBalance(
-        selectAsset.asset.assetId,
-        BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
-      );
-      data.typeModal = ModalEnums.Success;
-      setShowAction(data);
-      setTimeout(() => {
-        setStep(0);
-        setAmount(BN.ZERO);
-      }, 5000);
-    } catch (err) {
-      console.log("err");
-      data.typeModal = ModalEnums.Error;
-      setShowAction(data);
+    setIsLoading(true);
+    const response = await balanceStore.withdrawBalance(
+      selectAsset.asset.assetId,
+      BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
+    );
+    setIsLoading(false);
+    if (response) {
+      setStep(0);
+      setAmount(BN.ZERO);
     }
   };
 
-  const handleCloseAction = () => {
-    if (!showAction) return;
-    setShowAction(null);
-    setIsloading(false);
-  };
   const ETH = bcNetwork.getTokenBySymbol("ETH");
   const balanceData = Array.from(balanceStore.balances)
     .filter(([assetId, balance]) => balance && balance.gt(BN.ZERO) && assetId !== ETH.assetId)
@@ -156,18 +132,8 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
           fitContent
           onClick={handleClick}
         >
-          Confirm
+          {isLoading ? <Spinner height={14} /> : "Confirm"}
         </ButtonConfirm>
-        <AnimatePresence>
-          {showAction && (
-            <ActionModal
-              hash={showAction.hash}
-              transactionInfo={showAction.transactionInfo}
-              typeModal={showAction.typeModal}
-              onClose={handleCloseAction}
-            />
-          )}
-        </AnimatePresence>
       </SmartFlexContainer>
     </>
   );
