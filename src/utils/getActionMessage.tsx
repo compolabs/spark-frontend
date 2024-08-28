@@ -17,11 +17,13 @@ export const enum ACTION_MESSAGE_TYPE {
   CANCELING_ORDER_FAILED,
   CREATING_SWAP,
   CREATING_SWAP_FAILED,
+  WITHDRAWING_ALL_TOKENS_FAILED,
 }
 
 type ActionMessageArgs = {
   [ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS]: [amount: string, symbol: string];
   [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS]: [];
+  [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS_FAILED]: [];
   [ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS_FAILED]: [];
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS]: [amount: string, symbol: string];
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED]: [amount: string, symbol: string];
@@ -86,6 +88,11 @@ const MESSAGE_TEMPLATES: ActionMessage = {
       <Text type={TEXT_TYPES.BUTTON} primary>
         {amount} {symbol}
       </Text>
+    </TextContainer>
+  ),
+  [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS_FAILED]: () => (
+    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+      Withdrawal failed
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED]: (amount, symbol) => (
