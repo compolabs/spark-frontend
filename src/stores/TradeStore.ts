@@ -3,7 +3,7 @@ import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
-import { DEFAULT_DECIMALS } from "@src/constants";
+import { DEFAULT_DECIMALS, DEFAULT_MARKET } from "@src/constants";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
 import { CONFIG } from "@src/utils/getConfig";
@@ -26,7 +26,7 @@ class TradeStore {
   spotMarkets: SpotMarket[] = [];
   perpMarkets: PerpMarket[] = [];
   marketSelectionOpened = false;
-  marketSymbol: string = "BTC-USDC";
+  marketSymbol = DEFAULT_MARKET;
 
   isPerp = false;
   setIsPerp = (value: boolean) => (this.isPerp = value);
@@ -91,6 +91,8 @@ class TradeStore {
 
   selectActiveMarket = (isPerp: boolean, marketId?: string) => {
     const bcNetwork = FuelNetwork.getInstance();
+
+    if (!marketId) return;
 
     const getMarket = <T extends SpotMarket | PerpMarket>(markets: T[]) =>
       markets.find((market) => market.symbol === marketId);

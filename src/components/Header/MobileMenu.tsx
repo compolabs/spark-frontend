@@ -1,13 +1,11 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import Text from "@components/Text";
-import { EVENTS, MENU_ITEMS } from "@src/constants";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
-import isRoutesEquals from "@src/utils/isRoutesEquals";
 
 import Button from "../Button";
 import MenuOverlay from "../MenuOverlay";
@@ -15,103 +13,56 @@ import SizedBox from "../SizedBox";
 import { SmartFlex } from "../SmartFlex";
 
 import ConnectedWalletButton from "./ConnectedWalletButton";
+import { MenuNav } from "./MenuNav";
 
 interface IProps {
   isOpen: boolean;
   onAccountClick: () => void;
   onWalletConnect: () => void;
-  onDepositWithdrawClick: () => void;
   onClose: () => void;
 }
 
-const MobileMenu: React.FC<IProps> = observer(
-  ({ isOpen, onAccountClick, onWalletConnect, onClose, onDepositWithdrawClick }) => {
-    const { accountStore, tradeStore, quickAssetsStore } = useStores();
-    const location = useLocation();
+const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalletConnect, onClose }) => {
+  const { accountStore, quickAssetsStore, mixPanelStore } = useStores();
+  const location = useLocation();
 
-    const handleAccountClick = () => {
-      onAccountClick();
-      onClose();
-    };
+  const handleAccountClick = () => {
+    onAccountClick();
+    onClose();
+  };
 
-    const handleConnectWallet = () => {
-      onWalletConnect();
-      onClose();
-    };
+  const handleConnectWallet = () => {
+    onWalletConnect();
+    onClose();
+  };
 
-    const handleDepositWithdrawClick = () => {
-      onDepositWithdrawClick();
-      onClose();
-    };
-
-    const renderWalletButton = () => {
-      return accountStore.address ? (
-        <ConnectedWalletButtonStyled onClick={handleAccountClick} />
-      ) : (
-        <Button green onClick={handleConnectWallet}>
-          Connect wallet
-        </Button>
-      );
-    };
-
-    const createEvents = (events: string) => {
-      if (events === EVENTS.OpenSideAssets) {
-        quickAssetsStore.setQuickAssets(true);
-      }
-    };
-
-    return (
-      <MenuOverlay isOpen={isOpen} top={50} zIndex={300}>
-        <Body>
-          <Container>
-            {MENU_ITEMS.map(({ title, link, route, events, dataOnboardingKey }) => {
-              const dataOnboardingDeviceKey = `${dataOnboardingKey}-${media.mobile ? "mobile" : "desktop"}`;
-
-              if (events) {
-                return (
-                  <MenuItem key={title} onClick={() => createEvents(events)}>
-                    {title}
-                  </MenuItem>
-                );
-              } else if (!link && !route) {
-                return (
-                  <MenuItem key={title}>
-                    <Text>{title}</Text>
-                  </MenuItem>
-                );
-              } else if (route) {
-                return (
-                  <Link key={title} to={route} onClick={onClose}>
-                    <MenuItem isSelected={isRoutesEquals(route, location.pathname)}>
-                      <Text data-onboarding={dataOnboardingDeviceKey}>{title}</Text>
-                    </MenuItem>
-                  </Link>
-                );
-              } else if (link) {
-                return (
-                  <a key={title} href={link} rel="noopener noreferrer" target="_blank">
-                    <MenuItem>
-                      <Text>{title}</Text>
-                    </MenuItem>
-                  </a>
-                );
-              }
-
-              return null;
-            })}
-          </Container>
-          <SizedBox height={8} />
-          <FooterContainer gap="8px" column>
-            <Button data-onboarding="assets-mobile" onClick={() => createEvents(EVENTS.OpenSideAssets)}>
-              ASSETS
-            </Button>
-            {renderWalletButton()}
-          </FooterContainer>
-        </Body>
-      </MenuOverlay>
+  const renderWalletButton = () => {
+    return accountStore.address ? (
+      <ConnectedWalletButtonStyled onClick={handleAccountClick} />
+    ) : (
+      <Button green onClick={handleConnectWallet}>
+        Connect wallet
+      </Button>
     );
-  },
-);
+  };
+
+  return (
+    <MenuOverlay isOpen={isOpen} top={50} zIndex={300}>
+      <Body>
+        <Container>
+          <MenuNav isMobile onMenuClick={onClose} />
+        </Container>
+        <SizedBox height={8} />
+        <FooterContainer gap="8px" column>
+          <Button data-onboarding="assets-mobile" onClick={() => quickAssetsStore.setQuickAssets(true)}>
+            ASSETS
+          </Button>
+          {renderWalletButton()}
+        </FooterContainer>
+      </Body>
+    </MenuOverlay>
+  );
+});
 
 export default MobileMenu;
 

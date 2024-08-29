@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
@@ -14,9 +14,11 @@ import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
 import { SwapScreen } from "./screens/SwapScreen";
 import TradeScreen from "./screens/TradeScreen";
-import { ROUTES } from "./constants";
+import { DEFAULT_MARKET, ROUTES } from "./constants";
 
 const isUnderConstruction = false;
+
+const DEFAULT_SPOT_ROUTE = `/spot/${DEFAULT_MARKET}`;
 
 const App: React.FC = observer(() => {
   usePrivateKeyAsAuth();
@@ -28,14 +30,12 @@ const App: React.FC = observer(() => {
   return (
     <Root>
       <Header />
-      {/* <Column alignItems="center" justifyContent="center" mainAxisSize="stretch">
-        <Text>Spark is under construction</Text>
-      </Column> */}
       <Routes>
-        <Route element={<TradeScreen />} path={ROUTES.TRADE} />
-        <Route element={<TradeScreen />} path={ROUTES.ROOT} />
+        <Route element={<TradeScreen />} path={ROUTES.SPOT} />
         <Route element={<SwapScreen />} path={ROUTES.SWAP} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
+        <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
+        <Route element={<Navigate to={DEFAULT_SPOT_ROUTE} />} path={ROUTES.ROOT} />
       </Routes>
       <SideManageAssets />
       <PWAModal />

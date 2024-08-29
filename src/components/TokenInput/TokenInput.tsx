@@ -86,7 +86,7 @@ const TokenInput: React.FC<IProps> = observer((props) => {
         {props.assetId && <Chip>{bcNetwork?.getTokenByAssetId(props.assetId).symbol}</Chip>}
         {props.isShowMax && <Chip onClick={props.handleMaxBalance}>MAX</Chip>}
       </InputContainer>
-      {props.error && props.errorMessage && <Text>{props.errorMessage}</Text>}
+      {props.error && props.errorMessage && <ErrorText attention>{props.errorMessage}</ErrorText>}
     </Root>
   );
 });
@@ -99,6 +99,8 @@ const Root = styled.div`
   justify-content: center;
   width: 100%;
   gap: 2px;
+
+  position: relative;
 `;
 
 const InputContainer = styled.div<{
@@ -117,8 +119,6 @@ const InputContainer = styled.div<{
   min-height: 32px;
   width: 100%;
   cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
-
-  box-sizing: border-box;
 
   input {
     cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
@@ -140,4 +140,10 @@ const InputContainer = styled.div<{
   ${media.mobile} {
     height: 32px;
   }
+`;
+
+const ErrorText = styled(Text)`
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
 `;

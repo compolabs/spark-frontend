@@ -113,8 +113,10 @@ const OrderType: React.FC = () => {
 export const OrderTypeTooltipIcon: React.FC<{ text: string; onClick?: () => void }> = ({ text, onClick }) => {
   return (
     <SmartFlex center="y" gap="2px" onClick={onClick}>
-      <InfoIcon />
-      <Text type={TEXT_TYPES.SUPPORTING}>{text}</Text>
+      <InfoIconStyled />
+      <Text type={TEXT_TYPES.SUPPORTING} disabled>
+        {text}
+      </Text>
     </SmartFlex>
   );
 };
@@ -167,4 +169,13 @@ const RadioContainer = styled(SmartFlex)<{ isVisible?: boolean }>`
   visibility: ${({ isVisible }) => (isVisible ? "auto" : "hidden")};
   gap: 18px;
   margin: 0 52px;
+`;
+
+const InfoIconStyled = styled(InfoIcon)`
+  width: 12px;
+  height: 12px;
+
+  & > path {
+    fill: ${({ theme }) => theme.colors.textDisabled};
+  }
 `;

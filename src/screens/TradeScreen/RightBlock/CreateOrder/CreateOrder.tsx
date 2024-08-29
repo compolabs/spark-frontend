@@ -5,7 +5,7 @@ import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react";
 
 import AccordionItem from "@components/AccordionItem";
-import { Column, Row } from "@components/Flex";
+import { Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
 import Select from "@components/Select";
 import Slider from "@components/Slider";
@@ -276,7 +276,7 @@ const CreateOrder: React.FC = observer(() => {
       </ButtonGroup>
       <ParamsContainer>
         <StyledRow>
-          <StyledColumn crossAxisSize="max">
+          <SelectOrderTypeContainer>
             <Select
               label="Order type"
               options={ORDER_OPTIONS}
@@ -284,7 +284,7 @@ const CreateOrder: React.FC = observer(() => {
               onSelect={onSelectOrderType}
             />
             {renderOrderTooltip()}
-          </StyledColumn>
+          </SelectOrderTypeContainer>
           <TokenInput
             amount={vm.inputPrice}
             decimals={DEFAULT_DECIMALS}
@@ -295,18 +295,19 @@ const CreateOrder: React.FC = observer(() => {
             onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Price)}
           />
         </StyledRow>
-        <StyledRow alignItems="flex-end">
+        <InputContainerWithError>
           <TokenInput
             amount={vm.inputAmount}
             assetId={baseToken.assetId}
             decimals={baseToken.decimals}
             error={vm.isSell ? vm.isInputError : undefined}
+            errorMessage={`Not enough ${baseToken.symbol}`}
             label="Order size"
             setAmount={vm.setInputAmount}
             onBlur={vm.setActiveInput}
             onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
           />
-          <StyledColumn alignItems="flex-end" crossAxisSize="max">
+          <InputContainerWithMaxButton>
             <StyledMaxButton fitContent onClick={vm.onMaxClick}>
               MAX
             </StyledMaxButton>
@@ -316,12 +317,13 @@ const CreateOrder: React.FC = observer(() => {
               assetId={quoteToken.assetId}
               decimals={quoteToken.decimals}
               error={vm.isSell ? undefined : vm.isInputError}
+              errorMessage={`Not enough ${quoteToken.symbol}`}
               setAmount={vm.setInputTotal}
               onBlur={vm.setActiveInput}
               onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
             />
-          </StyledColumn>
-        </StyledRow>
+          </InputContainerWithMaxButton>
+        </InputContainerWithError>
         <Row alignItems="center" justifyContent="space-between">
           <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
           <Row alignItems="center" mainAxisSize="fit-content">
@@ -397,16 +399,30 @@ const ParamsContainer = styled.div`
   gap: 12px;
 `;
 
-const StyledRow = styled(Row)`
+const StyledRow = styled(SmartFlex)`
   display: flex;
   gap: 8px;
   align-items: flex-start;
 `;
 
-const StyledColumn = styled(Column)`
+const SelectOrderTypeContainer = styled(SmartFlex)`
   display: flex;
   flex-direction: column;
   gap: 2px;
+
+  width: 100%;
+`;
+
+const InputContainerWithMaxButton = styled(SelectOrderTypeContainer)`
+  align-items: flex-end;
+`;
+
+const InputContainerWithError = styled(SmartFlex)`
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+
+  padding-bottom: 12px;
 `;
 
 const StyledMaxButton = styled(MaxButton)`
