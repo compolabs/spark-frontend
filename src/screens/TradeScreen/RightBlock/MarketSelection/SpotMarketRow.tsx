@@ -38,7 +38,6 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
       isActive={isActive}
       onClick={() => {
         tradeStore.setMarketSelectionOpened(false);
-        tradeStore.setIsPerp(false);
         navigate(`/${market.symbol}`);
       }}
     >

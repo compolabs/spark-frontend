@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
@@ -9,10 +9,9 @@ import { Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
 import Select from "@components/Select";
 import Slider from "@components/Slider";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import Button, { ButtonGroup } from "@src/components/Button";
-import { Checkbox } from "@src/components/Checkbox";
 import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
 import { DEFAULT_DECIMALS } from "@src/constants";
@@ -37,17 +36,12 @@ const ORDER_OPTIONS = [
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
 ];
 
-const LEVERAGE_OPTIONS = [5, 10, 20];
-
-const IS_TP_SL_FEATURE_DISABLED = true;
-
 export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore, collateralStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore } = useStores();
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
-  const isPerp = tradeStore.isPerp;
 
   const media = useMedia();
 
@@ -56,8 +50,6 @@ const CreateOrder: React.FC = observer(() => {
   const isButtonDisabled = vm.isLoading || !vm.canProceed;
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
-
-  const [isTpSlActive, setIsTpSlActive] = useState(false);
 
   if (!market) return null;
 
@@ -89,10 +81,6 @@ const CreateOrder: React.FC = observer(() => {
     if (settingsStore.orderType === ORDER_TYPE.Market) return;
 
     vm.setInputPrice(amount);
-  };
-
-  const toggleTpSl = () => {
-    setIsTpSlActive((state) => !state);
   };
 
   const disabledOrderTypes = [ORDER_TYPE.Limit, ORDER_TYPE.LimitFOK, ORDER_TYPE.LimitIOC];
@@ -176,79 +164,7 @@ const CreateOrder: React.FC = observer(() => {
     );
   };
 
-  // const renderLeverageContent = () => (
-  //   <Accordion transitionTimeout={400} transition>
-  //     <AccordionItem
-  //       header={
-  //         <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
-  //           <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-  //             LEVERAGE
-  //           </Text>
-  //           <Row alignItems="center" justifyContent="flex-end">
-  //             <Text primary>{vm.inputLeveragePercent.toSignificant(2)}</Text>
-  //             <Text>&nbsp;%</Text>
-  //           </Row>
-  //         </Row>
-  //       }
-  //       hideBottomBorder
-  //     >
-  //       <SmartFlex gap="8px" column>
-  //         <Slider
-  //           max={100}
-  //           min={0}
-  //           percent={vm.inputLeverage.toNumber()}
-  //           symbol="x"
-  //           value={vm.inputLeveragePercent.toNumber()}
-  //           onChange={(v) => vm.setInputLeveragePercent(v as number)}
-  //         />
-  //         <SmartFlex gap="8px">
-  //           <TokenInput amount={vm.inputLeverage} decimals={0} setAmount={vm.setInputLeverage} />
-  //           {LEVERAGE_OPTIONS.map((option) => (
-  //             <LeverageButton key={option} onClick={() => vm.setInputLeverage(new BN(option))}>
-  //               {option}x
-  //             </LeverageButton>
-  //           ))}
-  //         </SmartFlex>
-  //       </SmartFlex>
-  //     </AccordionItem>
-  //   </Accordion>
-  // );
-
-  const renderTpSlContent = () => {
-    if (!isPerp || IS_TP_SL_FEATURE_DISABLED) return;
-
-    return (
-      <SmartFlex alignItems="flex-start" gap="8px" margin="8px 0" column>
-        <Checkbox checked={isTpSlActive} onChange={toggleTpSl}>
-          <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-            TP / SL
-          </Text>
-        </Checkbox>
-        <TpSlContentContainer gap="8px" isOpen={isTpSlActive}>
-          <TokenInput
-            amount={vm.inputAmount}
-            assetId={quoteToken.assetId}
-            decimals={quoteToken.decimals}
-            label="Take profit"
-          />
-          <TokenInput
-            amount={vm.inputAmount}
-            assetId={quoteToken.assetId}
-            decimals={quoteToken.decimals}
-            label="Stop loss"
-          />
-        </TpSlContentContainer>
-      </SmartFlex>
-    );
-  };
-
   const getAvailableAmount = () => {
-    if (isPerp) {
-      return collateralStore.getFormatBalance(
-        vm.isSell ? baseToken.assetId : quoteToken.assetId,
-        vm.isSell ? baseToken.decimals : quoteToken.decimals,
-      );
-    }
     return balanceStore.getFormatContractBalanceInfo(
       vm.isSell ? baseToken.assetId : quoteToken.assetId,
       vm.isSell ? baseToken.decimals : quoteToken.decimals,
@@ -333,20 +249,16 @@ const CreateOrder: React.FC = observer(() => {
             <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
           </Row>
         </Row>
-        {!isPerp && (
-          <SliderContainer>
-            <Slider
-              max={100}
-              min={0}
-              percent={vm.inputPercent.toNumber()}
-              step={1}
-              value={vm.inputPercent.toNumber()}
-              onChange={(v) => handlePercentChange(v as number)}
-            />
-          </SliderContainer>
-        )}
-        {/* {isPerp ? renderLeverageContent() : null} */}
-        {renderTpSlContent()}
+        <SliderContainer>
+          <Slider
+            max={100}
+            min={0}
+            percent={vm.inputPercent.toNumber()}
+            step={1}
+            value={vm.inputPercent.toNumber()}
+            onChange={(v) => handlePercentChange(v as number)}
+          />
+        </SliderContainer>
         {renderOrderDetails()}
       </ParamsContainer>
       {renderButton()}
@@ -367,22 +279,6 @@ const Root = styled(SmartFlex)`
   ${media.mobile} {
     min-height: fit-content;
   }
-`;
-
-const LeverageButton = styled(Button)`
-  width: 34px;
-  height: 32px;
-  border-radius: 4px;
-
-  background-color: ${({ theme }) => theme.colors.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
-`;
-
-const TpSlContentContainer = styled(SmartFlex)<{ isOpen: boolean }>`
-  max-height: ${({ isOpen }) => (isOpen ? "50px" : "0")};
-  transition: max-height 0.25s cubic-bezier(0, 0, 0, 1);
-  overflow: hidden;
 `;
 
 const CreateOrderButton = styled(Button)`

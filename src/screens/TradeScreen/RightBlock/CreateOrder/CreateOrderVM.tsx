@@ -11,7 +11,6 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { PerpMaxAbsPositionSize } from "@src/blockchain/types";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
@@ -71,11 +70,6 @@ class CreateOrderVM {
   inputLeverage = BN.ZERO;
   inputLeveragePercent = BN.ZERO;
 
-  maxPositionSize: PerpMaxAbsPositionSize = {
-    shortSize: BN.ZERO,
-    longSize: BN.ZERO,
-  };
-
   matcherFee = BN.ZERO;
 
   constructor(private rootStore: RootStore) {
@@ -102,14 +96,6 @@ class CreateOrderVM {
       },
     );
 
-    // PERP Logic
-    // reaction(
-    //   () => [tradeStore.market, accountStore.address, Array.from(collateralStore.balances)],
-    //   async () => {
-    //     await this.getMaxPositionSize();
-    //   },
-    // );
-
     // reset input values when switch from perp to spot
     reaction(
       () => tradeStore.market,
@@ -130,16 +116,7 @@ class CreateOrderVM {
   }
 
   get isInputError(): boolean {
-    const { tradeStore } = this.rootStore;
-
-    if (tradeStore.isPerp) return this.isPerpInputError;
-
     return this.isSpotInputError;
-  }
-
-  get isPerpInputError(): boolean {
-    const maxSize = this.isSell ? this.maxPositionSize.shortSize : this.maxPositionSize.longSize;
-    return this.inputAmount.gt(maxSize);
   }
 
   get isSpotInputError(): boolean {
@@ -166,14 +143,6 @@ class CreateOrderVM {
   };
 
   onMaxClick = () => {
-    // PERP Logic
-    // const { tradeStore } = this.rootStore;
-
-    // if (tradeStore.isPerp) {
-    //   this.onPerpMaxClick();
-    //   return;
-    // }
-
     this.onSpotMaxClick();
   };
 
@@ -252,9 +221,6 @@ class CreateOrderVM {
     }
 
     this.updatePercent();
-
-    // PERP Logic
-    // this.calculateLeverage();
   }
 
   private updatePercent(): void {
@@ -303,25 +269,14 @@ class CreateOrderVM {
       const typeMarket = this.mode === ORDER_MODE.BUY ? OrderType.Sell : OrderType.Buy;
       const timeInForce = settingsStore.timeInForce;
       if (timeInForce === LimitType.GTC) {
-        if (tradeStore.isPerp) {
-          console.log("[PERP] Not implemented");
-          // const data = (await bcNetwork?.openPerpOrder(
-          //   baseToken.assetId,
-          //   baseSize.toString(),
-          //   this.inputPrice.toString(),
-          //   baseToken.priceFeed,
-          // )) as WriteTransactionResponse;
-          // hash = data?.transactionId;
-        } else {
-          const order: CreateOrderParams = {
-            amount: this.inputAmount.toString(),
-            price: this.inputPrice.toString(),
-            type,
-            feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
-          };
-          const data = await bcNetwork.createSpotOrder(order);
-          hash = data.transactionId;
-        }
+        const order: CreateOrderParams = {
+          amount: this.inputAmount.toString(),
+          price: this.inputPrice.toString(),
+          type,
+          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
+        };
+        const data = await bcNetwork.createSpotOrder(order);
+        hash = data.transactionId;
       } else {
         const params: GetOrdersParams = {
           limit: 50,
@@ -386,53 +341,4 @@ class CreateOrderVM {
 
     this.matcherFee = new BN(fee);
   };
-
-  // PERP Logic
-  // setInputLeverage = (value: BN) => (this.inputLeverage = value);
-  // setInputLeveragePercent = (value: BN | number | number[]) => (this.inputLeveragePercent = new BN(value.toString()));
-
-  // calculateLeverage = () => {
-  //   let percentageLeverageOfMaxPosition =
-  //     this.inputAmount.eq(BN.ZERO) || this.maxPositionSize.longSize.eq(BN.ZERO)
-  //       ? BN.ZERO
-  //       : BN.ratioOf(this.inputAmount, this.maxPositionSize.longSize);
-
-  //   if (this.isSell) {
-  //     percentageLeverageOfMaxPosition = BN.ratioOf(this.inputAmount, this.maxPositionSize.shortSize);
-  //   }
-
-  //   const leverage = percentageLeverageOfMaxPosition.toDecimalPlaces(0);
-  //   const inputPercent = percentageLeverageOfMaxPosition.gt(100) ? 100 : leverage;
-
-  //   this.setInputLeverage(leverage);
-  //   this.setInputLeveragePercent(inputPercent);
-  // };
-
-  // private onPerpMaxClick = async () => {
-  //   const { tradeStore } = this.rootStore;
-
-  //   if (!tradeStore.market) return;
-
-  //   const leverageAmount = this.isSell ? this.maxPositionSize.shortSize : this.maxPositionSize.longSize;
-
-  //   if (this.isSell) {
-  //     this.setInputAmount(leverageAmount, true);
-  //     return;
-  //   }
-
-  //   this.setInputAmount(leverageAmount, true);
-  // };
-
-  // getMaxPositionSize = async () => {
-  //   const { tradeStore, accountStore } = this.rootStore;
-  //   const bcNetwork = FuelNetwork.getInstance();
-
-  //   if (!tradeStore.market || !accountStore.isConnected || this.inputPrice.eq(BN.ZERO)) return;
-
-  //   this.maxPositionSize = await bcNetwork!.fetchPerpMaxAbsPositionSize(
-  //     accountStore.address!,
-  //     tradeStore.market.baseToken.assetId,
-  //     this.inputPrice.toString(),
-  //   );
-  // };
 }

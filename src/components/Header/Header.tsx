@@ -10,7 +10,6 @@ import Menu from "@src/assets/icons/menu.svg?react";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
 import ConnectWalletDialog from "@src/screens/ConnectWallet";
-import { MODAL_TYPE } from "@src/stores/ModalStore";
 import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 
@@ -18,7 +17,6 @@ import { AccountInfoSheet } from "../Modal";
 import { SmartFlex } from "../SmartFlex";
 
 import ConnectedWalletButton from "./ConnectedWalletButton";
-import DepositWithdrawModal from "./DepositWithdrawModal";
 import { MenuNav } from "./MenuNav";
 import MobileMenu from "./MobileMenu";
 
@@ -131,7 +129,6 @@ const Header: React.FC = observer(() => {
         <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
       ) : null}
       <AccountInfoSheet isOpen={isAccountInfoSheetOpen} onClose={closeAccountInfo} />
-      <DepositWithdrawModal visible={modalStore.isOpen(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)} onClose={modalStore.close} />
     </Root>
   );
 });

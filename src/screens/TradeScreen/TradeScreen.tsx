@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { observer } from "mobx-react";
 
 import Loader from "@src/components/Loader";
@@ -23,13 +23,11 @@ const TradeScreenImpl: React.FC = observer(() => {
 
 const TradeScreen: React.FC = observer(() => {
   const { tradeStore } = useStores();
-  const location = useLocation();
   const { marketId } = useParams<{ marketId: string }>();
 
-  const isPerp = location.pathname.includes("PERP");
   useEffect(() => {
-    tradeStore.selectActiveMarket(isPerp, marketId);
-  }, [marketId, isPerp]);
+    tradeStore.selectActiveMarket(marketId);
+  }, [marketId]);
 
   if (!tradeStore.initialized) {
     return <Loader />;

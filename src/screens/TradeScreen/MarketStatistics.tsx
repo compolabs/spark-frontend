@@ -37,18 +37,7 @@ const MarketStatistics: React.FC = observer(() => {
     { title: "24h Low", value: low24h },
   ];
 
-  const perpStatsArr = [
-    ...(media.mobile ? [] : [{ title: "Index Price", value: indexPrice }]),
-    {
-      title: media.mobile ? "Pred. funding rate" : "Predicted funding rate",
-      value: tradeStore.perpMarketInfo.predictedFundingRate.toSignificant(2),
-    },
-    // { title: "24H AVG. funding", value: BN.ZERO.toSignificant(2) },
-    // { title: "Open interest", value: BN.ZERO.toSignificant(2) },
-    // { title: "24H volume", value: volume24h },
-  ];
-
-  const activeDataArr = tradeStore.isPerp ? perpStatsArr : spotStatsArr;
+  const activeDataArr = spotStatsArr;
 
   const renderMobile = () => {
     return (
