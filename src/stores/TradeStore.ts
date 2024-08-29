@@ -81,10 +81,12 @@ class TradeStore {
 
     const spotMarket = getMarket<SpotMarket>(this.spotMarkets);
 
-    if (spotMarket) {
-      this.setMarketSymbol(marketId!);
-      bcNetwork.setActiveMarket(spotMarket.contractAddress);
-    }
+    if (!spotMarket) return;
+
+    const indexerInfo = CONFIG.APP.indexers[spotMarket.contractAddress as keyof typeof CONFIG.APP.indexers];
+    bcNetwork.setActiveMarket(spotMarket.contractAddress, indexerInfo);
+
+    this.setMarketSymbol(marketId!);
   };
 
   addToFav = (marketId: string) => {
@@ -153,7 +155,10 @@ class TradeStore {
         (market) => new SpotMarket(market.baseAssetId, market.quoteAssetId, market.contractId),
       );
 
-      bcNetwork.setActiveMarket(markets[0].contractAddress);
+      const market = markets[0];
+      const indexerInfo = CONFIG.APP.indexers[market.contractAddress as keyof typeof CONFIG.APP.indexers];
+      bcNetwork.setActiveMarket(market.contractAddress, indexerInfo);
+
       this.setSpotMarkets(markets);
       await this.updateMarketPrices();
     } catch (error) {

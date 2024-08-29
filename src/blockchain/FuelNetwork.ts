@@ -16,8 +16,6 @@ import { CONFIG } from "@src/utils/getConfig";
 import { Balances, SpotMarketVolume } from "./types";
 import { WalletManager } from "./WalletManager";
 
-const MARKET = "0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa";
-
 export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
 
@@ -30,13 +28,8 @@ export class FuelNetwork {
     this.orderbookSdk = new SparkOrderBookSdk({
       networkUrl: CONFIG.APP.networkUrl,
       contractAddresses: {
-        market: MARKET, // Temporary solution
         orderbook: CONFIG.APP.contracts.orderbook,
         multiAsset: CONFIG.APP.contracts.multiAsset,
-      },
-      indexerConfig: {
-        httpUrl: CONFIG.APP.indexers[MARKET].httpUrl,
-        wsUrl: CONFIG.APP.indexers[MARKET].wsUrl,
       },
     });
   }
@@ -48,8 +41,8 @@ export class FuelNetwork {
     return FuelNetwork.instance;
   }
 
-  setActiveMarket = (...params: Parameters<typeof this.orderbookSdk.setActiveMarketAddress>) => {
-    this.orderbookSdk.setActiveMarketAddress(...params);
+  setActiveMarket = (...params: Parameters<typeof this.orderbookSdk.setActiveMarket>) => {
+    this.orderbookSdk.setActiveMarket(...params);
   };
 
   getAddress = (): Nullable<B256Address> => {
