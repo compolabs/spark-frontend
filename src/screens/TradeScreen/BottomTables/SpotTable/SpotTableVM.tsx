@@ -79,7 +79,7 @@ class SpotTableVM {
     }
 
     try {
-      const tx = await bcNetwork?.cancelSpotOrder(order);
+      const tx = await bcNetwork?.cancelSpotOrder(order.id);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
         hash: tx.transactionId,
@@ -111,8 +111,8 @@ class SpotTableVM {
       this.subscriptionToOpenOrders.unsubscribe();
     }
 
-    this.subscriptionToOpenOrders = bcNetwork.orderbookSdk
-      .subscribeOrders({
+    this.subscriptionToOpenOrders = bcNetwork
+      .subscribeSpotOrders({
         limit,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
@@ -140,8 +140,8 @@ class SpotTableVM {
       this.subscriptionToHistoryOrders.unsubscribe();
     }
 
-    this.subscriptionToHistoryOrders = bcNetwork.orderbookSdk
-      .subscribeOrders({
+    this.subscriptionToHistoryOrders = bcNetwork
+      .subscribeSpotOrders({
         limit,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,

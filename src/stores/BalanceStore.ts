@@ -134,17 +134,12 @@ export class BalanceStore {
         text: "Please, confirm operation in your wallet",
       });
     }
-    const data = bcNetwork.getTokenByAssetId(assetId);
-    const asset = {
-      address: assetId,
-      symbol: data.symbol,
-      decimals: data.decimals,
-    };
-    const amountFormatted = BN.formatUnits(amount, data.decimals).toSignificant(2);
+    const token = bcNetwork.getTokenByAssetId(assetId);
+    const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
     try {
-      const tx = await bcNetwork?.depositSpotBalance(amount, asset);
+      const tx = await bcNetwork?.depositSpotBalance(token, amount);
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, data.symbol),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
       });
       return true;
@@ -152,7 +147,7 @@ export class BalanceStore {
       handleWalletErrors(
         notificationStore,
         error,
-        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amountFormatted, data.symbol),
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amountFormatted, token.symbol),
       );
       return false;
     }
