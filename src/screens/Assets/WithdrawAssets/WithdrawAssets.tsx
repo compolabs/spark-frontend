@@ -18,7 +18,7 @@ import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import Spinner from "@src/assets/icons/spinner.svg?react";
-import { CONFIG } from "@src/utils/getConfig.ts";
+import { CONFIG } from "@src/utils/getConfig";
 
 interface WithdrawAssets {
   setStep: (value: number) => void;

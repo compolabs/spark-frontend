@@ -22,7 +22,7 @@ import ConnectWalletDialog from "@screens/ConnectWallet";
 import useFlag from "@src/hooks/useFlag.ts";
 import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets";
 import Spinner from "@src/assets/icons/spinner.svg?react";
-import { CONFIG } from "@src/utils/getConfig.ts";
+import { CONFIG } from "@src/utils/getConfig";
 
 interface MainAssets {
   setStep: (value: number) => void;
