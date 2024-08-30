@@ -10,7 +10,6 @@ import SettingsStore, { ISerializedSettingStore } from "@stores/SettingsStore";
 import TradeStore, { ISerializedTradeStore } from "@stores/TradeStore";
 
 import { BalanceStore } from "./BalanceStore";
-import { CollateralStore } from "./CollateralStore";
 import { ModalStore } from "./ModalStore";
 import OracleStore from "./OracleStore";
 import SwapStore from "./SwapStore";
@@ -30,7 +29,6 @@ export default class RootStore {
   notificationStore: NotificationStore;
   tradeStore: TradeStore;
   balanceStore: BalanceStore;
-  collateralStore: CollateralStore;
   modalStore: ModalStore;
   swapStore: SwapStore;
   mixPanelStore: MixPanelStore;
@@ -44,7 +42,6 @@ export default class RootStore {
     this.settingsStore = new SettingsStore(this, initState?.settingStore);
     this.tradeStore = new TradeStore(this, initState?.tradeStore);
     this.balanceStore = new BalanceStore(this);
-    this.collateralStore = new CollateralStore(this);
     this.modalStore = new ModalStore(this);
     this.swapStore = new SwapStore(this);
     this.mixPanelStore = new MixPanelStore(this);

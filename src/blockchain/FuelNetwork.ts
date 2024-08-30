@@ -1,10 +1,7 @@
 import SparkOrderBookSdk, {
-  Asset,
-  AssetType,
-  CreateOrderParams,
-  FulfillOrderManyParams,
   GetActiveOrdersParams,
   Order,
+  OrderType,
   UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
@@ -12,26 +9,18 @@ import { Account, B256Address, Bech32Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { PerpMarket, PerpMarketTrade, PerpOrder, PerpPosition, SpotMarketOrder, Token } from "@src/entity";
+import { SpotMarketOrder, Token } from "@src/entity";
 import BN from "@src/utils/BN";
 import { CONFIG } from "@src/utils/getConfig";
 
-import {
-  Balances,
-  FetchTradesParams,
-  PerpMaxAbsPositionSize,
-  PerpPendingFundingPayment,
-  SpotMarketVolume,
-} from "./types";
+import { Balances, SpotMarketVolume } from "./types";
 import { WalletManager } from "./WalletManager";
-
-const MARKET = "0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa";
 
 export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
 
   private walletManager = new WalletManager();
-  orderbookSdk: SparkOrderBookSdk;
+  private orderbookSdk: SparkOrderBookSdk;
 
   private constructor() {
     makeObservable(this.walletManager);
@@ -39,13 +28,8 @@ export class FuelNetwork {
     this.orderbookSdk = new SparkOrderBookSdk({
       networkUrl: CONFIG.APP.networkUrl,
       contractAddresses: {
-        market: MARKET, // Temporary solution
         orderbook: CONFIG.APP.contracts.orderbook,
         multiAsset: CONFIG.APP.contracts.multiAsset,
-      },
-      indexerConfig: {
-        httpUrl: CONFIG.APP.indexers[MARKET].httpUrl,
-        wsUrl: CONFIG.APP.indexers[MARKET].wsUrl,
       },
     });
   }
@@ -57,8 +41,8 @@ export class FuelNetwork {
     return FuelNetwork.instance;
   }
 
-  setActiveMarket = (marketAddress: string) => {
-    this.orderbookSdk.setActiveMarketAddress(marketAddress);
+  setActiveMarket = (...params: Parameters<typeof this.orderbookSdk.setActiveMarket>) => {
+    this.orderbookSdk.setActiveMarket(...params);
   };
 
   getAddress = (): Nullable<B256Address> => {
@@ -112,85 +96,60 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (order: CreateOrderParams): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.createOrder(order);
+  createSpotOrder = async (
+    ...params: Parameters<typeof this.orderbookSdk.createOrder>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.createOrder(...params);
   };
 
-  swapTokens = async (order: FulfillOrderManyParams): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.fulfillOrderMany(order);
+  swapTokens = async (
+    ...params: Parameters<typeof this.orderbookSdk.fulfillOrderMany>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.fulfillOrderMany(...params);
   };
 
-  cancelSpotOrder = async (order: SpotMarketOrder): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.cancelOrder(order.id);
+  cancelSpotOrder = async (
+    ...params: Parameters<typeof this.orderbookSdk.cancelOrder>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.cancelOrder(...params);
   };
 
-  mintToken = async (amount: string, assetAddress: string): Promise<WriteTransactionResponse> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    return this.orderbookSdk.mintToken(asset, amount);
+  mintToken = async (...params: Parameters<typeof this.orderbookSdk.mintToken>): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.mintToken(...params);
   };
 
-  withdrawSpotBalance = async (amount: string, assetType: AssetType): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.withdraw(amount, assetType);
+  withdrawSpotBalance = async (
+    ...params: Parameters<typeof this.orderbookSdk.withdraw>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.withdraw(...params);
   };
 
-  withdrawSpotBalanceAll = async (assets: [{ amount: string; assetType: AssetType }]): Promise<void> => {
-    await this.orderbookSdk.withdrawAll(assets);
+  withdrawSpotBalanceAll = async (...params: Parameters<typeof this.orderbookSdk.withdrawAll>): Promise<void> => {
+    await this.orderbookSdk.withdrawAll(...params);
   };
 
-  depositSpotBalance = async (amount: string, asset: Asset): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.deposit(asset, amount);
+  depositSpotBalance = async (
+    ...params: Parameters<typeof this.orderbookSdk.deposit>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.deposit(...params);
   };
 
-  depositPerpCollateral = async (assetAddress: string, amount: string): Promise<void> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    // await this.sdk.depositPerpCollateral(asset, amount);
+  subscribeSpotOrders = (...params: Parameters<typeof this.orderbookSdk.subscribeOrders>) => {
+    return this.orderbookSdk.subscribeOrders(...params);
   };
 
-  withdrawPerpCollateral = async (assetAddress: string, amount: string, tokenPriceFeed: string): Promise<void> => {
-    const baseToken = this.getTokenByAssetId(assetAddress);
-    const baseAsset = this.getAssetFromToken(baseToken);
-    const gasToken = this.getTokenBySymbol("ETH");
-    const gasAsset = this.getAssetFromToken(gasToken);
-
-    // await this.sdk.withdrawPerpCollateral(baseAsset, gasAsset, amount, tokenPriceFeed);
+  subscribeSpotActiveOrders = <T extends OrderType>(
+    ...params: Parameters<typeof this.orderbookSdk.subscribeActiveOrders<T>>
+  ): ReturnType<typeof this.orderbookSdk.subscribeActiveOrders<T>> => {
+    return this.orderbookSdk.subscribeActiveOrders(...params);
   };
 
-  openPerpOrder = async (
-    assetAddress: string,
-    amount: string,
-    price: string,
-    tokenPriceFeed: string,
-  ): Promise<string> => {
-    const baseToken = this.getTokenByAssetId(assetAddress);
-    const baseAsset = this.getAssetFromToken(baseToken);
-    const gasToken = this.getTokenBySymbol("ETH");
-    const gasAsset = this.getAssetFromToken(gasToken);
-
-    return "";
-
-    // return this.sdk.openPerpOrder(baseAsset, gasAsset, amount, price, tokenPriceFeed);
+  subscribeSpotTradeOrderEvents = (...params: Parameters<typeof this.orderbookSdk.subscribeTradeOrderEvents>) => {
+    return this.orderbookSdk.subscribeTradeOrderEvents(...params);
   };
 
-  removePerpOrder = async (assetId: string): Promise<void> => {
-    // await this.sdk.removePerpOrder(assetId);
-  };
-
-  fulfillPerpOrder = async (orderId: string, amount: string, tokenPriceFeed: string): Promise<void> => {
-    const gasToken = this.getTokenBySymbol("ETH");
-    const gasAsset = this.getAssetFromToken(gasToken);
-
-    // await this.sdk.fulfillPerpOrder(gasAsset, orderId, amount, tokenPriceFeed);
-  };
-
-  fetchSpotMarketPrice = async (baseTokenAddress: string): Promise<BN> => {
-    const token = this.getTokenByAssetId(baseTokenAddress);
-    const asset = this.getAssetFromToken(token);
-
-    return this.orderbookSdk.fetchMarketPrice(asset);
+  fetchSpotMarketPrice = async (...params: Parameters<typeof this.orderbookSdk.fetchMarketPrice>): Promise<BN> => {
+    return this.orderbookSdk.fetchMarketPrice(...params);
   };
 
   fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
@@ -225,116 +184,5 @@ export class FuelNetwork {
 
   fetchSpotUserMarketBalance = async (accountAddress: Bech32Address): Promise<UserMarketBalance> => {
     return this.orderbookSdk.fetchUserMarketBalance(accountAddress);
-  };
-
-  matchPerpOrders = async (order1: string, order2: string): Promise<unknown> => {
-    return {};
-    // return this.sdk.matchPerpOrders(order1, order2);
-  };
-
-  fetchPerpTrades = async (params: FetchTradesParams): Promise<PerpMarketTrade[]> => {
-    // const trades = await this.sdk.fetchPerpTrades(params);
-
-    // return trades.map(
-    //   (obj) => new PerpMarketTrade({ ...obj, userAddress: params.trader, timestamp: Number(obj.timestamp) }),
-    // );
-
-    return [];
-  };
-
-  fetchPerpCollateralBalance = async (accountAddress: string, assetAddress: string): Promise<BN> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    // return this.sdk.fetchPerpCollateralBalance(accountAddress, asset);
-    return BN.ZERO;
-  };
-
-  fetchPerpAllTraderPositions = async (
-    accountAddress: string,
-    assetAddress: string,
-    limit: number,
-  ): Promise<PerpPosition[]> => {
-    // const positions = await this.sdk.fetchPerpAllTraderPositions(accountAddress, assetAddress, limit);
-
-    // return positions.map((obj) => new PerpPosition(obj));
-
-    return [];
-  };
-
-  fetchPerpIsAllowedCollateral = async (assetAddress: string): Promise<boolean> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    // return this.sdk.fetchPerpIsAllowedCollateral(asset);
-    return true;
-  };
-
-  fetchPerpTraderOrders = async (
-    accountAddress: string,
-    assetAddress: string,
-    isOpened?: boolean,
-    orderType?: "buy" | "sell",
-  ): Promise<PerpOrder[]> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    // const orders = await this.sdk.fetchPerpTraderOrders(accountAddress, asset, isOpened, orderType);
-
-    // return orders.map((obj) => new PerpOrder(obj));
-    return [];
-  };
-
-  fetchPerpAllMarkets = async (): Promise<PerpMarket[]> => {
-    const assets = this.getTokenList().map((token) => this.getAssetFromToken(token));
-    const quoteToken = this.getTokenBySymbol("USDC");
-    const quoteAsset = this.getAssetFromToken(quoteToken);
-    // const markets = await this.sdk.fetchPerpAllMarkets(assets, quoteAsset);
-
-    // return markets.map((obj) => new PerpMarket(obj));
-    return [];
-  };
-
-  fetchPerpFundingRate = async (assetAddress: string): Promise<BN> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    // return this.sdk.fetchPerpFundingRate(asset);
-    return BN.ZERO;
-  };
-
-  fetchPerpMaxAbsPositionSize = async (
-    accountAddress: string,
-    assetAddress: string,
-    tradePrice: string,
-  ): Promise<PerpMaxAbsPositionSize> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    // return this.sdk.fetchPerpMaxAbsPositionSize(accountAddress, asset, tradePrice);
-    return { shortSize: BN.ZERO, longSize: BN.ZERO };
-  };
-
-  fetchPerpPendingFundingPayment = async (
-    accountAddress: string,
-    assetAddress: string,
-  ): Promise<PerpPendingFundingPayment> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    // return this.sdk.fetchPerpPendingFundingPayment(accountAddress, asset);
-    return { fundingGrowthPayment: BN.ZERO, fundingPayment: BN.ZERO };
-  };
-
-  fetchPerpMarkPrice = async (assetAddress: string): Promise<BN> => {
-    const token = this.getTokenByAssetId(assetAddress);
-    const asset = this.getAssetFromToken(token);
-
-    // return this.sdk.fetchPerpMarkPrice(asset);
-    return BN.ZERO;
-  };
-
-  private getAssetFromToken = (token: Token) => {
-    return { address: token.assetId, decimals: token.decimals, symbol: token.symbol };
   };
 }

@@ -140,8 +140,8 @@ class SpotOrderbookVM {
       this.buySubscription.unsubscribe();
     }
 
-    this.buySubscription = bcNetwork.orderbookSdk
-      .subscribeActiveOrders<OrderType.Buy>({ ...params, orderType: OrderType.Buy })
+    this.buySubscription = bcNetwork
+      .subscribeSpotActiveOrders<OrderType.Buy>({ ...params, orderType: OrderType.Buy })
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
@@ -158,8 +158,8 @@ class SpotOrderbookVM {
       this.sellSubscription.unsubscribe();
     }
 
-    this.sellSubscription = bcNetwork.orderbookSdk
-      .subscribeActiveOrders<OrderType.Sell>({ ...params, orderType: OrderType.Sell })
+    this.sellSubscription = bcNetwork
+      .subscribeSpotActiveOrders<OrderType.Sell>({ ...params, orderType: OrderType.Sell })
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
