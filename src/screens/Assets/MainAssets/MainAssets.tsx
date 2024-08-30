@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -22,6 +22,7 @@ import ConnectWalletDialog from "@screens/ConnectWallet";
 import useFlag from "@src/hooks/useFlag.ts";
 import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets";
 import Spinner from "@src/assets/icons/spinner.svg?react";
+import { CONFIG } from "@src/utils/getConfig.ts";
 
 interface MainAssets {
   setStep: (value: number) => void;
@@ -38,23 +39,22 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
   const ETH = bcNetwork.getTokenBySymbol("ETH");
 
-  const balanceData = Array.from(balanceStore.balances)
-    .map(([assetId, balance]) => {
-      const token = bcNetwork!.getTokenByAssetId(assetId);
-      const contractBalance =
-        token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
-      const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
-      return {
-        asset: token,
-        walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-        contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
-        balance: BN.formatUnits(totalBalance, token.decimals).toString(),
-        assetId,
-      };
-    })
-    .filter((el) => {
-      return el.contractBalance && new BN(el.contractBalance).gt(BN.ZERO) && el.assetId !== ETH.assetId;
-    });
+  const balanceData = CONFIG.TOKENS.map(({ assetId }) => {
+    const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
+    const token = bcNetwork!.getTokenByAssetId(assetId);
+    const contractBalance =
+      token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
+    const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
+    return {
+      asset: token,
+      walletBalance: BN.formatUnits(balance, token.decimals).toString(),
+      contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
+      balance: BN.formatUnits(totalBalance, token.decimals).toString(),
+      assetId,
+    };
+  }).filter((el) => {
+    return el.contractBalance && new BN(el.contractBalance).gt(BN.ZERO) && el.assetId !== ETH.assetId;
+  });
 
   const hasPositiveBalance = balanceData.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
 
@@ -87,6 +87,8 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       ...el,
     };
   });
+
+  console.log("asd", balanceData);
 
   return (
     <AssetsContainer justifyContent="space-between" column>

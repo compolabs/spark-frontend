@@ -18,6 +18,7 @@ import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import Spinner from "@src/assets/icons/spinner.svg?react";
+import { CONFIG } from "@src/utils/getConfig.ts";
 
 interface WithdrawAssets {
   setStep: (value: number) => void;
@@ -58,23 +59,22 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   };
 
   const ETH = bcNetwork.getTokenBySymbol("ETH");
-  const balanceData = Array.from(balanceStore.balances)
-    .filter(([assetId, balance]) => balance && balance.gt(BN.ZERO) && assetId !== ETH.assetId)
-    .map(([assetId, balance]) => {
-      const token = bcNetwork!.getTokenByAssetId(assetId);
-      const contractBalance =
-        token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
-      const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
-      const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed ?? ""), DEFAULT_DECIMALS);
-      return {
-        price: price.toString(),
-        asset: token,
-        walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-        contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
-        balance: BN.formatUnits(totalBalance, token.decimals).toString(),
-        assetId,
-      };
-    });
+  const balanceData = CONFIG.TOKENS.map(({ assetId }) => {
+    const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
+    const token = bcNetwork!.getTokenByAssetId(assetId);
+    const contractBalance =
+      token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
+    const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
+    return {
+      asset: token,
+      walletBalance: BN.formatUnits(balance, token.decimals).toString(),
+      contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
+      balance: BN.formatUnits(totalBalance, token.decimals).toString(),
+      assetId,
+    };
+  }).filter((el) => {
+    return el.contractBalance && new BN(el.contractBalance).gt(BN.ZERO) && el.assetId !== ETH.assetId;
+  });
 
   useEffect(() => {
     setAssets(balanceData[0]);
