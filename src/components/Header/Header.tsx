@@ -1,34 +1,27 @@
 import React, { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
 import ConnectedWallet from "@components/Header/ConnectedWallet";
-import Tab from "@components/Tab";
-import { TEXT_TYPES } from "@components/Text";
+import DataBase from "@src/assets/icons/dataBase.svg?react";
 import Logo from "@src/assets/icons/logo.svg?react";
 import Menu from "@src/assets/icons/menu.svg?react";
-import DataBase from "@src/assets/icons/dataBase.svg?react";
-import { EVENTS, MENU_ITEMS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
 import ConnectWalletDialog from "@src/screens/ConnectWallet";
-import { MODAL_TYPE } from "@src/stores/ModalStore";
 import { media } from "@src/themes/breakpoints";
-import isRoutesEquals from "@src/utils/isRoutesEquals";
 import { useStores } from "@stores";
 
 import { AccountInfoSheet } from "../Modal";
 import { SmartFlex } from "../SmartFlex";
 
 import ConnectedWalletButton from "./ConnectedWalletButton";
-import DepositWithdrawModal from "./DepositWithdrawModal";
+import { MenuNav } from "./MenuNav";
 import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
-  const { modalStore, accountStore, mixPanelStore, quickAssetsStore } = useStores();
-  const location = useLocation();
+  const { modalStore, accountStore, quickAssetsStore } = useStores();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
@@ -98,11 +91,6 @@ const Header: React.FC = observer(() => {
   };
 
   const renderDesktop = () => {
-    const createEvents = (events: string) => {
-      if (events === EVENTS.OpenSideAssets) {
-        quickAssetsStore.setQuickAssets(true);
-      }
-    };
     return (
       <>
         <SmartFlex center="y">
@@ -111,47 +99,11 @@ const Header: React.FC = observer(() => {
           </a>
           <Divider />
           <SmartFlex gap="28px">
-            {MENU_ITEMS.map(({ title, link, route, events, dataOnboardingKey }) => {
-              const dataOnboardingDeviceKey = `${dataOnboardingKey}-${media.mobile ? "mobile" : "desktop"}`;
-
-              if (events) {
-                return (
-                  <Tab key={title} type={TEXT_TYPES.BUTTON_SECONDARY} onClick={() => createEvents(events)}>
-                    {title}
-                  </Tab>
-                );
-              } else if (!link && !route)
-                return (
-                  <Tab key={title} type={TEXT_TYPES.BUTTON_SECONDARY}>
-                    {title}
-                  </Tab>
-                );
-              else if (route)
-                return (
-                  <Link key={title} data-onboarding={dataOnboardingDeviceKey} to={route}>
-                    <Tab active={isRoutesEquals(route, location.pathname)} type={TEXT_TYPES.BUTTON_SECONDARY}>
-                      {title}
-                    </Tab>
-                  </Link>
-                );
-              else if (link)
-                return (
-                  <a
-                    key={title}
-                    href={link}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    onClick={() => mixPanelStore.trackEvent("desktopHeaderClick", { route: title })}
-                  >
-                    <Tab type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</Tab>
-                  </a>
-                );
-              else return null;
-            })}
+            <MenuNav />
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
-          <Button data-onboarding="assets-desktop" fitContent onClick={() => createEvents(EVENTS.OpenSideAssets)}>
+          <Button data-onboarding="assets-desktop" fitContent onClick={() => quickAssetsStore.setQuickAssets(true)}>
             <SmartFlex center="y" gap="8px">
               <DataBase />
               Assets
@@ -171,14 +123,12 @@ const Header: React.FC = observer(() => {
         isOpen={isMobileMenuOpen}
         onAccountClick={openAccountInfo}
         onClose={closeMobileMenu}
-        onDepositWithdrawClick={() => modalStore.open(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)}
         onWalletConnect={openConnectDialog}
       />
       {isConnectDialogVisible ? (
         <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
       ) : null}
       <AccountInfoSheet isOpen={isAccountInfoSheetOpen} onClose={closeAccountInfo} />
-      <DepositWithdrawModal visible={modalStore.isOpen(MODAL_TYPE.DEPOSIT_WITHDRAW_MODAL)} onClose={modalStore.close} />
     </Root>
   );
 });

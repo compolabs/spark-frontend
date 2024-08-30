@@ -2,8 +2,8 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
-import { PerpMarketVolume, SpotMarketVolume } from "@src/blockchain/types";
-import { DEFAULT_DECIMALS } from "@src/constants";
+import { SpotMarketVolume } from "@src/blockchain/types";
+import { DEFAULT_DECIMALS, DEFAULT_MARKET } from "@src/constants";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import BN from "@src/utils/BN";
 import { CONFIG } from "@src/utils/getConfig";
@@ -24,24 +24,13 @@ class TradeStore {
   loading = false;
   favMarkets: string[] = [];
   spotMarkets: SpotMarket[] = [];
-  perpMarkets: PerpMarket[] = [];
   marketSelectionOpened = false;
-  marketSymbol: string = "BTC-USDC";
-
-  isPerp = false;
-  setIsPerp = (value: boolean) => (this.isPerp = value);
+  marketSymbol = DEFAULT_MARKET;
 
   spotMarketInfo: SpotMarketVolume = {
     volume: BN.ZERO,
     high: BN.ZERO,
     low: BN.ZERO,
-  };
-
-  perpMarketInfo: PerpMarketVolume = {
-    predictedFundingRate: BN.ZERO,
-    averageFunding24h: BN.ZERO,
-    openInterest: BN.ZERO,
-    volume24h: BN.ZERO,
   };
 
   private marketInfoUpdater: IntervalUpdater;
@@ -77,38 +66,27 @@ class TradeStore {
   }
 
   get market() {
-    if (this.isPerp) {
-      return this.perpMarkets.find((market) => market.symbol === this.marketSymbol);
-    }
     return this.spotMarkets.find((market) => market.symbol === this.marketSymbol);
-  }
-
-  get isPerpAvailable() {
-    return false;
   }
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
 
-  selectActiveMarket = (isPerp: boolean, marketId?: string) => {
+  selectActiveMarket = (marketId?: string) => {
     const bcNetwork = FuelNetwork.getInstance();
+
+    if (!marketId) return;
 
     const getMarket = <T extends SpotMarket | PerpMarket>(markets: T[]) =>
       markets.find((market) => market.symbol === marketId);
 
     const spotMarket = getMarket<SpotMarket>(this.spotMarkets);
-    const perpMarket = getMarket<PerpMarket>(this.perpMarkets);
 
-    if (spotMarket || perpMarket) {
-      this.setMarketSymbol(marketId!);
-    }
+    if (!spotMarket) return;
 
-    if (spotMarket) {
-      bcNetwork.setActiveMarket(spotMarket.contractAddress);
-    } else if (perpMarket) {
-      bcNetwork.setActiveMarket(perpMarket.contractAddress);
-    }
+    const indexerInfo = CONFIG.APP.indexers[spotMarket.contractAddress as keyof typeof CONFIG.APP.indexers];
+    bcNetwork.setActiveMarket(spotMarket.contractAddress, indexerInfo);
 
-    this.setIsPerp(isPerp && this.isPerpAvailable);
+    this.setMarketSymbol(marketId!);
   };
 
   addToFav = (marketId: string) => {
@@ -141,16 +119,6 @@ class TradeStore {
       low,
       high,
     };
-
-    // fixme
-    // if (!this.market || this.market instanceof PerpMarket) return;
-    //
-    // const predictedFundingRate = await bcNetwork!.fetchPerpFundingRate(this.market.baseToken.assetId);
-    //
-    // this.perpMarketInfo = {
-    //   ...this.perpMarketInfo,
-    //   predictedFundingRate: BN.formatUnits(predictedFundingRate, this.market.quoteToken.decimals),
-    // };
   };
 
   updateMarketPrices = async () => {
@@ -173,7 +141,7 @@ class TradeStore {
     this.setInitialized(false);
     this._setLoading(true);
 
-    await Promise.all([this.initSpotMarket(), this.initPerpMarket()]).catch(console.error);
+    await Promise.all([this.initSpotMarket()]).catch(console.error);
 
     this._setLoading(false);
     this.setInitialized(true);
@@ -187,7 +155,10 @@ class TradeStore {
         (market) => new SpotMarket(market.baseAssetId, market.quoteAssetId, market.contractId),
       );
 
-      bcNetwork.setActiveMarket(markets[0].contractAddress);
+      const market = markets[0];
+      const indexerInfo = CONFIG.APP.indexers[market.contractAddress as keyof typeof CONFIG.APP.indexers];
+      bcNetwork.setActiveMarket(market.contractAddress, indexerInfo);
+
       this.setSpotMarkets(markets);
       await this.updateMarketPrices();
     } catch (error) {
@@ -195,22 +166,9 @@ class TradeStore {
     }
   };
 
-  private initPerpMarket = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
-
-    try {
-      const markets = await bcNetwork!.fetchPerpAllMarkets();
-      this.setPerpMarkets(markets);
-    } catch (error) {
-      console.error("[PERP] Error init perp market", error);
-    }
-  };
-
   private setFavMarkets = (v: string[]) => (this.favMarkets = v);
 
   private setSpotMarkets = (v: SpotMarket[]) => (this.spotMarkets = v);
-
-  private setPerpMarkets = (v: PerpMarket[]) => (this.perpMarkets = v);
 
   private setInitialized = (l: boolean) => (this.initialized = l);
 

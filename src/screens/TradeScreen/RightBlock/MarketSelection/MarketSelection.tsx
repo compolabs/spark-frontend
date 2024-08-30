@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Button, { ButtonGroup } from "@components/Button";
 import Divider from "@components/Divider";
 import { Row } from "@components/Flex";
 import SearchInput from "@components/SearchInput";
@@ -17,7 +16,6 @@ import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 
 import { MarketTitle } from "./MarketTitle";
-import PerpMarketRow from "./PerpMarketRow";
 
 interface IProps {}
 
@@ -29,7 +27,6 @@ const MarketSelection: React.FC<IProps> = observer(() => {
   const { tradeStore } = useStores();
   const media = useMedia();
   const [searchValue, setSearchValue] = useState("");
-  const [isSpotMarket, setSpotMarket] = useState(true);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useOnClickOutside(rootRef, () => {
@@ -39,11 +36,8 @@ const MarketSelection: React.FC<IProps> = observer(() => {
   });
 
   const spotMarketsFiltered = useFilteredMarkets(tradeStore.spotMarkets, searchValue);
-  const perpMarketsFiltered = useFilteredMarkets(tradeStore.perpMarkets, searchValue);
 
   const renderSpotMarketList = () => {
-    if (!isSpotMarket) return;
-
     if (!spotMarketsFiltered.length) {
       return (
         <>
@@ -58,23 +52,6 @@ const MarketSelection: React.FC<IProps> = observer(() => {
     return spotMarketsFiltered.map((market) => <SpotMarketRow key={market.symbol} market={market} />);
   };
 
-  const renderPerpMarketList = () => {
-    if (isSpotMarket) return;
-
-    if (!perpMarketsFiltered.length) {
-      return (
-        <>
-          <SizedBox height={16} />
-          <Row justifyContent="center">
-            <Text>No spot markets found</Text>
-          </Row>
-        </>
-      );
-    }
-
-    return perpMarketsFiltered.map((market) => <PerpMarketRow key={market.symbol} market={market} />);
-  };
-
   return (
     <Container ref={rootRef}>
       {media.desktop ? <CloseIcon onClick={() => tradeStore.setMarketSelectionOpened(false)} /> : null}
@@ -85,19 +62,6 @@ const MarketSelection: React.FC<IProps> = observer(() => {
       ) : null}
       <Root>
         <SearchContainer>
-          {tradeStore.isPerpAvailable && (
-            <>
-              <ButtonGroup>
-                <Button active={isSpotMarket} onClick={() => setSpotMarket(true)}>
-                  SPOT
-                </Button>
-                <Button active={!isSpotMarket} onClick={() => setSpotMarket(false)}>
-                  PERP
-                </Button>
-              </ButtonGroup>
-              <SizedBox height={16} />
-            </>
-          )}
           <SearchInput value={searchValue} onChange={setSearchValue} />
         </SearchContainer>
 
@@ -107,7 +71,6 @@ const MarketSelection: React.FC<IProps> = observer(() => {
         </SmartFlex>
         <Divider />
         {renderSpotMarketList()}
-        {renderPerpMarketList()}
       </Root>
     </Container>
   );

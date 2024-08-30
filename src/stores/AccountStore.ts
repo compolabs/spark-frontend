@@ -1,4 +1,3 @@
-const bcNetwork = FuelNetwork.getInstance();
 import { Account, B256Address } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";

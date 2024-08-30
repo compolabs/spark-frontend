@@ -41,8 +41,8 @@ class SpotTradesVM {
 
     const bcNetwork = FuelNetwork.getInstance();
 
-    bcNetwork.orderbookSdk
-      .subscribeTradeOrderEvents({
+    bcNetwork
+      .subscribeSpotTradeOrderEvents({
         limit: 50,
       })
       .subscribe({

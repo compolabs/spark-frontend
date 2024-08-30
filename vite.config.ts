@@ -7,6 +7,8 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+import getConfig from "./script/getConfig";
+
 const OUT_DIR = "build";
 
 const COMMIT_HASH = execSync("git rev-parse --short HEAD").toString().trim();
@@ -20,6 +22,7 @@ export default defineConfig({
     "process.env.__COMMIT_HASH__": JSON.stringify(COMMIT_HASH),
   },
   plugins: [
+    getConfig(),
     nodePolyfills({
       globals: {
         Buffer: true,

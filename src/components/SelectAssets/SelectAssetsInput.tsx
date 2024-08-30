@@ -17,7 +17,6 @@ import BN from "@src/utils/BN";
 import { Column } from "../Flex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
 import Tooltip from "../Tooltip";
-import BigNumber from "bignumber.js";
 
 export interface AssetBlockData {
   asset: Token;
@@ -82,13 +81,7 @@ const SelectAssetsInput = <T,>({
   const handleSetAmount = (el: number) => {
     setSelectPresent(el);
     if (!showBalance || !selectedOption || !decimals) return;
-    const amount1 = BN.parseUnits(
-      new BN(selectedOption[showBalance] ?? 0)
-        .multipliedBy(el)
-        .div(new BN(100))
-        .toFixed(decimals, BigNumber.ROUND_DOWN),
-      decimals,
-    );
+
     const amount = BN.parseUnits(new BN(selectedOption[showBalance] ?? 0).multipliedBy(el).div(new BN(100)), decimals);
     onChangeValue(amount);
   };

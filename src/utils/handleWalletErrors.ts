@@ -1,3 +1,5 @@
+import { getHumanReadableError } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { NotificationStore } from "@src/stores";
 
 export const handleWalletErrors = (
@@ -20,5 +22,17 @@ export const handleWalletErrors = (
     notificationStore.error({ text: "Not enough funds to pay gas" });
     return;
   }
-  notificationStore.error({ text: defaultMessage ?? error.toString() });
+
+  let extendedErrorText;
+
+  try {
+    extendedErrorText = getHumanReadableError(error.metadata.logs[0]);
+  } catch (error) {
+    console.error("Failed to parse error: ", error);
+  }
+
+  notificationStore.error({
+    text: defaultMessage ?? error.toString(),
+    error: extendedErrorText,
+  });
 };
