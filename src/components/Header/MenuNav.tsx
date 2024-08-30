@@ -15,7 +15,6 @@ import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
 import { isExternalLink } from "@src/utils/isExternalLink";
-import isRoutesEquals from "@src/utils/isRoutesEquals";
 
 import { SmartFlex } from "../SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
@@ -101,7 +100,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
   useOnClickOutside(dropdownRef, handleClickOutside);
 
   const renderChildMenuItem = ({ title, link, icon: Icon, desc }: MenuChildItem) => {
-    const isActive = isRoutesEquals(link, location.pathname);
+    const isActive = location.pathname.includes(link);
 
     return (
       <NavLink key={title} to={link} onClick={handleMenuItemClick}>
@@ -118,6 +117,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
   const renderMenuItem = ({ title, link, dataOnboardingKey, children }: MenuItem) => {
     const dataOnboardingDeviceKey = `${dataOnboardingKey}-${isMobile ? "mobile" : "desktop"}`;
+    const isActive = Boolean(link && location.pathname.includes(link));
 
     const handleDropdownToggle = () => {
       setOpenDropdown(openDropdown === title ? null : title);
@@ -126,7 +126,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     if (children) {
       const isDropdownOpen = openDropdown === title;
 
-      const isAnyChildrenActive = children.some((item) => isRoutesEquals(item.link, location.pathname));
+      const isAnyChildrenActive = children.some((item) => location.pathname.includes(item.link));
 
       const isActive = isDropdownOpen || isAnyChildrenActive;
 
@@ -178,7 +178,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
     return (
       <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleMenuItemClick}>
-        <Element isActive={isRoutesEquals(link, location.pathname)}>{title}</Element>
+        <Element isActive={isActive}>{title}</Element>
       </NavLink>
     );
   };

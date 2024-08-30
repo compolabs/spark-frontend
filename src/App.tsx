@@ -31,7 +31,7 @@ const App: React.FC = observer(() => {
     <Root>
       <Header />
       <Routes>
-        <Route element={<TradeScreen />} path={ROUTES.SPOT} />
+        <Route element={<TradeScreen />} path={`${ROUTES.SPOT}/:marketId`} />
         <Route element={<SwapScreen />} path={ROUTES.SWAP} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
         <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />

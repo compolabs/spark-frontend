@@ -5,7 +5,7 @@ import { sepolia } from "@wagmi/core/chains";
 
 export const ROUTES = {
   ROOT: "/",
-  SPOT: "/spot/:marketId",
+  SPOT: "/spot",
   FAUCET: "/faucet",
   SWAP: "/swap",
 };
