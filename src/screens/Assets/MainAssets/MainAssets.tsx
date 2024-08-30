@@ -15,12 +15,11 @@ import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import closeThin from "@src/assets/icons/closeThin.svg";
-import { useWallet } from "@src/hooks/useWallet.ts";
-import { assetsMock } from "@screens/Assets/MainAssets/const.ts";
+import { useWallet } from "@src/hooks/useWallet";
+import { assetsMock } from "@screens/Assets/MainAssets/const";
 import SizedBox from "@components/SizedBox";
 import ConnectWalletDialog from "@screens/ConnectWallet";
-import useFlag from "@src/hooks/useFlag.ts";
-import { ShowAction } from "@screens/Assets/WithdrawAssets/WithdrawAssets";
+import useFlag from "@src/hooks/useFlag";
 import Spinner from "@src/assets/icons/spinner.svg?react";
 import { CONFIG } from "@src/utils/getConfig";
 
@@ -87,8 +86,6 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       ...el,
     };
   });
-
-  console.log("asd", balanceData);
 
   return (
     <AssetsContainer justifyContent="space-between" column>
