@@ -74,8 +74,6 @@ class TradeStore {
   selectActiveMarket = (marketId?: string) => {
     const bcNetwork = FuelNetwork.getInstance();
 
-    console.log(marketId, this.marketSymbol);
-
     if (!marketId || marketId === this.marketSymbol) return;
 
     const getMarket = <T extends SpotMarket | PerpMarket>(markets: T[]) =>

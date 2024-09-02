@@ -53,8 +53,6 @@ class SpotOrderbookVM {
       ([initialized, market]) => {
         if (!initialized) return;
 
-        console.log(initialized, market);
-
         this.updateOrderBook();
       },
       { fireImmediately: true },
@@ -123,8 +121,6 @@ class SpotOrderbookVM {
     const { tradeStore } = this.rootStore;
     const market = tradeStore.market;
 
-    console.log("123123", market?.baseToken.assetId);
-
     if (!this.rootStore.initialized || !market) return;
 
     const bcNetwork = FuelNetwork.getInstance();
@@ -152,11 +148,8 @@ class SpotOrderbookVM {
         next: ({ data }) => {
           if (!data) return;
 
-          console.log(data);
-
           const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, market!.quoteToken.assetId);
           const buyOrdersCombinedByDecimal = groupOrders(buyOrders, this.decimalGroup);
-          console.log(buyOrdersCombinedByDecimal);
           this.allBuyOrders = buyOrdersCombinedByDecimal;
         },
       });
