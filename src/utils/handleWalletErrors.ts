@@ -26,7 +26,8 @@ export const handleWalletErrors = (
   let extendedErrorText;
 
   try {
-    extendedErrorText = getHumanReadableError(error.metadata.logs[0]);
+    extendedErrorText = getHumanReadableError(error.metadata.logs);
+    console.error("Detail info: ", error.metadata.logs);
   } catch (error) {
     console.error("Failed to parse error: ", error);
   }

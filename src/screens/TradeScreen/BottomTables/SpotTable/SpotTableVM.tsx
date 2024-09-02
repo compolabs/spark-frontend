@@ -43,7 +43,7 @@ class SpotTableVM {
   constructor(rootStore: RootStore) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
-    const { accountStore, tradeStore, balanceStore } = this.rootStore;
+    const { accountStore, tradeStore } = this.rootStore;
 
     reaction(
       () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected],

@@ -15,7 +15,7 @@
     "pnpm": ">=9.7.0"
   },
   "dependencies": {
-    "@compolabs/spark-orderbook-ts-sdk": "^1.6.5",
+    "@compolabs/spark-orderbook-ts-sdk": "^1.6.6",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fuels/connectors": "^0.9.1",

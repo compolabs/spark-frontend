@@ -29,6 +29,9 @@ export class SpotMarketOrder {
   initialQuoteAmount: BN;
   currentQuoteAmount: BN;
 
+  filledAmount: BN;
+  filledQuoteAmount: BN;
+
   constructor(order: SpotMarketOrderParams) {
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -49,6 +52,9 @@ export class SpotMarketOrder {
     this.currentAmount = new BN(order.amount);
     this.currentQuoteAmount = this.getQuoteAmount(this.currentAmount, this.price);
 
+    this.filledAmount = this.getFilledAmount(this.initialAmount, this.currentAmount);
+    this.filledQuoteAmount = this.getQuoteAmount(this.filledAmount, this.price);
+
     this.timestamp = dayjs(order.timestamp);
   }
 
@@ -68,12 +74,20 @@ export class SpotMarketOrder {
     return BN.formatUnits(this.currentAmount, this.baseToken.decimals);
   }
 
+  get filledAmountUnits(): BN {
+    return BN.formatUnits(this.filledAmount, this.baseToken.decimals);
+  }
+
   get initialQuoteAmountUnits(): BN {
     return BN.formatUnits(this.initialQuoteAmount, this.quoteToken.decimals);
   }
 
   get currentQuoteAmountUnits(): BN {
     return BN.formatUnits(this.currentQuoteAmount, this.quoteToken.decimals);
+  }
+
+  get filledQuoteAmountUnits(): BN {
+    return BN.formatUnits(this.filledQuoteAmount, this.quoteToken.decimals);
   }
 
   get formatPrice() {
@@ -89,20 +103,21 @@ export class SpotMarketOrder {
   }
 
   get formatFilledAmount() {
-    return this.initialAmount
-      .minus(this.currentAmount)
-      .dividedBy(Math.pow(10, this.baseToken.decimals))
-      .toSignificant(this.baseToken.decimals - 4);
+    return this.filledAmountUnits.toSignificant(2);
   }
 
   addInitialAmount = (amount: BN) => {
     this.initialAmount = this.initialAmount.plus(amount);
     this.initialQuoteAmount = this.getQuoteAmount(this.initialAmount, this.price);
+
+    this.filledAmount = this.getFilledAmount(this.initialAmount, this.currentAmount);
   };
 
   addCurrentAmount = (amount: BN) => {
     this.currentAmount = this.currentAmount.plus(amount);
     this.currentQuoteAmount = this.getQuoteAmount(this.currentAmount, this.price);
+
+    this.filledAmount = this.getFilledAmount(this.initialAmount, this.currentAmount);
   };
 
   private getQuoteAmount = (amount: BN, price: BN) => {
@@ -115,6 +130,10 @@ export class SpotMarketOrder {
       .dividedToIntegerBy(BN.parseUnits(1, decimalsDiffTokens));
 
     return new BN(result);
+  };
+
+  private getFilledAmount = (initialAmount: BN, currentAmount: BN) => {
+    return initialAmount.minus(currentAmount);
   };
 
   debug = () => {
