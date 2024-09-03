@@ -14,7 +14,7 @@ import TokenInput from "@components/TokenInput";
 import Button, { ButtonGroup } from "@src/components/Button";
 import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
-import { DEFAULT_DECIMALS } from "@src/constants";
+import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useMedia } from "@src/hooks/useMedia";
 import {
@@ -22,7 +22,7 @@ import {
   ORDER_MODE,
   ORDER_TYPE,
   useCreateOrderVM,
-} from "@src/screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
+} from "@src/screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
@@ -35,8 +35,6 @@ const ORDER_OPTIONS = [
   // { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
 ];
-
-export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore } = useStores();

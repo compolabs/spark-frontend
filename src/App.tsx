@@ -12,8 +12,8 @@ import { SplashScreen } from "./components/Splashscreen";
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
 import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
+import SpotScreen from "./screens/SpotScreen";
 import { SwapScreen } from "./screens/SwapScreen";
-import TradeScreen from "./screens/TradeScreen";
 import { DEFAULT_MARKET, ROUTES } from "./constants";
 
 const isUnderConstruction = false;
@@ -31,7 +31,7 @@ const App: React.FC = observer(() => {
     <Root>
       <Header />
       <Routes>
-        <Route element={<TradeScreen />} path={`${ROUTES.SPOT}/:marketId`} />
+        <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
         <Route element={<SwapScreen />} path={ROUTES.SWAP} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
         <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
