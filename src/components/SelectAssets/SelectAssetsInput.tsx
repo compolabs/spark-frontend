@@ -24,7 +24,7 @@ export interface AssetBlockData {
 }
 
 interface IProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
-  selected?: T;
+  selected?: string;
   onSelect: (option: AssetBlockData, index: number) => void;
   onChangeValue: (value: BN) => void;
   label?: string;
@@ -94,7 +94,6 @@ const SelectAssetsInput = <T,>({
           <TokenSelect
             assets={dataAssets}
             label={label}
-            selected={selected}
             selectedOption={selectedOption}
             showBalance={showBalance}
             onSelect={onSelect}

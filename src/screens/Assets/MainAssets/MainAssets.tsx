@@ -28,7 +28,7 @@ interface MainAssets {
 }
 
 const MainAssets = observer(({ setStep }: MainAssets) => {
-  const { balanceStore, accountStore } = useStores();
+  const { balanceStore, accountStore, faucetStore } = useStores();
   const { oracleStore, settingsStore, quickAssetsStore } = useStores();
   const { isConnected } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
@@ -40,9 +40,16 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 
   const balanceData = CONFIG.TOKENS.map(({ assetId }) => {
     const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
+    console.log("log", balance.toString());
     const token = bcNetwork!.getTokenByAssetId(assetId);
+    console.log(
+      "balanceStore.myMarketBalance",
+      balanceStore.myMarketBalance.liquid.quote.toString(),
+      balanceStore.myMarketBalance.liquid.base.toString(),
+    );
     const contractBalance =
       token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
+    console.log("contract", contractBalance.toString());
     const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
     return {
       asset: token,
@@ -56,7 +63,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   });
 
   const hasPositiveBalance = balanceData.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
-
+  console.log("balanceData", balanceData);
   const accumulateBalanceContract = balanceData.reduce((acc, account) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
     return acc.plus(new BN(account.contractBalance).multipliedBy(price));

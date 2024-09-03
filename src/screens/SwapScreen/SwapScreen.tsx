@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -28,14 +28,38 @@ export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
-  const { swapStore, balanceStore, quickAssetsStore } = useStores();
+  const { swapStore, balanceStore, quickAssetsStore, tradeStore } = useStores();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [isLoading, setIsloading] = useState(false);
   const [onPress, setOnPress] = useState(false);
-  const sellTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
-  const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
+  const tokens = swapStore.fetchNewTokens();
+  const buyTokenOptions = useMemo(() => {
+    return tradeStore.spotMarkets
+      .filter(
+        (token) =>
+          token.quoteToken.assetId === swapStore.sellToken.assetId ||
+          token.baseToken.assetId === swapStore.sellToken.assetId,
+      )
+      .map((token) =>
+        token.quoteToken.assetId === swapStore.sellToken.assetId
+          ? tokens.find((el) => el.assetId === token.baseToken.assetId)
+          : tokens.find((el) => el.assetId === token.quoteToken.assetId),
+      )
+      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined); // Type guard
+  }, [swapStore.sellToken]);
+
+  const getMarketPair = (assetId: string) => {
+    return tradeStore.spotMarkets
+      .filter((token) => token.quoteToken.assetId === assetId || token.baseToken.assetId === assetId)
+      .map((token) =>
+        token.quoteToken.assetId === assetId
+          ? tokens.find((el) => el.assetId === token.baseToken.assetId)
+          : tokens.find((el) => el.assetId === token.quoteToken.assetId),
+      )
+      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined); // Type guard
+  };
 
   const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
   const sellTokenPrice = swapStore.getPrice(swapStore.sellToken);
@@ -50,8 +74,6 @@ export const SwapScreen: React.FC = observer(() => {
 
   const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
 
-  const ETH = bcNetwork.getTokenBySymbol("ETH");
-
   useEffect(() => {
     const updateToken = setInterval(async () => {
       swapStore.updateTokens();
@@ -61,26 +83,20 @@ export const SwapScreen: React.FC = observer(() => {
   }, []);
 
   const generateBalanceData = (assets: TokenOption[]) =>
-    assets
-      .map(({ assetId }) => {
-        const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
-        const token = bcNetwork!.getTokenByAssetId(assetId);
-        const contractBalance =
-          token.symbol === "USDC"
-            ? balanceStore.myMarketBalance.liquid.quote
-            : balanceStore.myMarketBalance.liquid.base;
-        const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
-        return {
-          asset: token,
-          walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-          contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
-          balance: BN.formatUnits(totalBalance, token.decimals).toString(),
-          assetId,
-        };
-      })
-      .filter((el) => {
-        return el.assetId !== ETH.assetId;
-      });
+    assets.map(({ assetId }) => {
+      const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
+      const token = bcNetwork!.getTokenByAssetId(assetId);
+      const contractBalance =
+        token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
+      const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
+      return {
+        asset: token,
+        walletBalance: BN.formatUnits(balance, token.decimals).toString(),
+        contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
+        balance: BN.formatUnits(totalBalance, token.decimals).toString(),
+        assetId,
+      };
+    });
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOnPress(false);
@@ -156,7 +172,7 @@ export const SwapScreen: React.FC = observer(() => {
             <ActionContainer>
               <Text type={TEXT_TYPES.TEXT_NEW}>Sell</Text>
               {isLoaded && !isBalanceZero && (
-                <ActionTag onPress={onPress} onClick={fillPayAmount}>
+                <ActionTag onClick={fillPayAmount} onPress={onPress}>
                   <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
                     Max
                   </Text>
@@ -164,17 +180,18 @@ export const SwapScreen: React.FC = observer(() => {
               )}
             </ActionContainer>
             <TokenSelect
-              assets={generateBalanceData(sellTokenOptions)}
-              selected={() => {}}
-              selectedOption={generateBalanceData(sellTokenOptions)[0]}
+              assets={generateBalanceData(tokens)}
+              selectedOption={generateBalanceData([swapStore.sellToken])[0]}
               showBalance="contractBalance"
               type="rounded"
-              onSelect={() => {}}
+              onSelect={(_, i) => {
+                swapStore.setSellToken(tokens[i]);
+                swapStore.setBuyToken(getMarketPair(tokens[i].assetId)[0]);
+              }}
             />
           </BoxHeader>
           <SwapInput
             autoComplete="off"
-            disabled={!isConnected}
             id="pay-amount"
             type="text"
             value={swapStore.payAmount}
@@ -203,16 +220,17 @@ export const SwapScreen: React.FC = observer(() => {
             <Text type={TEXT_TYPES.TEXT_NEW}>Buy</Text>
             <TokenSelect
               assets={generateBalanceData(buyTokenOptions)}
-              selected={() => {}}
-              selectedOption={generateBalanceData(buyTokenOptions)[0]}
+              selectedOption={generateBalanceData([swapStore.buyToken])[0]}
               showBalance="contractBalance"
               type="rounded"
-              onSelect={() => {}}
+              onSelect={(_, i) => {
+                swapStore.setBuyToken(buyTokenOptions[i]);
+                swapStore.setSellToken(getMarketPair(buyTokenOptions[i].assetId)[0]);
+              }}
             />
           </BoxHeader>
           <SwapInput
             autoComplete="off"
-            disabled={!isConnected}
             id="receive-amount"
             type="text"
             value={swapStore.receiveAmount}

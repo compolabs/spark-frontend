@@ -25,7 +25,6 @@ export type TokenOption = {
 };
 
 interface TokenSelectProps {
-  selected: any;
   assets: AssetBlockData[];
   showBalance: "balance" | "walletBalance" | "contractBalance";
   label?: string;
@@ -36,7 +35,6 @@ interface TokenSelectProps {
 
 export const TokenSelect: React.FC<TokenSelectProps> = ({
   assets,
-  selected,
   showBalance,
   label,
   selectedOption,
@@ -77,7 +75,7 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({
             </OptionsHeader>
             {filteredItem.length > 0 ? (
               filteredItem.map((v, index) => {
-                const active = selected === v.assetId;
+                const active = selectedOption.assetId === v.assetId;
                 return (
                   <>
                     <Option key={v.assetId + "_option"} active={active} onClick={() => handleSelectClick(v, index)}>

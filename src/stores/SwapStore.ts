@@ -69,26 +69,23 @@ class SwapStore {
     const { balanceStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    return bcNetwork!
-      .getTokenList()
-      .filter((token) => token.symbol !== "ETH")
-      .map((v) => {
-        const balance = balanceStore.getContractBalanceInfo(v.assetId).amount;
-        const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
-        const token = bcNetwork!.getTokenByAssetId(v.assetId);
+    return bcNetwork!.getTokenList().map((v) => {
+      const balance = balanceStore.getContractBalanceInfo(v.assetId).amount;
+      const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
+      const token = bcNetwork!.getTokenByAssetId(v.assetId);
 
-        return {
-          key: token.symbol,
-          title: token.name,
-          symbol: token.symbol,
-          img: token.logo,
-          balance: formatBalance?.toFormat(v.precision),
-          priceFeed: token.priceFeed,
-          assetId: token.assetId,
-          decimals: token.decimals,
-          precision: token.precision,
-        };
-      });
+      return {
+        key: token.symbol,
+        title: token.name,
+        symbol: token.symbol,
+        img: token.logo,
+        balance: formatBalance?.toFormat(v.precision),
+        priceFeed: token.priceFeed,
+        assetId: token.assetId,
+        decimals: token.decimals,
+        precision: token.precision,
+      };
+    });
   }
 
   swapTokens = async ({ slippage }: { slippage: number }): Promise<boolean> => {
