@@ -40,8 +40,6 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
   const [isLoading, setIsloading] = useState(false);
   const { quickAssetsStore, balanceStore, oracleStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
-  const [showAction, setShowAction] = useState<ShowAction | null>();
-  const theme = useTheme();
   const navigate = useNavigate();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);

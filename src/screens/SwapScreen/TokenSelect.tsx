@@ -1,14 +1,16 @@
-import React, { useRef, useState } from "react";
-import { useTheme } from "@emotion/react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
 
 import SearchInput from "@components/SearchInput";
 import { SmartFlex } from "@components/SmartFlex";
 import arrowIcon from "@src/assets/icons/arrowUp.svg";
-import CloseIcon from "@src/assets/icons/close.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
+import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { media } from "@src/themes/breakpoints";
+import Tooltip from "@components/Tooltip";
+import AssetBlock from "@components/SelectAssets/AssetBlock";
+import SizedBox from "@components/SizedBox";
+import { Column } from "@components/Flex";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 
 export type TokenOption = {
   key: string;
@@ -23,228 +25,203 @@ export type TokenOption = {
 };
 
 interface TokenSelectProps {
-  selectType: "Buy" | "Sell";
-  value: TokenOption;
-  options: TokenOption[];
-  onSelect: (option: TokenOption) => void;
+  selected: any;
+  assets: AssetBlockData[];
+  showBalance: "balance" | "walletBalance" | "contractBalance";
+  label?: string;
+  selectedOption: AssetBlockData;
+  onSelect: (v: AssetBlockData, index: number) => void;
+  type?: "rounded" | "square";
 }
 
-export const TokenSelect: React.FC<TokenSelectProps> = ({ value, options, onSelect, selectType }) => {
-  const theme = useTheme();
-  const [isSelectMenuVisible, setSelectMenuVisible] = useState(false);
-  const selectRef = useRef<HTMLDivElement>(null);
+export const TokenSelect: React.FC<TokenSelectProps> = ({
+  assets,
+  selected,
+  showBalance,
+  label,
+  selectedOption,
+  onSelect,
+  type = "square",
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [filterData, setFilterData] = useState<TokenOption[]>(options);
-  useOnClickOutside(selectRef, () => setSelectMenuVisible(false));
-
-  const selectOption = (option: TokenOption) => {
-    setSelectMenuVisible(false);
-    onSelect(option);
+  const handleSelectClick = (v: AssetBlockData, index: number) => {
+    onSelect(v, index);
+    setIsVisible(false);
   };
 
   const handleChangeSearch = (text: string) => {
     setSearchValue(text);
-    const filteredArray = options.filter((item) => item.symbol.toLowerCase().includes(text.toLowerCase()));
-    setFilterData(filteredArray);
   };
 
+  const filteredItem = assets.filter((item) => item.asset.name.toLowerCase().includes(searchValue.toLowerCase()));
+
   return (
-    <SelectWrapper
-      focused={isSelectMenuVisible}
-      onClick={() => (!isSelectMenuVisible ? setSelectMenuVisible(true) : null)}
-    >
-      <SelectedOption>
-        <img alt={value.symbol} src={value.img} />
-        {value.symbol}
-      </SelectedOption>
-
-      <img alt="arrow" className="menu-arrow" src={arrowIcon} />
-      {isSelectMenuVisible && (
-        <MobileOverlay>
-          <OptionsContainer ref={selectRef}>
+    <TooltipAssetsContainer>
+      <Tooltip
+        config={{
+          placement: "bottom-end",
+          trigger: "click",
+          visible: isVisible,
+          onVisibleChange: setIsVisible,
+        }}
+        containerStyles={{ padding: 0 }}
+        content={
+          <ColumnContent crossAxisSize="max">
             <Container>
-              <Header>
-                <Text type={TEXT_TYPES.TITLE} primary>
-                  {selectType}
-                </Text>
-                <CloseIconStyled onClick={() => setSelectMenuVisible(false)} />
-              </Header>
-              <SearchInput placeholder=" " value={searchValue} onChange={handleChangeSearch} />
+              <SearchInput placeholder=" " value={searchValue} variant="transparent" onChange={handleChangeSearch} />
             </Container>
-            {filterData.length > 0 ? (
-              <>
-                <OptionsHeader>
-                  <Text type={TEXT_TYPES.BODY}>Asset</Text>
-                  <Text type={TEXT_TYPES.BODY}>Balance</Text>
-                </OptionsHeader>
-                {filterData.map((option) => (
-                  <Option key={option.key} onClick={() => selectOption(option)}>
-                    <OptionRightPart key={option.key}>
-                      <img alt={option.symbol} src={option.img} />
-                      <OptionTitle>
-                        <TokenSymbol color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-                          {option.symbol}
-                        </TokenSymbol>
-                        <Text type={TEXT_TYPES.BODY}>{option.title}</Text>
-                      </OptionTitle>
-                    </OptionRightPart>
-
-                    <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-                      {option.balance ?? "0.00"}
-                    </Text>
-                  </Option>
-                ))}
-              </>
+            <OptionsHeader>
+              <Text type={TEXT_TYPES.BUTTON}>Asset</Text>
+              <Text type={TEXT_TYPES.BUTTON}>Wallet Balance</Text>
+            </OptionsHeader>
+            {filteredItem.length > 0 ? (
+              filteredItem.map((v, index) => {
+                const active = selected === v.assetId;
+                return (
+                  <>
+                    <Option key={v.assetId + "_option"} active={active} onClick={() => handleSelectClick(v, index)}>
+                      <AssetBlock key={v.assetId} options={{ showBalance }} token={v} />
+                    </Option>
+                  </>
+                );
+              })
             ) : (
-              <NotFoundContainer justifyContent="center">
-                <Text>Nothing found</Text>
-              </NotFoundContainer>
+              <NoFoundAssets>
+                <TextNoFoundAssets>No assets found</TextNoFoundAssets>
+              </NoFoundAssets>
             )}
-          </OptionsContainer>
-        </MobileOverlay>
-      )}
-    </SelectWrapper>
+          </ColumnContent>
+        }
+      >
+        <Wrap focused={isVisible}>
+          <Text>{label}</Text>
+          <SizedBox height={2} />
+          <Root type={type} onBlur={() => setIsVisible(false)} onClick={() => setIsVisible(true)}>
+            {selectedOption && (
+              <AssetBlock
+                key={selectedOption.assetId}
+                options={{ isShowBalance: false, showBalance }}
+                token={selectedOption}
+                type="rounded"
+              />
+            )}
+            <img alt="arrow" className="menu-arrow" src={arrowIcon} />
+          </Root>
+        </Wrap>
+      </Tooltip>
+    </TooltipAssetsContainer>
   );
 };
 
-const SelectWrapper = styled.div<{
-  focused?: boolean;
-}>`
-  position: relative;
-  color: white;
-  border-radius: 30px;
-  background-color: ${({ focused }) => (focused ? "#ffffff12" : "#0000004D")};
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  cursor: pointer;
-  transition: 0.4s;
-  min-width: 121px;
+const TooltipAssetsContainer = styled(SmartFlex)`
+  width: auto;
+`;
 
-  .menu-arrow {
-    transition: 0.4s;
-    transform: ${({ focused }) => (focused ? "rotate(-180deg)" : "rotate(0deg)")};
-  }
-
-  :hover {
-    background-color: #ffffff12;
-    .menu-arrow {
-      transform: ${({ focused }) => (focused ? "rotate(-180)" : "rotate(-90deg)")};
-    }
-  }
-
+const ColumnContent = styled(Column)`
+  width: 320px;
   ${media.mobile} {
-    position: static;
-  }
-`;
-
-const SelectedOption = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const Container = styled.div`
-  padding: 0 16px;
-`;
-
-const MobileOverlay = styled.div`
-  ${media.mobile} {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    background-color: ${({ theme }) => theme.colors.overlayBackground};
-    backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    z-index: 1;
-  }
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-`;
-
-const OptionsContainer = styled.div`
-  z-index: 1;
-  position: absolute;
-  top: calc(100% + 8px);
-  width: 300px;
-  right: 0;
-  background-color: ${({ theme }) => theme.colors.bgSecondary};
-  padding: 16px 0 0;
-  border-radius: 10px;
-  max-height: 336px;
-  display: flex;
-  flex-direction: column;
-  gap: 13px;
-
-  ${media.mobile} {
-    z-index: 2;
-    backdrop-filter: blur(5px);
-    position: relative;
-    left: auto;
-    right: auto;
-    width: calc(100% - 16px);
-    margin: 0 auto;
-    top: auto;
+    width: 100vw;
   }
 `;
 
 const OptionsHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 0 16px;
-`;
-
-const Option = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  cursor: pointer;
   padding: 4px 16px;
-
-  &:hover {
-    background-color: #373737;
-  }
-
-  &:last-child {
-    border-radius: 0 0 10px 10px;
-  }
+  height: 40px;
+  width: 100%;
 `;
 
-const OptionRightPart = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
+const TextNoFoundAssets = styled(Text)`
+  text-align: center;
+  margin: auto;
 `;
 
-const OptionTitle = styled.div`
+const NoFoundAssets = styled(SmartFlex)`
+  width: 100%;
+  margin: auto;
+  text-align: center;
+`;
+
+const Wrap = styled.div<{
+  focused?: boolean;
+  disabled?: boolean;
+}>`
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  width: 100%;
+  .menu-arrow {
+    transition: 0.4s;
+    transform: ${({ focused }) => (focused ? "rotate(-180deg)" : "rotate(0deg)")};
+  }
+
+  :hover {
+    .menu-arrow {
+      transform: ${({ focused, disabled }) =>
+        focused ? "rotate(-180)" : disabled ? "rotate(0deg)" : "rotate(-90deg)"};
+    }
+  }
 `;
 
-const TokenSymbol = styled(Text)`
-  font-size: 16px;
-`;
-
-const CloseIconStyled = styled(CloseIcon)`
-  background: ${({ theme }) => theme.colors.bgIcon};
-  width: 30px;
-  height: 30px;
+const Root = styled.div<{
+  focused?: boolean;
+  disabled?: boolean;
+  type?: "rounded" | "square";
+}>`
+  display: flex;
   padding: 8px;
-  border-radius: 100px;
+  box-sizing: border-box;
+  border-radius: ${({ type }) => (type === "rounded" ? "32px" : "8px")};
+  gap: 8px;
+  background: ${({ theme, type }) => (type === "rounded" ? "#1F1F1F" : theme.colors.bgPrimary)};
+  border: 1px solid ${({ focused, theme }) => (focused ? theme.colors.borderAccent : theme.colors.borderSecondary)};
+  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  color: ${({ theme, disabled }) => (!disabled ? theme.colors.textPrimary : theme.colors.textDisabled)};
+  cursor: ${({ disabled }) => (!disabled ? "pointer" : "not-allowed")};
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+
+  ${media.mobile} {
+    height: 56px;
+  }
 `;
 
-const NotFoundContainer = styled(SmartFlex)`
-  padding-bottom: 10px;
+const Container = styled.div`
+  padding: 0 16px;
+  width: 100%;
+`;
+
+export const Option = styled.div<{
+  active?: boolean;
+  disabled?: boolean;
+}>`
+  width: 100%;
+  display: flex;
+  cursor: ${({ disabled }) => (!disabled ? "pointer" : "not-allowed")};
+  align-items: center;
+  background: ${({ active, theme }) => (active ? theme.colors.borderPrimary : "transparent")};
+  color: ${({ disabled, theme }) => (disabled ? theme.colors.textDisabled : theme.colors.textPrimary)};
+  padding: 5px 16px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  transition: 0.4s;
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
+
+  :hover {
+    background: ${({ theme, active, disabled }) =>
+      active ? theme.colors.borderPrimary : disabled ? "transparent" : theme.colors.borderSecondary};
+  }
+
+  :active {
+    background: ${({ theme, disabled }) => (!disabled ? theme.colors.borderPrimary : "transparent")};
+  }
+
+  :last-child {
+    border-radius: 0px 0px 10px 10px;
+  }
+
+  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]};
 `;

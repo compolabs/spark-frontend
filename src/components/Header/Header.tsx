@@ -21,7 +21,7 @@ import { MenuNav } from "./MenuNav";
 import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
-  const { modalStore, accountStore, quickAssetsStore } = useStores();
+  const { accountStore, quickAssetsStore } = useStores();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
@@ -82,6 +82,15 @@ const Header: React.FC = observer(() => {
         </SmartFlex>
         <SmartFlex center="y" gap="8px">
           {renderWallet()}
+          <ButtonStyled
+            data-onboarding="assets-mobile"
+            fitContent
+            onClick={() => quickAssetsStore.setQuickAssets(true)}
+          >
+            <SmartFlex>
+              <DataBase />
+            </SmartFlex>
+          </ButtonStyled>
           <MenuContainer data-onboarding="menu-mobile" onClick={toggleMenu}>
             <Menu />
           </MenuContainer>
@@ -118,7 +127,6 @@ const Header: React.FC = observer(() => {
   return (
     <Root>
       {media.mobile ? renderMobile() : renderDesktop()}
-
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onAccountClick={openAccountInfo}
@@ -148,6 +156,12 @@ const Root = styled(SmartFlex)`
     padding: 0 8px;
     margin: 4px 0;
   }
+`;
+
+const ButtonStyled = styled(Button)`
+  padding: 5px;
+  width: 34px;
+  height: 34px;
 `;
 
 const Divider = styled.div`

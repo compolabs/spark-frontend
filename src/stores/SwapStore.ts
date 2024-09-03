@@ -14,6 +14,8 @@ import BN from "@src/utils/BN";
 import { parseNumberWithCommas } from "@src/utils/swapUtils";
 
 import RootStore from "./RootStore";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
+import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 
 class SwapStore {
   tokens: TokenOption[];
@@ -89,7 +91,8 @@ class SwapStore {
       });
   }
 
-  swapTokens = async ({ slippage }: { slippage: number }): Promise<WriteTransactionResponse> => {
+  swapTokens = async ({ slippage }: { slippage: number }): Promise<boolean> => {
+    const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
     const ETH = bcNetwork.getTokenBySymbol("ETH");
     const isBuy = this.buyToken.symbol === "BTC"; // продумать если будет больше торговых пар, не будет работать
@@ -110,14 +113,32 @@ class SwapStore {
     const order: FulfillOrderManyParams = {
       amount: isBuy ? formattedVolume : formattedAmount,
       orderType: this.buyToken.symbol === "BTC" ? OrderType.Buy : OrderType.Sell,
-      limitType: LimitType.FOK, // TODO: Check is it correct
+      limitType: LimitType.FOK,
       price: sellOrders[sellOrders.length - 1].price.toString(),
       orders: sellOrders.map((el) => el.id),
       slippage: slippage.toString(),
       feeAssetId: ETH.assetId,
     };
+    const amountFormatted = BN.formatUnits(
+      isBuy ? formattedVolume : formattedAmount,
+      this.sellToken.decimals,
+    ).toSignificant(2);
 
-    return await bcNetwork.swapTokens(order);
+    try {
+      const tx = await bcNetwork.swapTokens(order);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.SWAP_TOKENS)(amountFormatted, this.sellToken.symbol),
+        hash: tx.transactionId,
+      });
+      return true;
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.SWAP_TOKENS_FAILED)(amountFormatted, this.sellToken.symbol),
+      );
+      return false;
+    }
   };
 
   onSwitchTokens = () => {

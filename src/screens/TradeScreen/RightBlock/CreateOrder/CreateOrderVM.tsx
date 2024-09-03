@@ -170,8 +170,9 @@ class CreateOrderVM {
   };
 
   setInputPrice = (price: BN) => {
+    const { settingsStore } = this.rootStore;
     this.inputPrice = price;
-    this.setActiveInput(ACTIVE_INPUT.Price);
+    if (settingsStore.orderType !== ORDER_TYPE.Market) this.setActiveInput(ACTIVE_INPUT.Price);
     this.calculateInputs();
   };
 

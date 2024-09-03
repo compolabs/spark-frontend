@@ -11,6 +11,8 @@ export const enum ACTION_MESSAGE_TYPE {
   WITHDRAWING_TOKENS,
   WITHDRAWING_ALL_TOKENS,
   WITHDRAWING_TOKENS_FAILED,
+  SWAP_TOKENS,
+  SWAP_TOKENS_FAILED,
   CREATING_ORDER,
   CREATING_ORDER_FAILED,
   CANCELING_ORDER,
@@ -27,6 +29,8 @@ type ActionMessageArgs = {
   [ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS_FAILED]: [];
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS]: [amount: string, symbol: string];
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED]: [amount: string, symbol: string];
+  [ACTION_MESSAGE_TYPE.SWAP_TOKENS]: [amount: string, symbol: string];
+  [ACTION_MESSAGE_TYPE.SWAP_TOKENS_FAILED]: [amount: string, symbol: string];
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS]: [amount: string, symbol: string];
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED]: [amount: string, symbol: string];
   [ACTION_MESSAGE_TYPE.CREATING_ORDER]: [amount: string, symbol: string, price: string, type: string];
@@ -71,6 +75,23 @@ const MESSAGE_TEMPLATES: ActionMessage = {
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED]: (amount, symbol) => (
     <TextContainer type={TEXT_TYPES.BUTTON} attention>
       Deposit of&nbsp;
+      <Text type={TEXT_TYPES.BUTTON} primary>
+        {amount} {symbol}
+      </Text>
+      &nbsp; failed
+    </TextContainer>
+  ),
+  [ACTION_MESSAGE_TYPE.SWAP_TOKENS]: (amount, symbol) => (
+    <TextContainer type={TEXT_TYPES.BUTTON} greenLight>
+      Swap Completed&nbsp;
+      <Text type={TEXT_TYPES.BUTTON} primary>
+        {amount} {symbol}
+      </Text>
+    </TextContainer>
+  ),
+  [ACTION_MESSAGE_TYPE.SWAP_TOKENS_FAILED]: (amount, symbol) => (
+    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+      Swap Failed&nbsp;
       <Text type={TEXT_TYPES.BUTTON} primary>
         {amount} {symbol}
       </Text>
