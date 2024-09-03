@@ -10,7 +10,6 @@ import useVM from "@src/hooks/useVM";
 import { Subscription } from "@src/typings/utils";
 import BN from "@src/utils/BN";
 import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
-import { CONFIG } from "@src/utils/getConfig";
 import { groupOrders } from "@src/utils/groupOrders";
 import { RootStore, useStores } from "@stores";
 
@@ -50,8 +49,8 @@ class SpotOrderbookVM {
     makeAutoObservable(this);
 
     reaction(
-      () => rootStore.initialized,
-      (initialized) => {
+      () => [rootStore.initialized, rootStore.tradeStore.market],
+      ([initialized, market]) => {
         if (!initialized) return;
 
         this.updateOrderBook();
@@ -140,13 +139,16 @@ class SpotOrderbookVM {
       this.buySubscription.unsubscribe();
     }
 
+    const { tradeStore } = this.rootStore;
+    const market = tradeStore.market;
+
     this.buySubscription = bcNetwork
       .subscribeSpotActiveOrders<OrderType.Buy>({ ...params, orderType: OrderType.Buy })
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
 
-          const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId);
+          const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, market!.quoteToken.assetId);
           const buyOrdersCombinedByDecimal = groupOrders(buyOrders, this.decimalGroup);
           this.allBuyOrders = buyOrdersCombinedByDecimal;
         },
@@ -158,13 +160,16 @@ class SpotOrderbookVM {
       this.sellSubscription.unsubscribe();
     }
 
+    const { tradeStore } = this.rootStore;
+    const market = tradeStore.market;
+
     this.sellSubscription = bcNetwork
       .subscribeSpotActiveOrders<OrderType.Sell>({ ...params, orderType: OrderType.Sell })
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
 
-          const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId);
+          const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, market!.quoteToken.assetId);
           const sellOrdersCombinedByDecimal = groupOrders(sellOrders, this.decimalGroup);
           this.allSellOrders = sellOrdersCombinedByDecimal;
         },

@@ -249,7 +249,7 @@ class CreateOrderVM {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore, accountStore } = this.rootStore;
     const { market } = tradeStore;
     const { orderType } = settingsStore;
     const bcNetwork = FuelNetwork.getInstance();

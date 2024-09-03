@@ -2,10 +2,9 @@ import SparkOrderBookSdk, {
   GetActiveOrdersParams,
   Order,
   OrderType,
-  UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
-import { Account, B256Address, Bech32Address } from "fuels";
+import { Account, B256Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -178,11 +177,11 @@ export class FuelNetwork {
     };
   };
 
-  fetchSpotMatcherFee = async (): Promise<number> => {
+  fetchSpotMatcherFee = async () => {
     return this.orderbookSdk.fetchMatcherFee();
   };
 
-  fetchSpotUserMarketBalance = async (accountAddress: Bech32Address): Promise<UserMarketBalance> => {
-    return this.orderbookSdk.fetchUserMarketBalance(accountAddress);
+  fetchSpotUserMarketBalance = async (...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalance>) => {
+    return this.orderbookSdk.fetchUserMarketBalance(...params);
   };
 }

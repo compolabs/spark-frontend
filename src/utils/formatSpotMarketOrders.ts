@@ -7,7 +7,7 @@ export const formatSpotMarketOrders = (orders: Order[], quoteAssetId: string) =>
     (order) =>
       new SpotMarketOrder({
         ...order,
-        quoteAssetId: quoteAssetId,
+        quoteAssetId,
       }),
   );
 };
