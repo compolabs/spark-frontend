@@ -63,8 +63,12 @@ export const SplashScreen: React.FC = observer(() => {
     setMode(newMode);
   };
 
-  const handleGoClick = () => {
-    navigate(TYPE_ROUTE_MAP[mode]);
+  const handleGoToMode = (newMode: SPLASH_SCREEN_TYPE) => {
+    handleGoClick(newMode);
+  };
+
+  const handleGoClick = (newMode?: SPLASH_SCREEN_TYPE) => {
+    navigate(TYPE_ROUTE_MAP[newMode ?? mode]);
     setSplashScreenVisible(false);
     setIsOnboardingVisible(true);
   };
@@ -78,7 +82,12 @@ export const SplashScreen: React.FC = observer(() => {
     const isSelected = mode === info.type;
 
     return (
-      <ModeButtonContainer key={info.name} isSelected={isSelected} onClick={() => handleModeClick(info.type)}>
+      <ModeButtonContainer
+        key={info.name}
+        isSelected={isSelected}
+        onClick={() => handleModeClick(info.type)}
+        onDoubleClick={() => handleGoToMode(info.type)}
+      >
         <img alt={info.name} src={info.icon} />
         <SmartFlex gap="6px" column>
           <Text>{info.name}</Text>
@@ -104,7 +113,7 @@ export const SplashScreen: React.FC = observer(() => {
               <TitleStyled>Select trading mode to begin</TitleStyled>
             </TitleContainer>
             <ModeContainer>{SPLASH_SCREEN_INFO.map(renderModeButton)}</ModeContainer>
-            <StyledButton green onClick={handleGoClick}>
+            <StyledButton green onClick={() => handleGoClick()}>
               <ButtonText type={TEXT_TYPES.TITLE} primary>
                 Let&apos;s go!
               </ButtonText>

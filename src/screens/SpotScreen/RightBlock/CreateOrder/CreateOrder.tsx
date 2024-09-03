@@ -36,6 +36,8 @@ const ORDER_OPTIONS = [
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
 ];
 
+const VISIBLE_MARKET_DECIMALS = 2;
+
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore } = useStores();
   const vm = useCreateOrderVM();
@@ -46,6 +48,8 @@ const CreateOrder: React.FC = observer(() => {
   const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
 
   const isButtonDisabled = vm.isLoading || !vm.canProceed;
+  const isMarketOrderType = settingsStore.orderType === ORDER_TYPE.Market;
+  const priceDisplayDecimals = isMarketOrderType ? VISIBLE_MARKET_DECIMALS : DEFAULT_DECIMALS;
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
 
@@ -202,6 +206,7 @@ const CreateOrder: React.FC = observer(() => {
           <TokenInput
             amount={vm.inputPrice}
             decimals={DEFAULT_DECIMALS}
+            displayDecimals={priceDisplayDecimals}
             disabled={isInputPriceDisabled}
             label="Price"
             setAmount={handleSetPrice}
