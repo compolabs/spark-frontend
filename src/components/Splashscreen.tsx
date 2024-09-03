@@ -31,7 +31,7 @@ interface SplashScreenInfo {
 const SPLASH_SCREEN_INFO: SplashScreenInfo[] = [
   {
     name: "Swap",
-    desc: "Buy and Sell assets at market price",
+    desc: "Buy and sell assets at market price",
     icon: splashScreenSwap,
     type: SPLASH_SCREEN_TYPE.SWAP,
   },
