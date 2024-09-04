@@ -89,15 +89,21 @@ class SwapStore {
   }
 
   swapTokens = async ({ slippage }: { slippage: number }): Promise<boolean> => {
-    const { notificationStore } = this.rootStore;
+    const { notificationStore, tradeStore, oracleStore } = this.rootStore;
+    const baseToken = tradeStore.market?.baseToken
+    const isBuy = baseToken?.assetId === this.buyToken.assetId
     const bcNetwork = FuelNetwork.getInstance();
     const ETH = bcNetwork.getTokenBySymbol("ETH");
-    const isBuy = this.buyToken.symbol === "BTC"; // продумать если будет больше торговых пар, не будет работать
+    // console.log('tradeStore.market?.symbol', tradeStore.market?.baseToken.assetId)
+    // // продумать если будет больше торговых пар, не будет работать
+    // console.log('this.buyToken', this.buyToken)
+    // console.log('this.sellToken.assetId', this.sellToken)
     const params: GetOrdersParams = {
       limit: 50, // or more if needed
-      asset: isBuy ? this.buyToken.assetId : this.sellToken.assetId,
+      asset: baseToken?.assetId,
       status: ["Active"],
     };
+
     const sellOrders = await bcNetwork!.fetchSpotOrders({
       ...params,
       orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
@@ -109,19 +115,21 @@ class SwapStore {
 
     const order: FulfillOrderManyParams = {
       amount: isBuy ? formattedVolume : formattedAmount,
-      orderType: this.buyToken.symbol === "BTC" ? OrderType.Buy : OrderType.Sell,
+      orderType: isBuy ? OrderType.Buy : OrderType.Sell,
       limitType: LimitType.FOK,
       price: sellOrders[sellOrders.length - 1].price.toString(),
       orders: sellOrders.map((el) => el.id),
       slippage: slippage.toString(),
       feeAssetId: ETH.assetId,
     };
+
     const amountFormatted = BN.formatUnits(
       isBuy ? formattedVolume : formattedAmount,
       this.sellToken.decimals,
     ).toSignificant(2);
 
     try {
+      console.log('order', order)
       const tx = await bcNetwork.swapTokens(order);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.SWAP_TOKENS)(amountFormatted, this.sellToken.symbol),

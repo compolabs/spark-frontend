@@ -284,23 +284,26 @@ class CreateOrderVM {
           asset: tradeStore?.market?.baseToken.assetId ?? "",
           status: ["Active"],
         };
+        console.log('params', {
+          ...params,
+          orderType: typeMarket,
+        })
         const sellOrders = await bcNetwork!.fetchSpotOrders({
           ...params,
           orderType: typeMarket,
         });
-
         const order: FulfillOrderManyParams = {
           amount: this.inputAmount.toString(),
           orderType: type,
           limitType: timeInForce,
           price:
             orderType === ORDER_TYPE.Market
-              ? this.inputPrice.toString()
-              : sellOrders[sellOrders.length - 1].price.toString(),
+              ? sellOrders[sellOrders.length - 1].price.toString() : this.inputPrice.toString(),
           orders: sellOrders.map((el) => el.id),
-          slippage: "100",
+          slippage: "10000",
           feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
+        console.log('order', order)
         const data = await bcNetwork.swapTokens(order);
         hash = data.transactionId;
       }

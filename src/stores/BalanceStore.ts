@@ -136,6 +136,8 @@ export class BalanceStore {
     }
     const token = bcNetwork.getTokenByAssetId(assetId);
     const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
+    console.log('1', token)
+    console.log('2', amount)
     try {
       const tx = await bcNetwork?.depositSpotBalance(token, amount);
       notificationStore.success({
