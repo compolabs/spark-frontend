@@ -12,6 +12,7 @@ import Slider from "@components/Slider";
 import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import Button, { ButtonGroup } from "@src/components/Button";
+import { ConnectWalletButton } from "@src/components/ConnectWalletButton";
 import SizedBox from "@src/components/SizedBox";
 import { SmartFlex } from "@src/components/SmartFlex";
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@src/constants";
@@ -206,8 +207,8 @@ const CreateOrder: React.FC = observer(() => {
           <TokenInput
             amount={vm.inputPrice}
             decimals={DEFAULT_DECIMALS}
-            displayDecimals={priceDisplayDecimals}
             disabled={isInputPriceDisabled}
+            displayDecimals={priceDisplayDecimals}
             label="Price"
             setAmount={handleSetPrice}
             onBlur={vm.setActiveInput}
@@ -264,7 +265,7 @@ const CreateOrder: React.FC = observer(() => {
         </SliderContainer>
         {renderOrderDetails()}
       </ParamsContainer>
-      {renderButton()}
+      <ConnectWalletButton connectText="Connect wallet to trade">{renderButton()}</ConnectWalletButton>
 
       <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
     </Root>
