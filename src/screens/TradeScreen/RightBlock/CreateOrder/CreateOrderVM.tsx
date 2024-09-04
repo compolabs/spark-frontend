@@ -292,11 +292,6 @@ class CreateOrderVM {
           ...params,
           orderType: typeMarket,
         });
-
-        console.log('sellOrders', sellOrders)
-        console.log("!", orderType === ORDER_TYPE.Market
-          ? this.inputPrice.toString()
-          : sellOrders[sellOrders.length - 1].price.toString(),)
         const order: FulfillOrderManyParams = {
           amount: this.inputAmount.toString(),
           orderType: type,
