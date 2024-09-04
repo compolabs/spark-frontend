@@ -58,7 +58,7 @@ const CreateOrder: React.FC = observer(() => {
   const handlePercentChange = (v: number) => {
     const balance = balanceStore.getContractBalanceInfo(vm.isSell ? baseToken.assetId : quoteToken.assetId).amount;
 
-    if (balance.eq(BN.ZERO)) return;
+    if (balance.isZero()) return;
 
     const value = BN.percentOf(balance, v);
     if (vm.isSell) {

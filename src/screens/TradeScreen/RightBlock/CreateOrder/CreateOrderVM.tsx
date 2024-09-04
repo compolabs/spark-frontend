@@ -14,11 +14,11 @@ import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
+import { RootStore, useStores } from "@src/stores";
 import BN from "@src/utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import Math from "@src/utils/Math";
-import { RootStore, useStores } from "@stores";
 
 const ctx = React.createContext<CreateOrderVM | null>(null);
 
@@ -88,7 +88,7 @@ class CreateOrderVM {
           this.setInputPriceDebounce(price);
         } else if (
           orderType === ORDER_TYPE.Limit &&
-          this.inputPrice.eq(BN.ZERO) &&
+          this.inputPrice.isZero() &&
           this.activeInput !== ACTIVE_INPUT.Price
         ) {
           this.setInputPriceDebounce(price);
@@ -231,7 +231,7 @@ class CreateOrderVM {
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
     const balance = balanceStore.getContractBalanceInfo(assetId).amount;
 
-    if (balance.eq(BN.ZERO)) {
+    if (balance.isZero()) {
       this.inputPercent = BN.ZERO;
       return;
     }
@@ -294,10 +294,10 @@ class CreateOrderVM {
           limitType: timeInForce,
           price:
             orderType === ORDER_TYPE.Market
-              ? this.inputPrice.toString()
-              : sellOrders[sellOrders.length - 1].price.toString(),
+              ? sellOrders[sellOrders.length - 1].price.toString()
+              : this.inputPrice.toString(),
           orders: sellOrders.map((el) => el.id),
-          slippage: "100",
+          slippage: "10000",
           feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
         const data = await bcNetwork.swapTokens(order);
