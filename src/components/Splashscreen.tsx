@@ -4,10 +4,11 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import CheckIcon from "@src/assets/icons/check.svg?react";
-import Logo from "@src/assets/icons/logo-small.svg?react";
+import LogoIcon from "@src/assets/icons/logo-small.svg?react";
+import WalletIcon from "@src/assets/icons/wallet.svg?react";
 import spacemanImage from "@src/assets/images/spaceman.webp";
-import splashScreenOrderbook from "@src/assets/splash/splash-screen-orderbook.svg";
-import splashScreenSwap from "@src/assets/splash/splash-screen-swap.svg";
+import splashScreenOrderbookIcon from "@src/assets/splash/splash-screen-orderbook.svg";
+import splashScreenSwapIcon from "@src/assets/splash/splash-screen-swap.svg";
 import { useMedia } from "@src/hooks/useMedia";
 import { useStores } from "@src/stores";
 
@@ -32,13 +33,13 @@ const SPLASH_SCREEN_INFO: SplashScreenInfo[] = [
   {
     name: "Swap",
     desc: "Buy and sell assets at market price",
-    icon: splashScreenSwap,
+    icon: splashScreenSwapIcon,
     type: SPLASH_SCREEN_TYPE.SWAP,
   },
   {
     name: "Orderbook",
     desc: "More options for experienced traders",
-    icon: splashScreenOrderbook,
+    icon: splashScreenOrderbookIcon,
     type: SPLASH_SCREEN_TYPE.ORDERBOOK,
   },
 ];
@@ -108,7 +109,7 @@ export const SplashScreen: React.FC = observer(() => {
             <TitleContainer>
               <SmartFlex gap="8px" center>
                 <DescriptionStyled>Hey, and welcome to</DescriptionStyled>
-                <Logo />
+                <LogoIcon />
               </SmartFlex>
               <TitleStyled>Select trading mode to begin</TitleStyled>
             </TitleContainer>
@@ -135,7 +136,8 @@ const ONBOARDING_TRADE_STEPS: Step[] = [
   {
     desktopKey: "connect-desktop",
     mobileKey: "connect-mobile",
-    desc: "Connect your wallet",
+    desc: "Let's connect your wallet",
+    icon: WalletIcon,
   },
   {
     desktopKey: "mint-desktop",
@@ -147,12 +149,12 @@ const ONBOARDING_TRADE_STEPS: Step[] = [
       const el = document.querySelector<HTMLElement>("[data-onboarding='menu-mobile']");
       el?.click();
     },
-    desc: "Mint tokens",
+    desc: "Mint some test tokens in Faucet",
   },
   {
     desktopKey: "assets-desktop",
     mobileKey: "assets-mobile",
-    desc: "Deposit assets",
+    desc: "Deposit assets to start trading",
   },
   {
     desktopKey: "trade-desktop",
@@ -172,7 +174,8 @@ const ONBOARDING_SWAP_STEPS: Step[] = [
   {
     desktopKey: "connect-desktop",
     mobileKey: "connect-mobile",
-    desc: "Connect your wallet",
+    desc: "Let's connect your wallet",
+    icon: WalletIcon,
   },
   {
     desktopKey: "mint-desktop",
@@ -184,12 +187,12 @@ const ONBOARDING_SWAP_STEPS: Step[] = [
       const el = document.querySelector<HTMLElement>("[data-onboarding='menu-mobile']");
       el?.click();
     },
-    desc: "Mint tokens",
+    desc: "Mint some test tokens in Faucet",
   },
   {
     desktopKey: "assets-desktop",
     mobileKey: "assets-mobile",
-    desc: "Deposit assets",
+    desc: "Deposit assets to start trading",
   },
   {
     desktopKey: "swap-desktop",

@@ -1,18 +1,20 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 
+import CloseIcon from "@src/assets/icons/close.svg?react";
 import arrowIcon from "@src/assets/icons/onboardingArrow.svg";
 import { IMedia, useMedia } from "@src/hooks/useMedia";
 import { media } from "@src/themes/breakpoints";
 
 import Button from "./Button";
 import { SmartFlex } from "./SmartFlex";
-import Text from "./Text";
+import Text, { TEXT_TYPES } from "./Text";
 
 export interface Step {
   desktopKey: string;
   mobileKey: string;
   desc: string;
+  icon?: React.FC;
   beforeAction?: (media: IMedia) => void;
 }
 
@@ -25,29 +27,56 @@ const ARROW_HEIGHT = 18;
 const ARROW_WIDTH = 50;
 const GAP = 16;
 
+const createOverlayCopy = (element: HTMLElement): HTMLElement => {
+  const copyContainer = document.createElement("div");
+  copyContainer.style.position = "absolute";
+  copyContainer.style.zIndex = "10000";
+  copyContainer.style.top = `${element.getBoundingClientRect().top}px`;
+  copyContainer.style.left = `${element.getBoundingClientRect().left}px`;
+  copyContainer.style.width = `${element.offsetWidth}px`;
+  copyContainer.style.height = `${element.offsetHeight}px`;
+
+  const clone = element.cloneNode(true) as HTMLElement;
+  copyContainer.appendChild(clone);
+
+  document.body.appendChild(copyContainer);
+
+  return copyContainer;
+};
+
+const removeOverlayCopy = (copyContainer: HTMLElement) => {
+  document.body.removeChild(copyContainer);
+};
+
 export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
   const media = useMedia();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
   const totalSteps = steps.length;
-  const nextButtonText = steps.length - 1 === currentStepIndex ? "Thats it!" : "Next";
+  const isLastStep = steps.length - 1 === currentStepIndex;
+  const nextButtonText = isLastStep ? "Thats it!" : "Next";
 
   const stepRef = useRef<HTMLDivElement>(null);
   const stepArrowRef = useRef<HTMLImageElement>(null);
   const targetRef = useRef<HTMLElement | null>(null);
+  const targetCopyRef = useRef<HTMLElement | null>(null);
 
   const calculatePosition = () => {
     if (steps.length === 0 || !stepRef.current) return;
 
     const currentStep = steps[currentStepIndex];
     const key = media.mobile ? currentStep.mobileKey : currentStep.desktopKey;
-    targetRef.current = document.querySelector(`[data-onboarding="${key}"]`);
 
     currentStep.beforeAction?.(media);
+
+    targetRef.current = document.querySelector(`[data-onboarding="${key}"]`);
 
     if (targetRef.current && stepRef.current && stepArrowRef.current) {
       const { top, left, width, height } = targetRef.current.getBoundingClientRect();
       const { width: stepWidth, height: stepHeight } = stepRef.current.getBoundingClientRect();
+
+      // Create a copy of the target element and place it at the top of the DOM
+      targetCopyRef.current = createOverlayCopy(targetRef.current);
 
       const stepPossibleLeft = left + width - stepWidth;
       const maxLeft = window.innerWidth - GAP - stepWidth;
@@ -73,7 +102,7 @@ export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
 
       const arrowTop = isTargetBelow ? stepHeight : -ARROW_HEIGHT;
       const arrowRotation = isTargetBelow ? "rotate(180deg)" : "none";
-      const arrowLeft = left + width / 2 - stepLeft - ARROW_WIDTH / 2;
+      const arrowLeft = Math.max(GAP, Math.min(left + width / 2 - stepLeft - ARROW_WIDTH / 2, stepWidth - ARROW_WIDTH));
 
       stepArrowRef.current.style.top = `${arrowTop}px`;
       stepArrowRef.current.style.transform = arrowRotation;
@@ -97,23 +126,41 @@ export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
   }, [steps, currentStepIndex]);
 
   const handleNextStep = () => {
+    if (targetCopyRef.current) {
+      // Remove the copied element when no longer needed
+      removeOverlayCopy(targetCopyRef.current);
+    }
+
     if (currentStepIndex < totalSteps - 1) {
       setCurrentStepIndex(currentStepIndex + 1);
+
       return;
     }
 
     onComplete?.();
   };
 
+  const currentStep = steps[currentStepIndex];
+  const Icon = currentStep.icon;
+
   return (
     <OverlayContainer>
       <StepContainer ref={stepRef}>
         <ArrowIconStyled ref={stepArrowRef} src={arrowIcon} />
-        <StepText>
-          {currentStepIndex + 1} / {totalSteps}
-        </StepText>
-        <TitleText>{steps[currentStepIndex].desc}</TitleText>
-        <ButtonStyled onClick={handleNextStep}>{nextButtonText}</ButtonStyled>
+        {Icon && (
+          <IconContainer>
+            <Icon />
+          </IconContainer>
+        )}
+        <TitleText type={TEXT_TYPES.BUTTON}>{currentStep.desc}</TitleText>
+        <ButtonStyled text onClick={handleNextStep}>
+          {nextButtonText}
+        </ButtonStyled>
+        {!isLastStep && (
+          <CloseIconContainer onClick={onComplete}>
+            <CloseIcon />
+          </CloseIconContainer>
+        )}
       </StepContainer>
     </OverlayContainer>
   );
@@ -125,24 +172,16 @@ const OverlayContainer = styled(SmartFlex)`
   width: 100%;
   height: 100%;
 
-  background-color: ${({ theme }) => theme.colors.overlayBackground};
+  background-color: #00000080;
 
   z-index: 1000;
 `;
 
-const StepText = styled(Text)`
-  font-family: Space Grotesk;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-`;
-
 const TitleText = styled(Text)`
-  font-family: Space Grotesk;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 14px;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const StepContainer = styled(SmartFlex)`
@@ -154,12 +193,12 @@ const StepContainer = styled(SmartFlex)`
 
   width: max-content;
 
-  padding: 22px 24px;
+  padding: 14px 16px;
   box-shadow:
-    0px 32px 48px -8px #00000059,
-    0px 0px 14px -4px #00000033;
+    0px 24px 32px 0px #00000026,
+    0px 0px 6px 0px #00000033;
 
-  background-color: ${({ theme }) => theme.colors.bgSecondary};
+  background-color: #232323;
 
   transition:
     top 250ms ease,
@@ -180,5 +219,31 @@ const ArrowIconStyled = styled.img`
 
 const ButtonStyled = styled(Button)`
   width: fit-content;
-  padding: 12px 26px !important;
+  height: fit-content !important;
+  padding: 0 !important;
+`;
+
+const IconContainer = styled(SmartFlex)`
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 24px;
+`;
+
+const CloseIconContainer = styled(SmartFlex)`
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  width: 16px;
+
+  path {
+    transition: fill 200ms ease;
+  }
+
+  cursor: pointer;
+  &:hover {
+    path {
+      fill: ${({ theme }) => theme.colors.iconPrimary};
+    }
+  }
 `;
