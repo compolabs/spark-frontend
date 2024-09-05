@@ -28,6 +28,7 @@ import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
+import { RadioButton } from "@components/RadioButton.tsx";
 
 const ORDER_OPTIONS = [
   { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
@@ -40,6 +41,7 @@ export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore } = useStores();
+  const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
 
@@ -118,6 +120,63 @@ const CreateOrder: React.FC = observer(() => {
     }
 
     return <OrderTypeTooltip />;
+  };
+
+  const renderInstruction = () => {
+    const handleChangeTimeInForce = (e: any) => {
+      settingsStore.setTimeInForce(e);
+    };
+    return (
+      <Accordion transitionTimeout={400} transition>
+        <AccordionItem
+          header={
+            <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
+              <Text type={TEXT_TYPES.BUTTON_SECONDARY} nowrap primary>
+                Instruction
+              </Text>
+              <Row alignItems="center" justifyContent="flex-end">
+                <Text>{timeInForce}</Text>
+              </Row>
+            </Row>
+          }
+          defaultChecked
+        >
+          <SmartFlex alignItems="center" gap="10px" justifyContent="space-between">
+            <RadioButton
+              isSelected={timeInForce === LimitType.GTC}
+              label="GTC"
+              value={LimitType.GTC}
+              onChange={handleChangeTimeInForce}
+            />
+            <Row alignItems="center">
+              <Text nowrap>(Good-Till-Cancelled)</Text>
+            </Row>
+          </SmartFlex>
+          <SmartFlex alignItems="center" gap="10px" justifyContent="space-between">
+            <RadioButton
+              isSelected={timeInForce === LimitType.IOC}
+              label="IOC"
+              value={LimitType.IOC}
+              onChange={handleChangeTimeInForce}
+            />
+            <Row alignItems="center">
+              <Text nowrap>(Immidiate-Or-Cancel)</Text>
+            </Row>
+          </SmartFlex>
+          <SmartFlex alignItems="center" gap="10px" justifyContent="space-between">
+            <RadioButton
+              isSelected={timeInForce === LimitType.FOK}
+              label="FOK"
+              value={LimitType.FOK}
+              onChange={handleChangeTimeInForce}
+            />
+            <Row alignItems="center">
+              <Text nowrap>(Fill-Or-Kill)</Text>
+            </Row>
+          </SmartFlex>
+        </AccordionItem>
+      </Accordion>
+    );
   };
 
   const renderOrderDetails = () => {
@@ -259,6 +318,7 @@ const CreateOrder: React.FC = observer(() => {
             onChange={(v) => handlePercentChange(v as number)}
           />
         </SliderContainer>
+        {renderInstruction()}
         {renderOrderDetails()}
       </ParamsContainer>
       {renderButton()}
