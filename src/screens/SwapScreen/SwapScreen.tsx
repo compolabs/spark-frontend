@@ -303,142 +303,142 @@ export const SwapScreen: React.FC = observer(() => {
 });
 
 const Root = styled.div`
-  padding-top: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  gap: 16px;
-  position: relative;
-  width: 400px;
-
-  ${media.mobile} {
+    padding-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    padding: 0 8px;
-    margin-top: 42px;
-  }
+    gap: 16px;
+    position: relative;
+    width: 400px;
+
+    ${media.mobile} {
+        width: 100%;
+        padding: 0 8px;
+        margin-top: 42px;
+    }
 `;
 
 const SmartFlexStyled = styled(SmartFlex)`
-  width: 100%;
-  ${media.mobile} {
-    position: fixed;
-    bottom: 40px;
-    width: calc(100% - 16px);
-  }
+    width: 100%;
+    ${media.mobile} {
+        position: fixed;
+        bottom: 40px;
+        width: calc(100% - 16px);
+    }
 `;
 const textAnimation = keyframes`
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 `;
 
 const ButtonBordered = styled(Button)`
-  border-radius: 10px;
-  padding: 12px 16px !important;
-  height: 56px !important;
+    border-radius: 10px;
+    padding: 12px 16px !important;
+    height: 56px !important;
 `;
 const Title = styled.h1`
-  width: 70px;
-  font-size: 28px !important;
-  line-height: 1 !important;
-  font-weight: 500;
-  text-align: center;
-  background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: ${textAnimation} 3s infinite;
-  background-size: 300% 300%;
-  color: transparent;
-  margin: 0 auto 8px;
+    width: 70px;
+    font-size: 28px !important;
+    line-height: 1 !important;
+    font-weight: 500;
+    text-align: center;
+    background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: ${textAnimation} 3s infinite;
+    background-size: 300% 300%;
+    color: transparent;
+    margin: 0 auto 8px;
 `;
 
 const SwapContainer = styled.div`
-  position: relative;
-  width: 100%;
+    position: relative;
+    width: 100%;
 `;
 
 const SwapBox = styled.div`
-  border-radius: 4px 4px 10px 10px;
-  background-color: #232323;
-  padding: 16px 20px;
-  &:first-of-type {
-    margin-bottom: 4px;
-    border-radius: 10px 10px 4px 4px;
-  }
+    border-radius: 4px 4px 10px 10px;
+    background-color: #232323;
+    padding: 16px 20px;
+    &:first-of-type {
+        margin-bottom: 4px;
+        border-radius: 10px 10px 4px 4px;
+    }
 `;
 
 const BoxHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  margin-right: -12px;
-  height: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    margin-right: -12px;
+    height: 25px;
 `;
 
 const ActionContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
 `;
 
 const ActionTag = styled(Button)<{ onPress: boolean }>`
-  padding: 5px !important;
-  height: auto !important;
-  width: auto !important;
-  background: ${({ onPress }) => (onPress ? "#535353" : "#53535326")};
-  border: none;
-  border-radius: 4px;
-  ${Text} {
-    color: ${({ theme, onPress }) => (onPress ? "white" : theme.colors.textSecondary)};
-  }
-  &:hover {
-    background: ${({ theme }) => theme.colors.textDisabled};
+    padding: 5px !important;
+    height: auto !important;
+    width: auto !important;
+    background: ${({ onPress }) => (onPress ? "#535353" : "#53535326")};
+    border: none;
+    border-radius: 4px;
     ${Text} {
-      color: ${({ theme }) => theme.colors.textPrimary};
+        color: ${({ theme, onPress }) => (onPress ? "white" : theme.colors.textSecondary)};
     }
-  }
+    &:hover {
+        background: ${({ theme }) => theme.colors.textDisabled};
+        ${Text} {
+            color: ${({ theme }) => theme.colors.textPrimary};
+        }
+    }
 `;
 
 const SwapInput = styled.input`
-  border: none;
-  width: 100%;
-  background: transparent;
-  outline: none;
-  color: white;
+    border: none;
+    width: 100%;
+    background: transparent;
+    outline: none;
+    color: white;
 
-  ${TEXT_TYPES_MAP[TEXT_TYPES.H_NUMBERS_NEW]}
+    ${TEXT_TYPES_MAP[TEXT_TYPES.H_NUMBERS_NEW]}
 
-  ${media.mobile} {
-    font-size: 24px;
-  }
+    ${media.mobile} {
+        font-size: 24px;
+    }
 `;
 
 const SwitchTokens = styled.button<{ disabled: boolean; isLoaded: boolean }>`
-  outline: none;
-  border: none;
-  position: absolute;
-  left: calc(50% - 14px);
-  top: ${({ isLoaded }) => (isLoaded ? "112px" : "100px")}; // TODO: height of first section, check for mobile
-  background-color: ${({ theme }) => theme.colors.greenLight};
-  width: 28px;
-  height: 44px;
-  border-radius: 22px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 1px 1px 0px rgba(255, 255, 255, 0.77) inset, 0px 2px 5px 0px rgba(0, 0, 0, 0.22), 0px 16px 14px -6px rgba(21, 20, 21, 0.25), 0px 1px 1px 0px rgba(255, 255, 255, 0.17) inset;
+    outline: none;
+    border: none;
+    position: absolute;
+    left: calc(50% - 14px);
+    top: ${({ isLoaded }) => (isLoaded ? "112px" : "100px")}; // TODO: height of first section, check for mobile
+    background-color: ${({ theme }) => theme.colors.greenLight};
+    width: 28px;
+    height: 44px;
+    border-radius: 22px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 1px 1px 0px rgba(255, 255, 255, 0.77) inset, 0px 2px 5px 0px rgba(0, 0, 0, 0.22), 0px 16px 14px -6px rgba(21, 20, 21, 0.25), 0px 1px 1px 0px rgba(255, 255, 255, 0.17) inset;
   pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
   background-color: ${({ theme, disabled }) => (disabled ? theme.colors.borderSecondary : theme.colors.greenLight)};
   color: ${({ theme, disabled }) => (disabled ? theme.colors.iconDisabled : "#171717")};
@@ -446,47 +446,47 @@ const SwitchTokens = styled.button<{ disabled: boolean; isLoaded: boolean }>`
     border-radius 0.2s,
     transform 0.2s;
 
-  &:hover {
-    transform: scale(1.1);
+    &:hover {
+        transform: scale(1.1);
     background: #2effab;
-  }
+    }
 
-  &:active {
-    background-color: #6EFFC5;
-  }
+    &:active {
+        background-color: #6EFFC5;
+    }
 
-  svg {
-    fill: ${({ theme, disabled }) => (disabled ? theme.colors.iconDisabled : "#171717")};
-    transition:
-      background-color 0.2s,
-      transform 0.2s;
-  }
+    svg {
+        fill: ${({ theme, disabled }) => (disabled ? theme.colors.iconDisabled : "#171717")};
+        transition:
+                background-color 0.2s,
+                transform 0.2s;
+    }
 `;
 
 const SwapButton = styled.button`
-  outline: none;
-  border-radius: 16px;
-  cursor: pointer;
-  width: 100%;
-  height: 56px;
-  border: 1px solid ${({ theme }) => theme.colors.greenLight};
-  background-color: ${({ theme }) => theme.colors.greenDark};
-  transition: all 0.2s;
-  padding: 16px 0;
-  pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
-  ${Text} {
-    color: ${({ theme }) => theme.colors.textPrimary};
-  }
-  &:disabled {
+    outline: none;
+    border-radius: 16px;
+    cursor: pointer;
+    width: 100%;
+    height: 56px;
+    border: 1px solid ${({ theme }) => theme.colors.greenLight};
+    background-color: ${({ theme }) => theme.colors.greenDark};
+    transition: all 0.2s;
+    padding: 16px 0;
+    pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
     ${Text} {
-      color: ${({ theme }) => theme.colors.textDisabled};
+        color: ${({ theme }) => theme.colors.textPrimary};
     }
-    background-color: ${({ theme }) => theme.colors.borderSecondary};
-    border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
-  }
+    &:disabled {
+        ${Text} {
+            color: ${({ theme }) => theme.colors.textDisabled};
+        }
+        background-color: ${({ theme }) => theme.colors.borderSecondary};
+        border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+    }
 
-  &:hover,
-  &:active {
-    background-color: ${({ theme }) => theme.colors.greenMedium};
-  }
+    &:hover,
+    &:active {
+        background-color: ${({ theme }) => theme.colors.greenMedium};
+    }
 `;
