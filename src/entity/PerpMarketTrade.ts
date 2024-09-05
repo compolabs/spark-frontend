@@ -2,9 +2,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { Address, isBech32 } from "fuels";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import BN from "@src/utils/BN";
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+
+import { FuelNetwork } from "@blockchain";
 
 import { Token } from "./Token";
 

@@ -15,6 +15,7 @@ module.exports = {
     "react-hooks",
     "@typescript-eslint",
     "prettier",
+    "import",
     "simple-import-sort",
     "unused-imports",
     "react-refresh",
@@ -39,7 +40,7 @@ module.exports = {
     // todo: Включить когда будем оптимизировать проект
     "react-hooks/exhaustive-deps": "off", // Checks effect dependencies
     // todo: Включить когда будем оптимизировать проект
-    "@typescript-eslint/no-unused-vars": ["off", { ignoreRestSiblings: true }],
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-ts-comment": "off",
@@ -53,7 +54,13 @@ module.exports = {
           ],
           // Packages. `react` related packages come first.
           ["^react", "^@?\\w"],
-          ["^(@src|@theme|@components|@assets|jsx:@assets|@stores|@screens|@utils|@hooks)(/.*|$)"],
+          ["^@compolabs"],
+          ["^(@src|@themes|@components)(/.*|$)"],
+          ["^(@assets)(/.*|$)"],
+          ["^(@stores|@hooks)(/.*|$)"],
+          ["^(@screens)(/.*|$)"],
+          ["^(@utils|@constants)(/.*|$)"],
+          ["^(@blockchain|@entity)(/.*|$)"],
           ["^\\u0000"],
           // Parent imports. Put `..` last.
           ["^\\.\\.(?!/?$)", "^\\.\\./?$"],

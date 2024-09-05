@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import outlineStarIcon from "@src/assets/icons/star.svg";
-import filledStarIcon from "@src/assets/icons/yellowStar.svg";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { SpotMarket } from "@src/entity";
+
+import outlineStarIcon from "@assets/icons/star.svg";
+import filledStarIcon from "@assets/icons/yellowStar.svg";
+
 import { useStores } from "@stores";
+
+import { SpotMarket } from "@entity";
 
 import { MarketTitle } from "./MarketTitle";
 
@@ -75,9 +78,4 @@ const Icon = styled.img`
   height: 16px;
   width: 16px;
   border-radius: 50%;
-`;
-
-const StyleIcon = styled(Icon)`
-  position: relative;
-  left: -6px;
 `;

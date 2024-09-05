@@ -3,16 +3,18 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import ArrowRight from "@assets/icons/arrowRight.svg?react";
+import CheckCircle from "@assets/icons/check-circle.svg?react";
+import CloseIcon from "@assets/icons/close.svg?react";
+import ErrorCircle from "@assets/icons/error-circle.svg?react";
+
 import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
-import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
-import CheckCircle from "@src/assets/icons/check-circle.svg?react";
-import CloseIcon from "@src/assets/icons/close.svg?react";
-import ErrorCircle from "@src/assets/icons/error-circle.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import TOKEN_LOGOS from "@src/constants/tokenLogos";
-import { useMedia } from "@src/hooks/useMedia";
-import { media } from "@src/themes/breakpoints";
-import { getExplorerLinkByHash } from "@src/utils/getExplorerLink";
+
+import TOKEN_LOGOS from "@constants/tokenLogos";
+import { getExplorerLinkByHash } from "@utils/getExplorerLink";
 
 type SuccessModalProps = {
   hash: string;
@@ -27,7 +29,6 @@ type SuccessModalProps = {
 };
 
 export const ActionModal: React.FC<SuccessModalProps> = ({ hash, onClose, transactionInfo, typeModal }) => {
-  const media = useMedia();
   const theme = useTheme();
   const { sellToken, buyToken, sellAmount, buyAmount } = transactionInfo;
 

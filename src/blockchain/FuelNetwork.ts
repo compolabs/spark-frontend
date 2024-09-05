@@ -1,3 +1,7 @@
+import { Account, B256Address, Bech32Address } from "fuels";
+import { makeObservable } from "mobx";
+import { Nullable } from "tsdef";
+
 import SparkOrderBookSdk, {
   GetActiveOrdersParams,
   Order,
@@ -5,13 +9,11 @@ import SparkOrderBookSdk, {
   UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
-import { Account, B256Address, Bech32Address } from "fuels";
-import { makeObservable } from "mobx";
-import { Nullable } from "tsdef";
 
-import { SpotMarketOrder, Token } from "@src/entity";
-import BN from "@src/utils/BN";
-import { CONFIG } from "@src/utils/getConfig";
+import BN from "@utils/BN";
+import { CONFIG } from "@utils/getConfig";
+
+import { SpotMarketOrder, Token } from "@entity";
 
 import { Balances, SpotMarketVolume } from "./types";
 import { WalletManager } from "./WalletManager";

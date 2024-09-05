@@ -2,9 +2,10 @@ import React from "react";
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
-import sparkLogoIcon from "@src/assets/icons/sparkLogoIcon.svg";
-import { SmartFlex } from "@src/components/SmartFlex";
+
+import sparkLogoIcon from "@assets/icons/sparkLogoIcon.svg";
 
 interface Props {
   size?: number;

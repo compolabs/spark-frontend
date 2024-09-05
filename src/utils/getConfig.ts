@@ -1,8 +1,10 @@
 import assert from "assert";
 
 import configJSON from "@src/config.json";
-import TOKEN_LOGOS from "@src/constants/tokenLogos";
-import { Token } from "@src/entity";
+
+import TOKEN_LOGOS from "@constants/tokenLogos";
+
+import { Token } from "@entity";
 
 const CURRENT_CONFIG_VER = "1.0.0";
 

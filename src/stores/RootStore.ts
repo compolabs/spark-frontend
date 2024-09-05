@@ -1,6 +1,5 @@
 import { autorun, makeAutoObservable } from "mobx";
 
-import { saveState } from "@src/utils/localStorage";
 import AccountStore, { ISerializedAccountStore } from "@stores/AccountStore";
 import FaucetStore from "@stores/FaucetStore";
 import MixPanelStore from "@stores/MixPanelStore";
@@ -8,6 +7,8 @@ import NotificationStore from "@stores/NotificationStore";
 import QuickAssetsStore from "@stores/QuickAssetsStore";
 import SettingsStore, { ISerializedSettingStore } from "@stores/SettingsStore";
 import TradeStore, { ISerializedTradeStore } from "@stores/TradeStore";
+
+import { saveState } from "@utils/localStorage";
 
 import { BalanceStore } from "./BalanceStore";
 import { ModalStore } from "./ModalStore";

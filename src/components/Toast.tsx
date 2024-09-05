@@ -2,11 +2,12 @@ import React from "react";
 import { ToastContentProps } from "react-toastify";
 import styled from "@emotion/styled";
 
-import CloseIcon from "@src/assets/icons/close.svg?react";
-import InfoIcon from "@src/assets/icons/info.svg?react";
-import SuccessIcon from "@src/assets/icons/success.svg?react";
-import WarningIcon from "@src/assets/icons/warning.svg?react";
-import { getExplorerLinkByAddress, getExplorerLinkByHash } from "@src/utils/getExplorerLink";
+import CloseIcon from "@assets/icons/close.svg?react";
+import InfoIcon from "@assets/icons/info.svg?react";
+import SuccessIcon from "@assets/icons/success.svg?react";
+import WarningIcon from "@assets/icons/warning.svg?react";
+
+import { getExplorerLinkByAddress, getExplorerLinkByHash } from "@utils/getExplorerLink";
 
 import { SmartFlex } from "./SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "./Text";

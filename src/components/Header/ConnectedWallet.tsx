@@ -7,14 +7,18 @@ import Divider from "@components/Divider";
 import { Column, Row } from "@components/Flex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import Tooltip from "@components/Tooltip";
-import copyIcon from "@src/assets/icons/copy.svg";
-import linkIcon from "@src/assets/icons/link.svg";
-import logoutIcon from "@src/assets/icons/logout.svg";
-import { FuelNetwork } from "@src/blockchain";
-import { useWallet } from "@src/hooks/useWallet";
-import BN from "@src/utils/BN";
-import { getExplorerLinkByAddress } from "@src/utils/getExplorerLink";
+
+import copyIcon from "@assets/icons/copy.svg";
+import linkIcon from "@assets/icons/link.svg";
+import logoutIcon from "@assets/icons/logout.svg";
+
+import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
+
+import BN from "@utils/BN";
+import { getExplorerLinkByAddress } from "@utils/getExplorerLink";
+
+import { FuelNetwork } from "@blockchain";
 
 import ConnectedWalletButton from "./ConnectedWalletButton";
 

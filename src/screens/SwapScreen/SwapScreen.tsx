@@ -3,18 +3,23 @@ import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import ArrowDownIcon from "@assets/icons/arrowDown.svg?react";
+
+import { useMedia } from "@hooks/useMedia";
+import { useWallet } from "@hooks/useWallet";
+import { useStores } from "@stores";
+
 import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
 import { MINIMAL_ETH_REQUIRED } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrder";
-import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
-import { FuelNetwork } from "@src/blockchain";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { useMedia } from "@src/hooks/useMedia";
-import { useWallet } from "@src/hooks/useWallet";
-import { useStores } from "@src/stores";
-import { media } from "@src/themes/breakpoints";
-import BN from "@src/utils/BN";
-import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
+
+import { FuelNetwork } from "@blockchain";
 
 import { ActionModal } from "./ActionModal";
 import { BalanceSection } from "./BalanceSection";

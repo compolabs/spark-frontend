@@ -4,7 +4,7 @@ import RCSlider, { SliderProps } from "rc-slider";
 
 import { Row } from "@components/Flex";
 import { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
 
 import "rc-slider/assets/index.css";
 

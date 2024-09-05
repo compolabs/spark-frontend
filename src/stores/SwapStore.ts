@@ -1,3 +1,5 @@
+import { autorun, makeAutoObservable } from "mobx";
+
 import {
   FulfillOrderManyParams,
   GetOrdersParams,
@@ -5,13 +7,14 @@ import {
   OrderType,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
-import { autorun, makeAutoObservable } from "mobx";
 
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { TokenOption } from "@src/screens/SwapScreen/TokenSelect";
-import BN from "@src/utils/BN";
-import { parseNumberWithCommas } from "@src/utils/swapUtils";
+import { TokenOption } from "@screens/SwapScreen/TokenSelect";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+import { parseNumberWithCommas } from "@utils/swapUtils";
+
+import { FuelNetwork } from "@blockchain";
 
 import RootStore from "./RootStore";
 

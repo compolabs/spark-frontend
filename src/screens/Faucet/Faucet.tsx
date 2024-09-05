@@ -4,11 +4,13 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import SizedBox from "@components/SizedBox";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import TokensFaucetTable from "@screens/Faucet/TokensFaucetTable";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
+
 import { useStores } from "@stores";
+
+import TokensFaucetTable from "@screens/Faucet/TokensFaucetTable";
 
 interface IProps {}
 

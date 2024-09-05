@@ -6,14 +6,17 @@ import Divider from "@components/Divider";
 import { Row } from "@components/Flex";
 import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { PerpMarket, SpotMarket } from "@src/entity";
-import { useMedia } from "@src/hooks/useMedia";
-import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
-import SpotMarketRow from "@src/screens/TradeScreen/RightBlock/MarketSelection/SpotMarketRow";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
+
+import { useMedia } from "@hooks/useMedia";
+import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
+
+import SpotMarketRow from "@screens/TradeScreen/RightBlock/MarketSelection/SpotMarketRow";
+
+import { PerpMarket, SpotMarket } from "@entity";
 
 import { MarketTitle } from "./MarketTitle";
 

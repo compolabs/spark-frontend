@@ -8,11 +8,14 @@ import AssetBlock, { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import { BigNumberInput } from "@components/TokenInput/BigNumberInput";
-import arrowIcon from "@src/assets/icons/arrowUp.svg";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { Token } from "@src/entity";
-import { media } from "@src/themes/breakpoints";
-import BN from "@src/utils/BN";
+import { media } from "@themes/breakpoints";
+
+import arrowIcon from "@assets/icons/arrowUp.svg";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+
+import { Token } from "@entity";
 
 import { Column } from "../Flex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
@@ -246,7 +249,7 @@ const ButtonPresent = styled(Button)<{ el: number; selectPresent: number }>`
   padding: 5px !important;
   height: auto !important;
   width: auto !important;
-  background: ${({ theme, el, selectPresent }) => (el === selectPresent ? "#535353" : "#53535326")};
+  background: ${({ el, selectPresent }) => (el === selectPresent ? "#535353" : "#53535326")};
   border-radius: 4px;
   ${TextPresent} {
     color: ${({ theme, el, selectPresent }) => (el === selectPresent ? "white" : theme.colors.textSecondary)};

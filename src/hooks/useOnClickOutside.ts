@@ -1,6 +1,6 @@
 import { RefObject } from "react";
 
-import { useEventListener } from "@src/hooks/useEventListener";
+import { useEventListener } from "@hooks/useEventListener";
 
 export const useOnClickOutside = <T extends HTMLElement = HTMLElement>(
   ref: RefObject<T>,

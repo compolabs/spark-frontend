@@ -1,6 +1,6 @@
 import { getHumanReadableError } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { NotificationStore } from "@src/stores";
+import { NotificationStore } from "@stores";
 
 export const handleWalletErrors = (
   notificationStore: NotificationStore,

@@ -1,11 +1,8 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import Text from "@components/Text";
-import { useStores } from "@src/stores";
-import { media } from "@src/themes/breakpoints";
+import { useStores } from "@stores";
 
 import Button from "../Button";
 import MenuOverlay from "../MenuOverlay";
@@ -23,8 +20,7 @@ interface IProps {
 }
 
 const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalletConnect, onClose }) => {
-  const { accountStore, quickAssetsStore, mixPanelStore } = useStores();
-  const location = useLocation();
+  const { accountStore, quickAssetsStore } = useStores();
 
   const handleAccountClick = () => {
     onAccountClick();
@@ -72,19 +68,6 @@ const Body = styled.div`
   height: 100%;
   flex-direction: column;
   background: ${({ theme }) => theme.colors.bgPrimary};
-`;
-
-const MenuItem = styled.div<{ isSelected?: boolean }>`
-  cursor: pointer;
-  padding: 12px 32px;
-
-  ${Text} {
-    width: fit-content;
-    color: ${({ theme, isSelected }) => (isSelected ? theme.colors.textPrimary : theme.colors.textSecondary)};
-    ${media.mobile} {
-      font-size: 16px;
-    }
-  }
 `;
 
 const Container = styled(SmartFlex)`

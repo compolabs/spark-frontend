@@ -7,18 +7,23 @@ import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+
+import arrowLeftShort from "@assets/icons/arrowLeftShort.svg";
+import closeThin from "@assets/icons/closeThin.svg";
+import DataBase from "@assets/icons/dataBase.svg?react";
+import Spinner from "@assets/icons/spinner.svg?react";
+import WalletIcon from "@assets/icons/wallet.svg?react";
+
+import { useStores } from "@stores";
+
 import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
 import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
-import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
-import closeThin from "@src/assets/icons/closeThin.svg";
-import DataBase from "@src/assets/icons/dataBase.svg?react";
-import Spinner from "@src/assets/icons/spinner.svg?react";
-import WalletIcon from "@src/assets/icons/wallet.svg?react";
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import BN from "@src/utils/BN";
-import { CONFIG } from "@src/utils/getConfig";
-import { useStores } from "@stores";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+import { CONFIG } from "@utils/getConfig";
+
+import { FuelNetwork } from "@blockchain";
 
 interface WithdrawAssets {
   setStep: (value: number) => void;
@@ -37,7 +42,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsLoading] = useState(false);
-  const { quickAssetsStore, balanceStore, oracleStore } = useStores();
+  const { quickAssetsStore, balanceStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);

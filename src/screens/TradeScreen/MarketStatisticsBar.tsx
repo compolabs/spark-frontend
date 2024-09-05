@@ -2,13 +2,15 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import arrowLeft from "@src/assets/icons/arrowLeft.svg";
-import arrowUp from "@src/assets/icons/arrowUp.svg";
-import SwitchIcon from "@src/assets/icons/switch.svg?react";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { useMedia } from "@src/hooks/useMedia";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
+
+import arrowLeft from "@assets/icons/arrowLeft.svg";
+import arrowUp from "@assets/icons/arrowUp.svg";
+import SwitchIcon from "@assets/icons/switch.svg?react";
+
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
 import MarketStatistics from "./MarketStatistics";

@@ -5,16 +5,18 @@ import { motion } from "framer-motion";
 
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import CheckCircle from "@assets/icons/check-circle.svg?react";
+import CloseIcon from "@assets/icons/close.svg?react";
+import ErrorCircle from "@assets/icons/error-circle.svg?react";
+import Spinner from "@assets/icons/spinner.svg?react";
+
 import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
-import CheckCircle from "@src/assets/icons/check-circle.svg?react";
-import CloseIcon from "@src/assets/icons/close.svg?react";
-import ErrorCircle from "@src/assets/icons/error-circle.svg?react";
-import Spinner from "@src/assets/icons/spinner.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import TOKEN_LOGOS from "@src/constants/tokenLogos";
-import { useMedia } from "@src/hooks/useMedia";
-import { media } from "@src/themes/breakpoints";
-import { getExplorerLinkByHash } from "@src/utils/getExplorerLink";
+
+import TOKEN_LOGOS from "@constants/tokenLogos";
+import { getExplorerLinkByHash } from "@utils/getExplorerLink";
 
 export type ActionModal = {
   hash: string;
@@ -42,7 +44,6 @@ const iconTitle = (type: ModalEnums) => {
 };
 
 export const ActionModal: React.FC<ActionModalProps> = ({ hash, onClose, transactionInfo, typeModal }) => {
-  const media = useMedia();
   const theme = useTheme();
   const { token, type, amount } = transactionInfo;
 

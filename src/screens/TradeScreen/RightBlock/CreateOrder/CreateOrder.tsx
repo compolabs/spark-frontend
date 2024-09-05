@@ -1,31 +1,35 @@
 import React from "react";
-import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react";
 
+import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
+
 import AccordionItem from "@components/AccordionItem";
+import Button, { ButtonGroup } from "@components/Button";
 import { Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
 import Select from "@components/Select";
+import SizedBox from "@components/SizedBox";
 import Slider from "@components/Slider";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
-import Button, { ButtonGroup } from "@src/components/Button";
-import SizedBox from "@src/components/SizedBox";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import useFlag from "@src/hooks/useFlag";
-import { useMedia } from "@src/hooks/useMedia";
+import { media } from "@themes/breakpoints";
+
+import useFlag from "@hooks/useFlag";
+import { useMedia } from "@hooks/useMedia";
+import { useStores } from "@stores";
+
 import {
   ACTIVE_INPUT,
   ORDER_MODE,
   ORDER_TYPE,
   useCreateOrderVM,
-} from "@src/screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
-import { media } from "@src/themes/breakpoints";
-import BN from "@src/utils/BN";
-import { useStores } from "@stores";
+} from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 

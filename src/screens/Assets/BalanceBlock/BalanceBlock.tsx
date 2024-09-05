@@ -5,9 +5,11 @@ import styled from "@emotion/styled";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import BN from "@src/utils/BN";
+
 import { useStores } from "@stores";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
 
 interface IBalanceBlock {
   icon: React.ReactElement;

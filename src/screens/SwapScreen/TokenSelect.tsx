@@ -4,11 +4,13 @@ import styled from "@emotion/styled";
 
 import SearchInput from "@components/SearchInput";
 import { SmartFlex } from "@components/SmartFlex";
-import arrowIcon from "@src/assets/icons/arrowUp.svg";
-import CloseIcon from "@src/assets/icons/close.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
-import { media } from "@src/themes/breakpoints";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import arrowIcon from "@assets/icons/arrowUp.svg";
+import CloseIcon from "@assets/icons/close.svg?react";
+
+import { useOnClickOutside } from "@hooks/useOnClickOutside";
 
 export type TokenOption = {
   key: string;

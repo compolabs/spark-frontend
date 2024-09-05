@@ -3,7 +3,8 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Loader from "@src/components/Loader";
+import Loader from "@components/Loader";
+
 import { useStores } from "@stores";
 
 const tvScriptLoadingPromise = () =>

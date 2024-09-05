@@ -4,11 +4,12 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
+import Loader from "@components/Loader";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
 import { useSpotTradesVM } from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
-import Loader from "@src/components/Loader";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { media } from "@src/themes/breakpoints";
 
 export const SpotTrades: React.FC = observer(() => {
   const vm = useSpotTradesVM();

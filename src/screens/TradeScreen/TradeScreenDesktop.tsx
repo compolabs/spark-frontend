@@ -2,13 +2,15 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { Column } from "@components/Flex";
+import { media } from "@themes/breakpoints";
+
+import { useStores } from "@stores";
+
 import BottomTables from "@screens/TradeScreen/BottomTables";
 import Chart from "@screens/TradeScreen/Chart";
 import MarketStatisticsBar from "@screens/TradeScreen/MarketStatisticsBar";
 import StatusBar from "@screens/TradeScreen/StatusBar/StatusBar";
-import { Column } from "@src/components/Flex";
-import { useStores } from "@src/stores";
-import { media } from "@src/themes/breakpoints";
 
 import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
 import MarketSelection from "./RightBlock/MarketSelection";

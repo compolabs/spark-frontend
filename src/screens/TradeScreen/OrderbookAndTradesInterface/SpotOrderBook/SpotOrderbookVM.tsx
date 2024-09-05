@@ -1,18 +1,22 @@
 import React, { useMemo } from "react";
-import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { SpotMarketOrder } from "@src/entity";
-import useVM from "@src/hooks/useVM";
+import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { Subscription } from "@src/typings/utils";
-import BN from "@src/utils/BN";
-import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
-import { CONFIG } from "@src/utils/getConfig";
-import { groupOrders } from "@src/utils/groupOrders";
+
+import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
+import { CONFIG } from "@utils/getConfig";
+import { groupOrders } from "@utils/groupOrders";
+
+import { FuelNetwork } from "@blockchain";
+import { SpotMarketOrder } from "@entity";
 
 import { SPOT_ORDER_FILTER } from "./SpotOrderBook";
 

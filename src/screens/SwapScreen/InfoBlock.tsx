@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import SettingsIcon from "@src/assets/icons/gear.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import { media } from "@src/themes/breakpoints";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import SettingsIcon from "@assets/icons/gear.svg?react";
 
 import { SlippageSettings } from "./SlippageSettings";
 interface InfoBlockProps {

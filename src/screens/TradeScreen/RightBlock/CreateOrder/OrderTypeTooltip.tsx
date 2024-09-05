@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 
-import InfoIcon from "@src/assets/icons/info.svg?react";
-import limitBuyChart from "@src/assets/tooltip/order/limitBuyChart.svg";
-import limitSellChart from "@src/assets/tooltip/order/limitSellChart.svg";
-import marketChart from "@src/assets/tooltip/order/marketChart.svg";
-import stopMarketChart from "@src/assets/tooltip/order/stopMarketChart.svg";
-import { RadioButton } from "@src/components/RadioButton";
-import Sheet from "@src/components/Sheet";
-import { SmartFlex } from "@src/components/SmartFlex";
-import Tab from "@src/components/Tab";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import Tooltip from "@src/components/Tooltip";
+import { RadioButton } from "@components/RadioButton";
+import Sheet from "@components/Sheet";
+import { SmartFlex } from "@components/SmartFlex";
+import Tab from "@components/Tab";
+import Text, { TEXT_TYPES } from "@components/Text";
+import Tooltip from "@components/Tooltip";
+
+import InfoIcon from "@assets/icons/info.svg?react";
+import limitBuyChart from "@assets/tooltip/order/limitBuyChart.svg";
+import limitSellChart from "@assets/tooltip/order/limitSellChart.svg";
+import marketChart from "@assets/tooltip/order/marketChart.svg";
+import stopMarketChart from "@assets/tooltip/order/stopMarketChart.svg";
 
 enum CHART_INFO {
   Market,

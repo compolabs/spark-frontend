@@ -2,12 +2,14 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import ArrowRight from "@src/assets/icons/arrowRight.svg?react";
-import CloseIcon from "@src/assets/icons/close.svg?react";
-import Spinner from "@src/assets/icons/spinner.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import TOKEN_LOGOS from "@src/constants/tokenLogos";
-import { media } from "@src/themes/breakpoints";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import ArrowRight from "@assets/icons/arrowRight.svg?react";
+import CloseIcon from "@assets/icons/close.svg?react";
+import Spinner from "@assets/icons/spinner.svg?react";
+
+import TOKEN_LOGOS from "@constants/tokenLogos";
 
 type PendingModalProps = {
   onClose: () => void;

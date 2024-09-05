@@ -4,14 +4,17 @@ import { observer } from "mobx-react";
 
 import Button from "@components/Button";
 import ConnectedWallet from "@components/Header/ConnectedWallet";
-import DataBase from "@src/assets/icons/dataBase.svg?react";
-import Logo from "@src/assets/icons/logo.svg?react";
-import Menu from "@src/assets/icons/menu.svg?react";
-import useFlag from "@src/hooks/useFlag";
-import { useMedia } from "@src/hooks/useMedia";
-import ConnectWalletDialog from "@src/screens/ConnectWallet";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
+
+import DataBase from "@assets/icons/dataBase.svg?react";
+import Logo from "@assets/icons/logo.svg?react";
+import Menu from "@assets/icons/menu.svg?react";
+
+import useFlag from "@hooks/useFlag";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+
+import ConnectWalletDialog from "@screens/ConnectWallet";
 
 import { AccountInfoSheet } from "../Modal";
 import { SmartFlex } from "../SmartFlex";
@@ -21,7 +24,7 @@ import { MenuNav } from "./MenuNav";
 import MobileMenu from "./MobileMenu";
 
 const Header: React.FC = observer(() => {
-  const { modalStore, accountStore, quickAssetsStore } = useStores();
+  const { accountStore, quickAssetsStore } = useStores();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();

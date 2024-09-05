@@ -24,12 +24,26 @@
     "paths": {
       "@src": ["src"],
       "@src/*": ["src/*"],
+      "@themes": ["src/themes"],
+      "@themes/*": ["src/themes/*"],
       "@components": ["src/components"],
       "@components/*": ["src/components/*"],
+      "@assets": ["src/assets"],
+      "@assets/*": ["src/assets/*"],
       "@stores": ["src/stores"],
       "@stores/*": ["src/stores/*"],
       "@screens": ["src/screens"],
-      "@screens/*": ["src/screens/*"]
+      "@screens/*": ["src/screens/*"],
+      "@utils": ["src/utils"],
+      "@utils/*": ["src/utils/*"],
+      "@hooks": ["src/hooks"],
+      "@hooks/*": ["src/hooks/*"],
+      "@blockchain": ["src/blockchain"],
+      "@blockchain/*": ["src/blockchain/*"],
+      "@entity": ["src/entity"],
+      "@entity/*": ["src/entity/*"],
+      "@constants": ["src/constants"],
+      "@constants/*": ["src/constants/*"]
     }
   },
   "include": ["src"],

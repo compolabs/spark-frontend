@@ -2,9 +2,11 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import arrowIcon from "@src/assets/icons/arrowUp.svg";
-import { useStores } from "@src/stores";
-import { getShortString } from "@src/utils/getShortString";
+import arrowIcon from "@assets/icons/arrowUp.svg";
+
+import { useStores } from "@stores";
+
+import { getShortString } from "@utils/getShortString";
 
 import { SmartFlex } from "../SmartFlex";
 import { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";

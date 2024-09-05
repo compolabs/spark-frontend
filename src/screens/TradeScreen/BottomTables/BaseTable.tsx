@@ -3,16 +3,18 @@ import { Config } from "react-popper-tooltip";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import tableSizeSelector from "@src/assets/icons/tablesSize.svg";
-import { Row } from "@src/components/Flex";
-import SizedBox from "@src/components/SizedBox";
-import { SmartFlex } from "@src/components/SmartFlex";
-import Tab from "@src/components/Tab";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import Tooltip from "@src/components/Tooltip";
-import { useStores } from "@src/stores";
-import { TRADE_TABLE_SIZE } from "@src/stores/SettingsStore";
-import { media } from "@src/themes/breakpoints";
+import { Row } from "@components/Flex";
+import SizedBox from "@components/SizedBox";
+import { SmartFlex } from "@components/SmartFlex";
+import Tab from "@components/Tab";
+import Text, { TEXT_TYPES } from "@components/Text";
+import Tooltip from "@components/Tooltip";
+import { media } from "@themes/breakpoints";
+
+import tableSizeSelector from "@assets/icons/tablesSize.svg";
+
+import { useStores } from "@stores";
+import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
 import { MAX_TABLE_HEIGHT, RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "./constants";
 

@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
 
 const Button = styled.button<{
   green?: boolean;
