@@ -114,7 +114,6 @@ class SwapStore {
       price: sellOrders[sellOrders.length - 1].price.toString(),
       orders: sellOrders.map((el) => el.id),
       slippage: slippage.toString(),
-      feeAssetId: ETH.assetId,
     };
 
     return await bcNetwork.swapTokens(order);

@@ -290,7 +290,6 @@ class CreateOrderVM {
           amount: this.inputAmount.toString(),
           price: this.inputPrice.toString(),
           type,
-          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
         const data = await bcNetwork.createSpotOrder(order);
         hash = data.transactionId;
@@ -315,7 +314,6 @@ class CreateOrderVM {
               : this.inputPrice.toString(),
           orders: sellOrders.map((el) => el.id),
           slippage: "10000",
-          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
         const data = await bcNetwork.swapTokens(order);
         hash = data.transactionId;
