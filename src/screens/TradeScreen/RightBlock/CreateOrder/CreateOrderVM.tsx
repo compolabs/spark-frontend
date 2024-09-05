@@ -70,8 +70,6 @@ class CreateOrderVM {
   inputLeverage = BN.ZERO;
   inputLeveragePercent = BN.ZERO;
 
-  matcherFee = BN.ZERO;
-
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
@@ -85,13 +83,13 @@ class CreateOrderVM {
         const price = token?.priceFeed ? oracleStore.getTokenIndexPrice(token?.priceFeed) : BN.ZERO;
 
         if (orderType === ORDER_TYPE.Market) {
-          this.setInputPriceDebounce(price);
+          this.setInputPriceThrottle(price);
         } else if (
           orderType === ORDER_TYPE.Limit &&
           this.inputPrice.isZero() &&
           this.activeInput !== ACTIVE_INPUT.Price
         ) {
-          this.setInputPriceDebounce(price);
+          this.setInputPriceThrottle(price);
         }
       },
     );
@@ -106,7 +104,12 @@ class CreateOrderVM {
       },
     );
 
-    this.fetchMarketFee();
+    reaction(
+      () => this.inputTotal,
+      (total) => {
+        this.fetchExchangeFeeDebounce(total.toString());
+      },
+    );
   }
 
   get canProceed() {
@@ -117,6 +120,13 @@ class CreateOrderVM {
 
   get isInputError(): boolean {
     return this.isSpotInputError;
+  }
+
+  get exchangeFee(): BN {
+    const { tradeStore } = this.rootStore;
+    const { makerFee, takerFee } = tradeStore.tradeFee;
+
+    return BN.max(makerFee, takerFee);
   }
 
   get isSpotInputError(): boolean {
@@ -145,6 +155,13 @@ class CreateOrderVM {
   onMaxClick = () => {
     this.onSpotMaxClick();
   };
+
+  fetchExchangeFee = (total: string) => {
+    const { tradeStore } = this.rootStore;
+    tradeStore.fetchTradeFee(total);
+  };
+
+  fetchExchangeFeeDebounce = _.debounce(this.fetchExchangeFee, 250);
 
   private onSpotMaxClick = () => {
     const { tradeStore, balanceStore, mixPanelStore } = this.rootStore;
@@ -243,7 +260,7 @@ class CreateOrderVM {
     this.inputPercent = percentageOfTotal.gt(100) ? new BN(100) : percentageOfTotal.toDecimalPlaces(0);
   }
 
-  setInputPriceDebounce = _.throttle(this.setInputPrice, PRICE_UPDATE_THROTTLE_INTERVAL);
+  setInputPriceThrottle = _.throttle(this.setInputPrice, PRICE_UPDATE_THROTTLE_INTERVAL);
 
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
@@ -332,13 +349,5 @@ class CreateOrderVM {
     settingsStore.setOrderType(ORDER_TYPE.Limit);
     this.setOrderMode(mode);
     this.setInputPrice(order.price);
-  };
-
-  fetchMarketFee = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
-
-    const fee = await bcNetwork.fetchSpotMatcherFee();
-
-    this.matcherFee = new BN(fee);
   };
 }
