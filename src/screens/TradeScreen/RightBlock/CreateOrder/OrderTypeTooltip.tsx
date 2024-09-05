@@ -22,7 +22,6 @@ enum CHART_INFO {
 const TABS = [
   { title: "MARKET", key: [CHART_INFO.Market] },
   { title: "LIMIT", key: [CHART_INFO.LimitBuy, CHART_INFO.LimitSell] },
-  // { title: "STOP-MARKET", key: [CHART_INFO.StopMarket] },
 ];
 
 const CHART_IMG_MAP = {
