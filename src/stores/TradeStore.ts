@@ -153,7 +153,6 @@ class TradeStore {
   };
 
   fetchTradeFee = async (quoteAmount: string) => {
-    console.log(quoteAmount);
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -163,9 +162,11 @@ class TradeStore {
 
     const tradeFee = await bcNetwork.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
 
+    const decimals = this.market.quoteToken.decimals;
+
     this.tradeFee = {
-      makerFee: BN.formatUnits(tradeFee.makerFee),
-      takerFee: BN.formatUnits(tradeFee.takerFee),
+      makerFee: BN.formatUnits(tradeFee.makerFee, decimals),
+      takerFee: BN.formatUnits(tradeFee.takerFee, decimals),
     };
   };
 
