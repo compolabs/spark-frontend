@@ -221,7 +221,7 @@ export const SwapScreen: React.FC = observer(() => {
         </SwapBox>
 
         <SwitchTokens
-          disabled={!isConnected || !balanceStore.initialized || isBalanceZero}
+          disabled={false}
           isLoaded={isLoaded && !isBalanceZero}
           onClick={swapStore.onSwitchTokens}
         >
@@ -448,7 +448,8 @@ const SwitchTokens = styled.button<{ disabled: boolean; isLoaded: boolean }>`
 
     &:hover {
         transform: scale(1.1);
-    background: #2effab;
+        background: #2effab;
+      
     }
 
     &:active {
