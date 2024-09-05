@@ -86,7 +86,7 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({
               })
             ) : (
               <NoFoundAssets>
-                <TextNoFoundAssets>No assets found</TextNoFoundAssets>
+                <TextNoFoundAssets>Asset not found</TextNoFoundAssets>
               </NoFoundAssets>
             )}
           </ColumnContent>
@@ -141,6 +141,8 @@ const NoFoundAssets = styled(SmartFlex)`
   width: 100%;
   margin: auto;
   text-align: center;
+  padding-bottom: 20px;
+  padding-top: 30px;
 `;
 
 const Wrap = styled.div<{

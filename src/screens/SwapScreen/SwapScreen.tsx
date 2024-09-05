@@ -438,6 +438,7 @@ const SwitchTokens = styled.button<{ disabled: boolean; isLoaded: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 0px 1px 1px 0px rgba(255, 255, 255, 0.77) inset, 0px 2px 5px 0px rgba(0, 0, 0, 0.22), 0px 16px 14px -6px rgba(21, 20, 21, 0.25), 0px 1px 1px 0px rgba(255, 255, 255, 0.17) inset;
   pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
   background-color: ${({ theme, disabled }) => (disabled ? theme.colors.borderSecondary : theme.colors.greenLight)};
   color: ${({ theme, disabled }) => (disabled ? theme.colors.iconDisabled : "#171717")};
@@ -446,17 +447,12 @@ const SwitchTokens = styled.button<{ disabled: boolean; isLoaded: boolean }>`
     transform 0.2s;
 
   &:hover {
-    transform: scale(1.25);
-    //border-radius: 40%;
-
-    svg {
-      transform: scale(1.25);
-      transform-origin: center;
-    }
+    transform: scale(1.1);
+    background: #2effab;
   }
 
   &:active {
-    background-color: #2effab;
+    background-color: #6EFFC5;
   }
 
   svg {
