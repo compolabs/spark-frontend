@@ -192,6 +192,20 @@ export class FuelNetwork {
     return this.orderbookSdk.fetchMatcherFee();
   };
 
+  fetchSpotProtocolFee = async () => {
+    return this.orderbookSdk.fetchProtocolFee();
+  };
+
+  fetchSpotProtocolFeeForUser = async (...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeForUser>) => {
+    return this.orderbookSdk.fetchProtocolFeeForUser(...params);
+  };
+
+  fetchSpotProtocolFeeAmountForUser = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeAmountForUser>
+  ) => {
+    return this.orderbookSdk.fetchProtocolFeeAmountForUser(...params);
+  };
+
   fetchSpotUserMarketBalance = async (...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalance>) => {
     return this.orderbookSdk.fetchUserMarketBalance(...params);
   };

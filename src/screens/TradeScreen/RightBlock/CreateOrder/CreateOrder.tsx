@@ -207,8 +207,15 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{vm.matcherFee.toString()}</Text>
-              <Text>&nbsp;ETH</Text>
+              <Text primary>{tradeStore.matcherFee.toSignificant(2)}</Text>
+              <Text>&nbsp;{quoteToken.symbol}</Text>
+            </Row>
+          </Row>
+          <Row alignItems="center" justifyContent="space-between">
+            <Text nowrap>Exchange Fee</Text>
+            <Row alignItems="center" justifyContent="flex-end">
+              <Text primary>{vm.exchangeFee.toSignificant(2)}</Text>
+              <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
           <Row alignItems="center" justifyContent="space-between">

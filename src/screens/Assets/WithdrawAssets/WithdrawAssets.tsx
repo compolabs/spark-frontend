@@ -17,8 +17,8 @@ import WalletIcon from "@src/assets/icons/wallet.svg?react";
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
-import { useStores } from "@stores";
 import { CONFIG } from "@src/utils/getConfig";
+import { useStores } from "@stores";
 
 interface WithdrawAssets {
   setStep: (value: number) => void;
