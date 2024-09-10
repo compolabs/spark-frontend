@@ -1,10 +1,4 @@
-import {
-  FulfillOrderManyParams,
-  GetOrdersParams,
-  LimitType,
-  OrderType,
-  WriteTransactionResponse,
-} from "@compolabs/spark-orderbook-ts-sdk";
+import { FulfillOrderManyParams, GetOrdersParams, LimitType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { autorun, makeAutoObservable, reaction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
@@ -220,15 +214,18 @@ class SwapStore {
     CONFIG.TOKENS.map(({ assetId }) => {
       const { balanceStore } = this.rootStore;
       const bcNetwork = FuelNetwork.getInstance();
+      console.log("balance", balanceStore.balances);
       const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const balanceList = balanceStore.myMarketBalanceList;
+      console.log("balanceList", balanceList);
       const contractBalance = balanceList
-        .map((el) => {
-          if (el.baseAssetId === assetId) {
-            return el.liquid.base;
-          } else if (el.quoteAssetId === assetId) {
-            return el.liquid.quote;
+        .map((el, key) => {
+          console.log("el", el, el[0]);
+          if (el[key].baseAssetId === assetId) {
+            return el[key].liquid.base;
+          } else if (el[key].quoteAssetId === assetId) {
+            return el[key].liquid.quote;
           }
           return BN.ZERO;
         })
