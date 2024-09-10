@@ -37,7 +37,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsLoading] = useState(false);
-  const { quickAssetsStore, balanceStore, oracleStore } = useStores();
+  const { quickAssetsStore, balanceStore, swapStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
@@ -58,26 +58,10 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     }
   };
 
-  const ETH = bcNetwork.getTokenBySymbol("ETH");
-  const balanceData = CONFIG.TOKENS.map(({ assetId }) => {
-    const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
-    const token = bcNetwork!.getTokenByAssetId(assetId);
-    const contractBalance =
-      token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
-    const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
-    return {
-      asset: token,
-      walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-      contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
-      balance: BN.formatUnits(totalBalance, token.decimals).toString(),
-      assetId,
-    };
-  }).filter((el) => {
-    return el.contractBalance && new BN(el.contractBalance).gt(BN.ZERO) && el.assetId !== ETH.assetId;
-  });
+  const balanceList = swapStore.getSmartContractBalance();
 
   useEffect(() => {
-    setAssets(balanceData[0]);
+    setAssets(balanceList[0]);
   }, []);
 
   const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(
@@ -99,7 +83,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
         <SmartFlex gap="20px" column>
           <SelectAssetsInput
             amount={amount}
-            dataAssets={balanceData}
+            dataAssets={balanceList}
             decimals={selectAsset?.asset?.decimals}
             selected={selectAsset?.assetId}
             showBalance="contractBalance"

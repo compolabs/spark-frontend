@@ -161,7 +161,6 @@ class TradeStore {
     const address = toBech32(accountStore.address!);
 
     const tradeFee = await bcNetwork.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
-
     const decimals = this.market.quoteToken.decimals;
 
     this.tradeFee = {

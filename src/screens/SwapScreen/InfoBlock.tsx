@@ -13,6 +13,7 @@ import { useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SmartFlex } from "@components/SmartFlex";
+
 interface InfoBlockProps {
   slippage: number;
   updateSlippage: (percent: number) => void;
@@ -22,11 +23,13 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
   const theme = useTheme();
   const [showDetails, setShowDetails] = useState(false);
   const [isSlippageSettingOpen, setSlippageSettingOpen] = useState(false);
-  const { swapStore, oracleStore } = useStores();
+  const { swapStore, oracleStore, tradeStore } = useStores();
   const exchangeRate =
     BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toNumber() /
     BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toNumber();
-
+  const exchangeFee = swapStore?.exchangeFee ?? 0;
+  const matcherFee = tradeStore.matcherFee;
+  const totalFee = exchangeFee.plus(matcherFee);
   return (
     <Root>
       <InfoLine onClick={() => setShowDetails(!showDetails)}>
@@ -39,7 +42,7 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
           <SmartFlex alignItems="center">
             <LightningIcon />
             Total fee
-            <SnackStyled>$0.0</SnackStyled>
+            <SnackStyled>${totalFee.toSignificant(2)}</SnackStyled>
             <ArrowUpIconStyled showDetails={showDetails} />
           </SmartFlex>
         </Text>
@@ -49,13 +52,13 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
           <InfoLine>
             <Text type={TEXT_TYPES.SUPPORTING_TEXT_NEW}>Exchange fee</Text>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY_NEW}>
-              0 ETH (0$)
+              <Text primary>{exchangeFee.toSignificant(2)}$</Text>
             </Text>
           </InfoLine>
           <InfoLine>
-            <Text type={TEXT_TYPES.SUPPORTING_TEXT_NEW}>Network fee</Text>
+            <Text type={TEXT_TYPES.SUPPORTING_TEXT_NEW}>Matcher fee</Text>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY_NEW}>
-              0 ETH (0$)
+              <Text primary>{matcherFee.toSignificant(2)}$</Text>
             </Text>
           </InfoLine>
           <InfoLine>

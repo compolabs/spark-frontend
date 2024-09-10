@@ -152,17 +152,6 @@ export class FuelNetwork {
   };
 
   fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
-    // {
-    //   "limit": 50,
-    //     "asset": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-    //     "status": [
-    //   "Active"
-    // ],
-    //     "orderType": "Buy"
-    // }
-
-
-    console.log('params', params)
     const { data } = await this.orderbookSdk.fetchActiveOrders(params);
 
     const formatOrder = (order: Order) =>
@@ -208,5 +197,11 @@ export class FuelNetwork {
 
   fetchSpotUserMarketBalance = async (...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalance>) => {
     return this.orderbookSdk.fetchUserMarketBalance(...params);
+  };
+
+  fetchUserMarketBalanceByContracts = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalanceByContracts>
+  ) => {
+    return this.orderbookSdk.fetchUserMarketBalanceByContracts(...params);
   };
 }
