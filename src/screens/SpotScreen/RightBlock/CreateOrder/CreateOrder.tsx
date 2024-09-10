@@ -1,36 +1,29 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { Accordion } from "@szhsin/react-accordion";
-import { observer } from "mobx-react";
+import { Accordion, AccordionItem } from "@szhsin/react-accordion";
+import { observer } from "mobx-react-lite";
 
-import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 
-import AccordionItem from "@components/AccordionItem";
 import Button, { ButtonGroup } from "@components/Button";
+import { ConnectWalletButton } from "@components/ConnectWalletButton";
 import { Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
-import Slider from "@components/Slider";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
+import Slider from "@src/components/Slider";
 import { media } from "@themes/breakpoints";
 
 import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
-import {
-  ACTIVE_INPUT,
-  ORDER_MODE,
-  ORDER_TYPE,
-  useCreateOrderVM,
-} from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
+import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 
-import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
-
+import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "./CreateOrderVM";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [
@@ -40,7 +33,7 @@ const ORDER_OPTIONS = [
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
 ];
 
-export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
+const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore } = useStores();
@@ -52,6 +45,8 @@ const CreateOrder: React.FC = observer(() => {
   const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
 
   const isButtonDisabled = vm.isLoading || !vm.canProceed;
+  const isMarketOrderType = settingsStore.orderType === ORDER_TYPE.Market;
+  const priceDisplayDecimals = isMarketOrderType ? VISIBLE_MARKET_DECIMALS : DEFAULT_DECIMALS;
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
 
@@ -209,6 +204,7 @@ const CreateOrder: React.FC = observer(() => {
             amount={vm.inputPrice}
             decimals={DEFAULT_DECIMALS}
             disabled={isInputPriceDisabled}
+            displayDecimals={priceDisplayDecimals}
             label="Price"
             setAmount={handleSetPrice}
             onBlur={vm.setActiveInput}
@@ -265,7 +261,7 @@ const CreateOrder: React.FC = observer(() => {
         </SliderContainer>
         {renderOrderDetails()}
       </ParamsContainer>
-      {renderButton()}
+      <ConnectWalletButton connectText="Connect wallet to trade">{renderButton()}</ConnectWalletButton>
 
       <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
     </Root>

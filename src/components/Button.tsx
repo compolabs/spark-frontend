@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
-const Button = styled.button<{
+export interface ButtonProps {
   green?: boolean;
   red?: boolean;
   text?: boolean;
@@ -12,7 +12,9 @@ const Button = styled.button<{
   grey?: boolean;
   fitContent?: boolean;
   active?: boolean;
-}>`
+}
+
+const Button = styled.button<ButtonProps>`
   text-decoration: none;
   white-space: nowrap;
   display: flex;

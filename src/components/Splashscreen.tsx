@@ -4,10 +4,11 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import CheckIcon from "@assets/icons/check.svg?react";
-import Logo from "@assets/icons/logo-small.svg?react";
+import LogoIcon from "@assets/icons/logo-small.svg?react";
+import WalletIcon from "@assets/icons/wallet.svg?react";
 import spacemanImage from "@assets/images/spaceman.webp";
-import splashScreenOrderbook from "@assets/splash/splash-screen-orderbook.svg";
-import splashScreenSwap from "@assets/splash/splash-screen-swap.svg";
+import splashScreenOrderbookIcon from "@assets/splash/splash-screen-orderbook.svg";
+import splashScreenSwapIcon from "@assets/splash/splash-screen-swap.svg";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
@@ -32,14 +33,14 @@ interface SplashScreenInfo {
 const SPLASH_SCREEN_INFO: SplashScreenInfo[] = [
   {
     name: "Swap",
-    desc: "Buy and Sell assets at market price",
-    icon: splashScreenSwap,
+    desc: "Buy and sell assets at market price",
+    icon: splashScreenSwapIcon,
     type: SPLASH_SCREEN_TYPE.SWAP,
   },
   {
     name: "Orderbook",
     desc: "More options for experienced traders",
-    icon: splashScreenOrderbook,
+    icon: splashScreenOrderbookIcon,
     type: SPLASH_SCREEN_TYPE.ORDERBOOK,
   },
 ];
@@ -64,8 +65,12 @@ export const SplashScreen: React.FC = observer(() => {
     setMode(newMode);
   };
 
-  const handleGoClick = () => {
-    navigate(TYPE_ROUTE_MAP[mode]);
+  const handleGoToMode = (newMode: SPLASH_SCREEN_TYPE) => {
+    handleGoClick(newMode);
+  };
+
+  const handleGoClick = (newMode?: SPLASH_SCREEN_TYPE) => {
+    navigate(TYPE_ROUTE_MAP[newMode ?? mode]);
     setSplashScreenVisible(false);
     setIsOnboardingVisible(true);
   };
@@ -79,7 +84,12 @@ export const SplashScreen: React.FC = observer(() => {
     const isSelected = mode === info.type;
 
     return (
-      <ModeButtonContainer key={info.name} isSelected={isSelected} onClick={() => handleModeClick(info.type)}>
+      <ModeButtonContainer
+        key={info.name}
+        isSelected={isSelected}
+        onClick={() => handleModeClick(info.type)}
+        onDoubleClick={() => handleGoToMode(info.type)}
+      >
         <img alt={info.name} src={info.icon} />
         <SmartFlex gap="6px" column>
           <Text>{info.name}</Text>
@@ -100,12 +110,12 @@ export const SplashScreen: React.FC = observer(() => {
             <TitleContainer>
               <SmartFlex gap="8px" center>
                 <DescriptionStyled>Hey, and welcome to</DescriptionStyled>
-                <Logo />
+                <LogoIcon />
               </SmartFlex>
               <TitleStyled>Select trading mode to begin</TitleStyled>
             </TitleContainer>
             <ModeContainer>{SPLASH_SCREEN_INFO.map(renderModeButton)}</ModeContainer>
-            <StyledButton green onClick={handleGoClick}>
+            <StyledButton green onClick={() => handleGoClick()}>
               <ButtonText type={TEXT_TYPES.TITLE} primary>
                 Let&apos;s go!
               </ButtonText>
@@ -127,7 +137,8 @@ const ONBOARDING_TRADE_STEPS: Step[] = [
   {
     desktopKey: "connect-desktop",
     mobileKey: "connect-mobile",
-    desc: "Connect your wallet",
+    desc: "Let's connect your wallet",
+    icon: WalletIcon,
   },
   {
     desktopKey: "mint-desktop",
@@ -139,12 +150,12 @@ const ONBOARDING_TRADE_STEPS: Step[] = [
       const el = document.querySelector<HTMLElement>("[data-onboarding='menu-mobile']");
       el?.click();
     },
-    desc: "Mint tokens",
+    desc: "Mint some test tokens in Faucet",
   },
   {
     desktopKey: "assets-desktop",
     mobileKey: "assets-mobile",
-    desc: "Deposit assets",
+    desc: "Deposit assets to start trading",
   },
   {
     desktopKey: "trade-desktop",
@@ -164,7 +175,8 @@ const ONBOARDING_SWAP_STEPS: Step[] = [
   {
     desktopKey: "connect-desktop",
     mobileKey: "connect-mobile",
-    desc: "Connect your wallet",
+    desc: "Let's connect your wallet",
+    icon: WalletIcon,
   },
   {
     desktopKey: "mint-desktop",
@@ -176,12 +188,12 @@ const ONBOARDING_SWAP_STEPS: Step[] = [
       const el = document.querySelector<HTMLElement>("[data-onboarding='menu-mobile']");
       el?.click();
     },
-    desc: "Mint tokens",
+    desc: "Mint some test tokens in Faucet",
   },
   {
     desktopKey: "assets-desktop",
     mobileKey: "assets-mobile",
-    desc: "Deposit assets",
+    desc: "Deposit assets to start trading",
   },
   {
     desktopKey: "swap-desktop",

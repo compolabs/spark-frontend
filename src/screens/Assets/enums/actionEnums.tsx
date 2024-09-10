@@ -1,4 +1,4 @@
-export enum TypeTranaction {
+export enum TypeTransaction {
   DEPOSIT = "Deposit",
   WITHDRAWAL = "Withdrawal",
 }

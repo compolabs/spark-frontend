@@ -14,7 +14,7 @@ import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 
-import SpotMarketRow from "@screens/TradeScreen/RightBlock/MarketSelection/SpotMarketRow";
+import SpotMarketRow from "@screens/SpotScreen/RightBlock/MarketSelection/SpotMarketRow";
 
 import { PerpMarket, SpotMarket } from "@entity";
 

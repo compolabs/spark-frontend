@@ -9,8 +9,8 @@ import MenuOverlay from "../MenuOverlay";
 import SizedBox from "../SizedBox";
 import { SmartFlex } from "../SmartFlex";
 
-import ConnectedWalletButton from "./ConnectedWalletButton";
 import { MenuNav } from "./MenuNav";
+import WalletAddressButton from "./WalletAddressButton";
 
 interface IProps {
   isOpen: boolean;
@@ -32,9 +32,9 @@ const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalle
     onClose();
   };
 
-  const renderWalletButton = () => {
+  const renderWalletAddressButton = () => {
     return accountStore.address ? (
-      <ConnectedWalletButtonStyled onClick={handleAccountClick} />
+      <WalletAddressButtonStyled onClick={handleAccountClick} />
     ) : (
       <Button green onClick={handleConnectWallet}>
         Connect wallet
@@ -53,7 +53,7 @@ const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalle
           <Button data-onboarding="assets-mobile" onClick={() => quickAssetsStore.setQuickAssets(true)}>
             ASSETS
           </Button>
-          {renderWalletButton()}
+          {renderWalletAddressButton()}
         </FooterContainer>
       </Body>
     </MenuOverlay>
@@ -86,7 +86,7 @@ const FooterContainer = styled(SmartFlex)`
   width: 100%;
 `;
 
-const ConnectedWalletButtonStyled = styled(ConnectedWalletButton)`
+const WalletAddressButtonStyled = styled(WalletAddressButton)`
   width: 100%;
   height: 40px;
 `;

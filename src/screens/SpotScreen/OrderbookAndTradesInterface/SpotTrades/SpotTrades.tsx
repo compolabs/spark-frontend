@@ -9,7 +9,7 @@ import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
-import { useSpotTradesVM } from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
+import { useSpotTradesVM } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
 
 export const SpotTrades: React.FC = observer(() => {
   const vm = useSpotTradesVM();

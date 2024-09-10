@@ -20,9 +20,9 @@ import { getExplorerLinkByAddress } from "@utils/getExplorerLink";
 
 import { FuelNetwork } from "@blockchain";
 
-import ConnectedWalletButton from "./ConnectedWalletButton";
+import WalletAddressButton from "./Header/WalletAddressButton";
 
-const ConnectedWallet: React.FC = observer(() => {
+const WalletButton: React.FC = observer(() => {
   const { accountStore, notificationStore, balanceStore } = useStores();
   const { disconnect: disconnectWallet } = useWallet();
 
@@ -93,12 +93,12 @@ const ConnectedWallet: React.FC = observer(() => {
         </Column>
       }
     >
-      <ConnectedWalletButton isFocused={isFocused} />
+      <WalletAddressButton isFocused={isFocused} />
     </Tooltip>
   );
 });
 
-export default ConnectedWallet;
+export default WalletButton;
 
 const Icon = styled.img`
   width: 24px;

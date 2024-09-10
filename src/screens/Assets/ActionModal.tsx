@@ -13,7 +13,7 @@ import CloseIcon from "@assets/icons/close.svg?react";
 import ErrorCircle from "@assets/icons/error-circle.svg?react";
 import Spinner from "@assets/icons/spinner.svg?react";
 
-import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
+import { ModalEnums, TypeTransaction } from "@screens/Assets/enums/actionEnums";
 
 import TOKEN_LOGOS from "@constants/tokenLogos";
 import { getExplorerLinkByHash } from "@utils/getExplorerLink";
@@ -22,7 +22,7 @@ export type ActionModal = {
   hash: string;
   transactionInfo: {
     token: IAssetBlock["token"];
-    type: TypeTranaction;
+    type: TypeTransaction;
     amount: string;
   };
   typeModal: ModalEnums;

@@ -20,6 +20,11 @@ module.exports = {
     "unused-imports",
     "react-refresh",
   ],
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
   rules: {
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     eqeqeq: "error",

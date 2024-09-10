@@ -6,7 +6,7 @@ import { THEME_TYPE } from "@themes/ThemeProvider";
 
 import RootStore from "@stores/RootStore";
 
-import { ORDER_TYPE } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
+import { ORDER_TYPE } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 
 export interface ISerializedSettingStore {
   isUserAgreedWithTerms?: boolean;

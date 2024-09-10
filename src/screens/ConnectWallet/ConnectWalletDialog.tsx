@@ -17,8 +17,6 @@ type IProps = Omit<IDialogPropTypes, "onClose"> & {
   visible: boolean;
 };
 
-// TODO: refactor account store, minting and save address in local storage
-
 const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) => {
   const { settingsStore, mixPanelStore } = useStores();
   const theme = useTheme();
@@ -61,6 +59,8 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
       openWalletConnectUI();
     }
   };
+
+  if (!visible) return;
 
   return (
     <Dialog

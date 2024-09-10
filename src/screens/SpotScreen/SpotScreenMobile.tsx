@@ -8,10 +8,10 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import BottomTables from "@screens/TradeScreen/BottomTables";
-import Chart from "@screens/TradeScreen/Chart";
-import MarketStatisticsBar from "@screens/TradeScreen/MarketStatisticsBar";
-import StatusBar from "@screens/TradeScreen/StatusBar/StatusBar";
+import BottomTables from "@screens/SpotScreen/BottomTables";
+import Chart from "@screens/SpotScreen/Chart";
+import MarketStatisticsBar from "@screens/SpotScreen/MarketStatisticsBar";
+import StatusBar from "@screens/SpotScreen/StatusBar/StatusBar";
 
 import { SpotOrderBook } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 import { SpotOrderbookVMProvider } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderbookVM";
@@ -19,7 +19,7 @@ import CreateOrder from "./RightBlock/CreateOrder";
 import MarketSelection from "./RightBlock/MarketSelection";
 import MarketStatistics from "./MarketStatistics";
 
-const TradeScreenMobile: React.FC = observer(() => {
+const SpotScreenMobile: React.FC = observer(() => {
   const { tradeStore } = useStores();
   const [isChartOpen, setIsChartOpen] = useState(false);
 
@@ -70,7 +70,7 @@ const TradeScreenMobile: React.FC = observer(() => {
   );
 });
 
-export default TradeScreenMobile;
+export default SpotScreenMobile;
 
 const Root = styled.div`
   display: flex;

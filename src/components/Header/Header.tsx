@@ -3,7 +3,6 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
-import ConnectedWallet from "@components/Header/ConnectedWallet";
 import { media } from "@themes/breakpoints";
 
 import DataBase from "@assets/icons/dataBase.svg?react";
@@ -13,22 +12,22 @@ import Menu from "@assets/icons/menu.svg?react";
 import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+import { MODAL_TYPE } from "@stores/ModalStore";
 
-import ConnectWalletDialog from "@screens/ConnectWallet";
-
+import { ConnectWalletButton } from "../ConnectWalletButton";
 import { AccountInfoSheet } from "../Modal";
 import { SmartFlex } from "../SmartFlex";
+import WalletButton from "../WalletButton";
 
-import ConnectedWalletButton from "./ConnectedWalletButton";
 import { MenuNav } from "./MenuNav";
 import MobileMenu from "./MobileMenu";
+import WalletAddressButton from "./WalletAddressButton";
 
 const Header: React.FC = observer(() => {
-  const { accountStore, quickAssetsStore } = useStores();
+  const { modalStore, quickAssetsStore } = useStores();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
-  const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
 
   useEffect(() => {
@@ -47,30 +46,16 @@ const Header: React.FC = observer(() => {
     }
   };
 
+  const openConnectModal = () => modalStore.open(MODAL_TYPE.CONNECT_MODAL);
+
   const renderWallet = () => {
     const dataOnboardingConnectKey = `connect-${media.mobile ? "mobile" : "desktop"}`;
 
-    if (!accountStore.address) {
-      return (
-        <WalletContainer data-onboarding={dataOnboardingConnectKey}>
-          <Button fitContent green onClick={openConnectDialog}>
-            Connect wallet
-          </Button>
-        </WalletContainer>
-      );
-    }
-
-    if (media.mobile) {
-      return (
-        <WalletContainer data-onboarding={dataOnboardingConnectKey} isVisible={!isMobileMenuOpen}>
-          <ConnectedWalletButton onClick={openAccountInfo} />
-        </WalletContainer>
-      );
-    }
+    const walletButtonContent = media.mobile ? <WalletAddressButton onClick={openAccountInfo} /> : <WalletButton />;
 
     return (
-      <WalletContainer data-onboarding={dataOnboardingConnectKey}>
-        <ConnectedWallet />
+      <WalletContainer data-onboarding={dataOnboardingConnectKey} isVisible={!isMobileMenuOpen}>
+        <ConnectWalletButton fitContent>{walletButtonContent}</ConnectWalletButton>
       </WalletContainer>
     );
   };
@@ -126,11 +111,8 @@ const Header: React.FC = observer(() => {
         isOpen={isMobileMenuOpen}
         onAccountClick={openAccountInfo}
         onClose={closeMobileMenu}
-        onWalletConnect={openConnectDialog}
+        onWalletConnect={openConnectModal}
       />
-      {isConnectDialogVisible ? (
-        <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
-      ) : null}
       <AccountInfoSheet isOpen={isAccountInfoSheetOpen} onClose={closeAccountInfo} />
     </Root>
   );

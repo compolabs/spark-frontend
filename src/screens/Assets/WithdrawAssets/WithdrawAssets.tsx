@@ -17,7 +17,7 @@ import WalletIcon from "@assets/icons/wallet.svg?react";
 import { useStores } from "@stores";
 
 import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
-import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
+import { ModalEnums, TypeTransaction } from "@screens/Assets/enums/actionEnums";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
@@ -33,7 +33,7 @@ export interface ShowAction {
   hash: string;
   transactionInfo: {
     token: IAssetBlock["token"];
-    type: TypeTranaction;
+    type: TypeTransaction;
     amount: string;
   };
   typeModal: ModalEnums;

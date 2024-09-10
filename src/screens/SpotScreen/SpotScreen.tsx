@@ -7,12 +7,12 @@ import Loader from "@components/Loader";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
-import { CreateOrderVMProvider } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
+import { CreateOrderVMProvider } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 
-import TradeScreenDesktop from "./TradeScreenDesktop";
-import TradeScreenMobile from "./TradeScreenMobile";
+import SpotScreenDesktop from "./SpotScreenDesktop";
+import SpotScreenMobile from "./SpotScreenMobile";
 
-const TradeScreenImpl: React.FC = observer(() => {
+const SpotScreenImpl: React.FC = observer(() => {
   const { tradeStore } = useStores();
   const media = useMedia();
 
@@ -20,10 +20,10 @@ const TradeScreenImpl: React.FC = observer(() => {
     document.title = `Spark | ${tradeStore.marketSymbol}`;
   }, [tradeStore.marketSymbol]);
 
-  return media.mobile ? <TradeScreenMobile /> : <TradeScreenDesktop />;
+  return media.mobile ? <SpotScreenMobile /> : <SpotScreenDesktop />;
 });
 
-const TradeScreen: React.FC = observer(() => {
+const SpotScreen: React.FC = observer(() => {
   const { tradeStore } = useStores();
   const { marketId } = useParams<{ marketId: string }>();
 
@@ -36,11 +36,11 @@ const TradeScreen: React.FC = observer(() => {
   }
 
   return (
-    // TradeScreenImpl оборачивается в CreateOrderSpotVMProvider чтобы при нажатии на ордер в OrderbookAndTradesInterface устанавливать значение в RightBlock
+    // SpotScreenImpl оборачивается в CreateOrderSpotVMProvider чтобы при нажатии на ордер в OrderbookAndTradesInterface устанавливать значение в RightBlock
     <CreateOrderVMProvider>
-      <TradeScreenImpl />
+      <SpotScreenImpl />
     </CreateOrderVMProvider>
   );
 });
 
-export default TradeScreen;
+export default SpotScreen;

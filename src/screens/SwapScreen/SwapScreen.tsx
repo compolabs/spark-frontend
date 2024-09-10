@@ -13,9 +13,8 @@ import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 
 import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
-import { MINIMAL_ETH_REQUIRED } from "@screens/TradeScreen/RightBlock/CreateOrder/CreateOrder";
 
-import { DEFAULT_DECIMALS } from "@constants";
+import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 import BN from "@utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
 

@@ -7,16 +7,16 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import BottomTables from "@screens/TradeScreen/BottomTables";
-import Chart from "@screens/TradeScreen/Chart";
-import MarketStatisticsBar from "@screens/TradeScreen/MarketStatisticsBar";
-import StatusBar from "@screens/TradeScreen/StatusBar/StatusBar";
+import BottomTables from "@screens/SpotScreen/BottomTables";
+import Chart from "@screens/SpotScreen/Chart";
+import MarketStatisticsBar from "@screens/SpotScreen/MarketStatisticsBar";
+import StatusBar from "@screens/SpotScreen/StatusBar/StatusBar";
 
 import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
 import MarketSelection from "./RightBlock/MarketSelection";
 import RightBlock from "./RightBlock/RightBlock";
 
-const TradeScreenDesktop: React.FC = observer(() => {
+const SpotScreenDesktop: React.FC = observer(() => {
   const { tradeStore } = useStores();
 
   return (
@@ -36,7 +36,7 @@ const TradeScreenDesktop: React.FC = observer(() => {
   );
 });
 
-export default TradeScreenDesktop;
+export default SpotScreenDesktop;
 
 const Root = styled.div`
   display: flex;

@@ -10,9 +10,9 @@ import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
-import { FuelNetwork } from "@blockchain";
+import { MINIMAL_ETH_REQUIRED } from "@constants";
 
-import { MINIMAL_ETH_REQUIRED } from "../TradeScreen/RightBlock/CreateOrder/CreateOrder";
+import { FuelNetwork } from "@blockchain";
 
 import MintButtons from "./MintButtons";
 
