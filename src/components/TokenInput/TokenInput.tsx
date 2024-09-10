@@ -14,6 +14,7 @@ import { BigNumberInput } from "./BigNumberInput";
 interface IProps {
   assetId?: string;
   decimals: number;
+  displayDecimals?: number;
   label?: string;
   max?: BN;
   amount: BN;
@@ -62,7 +63,7 @@ const TokenInput: React.FC<IProps> = observer((props) => {
           autofocus={focused}
           decimals={props.decimals}
           disabled={props.disabled}
-          displayDecimals={props.decimals}
+          displayDecimals={props.displayDecimals}
           max={props.max?.toString()}
           placeholder="0.00"
           renderInput={(inputProps, ref) => (

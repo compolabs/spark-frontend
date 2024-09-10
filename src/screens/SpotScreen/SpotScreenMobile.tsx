@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import BottomTables from "@screens/TradeScreen/BottomTables";
-import Chart from "@screens/TradeScreen/Chart";
-import MarketStatisticsBar from "@screens/TradeScreen/MarketStatisticsBar";
-import StatusBar from "@screens/TradeScreen/StatusBar/StatusBar";
 import MenuOverlay from "@src/components/MenuOverlay";
 import { SmartFlex } from "@src/components/SmartFlex";
+import BottomTables from "@src/screens/SpotScreen/BottomTables";
+import Chart from "@src/screens/SpotScreen/Chart";
+import MarketStatisticsBar from "@src/screens/SpotScreen/MarketStatisticsBar";
+import StatusBar from "@src/screens/SpotScreen/StatusBar/StatusBar";
 import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 
@@ -17,7 +17,7 @@ import CreateOrder from "./RightBlock/CreateOrder";
 import MarketSelection from "./RightBlock/MarketSelection";
 import MarketStatistics from "./MarketStatistics";
 
-const TradeScreenMobile: React.FC = observer(() => {
+const SpotScreenMobile: React.FC = observer(() => {
   const { tradeStore } = useStores();
   const [isChartOpen, setIsChartOpen] = useState(false);
 
@@ -68,7 +68,7 @@ const TradeScreenMobile: React.FC = observer(() => {
   );
 });
 
-export default TradeScreenMobile;
+export default SpotScreenMobile;
 
 const Root = styled.div`
   display: flex;

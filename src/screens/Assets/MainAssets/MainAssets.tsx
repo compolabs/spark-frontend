@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -20,8 +20,8 @@ import { DEFAULT_DECIMALS } from "@src/constants";
 import useFlag from "@src/hooks/useFlag";
 import { useWallet } from "@src/hooks/useWallet";
 import BN from "@src/utils/BN";
-import { useStores } from "@stores";
 import { CONFIG } from "@src/utils/getConfig";
+import { useStores } from "@stores";
 
 interface MainAssets {
   setStep: (value: number) => void;

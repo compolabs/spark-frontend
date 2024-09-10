@@ -10,17 +10,22 @@ import Header from "./components/Header";
 import { PWAModal } from "./components/PWAModal";
 import { SplashScreen } from "./components/Splashscreen";
 import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
+import ConnectWalletDialog from "./screens/ConnectWallet";
 import UnderConstruction from "./screens/Errors/UnderConstruction";
 import Faucet from "./screens/Faucet";
+import SpotScreen from "./screens/SpotScreen";
 import { SwapScreen } from "./screens/SwapScreen";
-import TradeScreen from "./screens/TradeScreen";
+import { MODAL_TYPE } from "./stores/ModalStore";
 import { DEFAULT_MARKET, ROUTES } from "./constants";
+import { useStores } from "./stores";
 
 const isUnderConstruction = false;
 
 const DEFAULT_SPOT_ROUTE = `/spot/${DEFAULT_MARKET}`;
 
 const App: React.FC = observer(() => {
+  const { modalStore } = useStores();
+
   usePrivateKeyAsAuth();
 
   if (isUnderConstruction) {
@@ -31,7 +36,7 @@ const App: React.FC = observer(() => {
     <Root>
       <Header />
       <Routes>
-        <Route element={<TradeScreen />} path={`${ROUTES.SPOT}/:marketId`} />
+        <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
         <Route element={<SwapScreen />} path={ROUTES.SWAP} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
         <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
@@ -40,6 +45,7 @@ const App: React.FC = observer(() => {
       <SideManageAssets />
       <PWAModal />
       <SplashScreen />
+      <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={() => modalStore.close()} />
     </Root>
   );
 });

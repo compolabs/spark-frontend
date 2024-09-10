@@ -15,7 +15,7 @@ interface Props {
   onClick?: () => void;
 }
 
-const ConnectedWalletButton: React.FC<Props> = observer(({ isFocused, className, onClick }) => {
+const WalletAddressButton: React.FC<Props> = observer(({ isFocused, className, onClick }) => {
   const { accountStore } = useStores();
 
   return (
@@ -26,7 +26,7 @@ const ConnectedWalletButton: React.FC<Props> = observer(({ isFocused, className,
   );
 });
 
-export default ConnectedWalletButton;
+export default WalletAddressButton;
 
 const ArrowIconStyled = styled.img`
   transition: 0.4s;
