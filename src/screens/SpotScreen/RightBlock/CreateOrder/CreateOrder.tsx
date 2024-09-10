@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { Accordion, AccordionItem } from "@szhsin/react-accordion";
+import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react-lite";
 
 import { BN, LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 
+import AccordionItem from "@components/AccordionItem";
 import Button, { ButtonGroup } from "@components/Button";
 import { ConnectWalletButton } from "@components/ConnectWalletButton";
 import { Row } from "@components/Flex";
