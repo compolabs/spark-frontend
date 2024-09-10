@@ -7,7 +7,7 @@ import { useStores } from "@src/stores";
 export const useWallet = () => {
   const { fuel } = useFuel();
   const { accountStore } = useStores();
-  const { connect, isConnecting } = useConnectUI();
+  const { connect, isConnecting, dialog } = useConnectUI();
 
   const [isConnected, setIsConnected] = useState(false);
   const [wallet, setWallet] = useState<Account | null>(null);
