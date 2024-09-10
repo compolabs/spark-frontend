@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { useSpotTradesVM } from "@screens/TradeScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
 import Loader from "@src/components/Loader";
 import { SmartFlex } from "@src/components/SmartFlex";
+import { useSpotTradesVM } from "@src/screens/SpotScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
 import { media } from "@src/themes/breakpoints";
 
 export const SpotTrades: React.FC = observer(() => {

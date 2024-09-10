@@ -214,14 +214,13 @@ class SwapStore {
     CONFIG.TOKENS.map(({ assetId }) => {
       const { balanceStore } = this.rootStore;
       const bcNetwork = FuelNetwork.getInstance();
-      console.log("balance", balanceStore.balances);
+
       const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const balanceList = balanceStore.myMarketBalanceList;
-      console.log("balanceList", balanceList);
+
       const contractBalance = balanceList
         .map((el, key) => {
-          console.log("el", el, el[0]);
           if (el[key].baseAssetId === assetId) {
             return el[key].liquid.base;
           } else if (el[key].quoteAssetId === assetId) {

@@ -11,7 +11,7 @@ import { SmartFlex } from "@src/components/SmartFlex";
 import { PerpMarket, SpotMarket } from "@src/entity";
 import { useMedia } from "@src/hooks/useMedia";
 import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
-import SpotMarketRow from "@src/screens/TradeScreen/RightBlock/MarketSelection/SpotMarketRow";
+import SpotMarketRow from "@src/screens/SpotScreen/RightBlock/MarketSelection/SpotMarketRow";
 import { media } from "@src/themes/breakpoints";
 import { useStores } from "@stores";
 

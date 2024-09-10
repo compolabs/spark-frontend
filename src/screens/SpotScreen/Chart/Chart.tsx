@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-import { ChartVMProvider } from "@screens/TradeScreen/Chart/ChartVm";
+import { ChartVMProvider } from "@src/screens/SpotScreen/Chart/ChartVm";
 import { media } from "@src/themes/breakpoints";
 
 import TradingViewWidget from "./TradingViewWidget";

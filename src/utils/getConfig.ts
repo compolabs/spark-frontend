@@ -9,6 +9,8 @@ const CURRENT_CONFIG_VER = "1.2.0";
 function createConfig() {
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
+  console.warn("SPARK CONFIG", configJSON);
+
   const tokens = configJSON.tokens.map(({ name, symbol, decimals, assetId, priceFeed, precision }) => {
     return new Token({
       name,
