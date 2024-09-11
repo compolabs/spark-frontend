@@ -35,8 +35,8 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
-  const balanceList = swapStore.getSmartContractBalance();
-  const hasPositiveBalance = balanceList.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
+  const balanceList = swapStore.getFormatedContractBalance();
+  const hasPositiveBalance = balanceList.some((item) => !new BN(item.balance).isZero());
   const accumulateBalanceContract = balanceList.reduce((acc, account) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
     return acc.plus(new BN(account.contractBalance).multipliedBy(price));

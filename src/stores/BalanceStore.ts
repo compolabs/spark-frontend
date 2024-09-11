@@ -43,22 +43,18 @@ export class BalanceStore {
     },
   };
 
-  myMarketBalanceList = [
-    {
-      [CONFIG.APP.markets[0].marketName]: {
-        baseAssetId: "",
-        quoteAssetId: "",
-        locked: {
-          base: BN.ZERO,
-          quote: BN.ZERO,
-        },
-        liquid: {
-          base: BN.ZERO,
-          quote: BN.ZERO,
-        },
+  myMarketBalanceList = {
+    [CONFIG.APP.markets[0].contractId]: {
+      locked: {
+        base: BN.ZERO,
+        quote: BN.ZERO,
+      },
+      liquid: {
+        base: BN.ZERO,
+        quote: BN.ZERO,
       },
     },
-  ];
+  };
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
@@ -260,7 +256,6 @@ export class BalanceStore {
       // TODO: After type fix in sdk
       const address = Address.fromB256(accountStore.address);
       const balanceData = await bcNetwork.fetchSpotUserMarketBalance(address.bech32Address);
-      console.log("balanceData", balanceData);
       this.setMyMarketBalance(balanceData);
     } catch (error) {
       console.error(error);
@@ -297,19 +292,23 @@ export class BalanceStore {
     });
 
   private setMyMarketBalanceList = (balanceList: UserMarketBalance[], markets: markets[]) => {
-    return (this.myMarketBalanceList = balanceList.map((item, key) => ({
-      [markets[key].marketName]: {
-        baseAssetId: markets[key].baseAssetId,
-        quoteAssetId: markets[key].quoteAssetId,
-        liquid: {
-          base: new BN(item.liquid.base),
-          quote: new BN(item.liquid.quote),
+    let balanceListFromated = {};
+    balanceList.forEach((item, key) => {
+      balanceListFromated = {
+        ...balanceListFromated,
+        [markets[key].contractId]: {
+          liquid: {
+            base: new BN(item.liquid.base),
+            quote: new BN(item.liquid.quote),
+          },
+          locked: {
+            base: new BN(item.locked.base),
+            quote: new BN(item.locked.quote),
+          },
         },
-        locked: {
-          base: new BN(item.locked.base),
-          quote: new BN(item.locked.quote),
-        },
-      },
-    })));
+      };
+    });
+
+    return (this.myMarketBalanceList = balanceListFromated);
   };
 }

@@ -30,6 +30,7 @@ import { useStores } from "@stores";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 import { RadioButton } from "@components/RadioButton.tsx";
+import swapStore from "@stores/SwapStore.ts";
 
 const ORDER_OPTIONS = [
   { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
@@ -41,7 +42,7 @@ const ORDER_OPTIONS = [
 const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore, swapStore } = useStores();
   const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
@@ -217,7 +218,7 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Exchange Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{vm.exchangeFee.toSignificant(2)}</Text>
+              <Text primary>{swapStore.exchangeFee?.toSignificant(2) ?? 0}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>

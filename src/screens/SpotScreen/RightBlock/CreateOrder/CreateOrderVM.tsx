@@ -107,7 +107,8 @@ class CreateOrderVM {
     reaction(
       () => this.inputTotal,
       (total) => {
-        this.fetchExchangeFeeDebounce(total.toString());
+        const { swapStore } = this.rootStore;
+        swapStore.fetchExchangeFeeDebounce(total.toString());
       },
     );
   }
@@ -120,13 +121,6 @@ class CreateOrderVM {
 
   get isInputError(): boolean {
     return this.isSpotInputError;
-  }
-
-  get exchangeFee(): BN {
-    const { tradeStore } = this.rootStore;
-    const { makerFee, takerFee } = tradeStore.tradeFee;
-
-    return BN.max(makerFee, takerFee);
   }
 
   get isSpotInputError(): boolean {
@@ -155,13 +149,6 @@ class CreateOrderVM {
   onMaxClick = () => {
     this.onSpotMaxClick();
   };
-
-  fetchExchangeFee = (total: string) => {
-    const { tradeStore } = this.rootStore;
-    tradeStore.fetchTradeFee(total);
-  };
-
-  fetchExchangeFeeDebounce = _.debounce(this.fetchExchangeFee, 250);
 
   private onSpotMaxClick = () => {
     const { tradeStore, balanceStore, mixPanelStore } = this.rootStore;

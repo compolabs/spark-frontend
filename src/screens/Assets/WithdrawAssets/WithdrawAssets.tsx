@@ -58,7 +58,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     }
   };
 
-  const balanceList = swapStore.getSmartContractBalance();
+  const balanceList = swapStore.getFormatedContractBalance();
 
   useEffect(() => {
     setAssets(balanceList[0]);

@@ -24,9 +24,13 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
   const [showDetails, setShowDetails] = useState(false);
   const [isSlippageSettingOpen, setSlippageSettingOpen] = useState(false);
   const { swapStore, oracleStore, tradeStore } = useStores();
-  const exchangeRate =
-    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toNumber() /
-    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toNumber();
+  const exchangeRate = BN.formatUnits(
+    oracleStore
+      .getTokenIndexPrice(swapStore.sellToken.priceFeed)
+      .dividedBy(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed)),
+    DEFAULT_DECIMALS,
+  ).toNumber();
+
   const exchangeFee = swapStore?.exchangeFee ?? 0;
   const matcherFee = tradeStore.matcherFee;
   const totalFee = exchangeFee.plus(matcherFee);
@@ -34,7 +38,7 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
     <Root>
       <InfoLine onClick={() => setShowDetails(!showDetails)}>
         <Text type={TEXT_TYPES.SUPPORTING_TEXT_NEW}>
-          1 {swapStore.sellToken.symbol} = <SpanStyled>{exchangeRate.toFixed(6)}</SpanStyled>{" "}
+          1 {swapStore.sellToken.symbol} = <SpanStyled>{new BN(exchangeRate).toSignificant(6)}</SpanStyled>{" "}
           {swapStore.buyToken.symbol}
         </Text>
 

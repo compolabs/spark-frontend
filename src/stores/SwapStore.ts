@@ -42,12 +42,10 @@ class SwapStore {
     reaction(
       () => [this.payAmount, this.receiveAmount],
       () => {
-        const { tradeStore } = this.rootStore;
-        const isBuy = tradeStore.market?.baseToken?.assetId === this.buyToken.assetId;
         this.fetchExchangeFeeDebounce(
           BN.parseUnits(
-            isBuy ? this.payAmount : this.receiveAmount,
-            isBuy ? this.sellToken.decimals : this.buyToken.decimals,
+            this.isBuy() ? this.payAmount : this.receiveAmount,
+            this.isBuy() ? this.sellToken.decimals : this.buyToken.decimals,
           ).toString(),
         );
       },
@@ -66,18 +64,23 @@ class SwapStore {
     this.updateTokens();
   }
 
+  isBuy = () => {
+    const { tradeStore } = this.rootStore;
+    return tradeStore.market?.baseToken?.assetId === this.buyToken.assetId;
+  };
+
   getTokenPair = (assetId: string) => {
     const { tradeStore } = this.rootStore;
     const markets = tradeStore.spotMarkets;
     const tokens = this.fetchNewTokens();
     return markets
-      .filter((token) => token.quoteToken.assetId === assetId || token.baseToken.assetId === assetId)
-      .map((token) =>
-        token.quoteToken.assetId === assetId
-          ? tokens.find((el) => el.assetId === token.baseToken.assetId)
-          : tokens.find((el) => el.assetId === token.quoteToken.assetId),
-      )
-      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined); // Type guard
+      .map((market) => {
+        const oppositeAssetId =
+          market.quoteToken.assetId === assetId ? market.baseToken.assetId : market.quoteToken.assetId;
+
+        return tokens.find((token) => token.assetId === oppositeAssetId);
+      })
+      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined);
   };
 
   getPrice(token: TokenOption): string {
@@ -210,36 +213,53 @@ class SwapStore {
     this.receiveAmount = value;
   }
 
-  getSmartContractBalance = () =>
-    CONFIG.TOKENS.map(({ assetId }) => {
-      const { balanceStore } = this.rootStore;
-      const bcNetwork = FuelNetwork.getInstance();
-
-      const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
-      const token = bcNetwork!.getTokenByAssetId(assetId);
-      const balanceList = balanceStore.myMarketBalanceList;
-
-      const contractBalance = balanceList
-        .map((el, key) => {
-          if (el[key].baseAssetId === assetId) {
-            return el[key].liquid.base;
-          } else if (el[key].quoteAssetId === assetId) {
-            return el[key].liquid.quote;
+  getSmartContractBalanceN = () => {
+    const { balanceStore } = this.rootStore;
+    return CONFIG.APP.markets
+      .flatMap((market) => {
+        const marketBalance = balanceStore.myMarketBalanceList[market.contractId];
+        return [
+          {
+            assetId: market?.baseAssetId ?? "",
+            balance: new BN(marketBalance?.locked?.base ?? 0),
+          },
+          {
+            assetId: market.quoteAssetId,
+            balance: new BN(marketBalance?.locked?.quote ?? 0),
+          },
+        ];
+      })
+      .reduce(
+        (acc, { assetId, balance }) => {
+          if (!acc[assetId]) {
+            acc[assetId] = new BN(0);
           }
-          return BN.ZERO;
-        })
-        .reduce((acc, val) => acc.plus(val), BN.ZERO);
-      const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
-      return {
+          acc[assetId] = acc[assetId].plus(balance);
+          return acc;
+        },
+        {} as Record<string, BN>,
+      );
+  };
+
+  getFormatedContractBalance = () => {
+    const data = this.getSmartContractBalanceN();
+    const formatedBalance = [];
+    const bcNetwork = FuelNetwork.getInstance();
+    const { balanceStore } = this.rootStore;
+    for (const assetId in data) {
+      const token = bcNetwork!.getTokenByAssetId(assetId);
+      const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
+      const totalBalance = data[assetId].plus(balance);
+      formatedBalance.push({
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-        contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
+        contractBalance: BN.formatUnits(data[assetId], token.decimals).toString(),
         balance: BN.formatUnits(totalBalance, token.decimals).toString(),
         assetId,
-      };
-    }).filter((el) => {
-      return el.contractBalance && new BN(el.contractBalance).gt(BN.ZERO);
-    });
+      });
+    }
+    return formatedBalance;
+  };
 }
 
 export default SwapStore;

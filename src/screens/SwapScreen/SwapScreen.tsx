@@ -47,7 +47,7 @@ export const SwapScreen: React.FC = observer(() => {
           ? tokens.find((el) => el.assetId === token.baseToken.assetId)
           : tokens.find((el) => el.assetId === token.quoteToken.assetId),
       )
-      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined); // Type guard
+      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined);
   }, [swapStore.sellToken]);
 
   const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
