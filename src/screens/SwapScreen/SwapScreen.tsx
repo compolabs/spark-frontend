@@ -73,7 +73,7 @@ export const SwapScreen: React.FC = observer(() => {
 
   const generateBalanceData = (assets: TokenOption[]) =>
     assets.map(({ assetId }) => {
-      const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
+      const balance = balanceStore.balances.get(assetId) ?? BN.ZERO;
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =
         token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;

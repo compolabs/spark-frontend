@@ -213,14 +213,14 @@ class SwapStore {
     this.receiveAmount = value;
   }
 
-  getSmartContractBalanceN = () => {
+  getSmartContractBalance = () => {
     const { balanceStore } = this.rootStore;
     return CONFIG.APP.markets
       .flatMap((market) => {
         const marketBalance = balanceStore.myMarketBalanceList[market.contractId];
         return [
           {
-            assetId: market?.baseAssetId ?? "",
+            assetId: market.baseAssetId,
             balance: new BN(marketBalance?.locked?.base ?? 0),
           },
           {
@@ -232,7 +232,7 @@ class SwapStore {
       .reduce(
         (acc, { assetId, balance }) => {
           if (!acc[assetId]) {
-            acc[assetId] = new BN(0);
+            acc[assetId] = BN.ZERO;
           }
           acc[assetId] = acc[assetId].plus(balance);
           return acc;
@@ -242,13 +242,13 @@ class SwapStore {
   };
 
   getFormatedContractBalance = () => {
-    const data = this.getSmartContractBalanceN();
+    const data = this.getSmartContractBalance();
     const formatedBalance = [];
     const bcNetwork = FuelNetwork.getInstance();
     const { balanceStore } = this.rootStore;
     for (const assetId in data) {
       const token = bcNetwork!.getTokenByAssetId(assetId);
-      const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
+      const balance = balanceStore.balances.get(assetId) ?? BN.ZERO;
       const totalBalance = data[assetId].plus(balance);
       formatedBalance.push({
         asset: token,

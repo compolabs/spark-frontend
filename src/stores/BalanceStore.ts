@@ -279,8 +279,8 @@ export class BalanceStore {
     }
   };
 
-  private setMyMarketBalance = (balance: UserMarketBalance) =>
-    (this.myMarketBalance = {
+  private setMyMarketBalance = (balance: UserMarketBalance) => {
+    this.myMarketBalance = {
       liquid: {
         base: new BN(balance.liquid.base),
         quote: new BN(balance.liquid.quote),
@@ -289,7 +289,8 @@ export class BalanceStore {
         base: new BN(balance.locked.base),
         quote: new BN(balance.locked.quote),
       },
-    });
+    };
+  };
 
   private setMyMarketBalanceList = (balanceList: UserMarketBalance[], markets: markets[]) => {
     let balanceListFromated = {};
@@ -309,6 +310,6 @@ export class BalanceStore {
       };
     });
 
-    return (this.myMarketBalanceList = balanceListFromated);
+    this.myMarketBalanceList = balanceListFromated;
   };
 }
