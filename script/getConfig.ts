@@ -4,8 +4,7 @@ export default function getConfig() {
   return {
     name: "download-config",
     async buildStart() {
-      const url =
-        "https://raw.githubusercontent.com/compolabs/spark-frontend-config/c9685fa04f75fe5bde63e85961c9f2b2337391e9/config-dev.json";
+      const url = "https://raw.githubusercontent.com/compolabs/spark-frontend-config/main/config-dev.json";
       const res = await fetch(url);
       const json = await res.json();
 
