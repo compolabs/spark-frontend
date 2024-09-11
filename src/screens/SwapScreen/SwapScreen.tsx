@@ -48,19 +48,8 @@ export const SwapScreen: React.FC = observer(() => {
           ? tokens.find((el) => el.assetId === token.baseToken.assetId)
           : tokens.find((el) => el.assetId === token.quoteToken.assetId),
       )
-      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined); // Type guard
+      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined);
   }, [swapStore.sellToken]);
-
-  const getTokenPair = (assetId: string) => {
-    return markets
-      .filter((token) => token.quoteToken.assetId === assetId || token.baseToken.assetId === assetId)
-      .map((token) =>
-        token.quoteToken.assetId === assetId
-          ? tokens.find((el) => el.assetId === token.baseToken.assetId)
-          : tokens.find((el) => el.assetId === token.quoteToken.assetId),
-      )
-      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined); // Type guard
-  };
 
   const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
   const sellTokenPrice = swapStore.getPrice(swapStore.sellToken);
@@ -85,11 +74,11 @@ export const SwapScreen: React.FC = observer(() => {
 
   const generateBalanceData = (assets: TokenOption[]) =>
     assets.map(({ assetId }) => {
-      const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
+      const balance = balanceStore.balances.get(assetId) ?? BN.ZERO;
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =
         token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
-      const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
+      const totalBalance = contractBalance.plus(balance);
       return {
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toString(),
@@ -169,9 +158,11 @@ export const SwapScreen: React.FC = observer(() => {
   const isLoaded = isConnected && balanceStore.initialized;
 
   const handleChangeMarketId = (tokenList: TokenOption[], i: number, type: "buy" | "sell") => {
-    const paris = getTokenPair(tokenList[i].assetId);
+    const paris = swapStore.getTokenPair(tokenList[i].assetId);
     swapStore.setSellToken(type === "sell" ? tokenList[i] : paris[0]);
     swapStore.setBuyToken(type === "sell" ? paris[0] : tokenList[i]);
+    swapStore.setPayAmount("0");
+    swapStore.setReceiveAmount("0");
     const marketId = getMarketPair(tokenList[i], paris[0]);
     if (!marketId) return;
     tradeStore.selectActiveMarket(marketId.symbol);
