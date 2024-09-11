@@ -152,17 +152,6 @@ export class FuelNetwork {
   };
 
   fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
-    // {
-    //   "limit": 50,
-    //     "asset": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-    //     "status": [
-    //   "Active"
-    // ],
-    //     "orderType": "Buy"
-    // }
-
-
-    console.log('params', params)
     const { data } = await this.orderbookSdk.fetchActiveOrders(params);
 
     const formatOrder = (order: Order) =>
@@ -192,7 +181,27 @@ export class FuelNetwork {
     return this.orderbookSdk.fetchMatcherFee();
   };
 
+  fetchSpotProtocolFee = async () => {
+    return this.orderbookSdk.fetchProtocolFee();
+  };
+
+  fetchSpotProtocolFeeForUser = async (...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeForUser>) => {
+    return this.orderbookSdk.fetchProtocolFeeForUser(...params);
+  };
+
+  fetchSpotProtocolFeeAmountForUser = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeAmountForUser>
+  ) => {
+    return this.orderbookSdk.fetchProtocolFeeAmountForUser(...params);
+  };
+
   fetchSpotUserMarketBalance = async (...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalance>) => {
     return this.orderbookSdk.fetchUserMarketBalance(...params);
+  };
+
+  fetchUserMarketBalanceByContracts = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalanceByContracts>
+  ) => {
+    return this.orderbookSdk.fetchUserMarketBalanceByContracts(...params);
   };
 }

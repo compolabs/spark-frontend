@@ -2,11 +2,11 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import BottomTables from "@screens/TradeScreen/BottomTables";
-import Chart from "@screens/TradeScreen/Chart";
-import MarketStatisticsBar from "@screens/TradeScreen/MarketStatisticsBar";
-import StatusBar from "@screens/TradeScreen/StatusBar/StatusBar";
 import { Column } from "@src/components/Flex";
+import BottomTables from "@src/screens/SpotScreen/BottomTables";
+import Chart from "@src/screens/SpotScreen/Chart";
+import MarketStatisticsBar from "@src/screens/SpotScreen/MarketStatisticsBar";
+import StatusBar from "@src/screens/SpotScreen/StatusBar/StatusBar";
 import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
 
@@ -14,7 +14,7 @@ import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/Orderbook
 import MarketSelection from "./RightBlock/MarketSelection";
 import RightBlock from "./RightBlock/RightBlock";
 
-const TradeScreenDesktop: React.FC = observer(() => {
+const SpotScreenDesktop: React.FC = observer(() => {
   const { tradeStore } = useStores();
 
   return (
@@ -34,7 +34,7 @@ const TradeScreenDesktop: React.FC = observer(() => {
   );
 });
 
-export default TradeScreenDesktop;
+export default SpotScreenDesktop;
 
 const Root = styled.div`
   display: flex;

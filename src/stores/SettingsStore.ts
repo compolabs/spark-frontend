@@ -1,7 +1,7 @@
 import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable } from "mobx";
 
-import { ORDER_TYPE } from "@src/screens/TradeScreen/RightBlock/CreateOrder/CreateOrderVM";
+import { ORDER_TYPE } from "@src/screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
 import RootStore from "@stores/RootStore";
 

@@ -70,8 +70,6 @@ class CreateOrderVM {
   inputLeverage = BN.ZERO;
   inputLeveragePercent = BN.ZERO;
 
-  matcherFee = BN.ZERO;
-
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
@@ -85,13 +83,13 @@ class CreateOrderVM {
         const price = token?.priceFeed ? oracleStore.getTokenIndexPrice(token?.priceFeed) : BN.ZERO;
 
         if (orderType === ORDER_TYPE.Market) {
-          this.setInputPriceDebounce(price);
+          this.setInputPriceThrottle(price);
         } else if (
           orderType === ORDER_TYPE.Limit &&
           this.inputPrice.isZero() &&
           this.activeInput !== ACTIVE_INPUT.Price
         ) {
-          this.setInputPriceDebounce(price);
+          this.setInputPriceThrottle(price);
         }
       },
     );
@@ -106,7 +104,13 @@ class CreateOrderVM {
       },
     );
 
-    this.fetchMarketFee();
+    reaction(
+      () => this.inputTotal,
+      (total) => {
+        const { swapStore } = this.rootStore;
+        swapStore.fetchExchangeFeeDebounce(total.toString());
+      },
+    );
   }
 
   get canProceed() {
@@ -244,7 +248,7 @@ class CreateOrderVM {
     this.inputPercent = percentageOfTotal.gt(100) ? new BN(100) : percentageOfTotal.toDecimalPlaces(0);
   }
 
-  setInputPriceDebounce = _.throttle(this.setInputPrice, PRICE_UPDATE_THROTTLE_INTERVAL);
+  setInputPriceThrottle = _.throttle(this.setInputPrice, PRICE_UPDATE_THROTTLE_INTERVAL);
 
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
@@ -274,7 +278,6 @@ class CreateOrderVM {
           amount: this.inputAmount.toString(),
           price: this.inputPrice.toString(),
           type,
-          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
         const data = await bcNetwork.createSpotOrder(order);
         hash = data.transactionId;
@@ -284,10 +287,7 @@ class CreateOrderVM {
           asset: tradeStore?.market?.baseToken.assetId ?? "",
           status: ["Active"],
         };
-        console.log('params', {
-          ...params,
-          orderType: typeMarket,
-        })
+
         const sellOrders = await bcNetwork!.fetchSpotOrders({
           ...params,
           orderType: typeMarket,
@@ -298,12 +298,12 @@ class CreateOrderVM {
           limitType: timeInForce,
           price:
             orderType === ORDER_TYPE.Market
-              ? sellOrders[sellOrders.length - 1].price.toString() : this.inputPrice.toString(),
+              ? sellOrders[sellOrders.length - 1].price.toString()
+              : this.inputPrice.toString(),
           orders: sellOrders.map((el) => el.id),
           slippage: "10000",
-          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
         };
-        console.log('order', order)
+
         const data = await bcNetwork.swapTokens(order);
         hash = data.transactionId;
       }
@@ -336,13 +336,5 @@ class CreateOrderVM {
     settingsStore.setOrderType(ORDER_TYPE.Limit);
     this.setOrderMode(mode);
     this.setInputPrice(order.price);
-  };
-
-  fetchMarketFee = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
-
-    const fee = await bcNetwork.fetchSpotMatcherFee();
-
-    this.matcherFee = new BN(fee);
   };
 }

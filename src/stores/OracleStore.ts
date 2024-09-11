@@ -74,7 +74,7 @@ class OracleStore {
 
     const price = new BN(feed.price);
 
-    // Нам нужно докидывать 1 decimal, потому что decimals,
+    // Нам нужно докидывать 1 decimal, потому что decimals разный в api и у нас
     return BN.parseUnits(price, 1);
   };
 
