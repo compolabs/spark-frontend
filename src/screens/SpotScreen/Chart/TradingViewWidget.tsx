@@ -28,9 +28,9 @@ const TradingViewWidget = observer(() => {
 
   const theme = useTheme();
   const { tradeStore } = useStores();
+  const { market } = tradeStore;
 
   const createWidget = () => {
-    const { market } = tradeStore;
     const tradingViewContainer = document.getElementById(TRADING_VIEW_ID);
     const isTradingViewAvailable = "TradingView" in window;
 
@@ -63,9 +63,11 @@ const TradingViewWidget = observer(() => {
     if (isScriptInjected.current) return;
 
     tvScriptLoadingPromise().then(createWidget);
-  }, []);
+  }, [market]);
 
   useEffect(() => {
+    setIsLoading(true);
+
     const intervalId = setInterval(() => {
       if (!widgetRef.current?._ready) return;
 
@@ -74,7 +76,7 @@ const TradingViewWidget = observer(() => {
     }, CHART_CHECK_INTERVAL);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [market]);
 
   return (
     <Root className="tradingview-widget-container">

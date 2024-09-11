@@ -31,6 +31,8 @@ export const EVENTS = {
 
 export const DEFAULT_MARKET = "BTC-USDC";
 
+export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
+
 const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 
 const METADATA = {

@@ -209,4 +209,10 @@ export class FuelNetwork {
   fetchSpotUserMarketBalance = async (...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalance>) => {
     return this.orderbookSdk.fetchUserMarketBalance(...params);
   };
+
+  fetchUserMarketBalanceByContracts = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalanceByContracts>
+  ) => {
+    return this.orderbookSdk.fetchUserMarketBalanceByContracts(...params);
+  };
 }
