@@ -77,7 +77,7 @@ export const SwapScreen: React.FC = observer(() => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =
         token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
-      const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
+      const totalBalance = contractBalance.plus(balance);
       return {
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toString(),
