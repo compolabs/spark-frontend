@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 import AccordionItem from "@components/AccordionItem";
 import { Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
+import { RadioButton } from "@components/RadioButton.tsx";
 import Select from "@components/Select";
 import Slider from "@components/Slider";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -29,7 +30,6 @@ import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
-import { RadioButton } from "@components/RadioButton.tsx";
 
 const ORDER_OPTIONS = [
   { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
