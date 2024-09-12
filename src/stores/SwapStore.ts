@@ -157,10 +157,20 @@ class SwapStore {
       this.sellToken.decimals,
     ).toSignificant(2);
 
+    const volumeFormatted = BN.formatUnits(
+      isBuy ? formattedAmount : formattedVolume,
+      this.sellToken.decimals,
+    ).toSignificant(2);
+
     try {
       const tx = await bcNetwork.swapTokens(order);
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.SWAP_TOKENS)(amountFormatted, this.sellToken.symbol),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_SWAP)(
+          amountFormatted,
+          this.sellToken.symbol,
+          volumeFormatted,
+          this.buyToken.symbol,
+        ),
         hash: tx.transactionId,
       });
       return true;
@@ -168,7 +178,12 @@ class SwapStore {
       handleWalletErrors(
         notificationStore,
         error,
-        getActionMessage(ACTION_MESSAGE_TYPE.SWAP_TOKENS_FAILED)(amountFormatted, this.sellToken.symbol),
+        getActionMessage(ACTION_MESSAGE_TYPE.CREATING_SWAP_FAILED)(
+          amountFormatted,
+          this.sellToken.symbol,
+          volumeFormatted,
+          this.buyToken.symbol,
+        ),
       );
       return false;
     }

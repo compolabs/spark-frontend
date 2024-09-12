@@ -11,7 +11,6 @@ import { media } from "@src/themes/breakpoints";
 import { SlippageSettings } from "./SlippageSettings";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { DEFAULT_DECIMALS } from "@src/constants";
 import { SmartFlex } from "@components/SmartFlex";
 
 interface InfoBlockProps {
@@ -24,12 +23,10 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
   const [showDetails, setShowDetails] = useState(false);
   const [isSlippageSettingOpen, setSlippageSettingOpen] = useState(false);
   const { swapStore, oracleStore, tradeStore } = useStores();
-  const exchangeRate = BN.formatUnits(
-    oracleStore
-      .getTokenIndexPrice(swapStore.sellToken.priceFeed)
-      .dividedBy(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed)),
-    DEFAULT_DECIMALS,
-  ).toNumber();
+  const exchangeRate = oracleStore
+    .getTokenIndexPrice(swapStore.sellToken.priceFeed)
+    .dividedBy(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed))
+    .toNumber();
 
   const exchangeFee = swapStore?.exchangeFee ?? 0;
   const matcherFee = tradeStore.matcherFee;
