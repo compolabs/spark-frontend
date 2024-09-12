@@ -1,6 +1,7 @@
 import React, { PropsWithChildren, useMemo } from "react";
 import {
-  CreateOrderParams,
+  AssetType,
+  CreateOrderWithDepositParams,
   FulfillOrderManyParams,
   GetOrdersParams,
   LimitType,
@@ -12,11 +13,12 @@ import { Undefinable } from "tsdef";
 
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
-import { SpotMarketOrder } from "@src/entity";
+import { SpotMarket, SpotMarketOrder } from "@src/entity";
 import useVM from "@src/hooks/useVM";
 import { RootStore, useStores } from "@src/stores";
 import BN from "@src/utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
+import { CONFIG } from "@src/utils/getConfig";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import Math from "@src/utils/Math";
 
@@ -267,70 +269,41 @@ class CreateOrderVM {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore, accountStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore } = this.rootStore;
+
     const { market } = tradeStore;
-    const { orderType } = settingsStore;
+    const { orderType, timeInForce } = settingsStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (!market) return;
-
     this.isLoading = true;
 
+    const isBuy = this.mode === ORDER_MODE.BUY;
+    const type = isBuy ? OrderType.Buy : OrderType.Sell;
+    const typeMarket = isBuy ? OrderType.Sell : OrderType.Buy;
+
     if (bcNetwork.getIsExternalWallet()) {
-      notificationStore.info({
-        text: "Please, confirm operation in your wallet",
-      });
+      notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
     try {
       let hash: Undefinable<string> = "";
-      const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
-      const typeMarket = this.mode === ORDER_MODE.BUY ? OrderType.Sell : OrderType.Buy;
-      const timeInForce = settingsStore.timeInForce;
+
       if (timeInForce === LimitType.GTC) {
-        const order: CreateOrderParams = {
-          amount: this.inputAmount.toString(),
-          price: this.inputPrice.toString(),
-          type,
-        };
-        const data = await bcNetwork.createSpotOrder(order);
-        hash = data.transactionId;
+        hash = await this.createGTCOrder(type, isBuy, market);
       } else {
-        const params: GetOrdersParams = {
-          limit: 50,
-          asset: tradeStore?.market?.baseToken.assetId ?? "",
-          status: ["Active"],
-        };
-
-        const sellOrders = await bcNetwork!.fetchSpotOrders({
-          ...params,
-          orderType: typeMarket,
-        });
-        const order: FulfillOrderManyParams = {
-          amount: this.inputAmount.toString(),
-          orderType: type,
-          limitType: timeInForce,
-          price:
-            orderType === ORDER_TYPE.Market
-              ? sellOrders[sellOrders.length - 1].price.toString()
-              : this.inputPrice.toString(),
-          orders: sellOrders.map((el) => el.id),
-          slippage: "10000",
-        };
-
-        const data = await bcNetwork.swapTokens(order);
-        hash = data.transactionId;
+        hash = await this.createMarketOrLimitOrder(type, typeMarket, orderType, market);
       }
 
-      const token = this.mode === ORDER_MODE.BUY ? market.baseToken : market.quoteToken;
-      const amount = this.mode === ORDER_MODE.BUY ? this.inputAmount : this.inputTotal;
+      const token = isBuy ? market.baseToken : market.quoteToken;
+      const amount = isBuy ? this.inputAmount : this.inputTotal;
 
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           BN.formatUnits(amount, token.decimals).toSignificant(2),
           token.symbol,
           BN.formatUnits(this.inputPrice, DEFAULT_DECIMALS).toSignificant(2),
-          this.mode === ORDER_MODE.BUY ? "buy" : "sell",
+          isBuy ? "buy" : "sell",
         ),
         hash,
       });
@@ -340,8 +313,76 @@ class CreateOrderVM {
     }
 
     await balanceStore.update();
-
     this.isLoading = false;
+  };
+
+  // Extracted function for creating GTC orders with deposits
+  private createGTCOrder = async (type: OrderType, isBuy: boolean, market: SpotMarket): Promise<string> => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
+    const depositAmountWithFee = BN.parseUnits(this.exchangeFee, market.quoteToken.decimals).plus(
+      BN.parseUnits(this.rootStore.tradeStore.matcherFee, market.quoteToken.decimals),
+    );
+
+    const deposit = {
+      amountToSpend: depositAmount.toString(),
+      amountFee: depositAmountWithFee.toString(),
+      depositAssetId: isBuy ? market.quoteToken.assetId : market.baseToken.assetId,
+      feeAssetId: market.quoteToken.assetId,
+      assetType: isBuy ? AssetType.Quote : AssetType.Base,
+    };
+
+    const marketContracts = CONFIG.APP.markets
+      .filter(
+        (m) =>
+          m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
+          m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
+      )
+      .map((m) => m.contractId);
+
+    const order: CreateOrderWithDepositParams = {
+      type,
+      amount: this.inputAmount.toString(),
+      price: this.inputPrice.toString(),
+      ...deposit,
+    };
+
+    const data = await bcNetwork.createSpotOrderWithDeposit(order, marketContracts);
+    return data.transactionId;
+  };
+
+  private createMarketOrLimitOrder = async (
+    type: OrderType,
+    typeMarket: OrderType,
+    orderType: ORDER_TYPE,
+    market: SpotMarket,
+  ): Promise<string> => {
+    const { settingsStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const params: GetOrdersParams = {
+      limit: 50,
+      asset: market.baseToken.assetId ?? "",
+      status: ["Active"],
+    };
+
+    const sellOrders = await bcNetwork.fetchSpotOrders({ ...params, orderType: typeMarket });
+
+    const order: FulfillOrderManyParams = {
+      amount: this.inputAmount.toString(),
+      orderType: type,
+      limitType: settingsStore.timeInForce,
+      price:
+        orderType === ORDER_TYPE.Market
+          ? sellOrders[sellOrders.length - 1].price.toString()
+          : this.inputPrice.toString(),
+      orders: sellOrders.map((el) => el.id),
+      slippage: "10000",
+    };
+
+    const data = await bcNetwork.swapTokens(order);
+    return data.transactionId;
   };
 
   selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {

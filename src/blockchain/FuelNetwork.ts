@@ -101,6 +101,12 @@ export class FuelNetwork {
     return this.orderbookSdk.createOrder(...params);
   };
 
+  createSpotOrderWithDeposit = async (
+    ...params: Parameters<typeof this.orderbookSdk.createOrderWithDeposit>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.createOrderWithDeposit(...params);
+  };
+
   swapTokens = async (
     ...params: Parameters<typeof this.orderbookSdk.fulfillOrderMany>
   ): Promise<WriteTransactionResponse> => {
