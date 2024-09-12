@@ -19,6 +19,7 @@ import BN from "@src/utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import Math from "@src/utils/Math";
+import swapStore from "@stores/SwapStore.ts";
 
 const ctx = React.createContext<CreateOrderVM | null>(null);
 
@@ -131,11 +132,13 @@ class CreateOrderVM {
   }
 
   get isSpotInputError(): boolean {
-    const { tradeStore, balanceStore } = this.rootStore;
+    const { tradeStore, swapStore } = this.rootStore;
     const { market } = tradeStore;
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const balance = balanceStore.getContractBalanceInfo(token).amount;
+    const activeToken = swapStore.getFormatedContractBalance().find((el) => el.assetId === token);
+    if (!activeToken) return false;
+    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
     return balance ? amount.gt(balance) : false;
   }
 

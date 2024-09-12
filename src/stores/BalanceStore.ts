@@ -148,7 +148,7 @@ export class BalanceStore {
 
   getFormatContractBalanceInfo = (assetId: string) => {
     const { swapStore } = this.rootStore;
-    const balances = swapStore.getFormatedContractBalance();
+    const balances = swapStore?.getFormatedContractBalance();
     return balances ? (balances.find((el) => el.assetId === assetId)?.balance ?? "0") : "0";
   };
 
