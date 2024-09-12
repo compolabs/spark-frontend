@@ -25,23 +25,12 @@ interface DepositAssets {
   setStep: (value: number) => void;
 }
 
-interface ShowAction {
-  hash: string;
-  transactionInfo: {
-    token: IAssetBlock["token"];
-    type: TypeTranaction;
-    amount: string;
-  };
-  typeModal: ModalEnums;
-}
 const DepositAssets = observer(({ setStep }: DepositAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsloading] = useState(false);
   const { quickAssetsStore, balanceStore, oracleStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
-  const [showAction, setShowAction] = useState<ShowAction | null>();
-  const theme = useTheme();
   const navigate = useNavigate();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
@@ -66,9 +55,8 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
     }
   };
 
-  const ETH = bcNetwork.getTokenBySymbol("ETH");
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([assetId, balance]) => balance && balance.gt(BN.ZERO) && assetId !== ETH.assetId)
+    .filter(([assetId, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =

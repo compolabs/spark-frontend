@@ -10,6 +10,7 @@ import { getExplorerLinkByAddress, getExplorerLinkByHash } from "@src/utils/getE
 
 import { SmartFlex } from "./SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "./Text";
+import { media } from "@src/themes/breakpoints";
 
 export interface NotificationProps {
   text: React.ReactNode;
@@ -60,8 +61,12 @@ export const createToast = (props: Props) => {
 
 const ToastContainer = styled(SmartFlex)`
   padding: 14px 16px;
-
   gap: 12px;
+  ${media.mobile} {
+    width: 100vw;
+    height: 54px;
+    align-items: center;
+  }
 `;
 
 const Content = styled(SmartFlex)`

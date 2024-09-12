@@ -14,10 +14,34 @@ import RootStore from "./RootStore";
 
 const UPDATE_INTERVAL = 5 * 1000;
 
+interface markets {
+  marketName: string;
+  owner: string;
+  baseAssetId: string;
+  baseAssetDecimals: number;
+  quoteAssetId: string;
+  quoteAssetDecimals: number;
+  priceDecimals: number;
+  version: number;
+  contractId: string;
+}
+
+interface ContractBalance {
+  locked: {
+    base: BN;
+    quote: BN;
+  };
+  liquid: {
+    base: BN;
+    quote: BN;
+  };
+}
+
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
   public initialized = false;
 
+  private swapStore;
   private balancesUpdater: IntervalUpdater;
 
   myMarketBalance = {
@@ -31,6 +55,8 @@ export class BalanceStore {
     },
   };
 
+  myMarketBalanceList: Record<string, ContractBalance> = {};
+
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
@@ -38,8 +64,8 @@ export class BalanceStore {
 
     this.balancesUpdater.run();
 
-    const { accountStore } = rootStore;
-
+    const { accountStore, swapStore } = rootStore;
+    this.swapStore = swapStore;
     reaction(
       () => [accountStore.isConnected, accountStore.address],
       ([isConnected]) => {
@@ -80,7 +106,8 @@ export class BalanceStore {
     if (!accountStore.address || !wallet) return;
 
     const [balances] = await Promise.all([this.fetchBalances(), this.fetchUserMarketBalance()]);
-
+    await this.fetchUserMarketBalanceByContracts();
+    // console.log('balancesContracts', balancesContracts)
     try {
       for (const [tokenAddress, balance] of Object.entries(balances)) {
         const isTokenExist = !!bcNetwork.getTokenByAssetId(tokenAddress);
@@ -121,8 +148,9 @@ export class BalanceStore {
     return { amount, type };
   };
 
-  getFormatContractBalanceInfo = (assetId: string, decimals: number) => {
-    return BN.formatUnits(this.getContractBalanceInfo(assetId).amount, decimals).toSignificant(2) ?? "-";
+  getFormatContractBalanceInfo = (assetId: string) => {
+    const balances = this.swapStore?.getFormatedContractBalance();
+    return balances ? (balances.find((el) => el.assetId === assetId)?.balance ?? "0") : "0";
   };
 
   depositBalance = async (assetId: string, amount: string) => {
@@ -236,8 +264,25 @@ export class BalanceStore {
     }
   };
 
-  private setMyMarketBalance = (balance: UserMarketBalance) =>
-    (this.myMarketBalance = {
+  private fetchUserMarketBalanceByContracts = async () => {
+    const { accountStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    if (!accountStore.address) return;
+
+    try {
+      const markets = CONFIG.APP.markets;
+      const listMarket = markets.map((market) => market.contractId);
+      const address = Address.fromB256(accountStore.address);
+      const balanceData = await bcNetwork.fetchUserMarketBalanceByContracts(address.bech32Address, listMarket);
+      this.setMyMarketBalanceList(balanceData, markets);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  private setMyMarketBalance = (balance: UserMarketBalance) => {
+    this.myMarketBalance = {
       liquid: {
         base: new BN(balance.liquid.base),
         quote: new BN(balance.liquid.quote),
@@ -246,5 +291,27 @@ export class BalanceStore {
         base: new BN(balance.locked.base),
         quote: new BN(balance.locked.quote),
       },
+    };
+  };
+
+  private setMyMarketBalanceList = (balanceList: UserMarketBalance[], markets: markets[]) => {
+    let balanceListFromated = {};
+    balanceList.forEach((item, key) => {
+      balanceListFromated = {
+        ...balanceListFromated,
+        [markets[key].contractId]: {
+          liquid: {
+            base: new BN(item.liquid.base),
+            quote: new BN(item.liquid.quote),
+          },
+          locked: {
+            base: new BN(item.locked.base),
+            quote: new BN(item.locked.quote),
+          },
+        },
+      };
     });
+
+    this.myMarketBalanceList = balanceListFromated;
+  };
 }

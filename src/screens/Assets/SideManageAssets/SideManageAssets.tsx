@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 
 import ModalSheet from "@components/ModalSheet";
 import SideBar from "@components/SideBar";
-import DepositAssets from "@screens/Assets/DepositAssets/DepositAssets";
 import MainAssets from "@screens/Assets/MainAssets/MainAssets";
 import WithdrawAssets from "@screens/Assets/WithdrawAssets/WithdrawAssets";
 import { useMedia } from "@src/hooks/useMedia";
@@ -46,10 +45,9 @@ const SideManageAssets = observer(() => {
     }, 100);
   };
   const MainAssetsComponent = () => <MainAssets setStep={setStep} />;
-  const DepositAssetsComponent = () => <DepositAssets setStep={setStep} />;
   const WithdrawAssetsComponent = () => <WithdrawAssets setStep={setStep} />;
 
-  const steps = [MainAssetsComponent, DepositAssetsComponent, WithdrawAssetsComponent];
+  const steps = [MainAssetsComponent, WithdrawAssetsComponent];
   const CurrentComponent = steps[quickAssetsStore.currentStep];
 
   const handleClose = () => {

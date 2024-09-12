@@ -107,7 +107,8 @@ class CreateOrderVM {
     reaction(
       () => this.inputTotal,
       (total) => {
-        this.fetchExchangeFeeDebounce(total.toString());
+        const { swapStore } = this.rootStore;
+        swapStore.fetchExchangeFeeDebounce(total.toString());
       },
     );
   }
@@ -187,8 +188,9 @@ class CreateOrderVM {
   };
 
   setInputPrice = (price: BN) => {
+    const { settingsStore } = this.rootStore;
     this.inputPrice = price;
-    this.setActiveInput(ACTIVE_INPUT.Price);
+    if (settingsStore.orderType !== ORDER_TYPE.Market) this.setActiveInput(ACTIVE_INPUT.Price);
     this.calculateInputs();
   };
 
@@ -299,11 +301,11 @@ class CreateOrderVM {
           asset: tradeStore?.market?.baseToken.assetId ?? "",
           status: ["Active"],
         };
+
         const sellOrders = await bcNetwork!.fetchSpotOrders({
           ...params,
           orderType: typeMarket,
         });
-
         const order: FulfillOrderManyParams = {
           amount: this.inputAmount.toString(),
           orderType: type,
@@ -315,6 +317,7 @@ class CreateOrderVM {
           orders: sellOrders.map((el) => el.id),
           slippage: "10000",
         };
+
         const data = await bcNetwork.swapTokens(order);
         hash = data.transactionId;
       }

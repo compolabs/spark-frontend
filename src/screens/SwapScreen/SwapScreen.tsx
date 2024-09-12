@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { ModalEnums } from "@screens/SwapScreen/enums/modalEnums";
 import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
+import Spinner from "@src/assets/icons/spinner.svg?react";
 import { FuelNetwork } from "@src/blockchain";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@src/constants";
@@ -14,39 +14,51 @@ import { useStores } from "@src/stores";
 import { media } from "@src/themes/breakpoints";
 import BN from "@src/utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
-
-import { ActionModal } from "./ActionModal";
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
-import { PendingModal } from "./PendingModal";
 import { TokenSelect } from "./TokenSelect";
+import Button from "@components/Button";
+import useFlag from "@src/hooks/useFlag";
+import ConnectWalletDialog from "@screens/ConnectWallet";
+import { SmartFlex } from "@components/SmartFlex";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
+import { Token } from "@src/entity";
 
-const INPUT_FILL_OPTIONS = ["Half", "Max"];
 const INITIAL_SLIPPAGE = 1;
 
 export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
-  const { swapStore, oracleStore, balanceStore } = useStores();
+  const { swapStore, balanceStore, quickAssetsStore, tradeStore } = useStores();
+  const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
-  const [typeModal, setTypeModal] = useState<ModalEnums>(ModalEnums.Success);
-  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
-  const [isPendingModalVisible, setPendingModalVisible] = useState(false); //TODO: set to true when transaction is pending
-  const [transactionId, setTransactionId] = useState<string>("");
-  const sellTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.buyToken.symbol);
-  const buyTokenOptions = swapStore.tokens.filter((token) => token.symbol !== swapStore.sellToken.symbol);
+  const [isLoading, setIsloading] = useState(false);
+  const [onPress, setOnPress] = useState(false);
+  const tokens = swapStore.fetchNewTokens();
+  const markets = tradeStore.spotMarkets;
+  const buyTokenOptions = useMemo(() => {
+    return markets
+      .filter(
+        (token) =>
+          token.quoteToken.assetId === swapStore.sellToken.assetId ||
+          token.baseToken.assetId === swapStore.sellToken.assetId,
+      )
+      .map((token) =>
+        token.quoteToken.assetId === swapStore.sellToken.assetId
+          ? tokens.find((el) => el.assetId === token.baseToken.assetId)
+          : tokens.find((el) => el.assetId === token.quoteToken.assetId),
+      )
+      .filter((tokenOption): tokenOption is Token => tokenOption !== undefined);
+  }, [swapStore.sellToken]);
 
   const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
   const sellTokenPrice = swapStore.getPrice(swapStore.sellToken);
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
-  const nativeBalanceContract = balanceStore.getFormatContractBalanceInfo(
-    bcNetwork.getTokenBySymbol("ETH").assetId,
-    DEFAULT_DECIMALS,
-  );
+  const nativeBalanceContract = balanceStore.getFormatContractBalanceInfo(bcNetwork.getTokenBySymbol("ETH").assetId);
   const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(nativeBalanceContract);
 
   const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
@@ -58,11 +70,22 @@ export const SwapScreen: React.FC = observer(() => {
 
     return () => clearInterval(updateToken);
   }, []);
-  const exchangeRate =
-    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.sellToken.priceFeed), DEFAULT_DECIMALS).toNumber() /
-    BN.formatUnits(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed), DEFAULT_DECIMALS).toNumber();
+
+  const generateBalanceData = (assets: Token[]) => {
+    const d = swapStore.getFormatedContractBalance();
+    return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
+  };
+
+  const getMarketPair = (baseAsset: Token, queryAsset: Token) => {
+    return markets.find(
+      (el) =>
+        (el.baseToken.assetId === baseAsset.assetId && el.quoteToken.assetId === queryAsset.assetId) ||
+        (el.baseToken.assetId === queryAsset.assetId && el.quoteToken.assetId === baseAsset.assetId),
+    );
+  };
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOnPress(false);
     const newPayAmount = replaceComma(e.target.value);
 
     if (!isValidAmountInput(newPayAmount)) {
@@ -73,11 +96,11 @@ export const SwapScreen: React.FC = observer(() => {
 
     const receiveAmount =
       Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
-
-    swapStore.setReceiveAmount(receiveAmount.toFixed(4));
+    swapStore.setReceiveAmount(receiveAmount.toFixed(swapStore.buyToken.precision));
   };
 
   const onReceivedTokensChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOnPress(false);
     const newReceiveAmount = replaceComma(e.target.value);
 
     if (!isValidAmountInput(newReceiveAmount)) {
@@ -88,17 +111,13 @@ export const SwapScreen: React.FC = observer(() => {
 
     const payAmount =
       Number(newReceiveAmount) * (parseNumberWithCommas(buyTokenPrice) / parseNumberWithCommas(sellTokenPrice));
-    swapStore.setPayAmount(payAmount.toFixed(4));
+    swapStore.setPayAmount(payAmount.toFixed(swapStore.sellToken.precision));
   };
 
-  const fillPayAmount = (option: string) => {
-    let newPayAmount = "";
-    if (option === "Half") {
-      const half = (parseNumberWithCommas(swapStore.sellToken.balance) / 2).toFixed(swapStore.sellToken.precision);
-      newPayAmount = half.toString();
-    } else if (option === "Max") {
-      newPayAmount = parseNumberWithCommas(swapStore.sellToken.balance).toFixed(swapStore.sellToken.precision);
-    }
+  const fillPayAmount = () => {
+    setOnPress(true);
+    const balance = generateBalanceData([swapStore.sellToken])[0].balance;
+    const newPayAmount = parseNumberWithCommas(balance.toString()).toFixed(swapStore.sellToken.precision);
 
     swapStore.setPayAmount(newPayAmount);
 
@@ -109,55 +128,66 @@ export const SwapScreen: React.FC = observer(() => {
   };
 
   const swapTokens = async () => {
-    setPendingModalVisible(true);
+    if (isLoading) return;
     const slippagePercentage = Number(slippage) * 100;
+    setIsloading(true);
     try {
-      const data = await swapStore.swapTokens({ slippage: slippagePercentage });
-      setTransactionId(data?.transactionId);
-      setTypeModal(ModalEnums.Success);
+      const response = await swapStore.swapTokens({ slippage: slippagePercentage });
+      setIsloading(false);
+      if (response) {
+        swapStore.setPayAmount("0");
+        swapStore.setReceiveAmount("0");
+      }
     } catch (err) {
       console.error("er", err);
-      setTypeModal(ModalEnums.Error);
-    } finally {
-      setPendingModalVisible(false);
-      setSuccessModalVisible(true);
     }
   };
 
-  const handleMaxAmount = () => {
-    fillPayAmount(INPUT_FILL_OPTIONS[1]);
+  const balance = generateBalanceData([swapStore.sellToken])[0].balance;
+  const isBalanceZero = Number(balance) === 0;
+  const isLoaded = isConnected && balanceStore.initialized;
+
+  const handleChangeMarketId = (tokenList: Token[], item: AssetBlockData, type: "buy" | "sell") => {
+    const pair = tokenList.find((el) => el.assetId === item.assetId);
+    if (!pair) return;
+    const paris = swapStore.getTokenPair(pair.assetId);
+    swapStore.setSellToken(type === "sell" ? pair : paris[0]);
+    swapStore.setBuyToken(type === "sell" ? paris[0] : pair);
+    swapStore.setPayAmount("0");
+    swapStore.setReceiveAmount("0");
+    const marketId = getMarketPair(pair, paris[0]);
+    if (!marketId) return;
+    tradeStore.selectActiveMarket(marketId.symbol);
+    balanceStore.update();
   };
 
-  const isBalanceZero = Number(swapStore.sellToken.balance) === 0;
-  const isLoaded = isConnected && balanceStore.initialized;
   return (
     <Root>
-      <TitleContainer>
+      <Text>
         <Title>Swap</Title>
         <Text type={TEXT_TYPES.BUTTON}>Easiest way to trade assets on Fuel</Text>
-      </TitleContainer>
+      </Text>
       <SwapContainer>
         <SwapBox>
           <BoxHeader>
             <ActionContainer>
-              <Text type={TEXT_TYPES.BUTTON}>Sell</Text>
+              <Text type={TEXT_TYPES.TEXT_NEW}>Sell</Text>
               {isLoaded && !isBalanceZero && (
-                <Actions>
-                  {INPUT_FILL_OPTIONS.map((option) => (
-                    <ActionTag key={option} onClick={() => fillPayAmount(option)}>
-                      <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
-                        {option}
-                      </Text>
-                    </ActionTag>
-                  ))}
-                </Actions>
+                <ActionTag onClick={fillPayAmount} onPress={onPress}>
+                  <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+                    Max
+                  </Text>
+                </ActionTag>
               )}
             </ActionContainer>
             <TokenSelect
-              options={sellTokenOptions}
-              selectType="Sell"
-              value={swapStore.sellToken}
-              onSelect={(option) => swapStore.setSellToken(option)}
+              assets={generateBalanceData(tokens)}
+              selectedOption={generateBalanceData([swapStore.sellToken])[0]}
+              showBalance="contractBalance"
+              type="rounded"
+              onSelect={(item) => {
+                handleChangeMarketId(tokens, item, "sell");
+              }}
             />
           </BoxHeader>
           <SwapInput
@@ -167,29 +197,31 @@ export const SwapScreen: React.FC = observer(() => {
             value={swapStore.payAmount}
             onChange={onPayAmountChange}
           />
-          <BalanceSection
-            balance={swapStore.sellToken.balance}
-            balanceUSD={payAmountUSD}
-            handleMaxAmount={handleMaxAmount}
-            isLoaded={isLoaded}
-          />
+          {isLoaded && !isBalanceZero && (
+            <BalanceSection
+              balance={generateBalanceData([swapStore.sellToken])[0].balance}
+              balanceUSD={payAmountUSD}
+              handleMaxAmount={fillPayAmount}
+              isLoaded={isLoaded}
+            />
+          )}
         </SwapBox>
 
-        <SwitchTokens
-          disabled={!isConnected || !balanceStore.initialized || isBalanceZero}
-          onClick={swapStore.onSwitchTokens}
-        >
+        <SwitchTokens disabled={false} isLoaded={isLoaded && !isBalanceZero} onClick={swapStore.onSwitchTokens}>
           <ArrowDownIcon />
         </SwitchTokens>
 
         <SwapBox>
           <BoxHeader>
-            <Text type={TEXT_TYPES.BUTTON}>Buy</Text>
+            <Text type={TEXT_TYPES.TEXT_NEW}>Buy</Text>
             <TokenSelect
-              options={buyTokenOptions}
-              selectType="Buy"
-              value={swapStore.buyToken}
-              onSelect={(option) => swapStore.setBuyToken(option)}
+              assets={generateBalanceData(buyTokenOptions)}
+              selectedOption={generateBalanceData([swapStore.buyToken])[0]}
+              showBalance="contractBalance"
+              type="rounded"
+              onSelect={(item) => {
+                handleChangeMarketId(buyTokenOptions, item, "buy");
+              }}
             />
           </BoxHeader>
           <SwapInput
@@ -199,64 +231,50 @@ export const SwapScreen: React.FC = observer(() => {
             value={swapStore.receiveAmount}
             onChange={onReceivedTokensChange}
           />
-          <BalanceSection
-            balance={swapStore.buyToken.balance}
-            balanceUSD={receiveAmountUSD}
-            handleMaxAmount={handleMaxAmount}
-            isLoaded={isLoaded}
-          />
-          <ExchangeRate>
-            1 {swapStore.sellToken.symbol} = {exchangeRate.toFixed(6)} {swapStore.buyToken.symbol} (${sellTokenPrice})
-          </ExchangeRate>
+          {isLoaded && !isBalanceZero && (
+            <BalanceSection
+              balance={generateBalanceData([swapStore.buyToken])[0]?.balance ?? "0"}
+              balanceUSD={receiveAmountUSD}
+              handleMaxAmount={fillPayAmount}
+              isLoaded={isLoaded}
+            />
+          )}
         </SwapBox>
       </SwapContainer>
-      <InfoBlock slippage={slippage} updateSlippage={setSlippage} />
-
-      <SwapButton
-        data-onboarding={dataOnboardingSwapKey}
-        disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
-        onClick={swapTokens}
-      >
-        <Text type={TEXT_TYPES.TITLE}>
-          Swap {swapStore.sellToken.symbol} to {swapStore.buyToken.symbol}{" "}
-        </Text>
-      </SwapButton>
-
-      {isHaveExchangeFee && (
+      <SmartFlexStyled>
+        {isLoaded ? (
+          <>
+            <SwapButton
+              data-onboarding={dataOnboardingSwapKey}
+              disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
+              onClick={swapTokens}
+            >
+              <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>
+                {isLoading ? (
+                  <Spinner height={14} />
+                ) : (
+                  `Swap ${swapStore.sellToken.symbol} to ${swapStore.buyToken.symbol}`
+                )}
+              </Text>
+            </SwapButton>
+          </>
+        ) : (
+          <ButtonBordered green onClick={openConnectDialog}>
+            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_BIG_NEW}>
+              Connect wallet to start trading
+            </Text>
+          </ButtonBordered>
+        )}
+      </SmartFlexStyled>
+      {isLoaded && !isBalanceZero && <InfoBlock slippage={slippage} updateSlippage={setSlippage} />}
+      {isLoaded && !isBalanceZero && isHaveExchangeFee && (
         <Text type={TEXT_TYPES.BUTTON} attention>
           Not enough ETH to pay an exchange fee
         </Text>
       )}
-
-      {isSuccessModalVisible && (
-        <ActionModal
-          hash={transactionId}
-          transactionInfo={{
-            sellToken: swapStore.sellToken.symbol,
-            buyToken: swapStore.buyToken.symbol,
-            sellAmount: swapStore.payAmount,
-            buyAmount: swapStore.receiveAmount,
-          }}
-          typeModal={typeModal}
-          onClose={() => {
-            swapStore.setPayAmount("0");
-            swapStore.setReceiveAmount("0");
-            setSuccessModalVisible(false);
-          }}
-        />
-      )}
-
-      {isPendingModalVisible && (
-        <PendingModal
-          transactionInfo={{
-            sellToken: swapStore.sellToken.symbol,
-            buyToken: swapStore.buyToken.symbol,
-            sellAmount: swapStore.payAmount,
-            buyAmount: swapStore.receiveAmount,
-          }}
-          onClose={() => setPendingModalVisible(false)}
-        />
-      )}
+      {isConnectDialogVisible ? (
+        <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
+      ) : null}
     </Root>
   );
 });
@@ -275,26 +293,35 @@ const Root = styled.div`
   ${media.mobile} {
     width: 100%;
     padding: 0 8px;
+    margin-top: 42px;
   }
 `;
 
-const TitleContainer = styled.div`
-  margin-bottom: 16px;
-  margin-top: 48px;
+const SmartFlexStyled = styled(SmartFlex)`
+  width: 100%;
+  ${media.mobile} {
+    position: fixed;
+    bottom: 40px;
+    width: calc(100% - 16px);
+  }
 `;
-
 const textAnimation = keyframes`
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 `;
 
+const ButtonBordered = styled(Button)`
+  border-radius: 10px;
+  padding: 12px 16px !important;
+  height: 56px !important;
+`;
 const Title = styled.h1`
   width: 70px;
   font-size: 28px !important;
@@ -317,12 +344,12 @@ const SwapContainer = styled.div`
 `;
 
 const SwapBox = styled.div`
-  border-radius: 8px 8px 16px 16px;
+  border-radius: 4px 4px 10px 10px;
   background-color: #232323;
   padding: 16px 20px;
   &:first-of-type {
     margin-bottom: 4px;
-    border-radius: 16px 16px 8px 8px;
+    border-radius: 10px 10px 4px 4px;
   }
 `;
 
@@ -330,8 +357,9 @@ const BoxHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 32px;
   margin-right: -12px;
+  height: 25px;
 `;
 
 const ActionContainer = styled.div`
@@ -341,27 +369,22 @@ const ActionContainer = styled.div`
   width: 100%;
 `;
 
-const ActionTag = styled.button`
-  background-color: #00e38826;
-  padding: 5px 6px;
-  border-radius: 4px;
-  outline: none;
+const ActionTag = styled(Button)<{ onPress: boolean }>`
+  padding: 5px !important;
+  height: auto !important;
+  width: auto !important;
+  background: ${({ onPress }) => (onPress ? "#535353" : "#53535326")};
   border: none;
-  transition: background-color 0.2s;
-  cursor: pointer;
-
+  border-radius: 4px;
+  ${Text} {
+    color: ${({ theme, onPress }) => (onPress ? "white" : theme.colors.textSecondary)};
+  }
   &:hover {
-    background-color: #00e3884d;
+    background: ${({ theme }) => theme.colors.textDisabled};
+    ${Text} {
+      color: ${({ theme }) => theme.colors.textPrimary};
+    }
   }
-
-  &:active {
-    background-color: #00e38873;
-  }
-`;
-
-const Actions = styled.div`
-  display: flex;
-  gap: 8px;
 `;
 
 const SwapInput = styled.input`
@@ -371,31 +394,19 @@ const SwapInput = styled.input`
   outline: none;
   color: white;
 
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
-  font-size: 24px;
+  ${TEXT_TYPES_MAP[TEXT_TYPES.H_NUMBERS_NEW]}
 
   ${media.mobile} {
     font-size: 24px;
   }
 `;
 
-const ExchangeRate = styled.div`
-  background: #0000004d;
-  border-radius: 33px;
-  text-align: center;
-  margin-top: 32px;
-  padding: 9px 0;
-
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
-  color: ${({ theme }) => theme.colors.textSecondary};
-`;
-
-const SwitchTokens = styled.button<{ disabled: boolean }>`
+const SwitchTokens = styled.button<{ disabled: boolean; isLoaded: boolean }>`
   outline: none;
   border: none;
   position: absolute;
   left: calc(50% - 14px);
-  top: 120px; // TODO: height of first section, check for mobile
+  top: ${({ isLoaded }) => (isLoaded ? "112px" : "100px")}; // TODO: height of first section, check for mobile
   background-color: ${({ theme }) => theme.colors.greenLight};
   width: 28px;
   height: 44px;
@@ -404,6 +415,11 @@ const SwitchTokens = styled.button<{ disabled: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow:
+    0px 1px 1px 0px rgba(255, 255, 255, 0.77) inset,
+    0px 2px 5px 0px rgba(0, 0, 0, 0.22),
+    0px 16px 14px -6px rgba(21, 20, 21, 0.25),
+    0px 1px 1px 0px rgba(255, 255, 255, 0.17) inset;
   pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
   background-color: ${({ theme, disabled }) => (disabled ? theme.colors.borderSecondary : theme.colors.greenLight)};
   color: ${({ theme, disabled }) => (disabled ? theme.colors.iconDisabled : "#171717")};
@@ -412,17 +428,12 @@ const SwitchTokens = styled.button<{ disabled: boolean }>`
     transform 0.2s;
 
   &:hover {
-    transform: scale(1.25);
-    //border-radius: 40%;
-
-    svg {
-      transform: scale(1.25);
-      transform-origin: center;
-    }
+    transform: scale(1.1);
+    background: #2effab;
   }
 
   &:active {
-    background-color: #2effab;
+    background-color: #6effc5;
   }
 
   svg {
@@ -438,16 +449,19 @@ const SwapButton = styled.button`
   border-radius: 16px;
   cursor: pointer;
   width: 100%;
-  height: 54px;
+  height: 56px;
   border: 1px solid ${({ theme }) => theme.colors.greenLight};
   background-color: ${({ theme }) => theme.colors.greenDark};
   transition: all 0.2s;
-  color: ${({ theme }) => theme.colors.textPrimary};
   padding: 16px 0;
   pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
-
+  ${Text} {
+    color: ${({ theme }) => theme.colors.textPrimary};
+  }
   &:disabled {
-    color: ${({ theme }) => theme.colors.textDisabled};
+    ${Text} {
+      color: ${({ theme }) => theme.colors.textDisabled};
+    }
     background-color: ${({ theme }) => theme.colors.borderSecondary};
     border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   }
