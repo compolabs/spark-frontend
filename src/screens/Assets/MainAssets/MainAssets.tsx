@@ -43,13 +43,10 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   }, BN.ZERO);
 
   const handleWithdraw = async () => {
-    const ETH = bcNetwork.getTokenBySymbol("ETH");
-    const assets = balanceList
-      .filter((el) => el.assetId !== ETH.assetId)
-      .map((el) => ({
-        assetId: el.assetId,
-        balance: BN.parseUnits(el.contractBalance, el.asset.decimals).toString(),
-      }));
+    const assets = balanceList.map((el) => ({
+      assetId: el.assetId,
+      balance: BN.parseUnits(el.contractBalance, el.asset.decimals).toString(),
+    }));
     setIsLoading(true);
     await balanceStore.withdrawBalanceAll(assets);
     setIsLoading(false);

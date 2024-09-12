@@ -65,7 +65,6 @@ const ToastContainer = styled(SmartFlex)`
   ${media.mobile} {
     width: 100vw;
     height: 54px;
-    display: flex;
     align-items: center;
   }
 `;

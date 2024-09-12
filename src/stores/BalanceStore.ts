@@ -26,10 +26,22 @@ interface markets {
   contractId: string;
 }
 
+interface ContractBalance {
+  locked: {
+    base: BN;
+    quote: BN;
+  };
+  liquid: {
+    base: BN;
+    quote: BN;
+  };
+}
+
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
   public initialized = false;
 
+  private swapStore;
   private balancesUpdater: IntervalUpdater;
 
   myMarketBalance = {
@@ -43,18 +55,7 @@ export class BalanceStore {
     },
   };
 
-  myMarketBalanceList = {
-    [CONFIG.APP.markets[0].contractId]: {
-      locked: {
-        base: BN.ZERO,
-        quote: BN.ZERO,
-      },
-      liquid: {
-        base: BN.ZERO,
-        quote: BN.ZERO,
-      },
-    },
-  };
+  myMarketBalanceList: Record<string, ContractBalance> = {};
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
@@ -63,8 +64,8 @@ export class BalanceStore {
 
     this.balancesUpdater.run();
 
-    const { accountStore } = rootStore;
-
+    const { accountStore, swapStore } = rootStore;
+    this.swapStore = swapStore;
     reaction(
       () => [accountStore.isConnected, accountStore.address],
       ([isConnected]) => {
@@ -148,8 +149,7 @@ export class BalanceStore {
   };
 
   getFormatContractBalanceInfo = (assetId: string) => {
-    const { swapStore } = this.rootStore;
-    return swapStore.getFormatedContractBalance().find((el) => el.assetId === assetId)?.balance ?? "0";
+    return this.swapStore.getFormatedContractBalance().find((el) => el.assetId === assetId)?.balance ?? "0";
   };
 
   depositBalance = async (assetId: string, amount: string) => {

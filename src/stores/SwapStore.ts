@@ -252,6 +252,7 @@ class SwapStore {
 
   getFormatedContractBalance = () => {
     const data = this.getSmartContractBalance();
+    if (Object.keys(data).length === 0) return [];
     const formatedBalance = [];
     const bcNetwork = FuelNetwork.getInstance();
     const { balanceStore } = this.rootStore;
