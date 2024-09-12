@@ -307,25 +307,27 @@ const CreateOrder: React.FC = observer(() => {
             />
           </InputContainerWithMaxButton>
         </InputContainerWithError>
-        <Row alignItems="center" justifyContent="space-between">
-          <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
-          <Row alignItems="center" mainAxisSize="fit-content">
-            <Text type={TEXT_TYPES.BODY} primary>
-              {getAvailableAmount()}
-            </Text>
-            <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+        <SmartFlex column>
+          <SliderContainer>
+            <Slider
+              max={100}
+              min={0}
+              percent={vm.inputPercent.toNumber()}
+              step={1}
+              value={vm.inputPercent.toNumber()}
+              onChange={(v) => handlePercentChange(v as number)}
+            />
+          </SliderContainer>
+          <Row alignItems="center" justifyContent="space-between">
+            <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
+            <Row alignItems="center" mainAxisSize="fit-content">
+              <Text type={TEXT_TYPES.BODY} primary>
+                {getAvailableAmount()}
+              </Text>
+              <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+            </Row>
           </Row>
-        </Row>
-        <SliderContainer>
-          <Slider
-            max={100}
-            min={0}
-            percent={vm.inputPercent.toNumber()}
-            step={1}
-            value={vm.inputPercent.toNumber()}
-            onChange={(v) => handlePercentChange(v as number)}
-          />
-        </SliderContainer>
+        </SmartFlex>
         {renderInstruction()}
         {renderOrderDetails()}
       </ParamsContainer>
@@ -386,7 +388,7 @@ const InputContainerWithError = styled(SmartFlex)`
   gap: 8px;
   align-items: flex-start;
 
-  padding-bottom: 12px;
+  padding-bottom: 9px;
 `;
 
 const StyledMaxButton = styled(MaxButton)`
