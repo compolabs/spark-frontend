@@ -147,8 +147,9 @@ export class BalanceStore {
     return { amount, type };
   };
 
-  getFormatContractBalanceInfo = (assetId: string, decimals: number) => {
-    return BN.formatUnits(this.getContractBalanceInfo(assetId).amount, decimals).toSignificant(2) ?? "-";
+  getFormatContractBalanceInfo = (assetId: string) => {
+    const { swapStore } = this.rootStore;
+    return swapStore.getFormatedContractBalance().find((el) => el.assetId === assetId)?.balance ?? "0";
   };
 
   depositBalance = async (assetId: string, amount: string) => {

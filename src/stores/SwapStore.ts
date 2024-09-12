@@ -3,7 +3,6 @@ import { autorun, makeAutoObservable, reaction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
-import { TokenOption } from "@src/screens/SwapScreen/TokenSelect";
 import BN from "@src/utils/BN";
 import { parseNumberWithCommas } from "@src/utils/swapUtils";
 
@@ -12,11 +11,12 @@ import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessa
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import _ from "lodash";
 import { CONFIG } from "@src/utils/getConfig.ts";
+import { Token } from "@src/entity";
 
 class SwapStore {
-  tokens: TokenOption[];
-  sellToken: TokenOption;
-  buyToken: TokenOption;
+  tokens: Token[];
+  sellToken: Token;
+  buyToken: Token;
   // maybe use BN
   payAmount: string;
   receiveAmount: string;
@@ -80,10 +80,10 @@ class SwapStore {
 
         return tokens.find((token) => token.assetId === oppositeAssetId);
       })
-      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined);
+      .filter((tokenOption): tokenOption is Token => tokenOption !== undefined);
   };
 
-  getPrice(token: TokenOption): string {
+  getPrice(token: Token): string {
     const { oracleStore } = this.rootStore;
     return token.priceFeed
       ? BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed), DEFAULT_DECIMALS).toFormat(2)
@@ -99,21 +99,15 @@ class SwapStore {
     this.sellTokenPrice = this.getPrice(this.sellToken);
   }
 
-  fetchNewTokens(): TokenOption[] {
-    const { balanceStore } = this.rootStore;
+  fetchNewTokens(): Token[] {
     const bcNetwork = FuelNetwork.getInstance();
 
     return bcNetwork!.getTokenList().map((v) => {
-      const balance = balanceStore.getContractBalanceInfo(v.assetId).amount;
-      const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
       const token = bcNetwork!.getTokenByAssetId(v.assetId);
-
       return {
-        key: token.symbol,
-        title: token.name,
+        name: token.name,
         symbol: token.symbol,
-        img: token.logo,
-        balance: formatBalance?.toFormat(v.precision),
+        logo: token.logo,
         priceFeed: token.priceFeed,
         assetId: token.assetId,
         decimals: token.decimals,
@@ -186,8 +180,8 @@ class SwapStore {
 
     const tempToken = { ...this.sellToken };
 
-    this.setSellToken(this.buyToken as TokenOption);
-    this.setBuyToken(tempToken as TokenOption);
+    this.setSellToken(this.buyToken as Token);
+    this.setBuyToken(tempToken as Token);
 
     this.setPayAmount(this.receiveAmount);
 
@@ -195,12 +189,12 @@ class SwapStore {
     this.setReceiveAmount(newReceiveAmount.toFixed(4));
   };
 
-  setSellToken(token: TokenOption) {
+  setSellToken(token: Token) {
     this.sellToken = token;
     this.sellTokenPrice = this.getPrice(token);
   }
 
-  setBuyToken(token: TokenOption) {
+  setBuyToken(token: Token) {
     this.buyToken = token;
     this.buyTokenPrice = this.getPrice(token);
   }

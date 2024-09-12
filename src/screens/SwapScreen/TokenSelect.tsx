@@ -12,18 +12,6 @@ import SizedBox from "@components/SizedBox";
 import { Column } from "@components/Flex";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 
-export type TokenOption = {
-  key: string;
-  title: string;
-  symbol: string;
-  img: string;
-  balance: string;
-  priceFeed: string;
-  assetId: string;
-  decimals: number;
-  precision: number;
-};
-
 interface TokenSelectProps {
   assets: AssetBlockData[];
   showBalance: "balance" | "walletBalance" | "contractBalance";

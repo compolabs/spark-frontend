@@ -30,7 +30,6 @@ import { useStores } from "@stores";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 import { RadioButton } from "@components/RadioButton.tsx";
-import swapStore from "@stores/SwapStore.ts";
 
 const ORDER_OPTIONS = [
   { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
@@ -235,10 +234,7 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const getAvailableAmount = () => {
-    return balanceStore.getFormatContractBalanceInfo(
-      vm.isSell ? baseToken.assetId : quoteToken.assetId,
-      vm.isSell ? baseToken.decimals : quoteToken.decimals,
-    );
+    return balanceStore.getFormatContractBalanceInfo(vm.isSell ? baseToken.assetId : quoteToken.assetId);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {

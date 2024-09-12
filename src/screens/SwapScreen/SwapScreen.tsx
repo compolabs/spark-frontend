@@ -16,11 +16,13 @@ import BN from "@src/utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
-import { TokenOption, TokenSelect } from "./TokenSelect";
+import { TokenSelect } from "./TokenSelect";
 import Button from "@components/Button";
 import useFlag from "@src/hooks/useFlag";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 import { SmartFlex } from "@components/SmartFlex";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
+import { Token } from "@src/entity";
 
 const INITIAL_SLIPPAGE = 1;
 
@@ -48,7 +50,7 @@ export const SwapScreen: React.FC = observer(() => {
           ? tokens.find((el) => el.assetId === token.baseToken.assetId)
           : tokens.find((el) => el.assetId === token.quoteToken.assetId),
       )
-      .filter((tokenOption): tokenOption is TokenOption => tokenOption !== undefined);
+      .filter((tokenOption): tokenOption is Token => tokenOption !== undefined);
   }, [swapStore.sellToken]);
 
   const buyTokenPrice = swapStore.getPrice(swapStore.buyToken);
@@ -56,10 +58,7 @@ export const SwapScreen: React.FC = observer(() => {
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
-  const nativeBalanceContract = balanceStore.getFormatContractBalanceInfo(
-    bcNetwork.getTokenBySymbol("ETH").assetId,
-    DEFAULT_DECIMALS,
-  );
+  const nativeBalanceContract = balanceStore.getFormatContractBalanceInfo(bcNetwork.getTokenBySymbol("ETH").assetId);
   const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(nativeBalanceContract);
 
   const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
@@ -72,23 +71,12 @@ export const SwapScreen: React.FC = observer(() => {
     return () => clearInterval(updateToken);
   }, []);
 
-  const generateBalanceData = (assets: TokenOption[]) =>
-    assets.map(({ assetId }) => {
-      const balance = balanceStore.balances.get(assetId) ?? BN.ZERO;
-      const token = bcNetwork!.getTokenByAssetId(assetId);
-      const contractBalance =
-        token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
-      const totalBalance = contractBalance.plus(balance);
-      return {
-        asset: token,
-        walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-        contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
-        balance: BN.formatUnits(totalBalance, token.decimals).toString(),
-        assetId,
-      };
-    });
+  const generateBalanceData = (assets: Token[]) => {
+    const d = swapStore.getFormatedContractBalance();
+    return d.filter((el) => assets.some((item) => item.assetId === el.assetId));
+  };
 
-  const getMarketPair = (baseAsset: TokenOption, queryAsset: TokenOption) => {
+  const getMarketPair = (baseAsset: Token, queryAsset: Token) => {
     return markets.find(
       (el) =>
         (el.baseToken.assetId === baseAsset.assetId && el.quoteToken.assetId === queryAsset.assetId) ||
@@ -128,7 +116,8 @@ export const SwapScreen: React.FC = observer(() => {
 
   const fillPayAmount = () => {
     setOnPress(true);
-    const newPayAmount = parseNumberWithCommas(swapStore.sellToken.balance).toFixed(swapStore.sellToken.precision);
+    const balance = generateBalanceData([swapStore.sellToken])[0].balance;
+    const newPayAmount = parseNumberWithCommas(balance.toString()).toFixed(swapStore.sellToken.precision);
 
     swapStore.setPayAmount(newPayAmount);
 
@@ -154,16 +143,19 @@ export const SwapScreen: React.FC = observer(() => {
     }
   };
 
-  const isBalanceZero = Number(swapStore.sellToken.balance) === 0;
+  const balance = generateBalanceData([swapStore.sellToken])[0].balance;
+  const isBalanceZero = Number(balance) === 0;
   const isLoaded = isConnected && balanceStore.initialized;
 
-  const handleChangeMarketId = (tokenList: TokenOption[], i: number, type: "buy" | "sell") => {
-    const paris = swapStore.getTokenPair(tokenList[i].assetId);
-    swapStore.setSellToken(type === "sell" ? tokenList[i] : paris[0]);
-    swapStore.setBuyToken(type === "sell" ? paris[0] : tokenList[i]);
+  const handleChangeMarketId = (tokenList: Token[], item: AssetBlockData, type: "buy" | "sell") => {
+    const pair = tokenList.find((el) => el.assetId === item.assetId);
+    if (!pair) return;
+    const paris = swapStore.getTokenPair(pair.assetId);
+    swapStore.setSellToken(type === "sell" ? pair : paris[0]);
+    swapStore.setBuyToken(type === "sell" ? paris[0] : pair);
     swapStore.setPayAmount("0");
     swapStore.setReceiveAmount("0");
-    const marketId = getMarketPair(tokenList[i], paris[0]);
+    const marketId = getMarketPair(pair, paris[0]);
     if (!marketId) return;
     tradeStore.selectActiveMarket(marketId.symbol);
     balanceStore.update();
@@ -193,8 +185,8 @@ export const SwapScreen: React.FC = observer(() => {
               selectedOption={generateBalanceData([swapStore.sellToken])[0]}
               showBalance="contractBalance"
               type="rounded"
-              onSelect={(_, i) => {
-                handleChangeMarketId(tokens, i, "sell");
+              onSelect={(item) => {
+                handleChangeMarketId(tokens, item, "sell");
               }}
             />
           </BoxHeader>
@@ -207,7 +199,7 @@ export const SwapScreen: React.FC = observer(() => {
           />
           {isLoaded && !isBalanceZero && (
             <BalanceSection
-              balance={swapStore.sellToken.balance}
+              balance={generateBalanceData([swapStore.sellToken])[0].balance}
               balanceUSD={payAmountUSD}
               handleMaxAmount={fillPayAmount}
               isLoaded={isLoaded}
@@ -227,8 +219,8 @@ export const SwapScreen: React.FC = observer(() => {
               selectedOption={generateBalanceData([swapStore.buyToken])[0]}
               showBalance="contractBalance"
               type="rounded"
-              onSelect={(_, i) => {
-                handleChangeMarketId(buyTokenOptions, i, "buy");
+              onSelect={(item) => {
+                handleChangeMarketId(buyTokenOptions, item, "buy");
               }}
             />
           </BoxHeader>
@@ -241,7 +233,7 @@ export const SwapScreen: React.FC = observer(() => {
           />
           {isLoaded && !isBalanceZero && (
             <BalanceSection
-              balance={swapStore.buyToken.balance}
+              balance={generateBalanceData([swapStore.buyToken])[0].balance}
               balanceUSD={receiveAmountUSD}
               handleMaxAmount={fillPayAmount}
               isLoaded={isLoaded}
@@ -252,25 +244,19 @@ export const SwapScreen: React.FC = observer(() => {
       <SmartFlexStyled>
         {isLoaded ? (
           <>
-            {isBalanceZero ? (
-              <SwapButton data-onboarding={dataOnboardingSwapKey} onClick={() => quickAssetsStore.setQuickAssets(true)}>
-                <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>Deposit funds to make swap</Text>
-              </SwapButton>
-            ) : (
-              <SwapButton
-                data-onboarding={dataOnboardingSwapKey}
-                disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
-                onClick={swapTokens}
-              >
-                <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>
-                  {isLoading ? (
-                    <Spinner height={14} />
-                  ) : (
-                    `Swap ${swapStore.sellToken.symbol} to ${swapStore.buyToken.symbol}`
-                  )}
-                </Text>
-              </SwapButton>
-            )}
+            <SwapButton
+              data-onboarding={dataOnboardingSwapKey}
+              disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
+              onClick={swapTokens}
+            >
+              <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>
+                {isLoading ? (
+                  <Spinner height={14} />
+                ) : (
+                  `Swap ${swapStore.sellToken.symbol} to ${swapStore.buyToken.symbol}`
+                )}
+              </Text>
+            </SwapButton>
           </>
         ) : (
           <ButtonBordered green onClick={openConnectDialog}>
