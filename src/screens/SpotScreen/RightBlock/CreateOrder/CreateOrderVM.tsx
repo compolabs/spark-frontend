@@ -19,7 +19,6 @@ import BN from "@src/utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
 import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import Math from "@src/utils/Math";
-import swapStore from "@stores/SwapStore.ts";
 
 const ctx = React.createContext<CreateOrderVM | null>(null);
 
@@ -246,12 +245,14 @@ class CreateOrderVM {
   }
 
   private updatePercent(): void {
-    const { tradeStore, balanceStore } = this.rootStore;
+    const { tradeStore, balanceStore, swapStore } = this.rootStore;
 
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const balance = balanceStore.getContractBalanceInfo(assetId).amount;
+    const activeToken = swapStore.getFormatedContractBalance().find((el) => el.assetId === assetId);
+    if (!activeToken) return;
+    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
 
     if (balance.isZero()) {
       this.inputPercent = BN.ZERO;
