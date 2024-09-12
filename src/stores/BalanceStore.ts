@@ -41,7 +41,6 @@ export class BalanceStore {
   public balances: Map<string, BN> = new Map();
   public initialized = false;
 
-  private swapStore;
   private balancesUpdater: IntervalUpdater;
 
   myMarketBalance = {
@@ -64,8 +63,7 @@ export class BalanceStore {
 
     this.balancesUpdater.run();
 
-    const { accountStore, swapStore } = rootStore;
-    this.swapStore = swapStore;
+    const { accountStore } = rootStore;
     reaction(
       () => [accountStore.isConnected, accountStore.address],
       ([isConnected]) => {
@@ -107,7 +105,7 @@ export class BalanceStore {
 
     const [balances] = await Promise.all([this.fetchBalances(), this.fetchUserMarketBalance()]);
     await this.fetchUserMarketBalanceByContracts();
-    // console.log('balancesContracts', balancesContracts)
+
     try {
       for (const [tokenAddress, balance] of Object.entries(balances)) {
         const isTokenExist = !!bcNetwork.getTokenByAssetId(tokenAddress);
@@ -149,7 +147,8 @@ export class BalanceStore {
   };
 
   getFormatContractBalanceInfo = (assetId: string) => {
-    const balances = this.swapStore?.getFormatedContractBalance();
+    const { swapStore } = this.rootStore;
+    const balances = swapStore.getFormatedContractBalance();
     return balances ? (balances.find((el) => el.assetId === assetId)?.balance ?? "0") : "0";
   };
 
