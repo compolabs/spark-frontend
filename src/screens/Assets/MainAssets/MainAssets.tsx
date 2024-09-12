@@ -36,7 +36,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
   const balanceList = swapStore.getFormatedContractBalance();
-  const hasPositiveBalance = balanceList.some((item) => !new BN(item.balance).isZero());
+  const hasPositiveBalance = balanceList.some((item) => !new BN(item.contractBalance).isZero());
   const accumulateBalanceContract = balanceList.reduce((acc, account) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
     return acc.plus(new BN(account.contractBalance).multipliedBy(price));
