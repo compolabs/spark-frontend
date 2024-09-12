@@ -73,7 +73,7 @@ export const SwapScreen: React.FC = observer(() => {
 
   const generateBalanceData = (assets: Token[]) => {
     const d = swapStore.getFormatedContractBalance();
-    return d.filter((el) => assets.some((item) => item.assetId === el.assetId));
+    return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
   };
 
   const getMarketPair = (baseAsset: Token, queryAsset: Token) => {
@@ -233,7 +233,7 @@ export const SwapScreen: React.FC = observer(() => {
           />
           {isLoaded && !isBalanceZero && (
             <BalanceSection
-              balance={generateBalanceData([swapStore.buyToken])[0].balance}
+              balance={generateBalanceData([swapStore.buyToken])[0]?.balance ?? "0"}
               balanceUSD={receiveAmountUSD}
               handleMaxAmount={fillPayAmount}
               isLoaded={isLoaded}

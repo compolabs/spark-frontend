@@ -149,7 +149,8 @@ export class BalanceStore {
   };
 
   getFormatContractBalanceInfo = (assetId: string) => {
-    return this.swapStore.getFormatedContractBalance().find((el) => el.assetId === assetId)?.balance ?? "0";
+    const balances = this.swapStore?.getFormatedContractBalance();
+    return balances ? (balances.find((el) => el.assetId === assetId)?.balance ?? "0") : "0";
   };
 
   depositBalance = async (assetId: string, amount: string) => {
