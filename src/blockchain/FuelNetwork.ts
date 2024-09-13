@@ -113,6 +113,12 @@ export class FuelNetwork {
     return this.orderbookSdk.fulfillOrderMany(...params);
   };
 
+  fulfillOrderManyWithDeposit = async (
+    ...params: Parameters<typeof this.orderbookSdk.fulfillOrderManyWithDeposit>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.fulfillOrderManyWithDeposit(...params);
+  };
+
   cancelSpotOrder = async (
     ...params: Parameters<typeof this.orderbookSdk.cancelOrder>
   ): Promise<WriteTransactionResponse> => {
