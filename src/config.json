@@ -57,8 +57,8 @@
       "wsUrl": "wss://indexer.bigdevenergy.link/7b34f67/v1/graphql"
     },
     "0x7d1da52a221897ebc88dc6a5d4623e704f7d64022d498b0438827dd79b6e5457": {
-      "httpUrl": "https://indexer.bigdevenergy.link/292f0b3/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/292f0b3/v1/graphql"
+      "httpUrl": "https://indexer.bigdevenergy.link/4991bb0/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/4991bb0/v1/graphql"
     }
   },
   "contracts": {
