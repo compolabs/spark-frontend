@@ -30,7 +30,7 @@ export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
-  const { swapStore, balanceStore, quickAssetsStore, tradeStore } = useStores();
+  const { swapStore, balanceStore, tradeStore } = useStores();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
@@ -74,14 +74,6 @@ export const SwapScreen: React.FC = observer(() => {
   const generateBalanceData = (assets: Token[]) => {
     const d = swapStore.getFormatedContractBalance();
     return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
-  };
-
-  const getMarketPair = (baseAsset: Token, queryAsset: Token) => {
-    return markets.find(
-      (el) =>
-        (el.baseToken.assetId === baseAsset.assetId && el.quoteToken.assetId === queryAsset.assetId) ||
-        (el.baseToken.assetId === queryAsset.assetId && el.quoteToken.assetId === baseAsset.assetId),
-    );
   };
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,7 +147,7 @@ export const SwapScreen: React.FC = observer(() => {
     swapStore.setBuyToken(type === "sell" ? paris[0] : pair);
     swapStore.setPayAmount("0");
     swapStore.setReceiveAmount("0");
-    const marketId = getMarketPair(pair, paris[0]);
+    const marketId = swapStore.getMarketPair(pair, paris[0]);
     if (!marketId) return;
     tradeStore.selectActiveMarket(marketId.symbol);
     balanceStore.update();
@@ -183,7 +175,7 @@ export const SwapScreen: React.FC = observer(() => {
             <TokenSelect
               assets={generateBalanceData(tokens)}
               selectedOption={generateBalanceData([swapStore.sellToken])[0]}
-              showBalance="contractBalance"
+              showBalance="balance"
               type="rounded"
               onSelect={(item) => {
                 handleChangeMarketId(tokens, item, "sell");
@@ -217,7 +209,7 @@ export const SwapScreen: React.FC = observer(() => {
             <TokenSelect
               assets={generateBalanceData(buyTokenOptions)}
               selectedOption={generateBalanceData([swapStore.buyToken])[0]}
-              showBalance="contractBalance"
+              showBalance="balance"
               type="rounded"
               onSelect={(item) => {
                 handleChangeMarketId(buyTokenOptions, item, "buy");
