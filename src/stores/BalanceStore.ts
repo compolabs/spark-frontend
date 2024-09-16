@@ -182,6 +182,9 @@ export class BalanceStore {
 
   withdrawBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
+    const markets = CONFIG.APP.markets
+      .map((el) => (el.baseAssetId === assetId || el.quoteAssetId === assetId ? el.contractId : null))
+      .filter((market): market is string => market !== null);
     const bcNetwork = FuelNetwork.getInstance();
 
     const token = bcNetwork.getTokenByAssetId(assetId);
@@ -192,10 +195,10 @@ export class BalanceStore {
       });
     }
     const { type } = this.getContractBalanceInfo(assetId);
-    const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
+    const amountFormatted = amount;
 
     try {
-      const tx = await bcNetwork?.withdrawSpotBalance(amount, type);
+      const tx = await bcNetwork?.withdrawSpotBalance(type, markets, amountFormatted);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
@@ -211,21 +214,15 @@ export class BalanceStore {
     }
   };
 
-  withdrawBalanceAll = async (withdrawAssets: any) => {
+  withdrawBalanceAll = async () => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
     if (bcNetwork?.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
-    const amountFormatted = withdrawAssets.map((el: { assetId: string; balance: number }) => {
-      const { type } = this.getContractBalanceInfo(el.assetId);
-      return {
-        amount: el.balance,
-        assetType: type,
-      };
-    });
+    const markets = CONFIG.APP.markets.map((el) => el.contractId);
     try {
-      await bcNetwork?.withdrawSpotBalanceAll(amountFormatted);
+      await bcNetwork?.withdrawSpotBalanceAll(markets);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS)(),
         hash: "",
