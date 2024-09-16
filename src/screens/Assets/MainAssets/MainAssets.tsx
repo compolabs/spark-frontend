@@ -137,7 +137,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
         )}
         {accumulateBalanceContract.gt(0) && (
           <SmartFlexBlock>
-            <ButtonConfirm fitContent onClick={() => setStep(2)}>
+            <ButtonConfirm fitContent onClick={() => setStep(1)}>
               Withdraw
             </ButtonConfirm>
             <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdraw}>

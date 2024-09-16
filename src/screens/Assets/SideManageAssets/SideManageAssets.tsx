@@ -38,6 +38,7 @@ const SideManageAssets = observer(() => {
   const [isFirstOpen, setIsFirstOpen] = useState(true);
   const [isBack, setIsBack] = useState(true);
   const setStep = (step: number) => {
+    console.log("step", step);
     setIsBack(step > quickAssetsStore.currentStep);
     setIsFirstOpen(false);
     setTimeout(() => {
