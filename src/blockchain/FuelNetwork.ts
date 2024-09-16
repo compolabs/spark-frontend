@@ -130,13 +130,14 @@ export class FuelNetwork {
   };
 
   withdrawSpotBalance = async (
-    ...params: Parameters<typeof this.orderbookSdk.withdraw>
+    ...params: Parameters<typeof this.orderbookSdk.withdrawAssets>
   ): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.withdraw(...params);
+    return this.orderbookSdk.withdrawAssets(...params);
   };
 
-  withdrawSpotBalanceAll = async (...params: Parameters<typeof this.orderbookSdk.withdrawAll>): Promise<void> => {
-    await this.orderbookSdk.withdrawAll(...params);
+  withdrawSpotBalanceAll = async (...params: Parameters<typeof this.orderbookSdk.withdrawAllAssets>): Promise<void> => {
+    console.log("params", params);
+    await this.orderbookSdk.withdrawAllAssets(...params);
   };
 
   depositSpotBalance = async (

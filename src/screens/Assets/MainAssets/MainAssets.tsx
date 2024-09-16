@@ -36,19 +36,15 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const bcNetwork = FuelNetwork.getInstance();
   const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
   const balanceList = swapStore.getFormatedContractBalance();
-  const hasPositiveBalance = balanceList.some((item) => !new BN(item.contractBalance).isZero());
+  const hasPositiveBalance = balanceList.some((item) => !new BN(item.balance).isZero());
   const accumulateBalanceContract = balanceList.reduce((acc, account) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
-    return acc.plus(new BN(account.contractBalance).multipliedBy(price));
+    return acc.plus(new BN(account.balance).multipliedBy(price));
   }, BN.ZERO);
 
   const handleWithdraw = async () => {
-    const assets = balanceList.map((el) => ({
-      assetId: el.assetId,
-      balance: BN.parseUnits(el.contractBalance, el.asset.decimals).toString(),
-    }));
     setIsLoading(true);
-    await balanceStore.withdrawBalanceAll(assets);
+    await balanceStore.withdrawBalanceAll();
     setIsLoading(false);
   };
   const closeAssets = () => {
@@ -70,7 +66,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       <SmartFlex alignItems="center" justifyContent="space-between" column>
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
           <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
-            Deposited Assets
+            Assets
           </TextTitle>
           <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
@@ -81,7 +77,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
                 <>
                   {balanceList.map((el) => (
                     <AssetItem key={el.assetId}>
-                      <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
+                      <AssetBlock options={{ showBalance: "balance" }} token={el} />
                     </AssetItem>
                   ))}
                   <OverallBlock justifyContent="space-between">
@@ -120,11 +116,21 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       {!hasPositiveBalance && isConnected && (
         <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
           <DepositAssets />
-          <TextTitleDeposit>Trade fast to trade fast and cheap.</TextTitleDeposit>
+          <TextTitleDeposit>
+            It looks like your wallet is empty. Tap the{" "}
+            <LinkStyled
+              href="/#/faucet"
+              onClick={() => {
+                quickAssetsStore.setQuickAssets(false);
+              }}
+            >
+              faucet
+            </LinkStyled>{" "}
+            to grab some tokens.
+          </TextTitleDeposit>
         </DepositedAssets>
       )}
       <BottomColumn justifyContent="space-between">
-        {isShowDepositInfo && isConnected && <InfoBlockAssets />}
         {!isConnected && (
           <SizedBoxStyled width={150}>
             <Text type={TEXT_TYPES.BUTTON}>Connect wallet to see your assets and trade</Text>
@@ -137,7 +143,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
         )}
         {accumulateBalanceContract.gt(0) && (
           <SmartFlexBlock>
-            <ButtonConfirm fitContent onClick={() => setStep(2)}>
+            <ButtonConfirm fitContent onClick={() => setStep(1)}>
               Withdraw
             </ButtonConfirm>
             <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdraw}>
@@ -219,6 +225,14 @@ const CloseButton = styled.img`
   background: ${({ theme }) => theme.colors.bgIcon};
   padding: 8px;
   border-radius: 100px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const LinkStyled = styled.a`
+  color: ${({ theme }) => theme.colors.greenLight};
+  text-decoration: underline;
   &:hover {
     cursor: pointer;
   }

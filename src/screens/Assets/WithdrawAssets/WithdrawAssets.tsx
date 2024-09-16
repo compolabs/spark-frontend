@@ -14,10 +14,8 @@ import closeThin from "@src/assets/icons/closeThin.svg";
 import DataBase from "@src/assets/icons/dataBase.svg?react";
 import Spinner from "@src/assets/icons/spinner.svg?react";
 import WalletIcon from "@src/assets/icons/wallet.svg?react";
-import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import BN from "@src/utils/BN";
-import { CONFIG } from "@src/utils/getConfig";
 import { useStores } from "@stores";
 
 interface WithdrawAssets {
@@ -38,7 +36,6 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsLoading] = useState(false);
   const { quickAssetsStore, balanceStore, swapStore } = useStores();
-  const bcNetwork = FuelNetwork.getInstance();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
