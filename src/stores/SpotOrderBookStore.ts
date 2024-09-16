@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
@@ -6,31 +6,19 @@ import { Nullable } from "tsdef";
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
-import useVM from "@src/hooks/useVM";
 import { Subscription } from "@src/typings/utils";
 import BN from "@src/utils/BN";
 import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
-import { CONFIG } from "@src/utils/getConfig";
 import { groupOrders } from "@src/utils/groupOrders";
-import { RootStore, useStores } from "@stores";
+import { RootStore } from "@stores";
 
-import { SPOT_ORDER_FILTER } from "./SpotOrderBook";
-
-const ctx = React.createContext<SpotOrderbookVM | null>(null);
+import { SPOT_ORDER_FILTER } from "@src/screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 
 interface IProps {
   children: React.ReactNode;
 }
 
-export const SpotOrderbookVMProvider: React.FC<IProps> = ({ children }) => {
-  const rootStore = useStores();
-  const store = useMemo(() => new SpotOrderbookVM(rootStore), [rootStore]);
-  return <ctx.Provider value={store}>{children}</ctx.Provider>;
-};
-
-export const useSpotOrderbookVM = () => useVM(ctx);
-
-class SpotOrderbookVM {
+class SpotOrderBookStore {
   private readonly rootStore: RootStore;
 
   allBuyOrders: SpotMarketOrder[] = [];
@@ -50,8 +38,8 @@ class SpotOrderbookVM {
     makeAutoObservable(this);
 
     reaction(
-      () => rootStore.initialized,
-      (initialized) => {
+      () => [rootStore.initialized, rootStore.tradeStore.market],
+      ([initialized, market]) => {
         if (!initialized) return;
 
         this.updateOrderBook();
@@ -140,13 +128,16 @@ class SpotOrderbookVM {
       this.buySubscription.unsubscribe();
     }
 
+    const { tradeStore } = this.rootStore;
+    const market = tradeStore.market;
+
     this.buySubscription = bcNetwork
       .subscribeSpotActiveOrders<OrderType.Buy>({ ...params, orderType: OrderType.Buy })
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
 
-          const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId);
+          const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, market!.quoteToken.assetId);
           const buyOrdersCombinedByDecimal = groupOrders(buyOrders, this.decimalGroup);
           this.allBuyOrders = buyOrdersCombinedByDecimal;
         },
@@ -158,13 +149,16 @@ class SpotOrderbookVM {
       this.sellSubscription.unsubscribe();
     }
 
+    const { tradeStore } = this.rootStore;
+    const market = tradeStore.market;
+
     this.sellSubscription = bcNetwork
       .subscribeSpotActiveOrders<OrderType.Sell>({ ...params, orderType: OrderType.Sell })
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
 
-          const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId);
+          const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, market!.quoteToken.assetId);
           const sellOrdersCombinedByDecimal = groupOrders(sellOrders, this.decimalGroup);
           this.allSellOrders = sellOrdersCombinedByDecimal;
         },
@@ -203,3 +197,5 @@ class SpotOrderbookVM {
     return spread.div(maxBuyPrice).times(100).toFormat(2);
   }
 }
+
+export default SpotOrderBookStore;

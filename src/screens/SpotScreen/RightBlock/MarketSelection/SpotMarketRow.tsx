@@ -7,6 +7,7 @@ import Text, { TEXT_TYPES } from "@components/Text";
 import outlineStarIcon from "@src/assets/icons/star.svg";
 import filledStarIcon from "@src/assets/icons/yellowStar.svg";
 import { SmartFlex } from "@src/components/SmartFlex";
+import { ROUTES } from "@src/constants";
 import { SpotMarket } from "@src/entity";
 import { useStores } from "@stores";
 
@@ -38,7 +39,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
       isActive={isActive}
       onClick={() => {
         tradeStore.setMarketSelectionOpened(false);
-        navigate(`/${market.symbol}`);
+        navigate(`${ROUTES.SPOT}/${market.symbol}`);
       }}
     >
       <SmartFlex gap="4px" width="100%" column>

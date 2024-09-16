@@ -50,9 +50,6 @@ const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalle
         </Container>
         <SizedBox height={8} />
         <FooterContainer gap="8px" column>
-          <Button data-onboarding="assets-mobile" onClick={() => quickAssetsStore.setQuickAssets(true)}>
-            ASSETS
-          </Button>
           {renderWalletAddressButton()}
         </FooterContainer>
       </Body>
