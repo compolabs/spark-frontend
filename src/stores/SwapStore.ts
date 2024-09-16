@@ -1,4 +1,4 @@
-import { FulfillOrderManyParams, GetOrdersParams, LimitType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { AssetType, GetOrdersParams, LimitType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { autorun, makeAutoObservable, reaction } from "mobx";
 
 import { FuelNetwork } from "@src/blockchain";
@@ -90,6 +90,15 @@ class SwapStore {
       : "0";
   }
 
+  getMarketPair = (baseAsset: Token, quoteToken: Token) => {
+    const { tradeStore } = this.rootStore;
+    return tradeStore.spotMarkets.find(
+      (el) =>
+        (el.baseToken.assetId === baseAsset.assetId && el.quoteToken.assetId === quoteToken.assetId) ||
+        (el.baseToken.assetId === quoteToken.assetId && el.quoteToken.assetId === baseAsset.assetId),
+    );
+  };
+
   updateTokens() {
     const newTokens = this.fetchNewTokens();
     this.tokens = newTokens;
@@ -124,7 +133,7 @@ class SwapStore {
   fetchExchangeFeeDebounce = _.debounce(this.fetchExchangeFee, 250);
 
   swapTokens = async ({ slippage }: { slippage: number }): Promise<boolean> => {
-    const { notificationStore, tradeStore, oracleStore } = this.rootStore;
+    const { notificationStore, tradeStore } = this.rootStore;
     const baseToken = tradeStore.market?.baseToken;
     const isBuy = baseToken?.assetId === this.buyToken.assetId;
     const bcNetwork = FuelNetwork.getInstance();
@@ -134,21 +143,44 @@ class SwapStore {
       status: ["Active"],
     };
 
-    const sellOrders = await bcNetwork!.fetchSpotOrders({
+    const orders = await bcNetwork!.fetchSpotOrders({
       ...params,
       orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     });
     // TODO: check if there is enough price sum to fulfill the order
-
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
     const formattedVolume = BN.parseUnits(this.receiveAmount, this.buyToken.decimals).toString();
+    const decimalToken = isBuy ? this.buyToken.decimals : this.sellToken.decimals;
+    const depositAmountWithFee = BN.parseUnits(this.exchangeFee, decimalToken).plus(
+      BN.parseUnits(this.rootStore.tradeStore.matcherFee, decimalToken),
+    );
 
-    const order: FulfillOrderManyParams = {
-      amount: isBuy ? formattedVolume : formattedAmount,
+    const pair = this.getMarketPair(this.buyToken, this.sellToken);
+    if (!pair) return true;
+    let total = new BN(isBuy ? formattedAmount : formattedVolume);
+    let spend = BN.ZERO;
+    const orderList = orders
+      .map((el) => {
+        if (total.toNumber() < 0) {
+          return null;
+        }
+        spend = spend.plus(el.currentAmount);
+        total = total.minus(el.currentQuoteAmount);
+        return el;
+      })
+      .filter((el) => el !== null);
+
+    const order = {
       orderType: isBuy ? OrderType.Buy : OrderType.Sell,
+      amount: isBuy ? formattedVolume : formattedAmount,
+      price: orderList[orderList.length - 1].price.toString(),
+      amountToSpend: isBuy ? formattedVolume : formattedAmount,
+      amountFee: depositAmountWithFee.toString(),
+      depositAssetId: isBuy ? pair?.quoteToken.assetId : pair?.baseToken.assetId,
+      feeAssetId: pair?.quoteToken.assetId,
+      assetType: isBuy ? AssetType.Quote : AssetType.Base,
       limitType: LimitType.FOK,
-      price: sellOrders[sellOrders.length - 1].price.toString(),
-      orders: sellOrders.map((el) => el.id),
+      orders: orderList.map((el) => el.id),
       slippage: slippage.toString(),
     };
 
@@ -163,7 +195,8 @@ class SwapStore {
     ).toSignificant(2);
 
     try {
-      const tx = await bcNetwork.swapTokens(order);
+      const marketContracts = CONFIG.APP.markets.map((el) => el.contractId);
+      const tx = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_SWAP)(
           amountFormatted,
@@ -171,7 +204,7 @@ class SwapStore {
           volumeFormatted,
           this.buyToken.symbol,
         ),
-        hash: tx.transactionId,
+        hash: "tx.transactionId,",
       });
       return true;
     } catch (error: any) {
@@ -230,11 +263,11 @@ class SwapStore {
         return [
           {
             assetId: market.baseAssetId,
-            balance: new BN(marketBalance?.locked?.base ?? 0),
+            balance: new BN(marketBalance?.liquid?.base ?? 0),
           },
           {
             assetId: market.quoteAssetId,
-            balance: new BN(marketBalance?.locked?.quote ?? 0),
+            balance: new BN(marketBalance?.liquid?.quote ?? 0),
           },
         ];
       })

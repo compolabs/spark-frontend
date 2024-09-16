@@ -89,17 +89,18 @@ class CreateOrderVM {
       () => oracleStore.prices,
       () => {
         const { orderType } = settingsStore;
-        const token = tradeStore.market?.baseToken;
-        const price = token?.priceFeed ? oracleStore.getTokenIndexPrice(token?.priceFeed) : BN.ZERO;
-
+        const { spotOrderBookStore } = this.rootStore;
+        const order = this.isSell
+          ? spotOrderBookStore.buyOrders[0]
+          : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1];
         if (orderType === ORDER_TYPE.Market) {
-          this.setInputPriceThrottle(price);
+          this.setInputPriceThrottle(order.price);
         } else if (
           orderType === ORDER_TYPE.Limit &&
           this.inputPrice.isZero() &&
           this.activeInput !== ACTIVE_INPUT.Price
         ) {
-          this.setInputPriceThrottle(price);
+          this.setInputPriceThrottle(order.price);
         }
       },
     );
@@ -363,8 +364,6 @@ class CreateOrderVM {
       ...deposit,
     };
 
-    console.log(order);
-
     const data = await bcNetwork.createSpotOrderWithDeposit(order, marketContracts);
     return data.transactionId;
   };
@@ -383,27 +382,42 @@ class CreateOrderVM {
       asset: market.baseToken.assetId ?? "",
       status: ["Active"],
     };
+    const isBuy = type === OrderType.Buy;
 
-    const oppositeOrderType = type === OrderType.Buy ? OrderType.Sell : OrderType.Buy;
+    const oppositeOrderType = isBuy ? OrderType.Sell : OrderType.Buy;
     const orders = await bcNetwork.fetchSpotOrders({ ...params, orderType: oppositeOrderType });
+    let total = this.inputTotal;
+    let spend = BN.ZERO;
+    const orderList = orders
+      .map((el) => {
+        if (total.toNumber() < 0) {
+          return null;
+        }
+        spend = spend.plus(el.currentAmount);
+        total = total.minus(el.currentQuoteAmount);
+        return el;
+      })
+      .filter((el) => el !== null);
 
     const price =
       settingsStore.orderType === ORDER_TYPE.Market
-        ? orders[orders.length - 1].price.toString()
+        ? orderList[orderList.length - 1].price.toString()
         : this.inputPrice.toString();
+
+    deposit = {
+      ...deposit,
+      amountToSpend: this.inputAmount.toString(),
+    };
 
     const order: FulfillOrderManyWithDepositParams = {
       amount: this.inputAmount.toString(),
       orderType: type,
       limitType: settingsStore.timeInForce,
       price,
-      orders: orders.map((el) => el.id),
+      orders: orderList.map((el) => el.id),
       slippage: "10000",
       ...deposit,
     };
-
-    console.log(order);
-
     const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
     return data.transactionId;
   };

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
@@ -6,30 +6,19 @@ import { Nullable } from "tsdef";
 import { FuelNetwork } from "@src/blockchain";
 import { DEFAULT_DECIMALS } from "@src/constants";
 import { SpotMarketOrder } from "@src/entity";
-import useVM from "@src/hooks/useVM";
 import { Subscription } from "@src/typings/utils";
 import BN from "@src/utils/BN";
 import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
 import { groupOrders } from "@src/utils/groupOrders";
-import { RootStore, useStores } from "@stores";
+import { RootStore } from "@stores";
 
-import { SPOT_ORDER_FILTER } from "./SpotOrderBook";
-
-const ctx = React.createContext<SpotOrderbookVM | null>(null);
+import { SPOT_ORDER_FILTER } from "@src/screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 
 interface IProps {
   children: React.ReactNode;
 }
 
-export const SpotOrderbookVMProvider: React.FC<IProps> = ({ children }) => {
-  const rootStore = useStores();
-  const store = useMemo(() => new SpotOrderbookVM(rootStore), [rootStore]);
-  return <ctx.Provider value={store}>{children}</ctx.Provider>;
-};
-
-export const useSpotOrderbookVM = () => useVM(ctx);
-
-class SpotOrderbookVM {
+class SpotOrderBookStore {
   private readonly rootStore: RootStore;
 
   allBuyOrders: SpotMarketOrder[] = [];
@@ -208,3 +197,5 @@ class SpotOrderbookVM {
     return spread.div(maxBuyPrice).times(100).toFormat(2);
   }
 }
+
+export default SpotOrderBookStore;

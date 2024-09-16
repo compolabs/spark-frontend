@@ -10,6 +10,7 @@ import QuickAssetsStore from "./QuickAssetsStore";
 import RootStore from "./RootStore";
 import SettingsStore from "./SettingsStore";
 import TradeStore from "./TradeStore";
+import SpotOrderBookStore from "./SpotOrderBookStore";
 
 export {
   AccountStore,
@@ -20,6 +21,7 @@ export {
   QuickAssetsStore,
   RootStore,
   SettingsStore,
+  SpotOrderBookStore,
   storesContext,
   // SpotOrdersStore,
   TradeStore,

@@ -30,7 +30,7 @@ export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
-  const { swapStore, balanceStore, quickAssetsStore, tradeStore } = useStores();
+  const { swapStore, balanceStore, tradeStore, spotOrderBookStore } = useStores();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
@@ -76,14 +76,6 @@ export const SwapScreen: React.FC = observer(() => {
     return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
   };
 
-  const getMarketPair = (baseAsset: Token, queryAsset: Token) => {
-    return markets.find(
-      (el) =>
-        (el.baseToken.assetId === baseAsset.assetId && el.quoteToken.assetId === queryAsset.assetId) ||
-        (el.baseToken.assetId === queryAsset.assetId && el.quoteToken.assetId === baseAsset.assetId),
-    );
-  };
-
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOnPress(false);
     const newPayAmount = replaceComma(e.target.value);
@@ -93,9 +85,11 @@ export const SwapScreen: React.FC = observer(() => {
     }
 
     swapStore.setPayAmount(newPayAmount);
-
-    const receiveAmount =
-      Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
+    const isBuy = swapStore.isBuy;
+    const price = !isBuy()
+      ? spotOrderBookStore.buyOrders[0].price
+      : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1].price;
+    const receiveAmount = BN.parseUnits(new BN(newPayAmount).dividedBy(price), DEFAULT_DECIMALS);
     swapStore.setReceiveAmount(receiveAmount.toFixed(swapStore.buyToken.precision));
   };
 
@@ -109,8 +103,11 @@ export const SwapScreen: React.FC = observer(() => {
 
     swapStore.setReceiveAmount(newReceiveAmount);
 
-    const payAmount =
-      Number(newReceiveAmount) * (parseNumberWithCommas(buyTokenPrice) / parseNumberWithCommas(sellTokenPrice));
+    const isBuy = swapStore.isBuy;
+    const price = !isBuy()
+      ? spotOrderBookStore.buyOrders[0].price
+      : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1].price;
+    const payAmount = BN.parseUnits(new BN(newReceiveAmount).dividedBy(price), DEFAULT_DECIMALS);
     swapStore.setPayAmount(payAmount.toFixed(swapStore.sellToken.precision));
   };
 
@@ -139,6 +136,7 @@ export const SwapScreen: React.FC = observer(() => {
         swapStore.setReceiveAmount("0");
       }
     } catch (err) {
+      setIsloading(false);
       console.error("er", err);
     }
   };
@@ -155,7 +153,7 @@ export const SwapScreen: React.FC = observer(() => {
     swapStore.setBuyToken(type === "sell" ? paris[0] : pair);
     swapStore.setPayAmount("0");
     swapStore.setReceiveAmount("0");
-    const marketId = getMarketPair(pair, paris[0]);
+    const marketId = swapStore.getMarketPair(pair, paris[0]);
     if (!marketId) return;
     tradeStore.selectActiveMarket(marketId.symbol);
     balanceStore.update();
@@ -183,7 +181,7 @@ export const SwapScreen: React.FC = observer(() => {
             <TokenSelect
               assets={generateBalanceData(tokens)}
               selectedOption={generateBalanceData([swapStore.sellToken])[0]}
-              showBalance="contractBalance"
+              showBalance="balance"
               type="rounded"
               onSelect={(item) => {
                 handleChangeMarketId(tokens, item, "sell");
@@ -217,7 +215,7 @@ export const SwapScreen: React.FC = observer(() => {
             <TokenSelect
               assets={generateBalanceData(buyTokenOptions)}
               selectedOption={generateBalanceData([swapStore.buyToken])[0]}
-              showBalance="contractBalance"
+              showBalance="balance"
               type="rounded"
               onSelect={(item) => {
                 handleChangeMarketId(buyTokenOptions, item, "buy");
