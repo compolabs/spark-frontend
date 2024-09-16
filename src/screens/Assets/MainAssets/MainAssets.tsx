@@ -131,7 +131,6 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
         </DepositedAssets>
       )}
       <BottomColumn justifyContent="space-between">
-        {isShowDepositInfo && isConnected && <InfoBlockAssets />}
         {!isConnected && (
           <SizedBoxStyled width={150}>
             <Text type={TEXT_TYPES.BUTTON}>Connect wallet to see your assets and trade</Text>
