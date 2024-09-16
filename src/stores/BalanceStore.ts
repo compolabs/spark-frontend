@@ -183,8 +183,9 @@ export class BalanceStore {
   withdrawBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
     const markets = CONFIG.APP.markets
-      .map((el) => (el.baseAssetId === assetId || el.quoteAssetId === assetId ? el.contractId : null))
-      .filter((market): market is string => market !== null);
+      .filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId)
+      .map((el) => el.contractId);
+
     const bcNetwork = FuelNetwork.getInstance();
 
     const token = bcNetwork.getTokenByAssetId(assetId);
