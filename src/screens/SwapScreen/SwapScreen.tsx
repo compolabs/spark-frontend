@@ -30,7 +30,7 @@ export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
-  const { swapStore, balanceStore, tradeStore } = useStores();
+  const { swapStore, balanceStore, tradeStore, spotOrderBookStore } = useStores();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
@@ -85,9 +85,11 @@ export const SwapScreen: React.FC = observer(() => {
     }
 
     swapStore.setPayAmount(newPayAmount);
-
-    const receiveAmount =
-      Number(newPayAmount) * (parseNumberWithCommas(sellTokenPrice) / parseNumberWithCommas(buyTokenPrice));
+    const isBuy = swapStore.isBuy;
+    const price = !isBuy()
+      ? spotOrderBookStore.buyOrders[0].price
+      : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1].price;
+    const receiveAmount = BN.parseUnits(new BN(newPayAmount).dividedBy(price), DEFAULT_DECIMALS);
     swapStore.setReceiveAmount(receiveAmount.toFixed(swapStore.buyToken.precision));
   };
 
@@ -101,8 +103,11 @@ export const SwapScreen: React.FC = observer(() => {
 
     swapStore.setReceiveAmount(newReceiveAmount);
 
-    const payAmount =
-      Number(newReceiveAmount) * (parseNumberWithCommas(buyTokenPrice) / parseNumberWithCommas(sellTokenPrice));
+    const isBuy = swapStore.isBuy;
+    const price = !isBuy()
+      ? spotOrderBookStore.buyOrders[0].price
+      : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1].price;
+    const payAmount = BN.parseUnits(new BN(newReceiveAmount).dividedBy(price), DEFAULT_DECIMALS);
     swapStore.setPayAmount(payAmount.toFixed(swapStore.sellToken.precision));
   };
 
@@ -131,6 +136,7 @@ export const SwapScreen: React.FC = observer(() => {
         swapStore.setReceiveAmount("0");
       }
     } catch (err) {
+      setIsloading(false);
       console.error("er", err);
     }
   };

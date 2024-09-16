@@ -143,7 +143,7 @@ class SwapStore {
       status: ["Active"],
     };
 
-    const sellOrders = await bcNetwork!.fetchSpotOrders({
+    const orders = await bcNetwork!.fetchSpotOrders({
       ...params,
       orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     });
@@ -155,34 +155,34 @@ class SwapStore {
       BN.parseUnits(this.rootStore.tradeStore.matcherFee, decimalToken),
     );
 
-    // {
-    //   "type": "Sell",
-    //   "amount": "17216",
-    //   "price": "58081620389280",
-    //   "amountToSpend": "17216",
-    //   "amountFee": "15999",
-    //   "depositAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-    //   "feeAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
-    //   "assetType": "Base"
-    // }
     const pair = this.getMarketPair(this.buyToken, this.sellToken);
-    console.log("pair", pair);
     if (!pair) return true;
+    let total = new BN(isBuy ? formattedAmount : formattedVolume);
+    let spend = BN.ZERO;
+    const orderList = orders
+      .map((el) => {
+        if (total.toNumber() < 0) {
+          return null;
+        }
+        spend = spend.plus(el.currentAmount);
+        total = total.minus(el.currentQuoteAmount);
+        return el;
+      })
+      .filter((el) => el !== null);
+
     const order = {
-      type: isBuy ? OrderType.Buy : OrderType.Sell,
+      orderType: isBuy ? OrderType.Buy : OrderType.Sell,
       amount: isBuy ? formattedVolume : formattedAmount,
-      price: sellOrders[sellOrders.length - 1].price.toString(),
-      amountToSpend: isBuy ? formattedAmount : formattedVolume,
+      price: orderList[orderList.length - 1].price.toString(),
+      amountToSpend: isBuy ? formattedVolume : formattedAmount,
       amountFee: depositAmountWithFee.toString(),
-      depositAssetId: pair?.baseToken.assetId,
+      depositAssetId: isBuy ? pair?.quoteToken.assetId : pair?.baseToken.assetId,
       feeAssetId: pair?.quoteToken.assetId,
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
       limitType: LimitType.FOK,
-      orders: sellOrders.map((el) => el.id),
+      orders: orderList.map((el) => el.id),
       slippage: slippage.toString(),
     };
-
-    console.log("order", order);
 
     const amountFormatted = BN.formatUnits(
       isBuy ? formattedVolume : formattedAmount,
@@ -196,7 +196,7 @@ class SwapStore {
 
     try {
       const marketContracts = CONFIG.APP.markets.map((el) => el.contractId);
-      const tx = await bcNetwork.createSpotOrderWithDeposit(order, marketContracts);
+      const tx = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_SWAP)(
           amountFormatted,

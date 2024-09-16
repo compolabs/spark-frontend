@@ -315,7 +315,6 @@ class CreateOrderVM {
       )
       .map((m) => m.contractId);
 
-    console.log("marketContracts", marketContracts);
     if (bcNetwork.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
@@ -364,9 +363,6 @@ class CreateOrderVM {
       price: this.inputPrice.toString(),
       ...deposit,
     };
-    console.log("order", order);
-
-    console.log(order);
 
     const data = await bcNetwork.createSpotOrderWithDeposit(order, marketContracts);
     return data.transactionId;
@@ -392,7 +388,7 @@ class CreateOrderVM {
     const orders = await bcNetwork.fetchSpotOrders({ ...params, orderType: oppositeOrderType });
     let total = this.inputTotal;
     let spend = BN.ZERO;
-    const arr = orders
+    const orderList = orders
       .map((el) => {
         if (total.toNumber() < 0) {
           return null;
@@ -402,55 +398,26 @@ class CreateOrderVM {
         return el;
       })
       .filter((el) => el !== null);
-    console.log("arr", arr);
-    const price =
-      settingsStore.orderType === ORDER_TYPE.Market ? arr[arr.length - 1].price.toString() : this.inputPrice.toString();
 
-    console.log("this.inputAmount", this.inputAmount.toString());
-    console.log("price", price.toString());
-    console.log("spend", spend.toString());
-    // 72275.54
+    const price =
+      settingsStore.orderType === ORDER_TYPE.Market
+        ? orderList[orderList.length - 1].price.toString()
+        : this.inputPrice.toString();
+
     deposit = {
       ...deposit,
       amountToSpend: this.inputAmount.toString(),
     };
 
-    // {
-    //   "amount": "13835",
-    //   "orderType": "Sell",
-    //   "limitType": "FOK",
-    //   "price": "72275538014795",
-    //   "orders": [
-    //   "0x6d96fca99833848826e6d95786a4e513bb5db72c6d4fc9d554b6464fc1ef97bd"
-    // ],
-    //   "slippage": "10000",
-    //   "amountToSpend": "13835",
-    //   "amountFee": "16000",
-    //   "depositAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-    //   "feeAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
-    //   "assetType": "Base"
-    // }
-
-    // {
-    //   "type": "Sell",
-    //   "amount": "13835",
-    //   "price": "72275540000000",
-    //   "amountToSpend": "13835",
-    //   "amountFee": "16000",
-    //   "depositAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-    //   "feeAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
-    //   "assetType": "Base"
-    // }
     const order: FulfillOrderManyWithDepositParams = {
       amount: this.inputAmount.toString(),
       orderType: type,
       limitType: settingsStore.timeInForce,
       price,
-      orders: arr.map((el) => el.id),
+      orders: orderList.map((el) => el.id),
       slippage: "10000",
       ...deposit,
     };
-    console.log("order", order);
     const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
     return data.transactionId;
   };
