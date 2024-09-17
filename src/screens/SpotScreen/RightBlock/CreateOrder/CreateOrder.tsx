@@ -10,6 +10,7 @@ import Button, { ButtonGroup } from "@components/Button";
 import { ConnectWalletButton } from "@components/ConnectWalletButton";
 import { Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
+import { RadioButton } from "@components/RadioButton.tsx";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
@@ -38,6 +39,7 @@ const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore } = useStores();
+  const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
 
@@ -58,7 +60,7 @@ const CreateOrder: React.FC = observer(() => {
   const handlePercentChange = (v: number) => {
     const balance = balanceStore.getContractBalanceInfo(vm.isSell ? baseToken.assetId : quoteToken.assetId).amount;
 
-    if (balance.eq(BN.ZERO)) return;
+    if (balance.isZero()) return;
 
     const value = BN.percentOf(balance, v);
     if (vm.isSell) {
@@ -120,6 +122,64 @@ const CreateOrder: React.FC = observer(() => {
     return <OrderTypeTooltip />;
   };
 
+  const renderInstruction = () => {
+    if (settingsStore.orderType === ORDER_TYPE.Market) return <></>;
+    const handleChangeTimeInForce = (e: any) => {
+      settingsStore.setTimeInForce(e);
+    };
+    return (
+      <Accordion transitionTimeout={400} transition>
+        <AccordionItem
+          header={
+            <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
+              <Text type={TEXT_TYPES.BUTTON_SECONDARY} nowrap primary>
+                Instruction
+              </Text>
+              <Row alignItems="center" justifyContent="flex-end">
+                <Text>{timeInForce}</Text>
+              </Row>
+            </Row>
+          }
+          defaultChecked
+        >
+          <SmartFlex alignItems="center" gap="10px" justifyContent="space-between">
+            <RadioButton
+              isSelected={timeInForce === LimitType.GTC}
+              label="GTC"
+              value={LimitType.GTC}
+              onChange={handleChangeTimeInForce}
+            />
+            <Row alignItems="center">
+              <Text nowrap>(Good-Till-Cancelled)</Text>
+            </Row>
+          </SmartFlex>
+          <SmartFlex alignItems="center" gap="10px" justifyContent="space-between">
+            <RadioButton
+              isSelected={timeInForce === LimitType.IOC}
+              label="IOC"
+              value={LimitType.IOC}
+              onChange={handleChangeTimeInForce}
+            />
+            <Row alignItems="center">
+              <Text nowrap>(Immidiate-Or-Cancel)</Text>
+            </Row>
+          </SmartFlex>
+          <SmartFlex alignItems="center" gap="10px" justifyContent="space-between">
+            <RadioButton
+              isSelected={timeInForce === LimitType.FOK}
+              label="FOK"
+              value={LimitType.FOK}
+              onChange={handleChangeTimeInForce}
+            />
+            <Row alignItems="center">
+              <Text nowrap>(Fill-Or-Kill)</Text>
+            </Row>
+          </SmartFlex>
+        </AccordionItem>
+      </Accordion>
+    );
+  };
+
   const renderOrderDetails = () => {
     return (
       <Accordion transitionTimeout={400} transition>
@@ -148,8 +208,15 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{vm.matcherFee.toString()}</Text>
-              <Text>&nbsp;ETH</Text>
+              <Text primary>{tradeStore.matcherFee.toSignificant(2)}</Text>
+              <Text>&nbsp;{quoteToken.symbol}</Text>
+            </Row>
+          </Row>
+          <Row alignItems="center" justifyContent="space-between">
+            <Text nowrap>Exchange Fee</Text>
+            <Row alignItems="center" justifyContent="flex-end">
+              <Text primary>{vm.exchangeFee.toSignificant(2)}</Text>
+              <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
           <Row alignItems="center" justifyContent="space-between">
@@ -165,10 +232,7 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const getAvailableAmount = () => {
-    return balanceStore.getFormatContractBalanceInfo(
-      vm.isSell ? baseToken.assetId : quoteToken.assetId,
-      vm.isSell ? baseToken.decimals : quoteToken.decimals,
-    );
+    return balanceStore.getFormatContractBalanceInfo(vm.isSell ? baseToken.assetId : quoteToken.assetId);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {
@@ -241,25 +305,28 @@ const CreateOrder: React.FC = observer(() => {
             />
           </InputContainerWithMaxButton>
         </InputContainerWithError>
-        <Row alignItems="center" justifyContent="space-between">
-          <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
-          <Row alignItems="center" mainAxisSize="fit-content">
-            <Text type={TEXT_TYPES.BODY} primary>
-              {getAvailableAmount()}
-            </Text>
-            <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+        <SmartFlex column>
+          <SliderContainer>
+            <Slider
+              max={100}
+              min={0}
+              percent={vm.inputPercent.toNumber()}
+              step={1}
+              value={vm.inputPercent.toNumber()}
+              onChange={(v) => handlePercentChange(v as number)}
+            />
+          </SliderContainer>
+          <Row alignItems="center" justifyContent="space-between">
+            <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
+            <Row alignItems="center" mainAxisSize="fit-content">
+              <Text type={TEXT_TYPES.BODY} primary>
+                {getAvailableAmount()}
+              </Text>
+              <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+            </Row>
           </Row>
-        </Row>
-        <SliderContainer>
-          <Slider
-            max={100}
-            min={0}
-            percent={vm.inputPercent.toNumber()}
-            step={1}
-            value={vm.inputPercent.toNumber()}
-            onChange={(v) => handlePercentChange(v as number)}
-          />
-        </SliderContainer>
+        </SmartFlex>
+        {renderInstruction()}
         {renderOrderDetails()}
       </ParamsContainer>
       <ConnectWalletButton connectText="Connect wallet to trade">{renderButton()}</ConnectWalletButton>
@@ -319,7 +386,7 @@ const InputContainerWithError = styled(SmartFlex)`
   gap: 8px;
   align-items: flex-start;
 
-  padding-bottom: 12px;
+  padding-bottom: 9px;
 `;
 
 const StyledMaxButton = styled(MaxButton)`

@@ -2,6 +2,8 @@ import React from "react";
 import { ToastContentProps } from "react-toastify";
 import styled from "@emotion/styled";
 
+import { media } from "@src/themes/breakpoints";
+
 import CloseIcon from "@assets/icons/close.svg?react";
 import InfoIcon from "@assets/icons/info.svg?react";
 import SuccessIcon from "@assets/icons/success.svg?react";
@@ -61,8 +63,12 @@ export const createToast = (props: Props) => {
 
 const ToastContainer = styled(SmartFlex)`
   padding: 14px 16px;
-
   gap: 12px;
+  ${media.mobile} {
+    width: 100vw;
+    height: 54px;
+    align-items: center;
+  }
 `;
 
 const Content = styled(SmartFlex)`

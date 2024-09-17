@@ -9,6 +9,7 @@ import OracleStore from "./OracleStore";
 import QuickAssetsStore from "./QuickAssetsStore";
 import RootStore from "./RootStore";
 import SettingsStore from "./SettingsStore";
+import SpotOrderBookStore from "./SpotOrderBookStore";
 import TradeStore from "./TradeStore";
 
 export {
@@ -20,6 +21,7 @@ export {
   QuickAssetsStore,
   RootStore,
   SettingsStore,
+  SpotOrderBookStore,
   storesContext,
   // SpotOrdersStore,
   TradeStore,

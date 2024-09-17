@@ -13,6 +13,7 @@ import { saveState } from "@utils/localStorage";
 import { BalanceStore } from "./BalanceStore";
 import { ModalStore } from "./ModalStore";
 import OracleStore from "./OracleStore";
+import SpotOrderBookStore from "./SpotOrderBookStore";
 import SwapStore from "./SwapStore";
 
 export interface ISerializedRootStore {
@@ -34,6 +35,7 @@ export default class RootStore {
   swapStore: SwapStore;
   mixPanelStore: MixPanelStore;
   quickAssetsStore: QuickAssetsStore;
+  spotOrderBookStore: SpotOrderBookStore;
 
   private constructor(initState?: ISerializedRootStore) {
     this.notificationStore = new NotificationStore(this);
@@ -47,6 +49,7 @@ export default class RootStore {
     this.swapStore = new SwapStore(this);
     this.mixPanelStore = new MixPanelStore(this);
     this.quickAssetsStore = new QuickAssetsStore(this);
+    this.spotOrderBookStore = new SpotOrderBookStore(this);
 
     makeAutoObservable(this);
 

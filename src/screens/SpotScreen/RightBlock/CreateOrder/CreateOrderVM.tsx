@@ -4,8 +4,9 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
 
 import {
-  CreateOrderParams,
-  FulfillOrderManyParams,
+  AssetType,
+  CreateOrderWithDepositParams,
+  FulfillOrderManyWithDepositParams,
   GetOrdersParams,
   LimitType,
   OrderType,
@@ -17,11 +18,12 @@ import { RootStore, useStores } from "@stores";
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
+import { CONFIG } from "@utils/getConfig";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import Math from "@utils/Math";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarketOrder } from "@entity";
+import { SpotMarket, SpotMarketOrder } from "@entity";
 
 const ctx = React.createContext<CreateOrderVM | null>(null);
 
@@ -58,6 +60,14 @@ export enum ORDER_TYPE {
   LimitIOC, // TODO: Когда TimeInForce будет переделана в отдельную вкладку оставить только тип limit
 }
 
+interface DepositInfo {
+  amountToSpend: string;
+  amountFee: string;
+  depositAssetId: string;
+  feeAssetId: string;
+  assetType: AssetType;
+}
+
 class CreateOrderVM {
   isLoading = false;
 
@@ -73,8 +83,6 @@ class CreateOrderVM {
   inputLeverage = BN.ZERO;
   inputLeveragePercent = BN.ZERO;
 
-  matcherFee = BN.ZERO;
-
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
@@ -84,17 +92,18 @@ class CreateOrderVM {
       () => oracleStore.prices,
       () => {
         const { orderType } = settingsStore;
-        const token = tradeStore.market?.baseToken;
-        const price = token?.priceFeed ? oracleStore.getTokenIndexPrice(token?.priceFeed) : BN.ZERO;
-
+        const { spotOrderBookStore } = this.rootStore;
+        const order = this.isSell
+          ? spotOrderBookStore.buyOrders[0]
+          : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1];
         if (orderType === ORDER_TYPE.Market) {
-          this.setInputPriceDebounce(price);
+          this.setInputPriceThrottle(order.price);
         } else if (
           orderType === ORDER_TYPE.Limit &&
-          this.inputPrice.eq(BN.ZERO) &&
+          this.inputPrice.isZero() &&
           this.activeInput !== ACTIVE_INPUT.Price
         ) {
-          this.setInputPriceDebounce(price);
+          this.setInputPriceThrottle(order.price);
         }
       },
     );
@@ -109,7 +118,13 @@ class CreateOrderVM {
       },
     );
 
-    this.fetchMarketFee();
+    reaction(
+      () => this.inputTotal,
+      (total) => {
+        const { swapStore } = this.rootStore;
+        swapStore.fetchExchangeFeeDebounce(total.toString());
+      },
+    );
   }
 
   get canProceed() {
@@ -122,12 +137,21 @@ class CreateOrderVM {
     return this.isSpotInputError;
   }
 
+  get exchangeFee(): BN {
+    const { tradeStore } = this.rootStore;
+    const { makerFee, takerFee } = tradeStore.tradeFee;
+
+    return BN.max(makerFee, takerFee);
+  }
+
   get isSpotInputError(): boolean {
-    const { tradeStore, balanceStore } = this.rootStore;
+    const { tradeStore, swapStore } = this.rootStore;
     const { market } = tradeStore;
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const balance = balanceStore.getContractBalanceInfo(token).amount;
+    const activeToken = swapStore.getFormatedContractBalance().find((el) => el.assetId === token);
+    if (!activeToken) return false;
+    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
     return balance ? amount.gt(balance) : false;
   }
 
@@ -148,6 +172,13 @@ class CreateOrderVM {
   onMaxClick = () => {
     this.onSpotMaxClick();
   };
+
+  fetchExchangeFee = (total: string) => {
+    const { tradeStore } = this.rootStore;
+    tradeStore.fetchTradeFee(total);
+  };
+
+  fetchExchangeFeeDebounce = _.debounce(this.fetchExchangeFee, 250);
 
   private onSpotMaxClick = () => {
     const { tradeStore, balanceStore, mixPanelStore } = this.rootStore;
@@ -173,8 +204,9 @@ class CreateOrderVM {
   };
 
   setInputPrice = (price: BN) => {
+    const { settingsStore } = this.rootStore;
     this.inputPrice = price;
-    this.setActiveInput(ACTIVE_INPUT.Price);
+    if (settingsStore.orderType !== ORDER_TYPE.Market) this.setActiveInput(ACTIVE_INPUT.Price);
     this.calculateInputs();
   };
 
@@ -227,14 +259,16 @@ class CreateOrderVM {
   }
 
   private updatePercent(): void {
-    const { tradeStore, balanceStore } = this.rootStore;
+    const { tradeStore, swapStore } = this.rootStore;
 
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const balance = balanceStore.getContractBalanceInfo(assetId).amount;
+    const activeToken = swapStore.getFormatedContractBalance().find((el) => el.assetId === assetId);
+    if (!activeToken) return;
+    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
 
-    if (balance.eq(BN.ZERO)) {
+    if (balance.isZero()) {
       this.inputPercent = BN.ZERO;
       return;
     }
@@ -246,76 +280,66 @@ class CreateOrderVM {
     this.inputPercent = percentageOfTotal.gt(100) ? new BN(100) : percentageOfTotal.toDecimalPlaces(0);
   }
 
-  setInputPriceDebounce = _.throttle(this.setInputPrice, PRICE_UPDATE_THROTTLE_INTERVAL);
+  setInputPriceThrottle = _.throttle(this.setInputPrice, PRICE_UPDATE_THROTTLE_INTERVAL);
 
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
     const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore } = this.rootStore;
+
     const { market } = tradeStore;
-    const { orderType } = settingsStore;
+    const { timeInForce } = settingsStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (!market) return;
-
     this.isLoading = true;
 
+    const isBuy = this.mode === ORDER_MODE.BUY;
+    const type = isBuy ? OrderType.Buy : OrderType.Sell;
+
+    const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
+    const depositAmountWithFee = BN.parseUnits(this.exchangeFee, market.quoteToken.decimals).plus(
+      BN.parseUnits(tradeStore.matcherFee, market.quoteToken.decimals),
+    );
+
+    const deposit: DepositInfo = {
+      amountToSpend: depositAmount.toString(),
+      amountFee: depositAmountWithFee.toString(),
+      depositAssetId: isBuy ? market.quoteToken.assetId : market.baseToken.assetId,
+      feeAssetId: market.quoteToken.assetId,
+      assetType: isBuy ? AssetType.Quote : AssetType.Base,
+    };
+
+    const marketContracts = CONFIG.APP.markets
+      .filter(
+        (m) =>
+          m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
+          m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
+      )
+      .map((m) => m.contractId);
+
     if (bcNetwork.getIsExternalWallet()) {
-      notificationStore.info({
-        text: "Please, confirm operation in your wallet",
-      });
+      notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
     try {
       let hash: Undefinable<string> = "";
-      const type = this.mode === ORDER_MODE.BUY ? OrderType.Buy : OrderType.Sell;
-      const typeMarket = this.mode === ORDER_MODE.BUY ? OrderType.Sell : OrderType.Buy;
-      const timeInForce = settingsStore.timeInForce;
-      if (timeInForce === LimitType.GTC) {
-        const order: CreateOrderParams = {
-          amount: this.inputAmount.toString(),
-          price: this.inputPrice.toString(),
-          type,
-          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
-        };
-        const data = await bcNetwork.createSpotOrder(order);
-        hash = data.transactionId;
-      } else {
-        const params: GetOrdersParams = {
-          limit: 50,
-          asset: tradeStore?.market?.baseToken.assetId ?? "",
-          status: ["Active"],
-        };
-        const sellOrders = await bcNetwork!.fetchSpotOrders({
-          ...params,
-          orderType: typeMarket,
-        });
 
-        const order: FulfillOrderManyParams = {
-          amount: this.inputAmount.toString(),
-          orderType: type,
-          limitType: timeInForce,
-          price:
-            orderType === ORDER_TYPE.Market
-              ? this.inputPrice.toString()
-              : sellOrders[sellOrders.length - 1].price.toString(),
-          orders: sellOrders.map((el) => el.id),
-          slippage: "100",
-          feeAssetId: bcNetwork.getTokenBySymbol("ETH").assetId,
-        };
-        const data = await bcNetwork.swapTokens(order);
-        hash = data.transactionId;
+      if (timeInForce === LimitType.GTC) {
+        hash = await this.createGTCOrder(type, deposit, marketContracts);
+      } else {
+        hash = await this.createMarketOrLimitOrder(type, market, deposit, marketContracts);
       }
 
-      const token = this.mode === ORDER_MODE.BUY ? market.baseToken : market.quoteToken;
-      const amount = this.mode === ORDER_MODE.BUY ? this.inputAmount : this.inputTotal;
+      const token = isBuy ? market.baseToken : market.quoteToken;
+      const amount = isBuy ? this.inputAmount : this.inputTotal;
 
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           BN.formatUnits(amount, token.decimals).toSignificant(2),
           token.symbol,
           BN.formatUnits(this.inputPrice, DEFAULT_DECIMALS).toSignificant(2),
-          this.mode === ORDER_MODE.BUY ? "buy" : "sell",
+          isBuy ? "buy" : "sell",
         ),
         hash,
       });
@@ -325,8 +349,80 @@ class CreateOrderVM {
     }
 
     await balanceStore.update();
-
     this.isLoading = false;
+  };
+
+  // Extracted function for creating GTC orders with deposits
+  private createGTCOrder = async (
+    type: OrderType,
+    deposit: DepositInfo,
+    marketContracts: string[],
+  ): Promise<string> => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const order: CreateOrderWithDepositParams = {
+      type,
+      amount: this.inputAmount.toString(),
+      price: this.inputPrice.toString(),
+      ...deposit,
+    };
+
+    const data = await bcNetwork.createSpotOrderWithDeposit(order, marketContracts);
+    return data.transactionId;
+  };
+
+  private createMarketOrLimitOrder = async (
+    type: OrderType,
+    market: SpotMarket,
+    deposit: DepositInfo,
+    marketContracts: string[],
+  ): Promise<string> => {
+    const { settingsStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const params: GetOrdersParams = {
+      limit: 50,
+      asset: market.baseToken.assetId ?? "",
+      status: ["Active"],
+    };
+    const isBuy = type === OrderType.Buy;
+
+    const oppositeOrderType = isBuy ? OrderType.Sell : OrderType.Buy;
+    const orders = await bcNetwork.fetchSpotOrders({ ...params, orderType: oppositeOrderType });
+    let total = this.inputTotal;
+    let spend = BN.ZERO;
+    const orderList = orders
+      .map((el) => {
+        if (total.toNumber() < 0) {
+          return null;
+        }
+        spend = spend.plus(el.currentAmount);
+        total = total.minus(el.currentQuoteAmount);
+        return el;
+      })
+      .filter((el) => el !== null);
+
+    const price =
+      settingsStore.orderType === ORDER_TYPE.Market
+        ? orderList[orderList.length - 1].price.toString()
+        : this.inputPrice.toString();
+
+    deposit = {
+      ...deposit,
+      amountToSpend: this.inputAmount.toString(),
+    };
+
+    const order: FulfillOrderManyWithDepositParams = {
+      amount: this.inputAmount.toString(),
+      orderType: type,
+      limitType: settingsStore.timeInForce,
+      price,
+      orders: orderList.map((el) => el.id),
+      slippage: "10000",
+      ...deposit,
+    };
+    const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
+    return data.transactionId;
   };
 
   selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {
@@ -335,13 +431,5 @@ class CreateOrderVM {
     settingsStore.setOrderType(ORDER_TYPE.Limit);
     this.setOrderMode(mode);
     this.setInputPrice(order.price);
-  };
-
-  fetchMarketFee = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
-
-    const fee = await bcNetwork.fetchSpotMatcherFee();
-
-    this.matcherFee = new BN(fee);
   };
 }

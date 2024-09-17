@@ -11,6 +11,8 @@ import filledStarIcon from "@assets/icons/yellowStar.svg";
 
 import { useStores } from "@stores";
 
+import { ROUTES } from "@constants";
+
 import { SpotMarket } from "@entity";
 
 import { MarketTitle } from "./MarketTitle";
@@ -41,7 +43,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
       isActive={isActive}
       onClick={() => {
         tradeStore.setMarketSelectionOpened(false);
-        navigate(`/${market.symbol}`);
+        navigate(`${ROUTES.SPOT}/${market.symbol}`);
       }}
     >
       <SmartFlex gap="4px" width="100%" column>

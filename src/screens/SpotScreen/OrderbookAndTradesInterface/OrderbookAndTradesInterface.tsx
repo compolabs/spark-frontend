@@ -6,7 +6,6 @@ import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 
 import { SpotOrderBook } from "./SpotOrderBook/SpotOrderBook";
-import { SpotOrderbookVMProvider } from "./SpotOrderBook/SpotOrderbookVM";
 import { SpotTrades } from "./SpotTrades/SpotTrades";
 import { SpotTradesVMProvider } from "./SpotTrades/SpotTradesVM";
 
@@ -14,26 +13,24 @@ const OrderbookAndTradesInterface: React.FC = () => {
   const [isOrderbook, setIsOrderbook] = useState(true);
 
   return (
-    <SpotOrderbookVMProvider>
-      <SpotTradesVMProvider>
-        <Root>
-          <ButtonGroup style={{ padding: "0 12px" }}>
-            <Button active={isOrderbook} onClick={() => setIsOrderbook(true)}>
-              <Text primary={isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
-                orderbook
-              </Text>
-            </Button>
-            <Button active={!isOrderbook} onClick={() => setIsOrderbook(false)}>
-              <Text primary={!isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
-                trades
-              </Text>
-            </Button>
-          </ButtonGroup>
-          <SizedBox height={8} />
-          {isOrderbook ? <SpotOrderBook /> : <SpotTrades />}
-        </Root>
-      </SpotTradesVMProvider>
-    </SpotOrderbookVMProvider>
+    <SpotTradesVMProvider>
+      <Root>
+        <ButtonGroup style={{ padding: "0 12px" }}>
+          <Button active={isOrderbook} onClick={() => setIsOrderbook(true)}>
+            <Text primary={isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
+              orderbook
+            </Text>
+          </Button>
+          <Button active={!isOrderbook} onClick={() => setIsOrderbook(false)}>
+            <Text primary={!isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
+              trades
+            </Text>
+          </Button>
+        </ButtonGroup>
+        <SizedBox height={8} />
+        {isOrderbook ? <SpotOrderBook /> : <SpotTrades />}
+      </Root>
+    </SpotTradesVMProvider>
   );
 };
 

@@ -19,12 +19,10 @@ import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 
 import { assetsMock } from "@screens/Assets/MainAssets/const";
-import { InfoBlockAssets } from "@screens/Assets/MainAssets/InfoBlockAssets";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
-import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 
@@ -33,50 +31,23 @@ interface MainAssets {
 }
 
 const MainAssets = observer(({ setStep }: MainAssets) => {
-  const { balanceStore, accountStore } = useStores();
-  const { oracleStore, settingsStore, quickAssetsStore } = useStores();
+  const { balanceStore } = useStores();
+  const { oracleStore, quickAssetsStore, swapStore } = useStores();
   const { isConnected } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
-  const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
-  const ETH = bcNetwork.getTokenBySymbol("ETH");
-
-  const balanceData = CONFIG.TOKENS.map(({ assetId }) => {
-    const balance = Array.from(balanceStore.balances).find((el) => el[0] === assetId)?.[1] ?? BN.ZERO;
-    const token = bcNetwork!.getTokenByAssetId(assetId);
-    const contractBalance =
-      token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
-    const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
-    return {
-      asset: token,
-      walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-      contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
-      balance: BN.formatUnits(totalBalance, token.decimals).toString(),
-      assetId,
-    };
-  }).filter((el) => {
-    return el.contractBalance && new BN(el.contractBalance).gt(BN.ZERO) && el.assetId !== ETH.assetId;
-  });
-
-  const hasPositiveBalance = balanceData.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
-
-  const accumulateBalanceContract = balanceData.reduce((acc, account) => {
+  const balanceList = swapStore.getFormatedContractBalance();
+  const hasPositiveBalance = balanceList.some((item) => !new BN(item.balance).isZero());
+  const accumulateBalanceContract = balanceList.reduce((acc, account) => {
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
-    return acc.plus(new BN(account.contractBalance).multipliedBy(price));
+    return acc.plus(new BN(account.balance).multipliedBy(price));
   }, BN.ZERO);
 
   const handleWithdraw = async () => {
-    const ETH = bcNetwork.getTokenBySymbol("ETH");
-    const assets = balanceData
-      .filter((el) => el.assetId !== ETH.assetId)
-      .map((el) => ({
-        assetId: el.assetId,
-        balance: BN.parseUnits(el.contractBalance, el.asset.decimals).toString(),
-      }));
     setIsLoading(true);
-    await balanceStore.withdrawBalanceAll(assets);
+    await balanceStore.withdrawBalanceAll();
     setIsLoading(false);
   };
   const closeAssets = () => {
@@ -98,7 +69,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       <SmartFlex alignItems="center" justifyContent="space-between" column>
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
           <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
-            Deposited Assets
+            Assets
           </TextTitle>
           <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
@@ -107,9 +78,9 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             <>
               {accumulateBalanceContract.gt(0) && (
                 <>
-                  {balanceData.map((el) => (
+                  {balanceList.map((el) => (
                     <AssetItem key={el.assetId}>
-                      <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
+                      <AssetBlock options={{ showBalance: "balance" }} token={el} />
                     </AssetItem>
                   ))}
                   <OverallBlock justifyContent="space-between">
@@ -148,28 +119,34 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       {!hasPositiveBalance && isConnected && (
         <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
           <DepositAssets />
-          <TextTitleDeposit>Deposit assets to trade fast and cheap.</TextTitleDeposit>
+          <TextTitleDeposit>
+            It looks like your wallet is empty. Tap the{" "}
+            <LinkStyled
+              href="/#/faucet"
+              onClick={() => {
+                quickAssetsStore.setQuickAssets(false);
+              }}
+            >
+              faucet
+            </LinkStyled>{" "}
+            to grab some tokens.
+          </TextTitleDeposit>
         </DepositedAssets>
       )}
       <BottomColumn justifyContent="space-between">
-        {isShowDepositInfo && isConnected && <InfoBlockAssets />}
         {!isConnected && (
           <SizedBoxStyled width={150}>
             <Text type={TEXT_TYPES.BUTTON}>Connect wallet to see your assets and trade</Text>
           </SizedBoxStyled>
         )}
-        {isConnected ? (
-          <Button green onClick={() => setStep(1)}>
-            Deposit
-          </Button>
-        ) : (
+        {!isConnected && (
           <Button green onClick={() => openConnectDialog()}>
             Connect wallet
           </Button>
         )}
         {accumulateBalanceContract.gt(0) && (
           <SmartFlexBlock>
-            <ButtonConfirm fitContent onClick={() => setStep(2)}>
+            <ButtonConfirm fitContent onClick={() => setStep(1)}>
               Withdraw
             </ButtonConfirm>
             <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdraw}>
@@ -251,6 +228,14 @@ const CloseButton = styled.img`
   background: ${({ theme }) => theme.colors.bgIcon};
   padding: 8px;
   border-radius: 100px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const LinkStyled = styled.a`
+  color: ${({ theme }) => theme.colors.greenLight};
+  text-decoration: underline;
   &:hover {
     cursor: pointer;
   }

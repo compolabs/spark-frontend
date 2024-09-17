@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalletConnect, onClose }) => {
-  const { accountStore, quickAssetsStore } = useStores();
+  const { accountStore } = useStores();
 
   const handleAccountClick = () => {
     onAccountClick();
@@ -50,9 +50,6 @@ const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalle
         </Container>
         <SizedBox height={8} />
         <FooterContainer gap="8px" column>
-          <Button data-onboarding="assets-mobile" onClick={() => quickAssetsStore.setQuickAssets(true)}>
-            ASSETS
-          </Button>
           {renderWalletAddressButton()}
         </FooterContainer>
       </Body>

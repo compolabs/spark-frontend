@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "contractVer": 257,
+  "version": "1.2.0",
+  "contractVer": 769,
   "tokens": [
     {
       "name": "Ethereum",
@@ -29,25 +29,40 @@
   ],
   "markets": [
     {
+      "marketName": "ETHUSDC",
+      "owner": "0xd1ebb551a2d58f024875bcc6798e4e2f8c8feec9da718a9f29d362f14531a3ef",
+      "baseAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+      "baseAssetDecimals": 9,
+      "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+      "quoteAssetDecimals": 6,
+      "priceDecimals": 9,
+      "version": 769,
+      "contractId": "0x7d1da52a221897ebc88dc6a5d4623e704f7d64022d498b0438827dd79b6e5457"
+    },
+    {
       "marketName": "BTCUSDC",
-      "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
+      "owner": "0xd1ebb551a2d58f024875bcc6798e4e2f8c8feec9da718a9f29d362f14531a3ef",
       "baseAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
       "baseAssetDecimals": 8,
       "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
       "quoteAssetDecimals": 6,
       "priceDecimals": 9,
-      "feeAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
-      "contractId": "0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa"
+      "version": 769,
+      "contractId": "0x416ccdaf69881ae345537b1844d1511b4103379fca43b8c2190aae8b42f08173"
     }
   ],
   "indexers": {
-    "0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
+    "0x416ccdaf69881ae345537b1844d1511b4103379fca43b8c2190aae8b42f08173": {
+      "httpUrl": "https://indexer.bigdevenergy.link/7b34f67/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/7b34f67/v1/graphql"
+    },
+    "0x7d1da52a221897ebc88dc6a5d4623e704f7d64022d498b0438827dd79b6e5457": {
+      "httpUrl": "https://indexer.bigdevenergy.link/4991bb0/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/4991bb0/v1/graphql"
     }
   },
   "contracts": {
-    "orderbook": "0x0713334e61ed73ba9421a3a49891953f9ccb7353828566b569752a82a39803e8",
+    "orderbook": "0x8f7935292f3da69aec797926029c864d7ec6d03c72f7347b4fd517ba4a7b78fb",
     "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
   },
   "networkUrl": "https://testnet.fuel.network/v1/graphql",

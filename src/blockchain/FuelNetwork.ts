@@ -1,4 +1,4 @@
-import { Account, B256Address, Bech32Address } from "fuels";
+import { Account, B256Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -6,7 +6,6 @@ import SparkOrderBookSdk, {
   GetActiveOrdersParams,
   Order,
   OrderType,
-  UserMarketBalance,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
 
@@ -104,10 +103,22 @@ export class FuelNetwork {
     return this.orderbookSdk.createOrder(...params);
   };
 
+  createSpotOrderWithDeposit = async (
+    ...params: Parameters<typeof this.orderbookSdk.createOrderWithDeposit>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.createOrderWithDeposit(...params);
+  };
+
   swapTokens = async (
     ...params: Parameters<typeof this.orderbookSdk.fulfillOrderMany>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.fulfillOrderMany(...params);
+  };
+
+  fulfillOrderManyWithDeposit = async (
+    ...params: Parameters<typeof this.orderbookSdk.fulfillOrderManyWithDeposit>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.fulfillOrderManyWithDeposit(...params);
   };
 
   cancelSpotOrder = async (
@@ -121,13 +132,14 @@ export class FuelNetwork {
   };
 
   withdrawSpotBalance = async (
-    ...params: Parameters<typeof this.orderbookSdk.withdraw>
+    ...params: Parameters<typeof this.orderbookSdk.withdrawAssets>
   ): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.withdraw(...params);
+    return this.orderbookSdk.withdrawAssets(...params);
   };
 
-  withdrawSpotBalanceAll = async (...params: Parameters<typeof this.orderbookSdk.withdrawAll>): Promise<void> => {
-    await this.orderbookSdk.withdrawAll(...params);
+  withdrawSpotBalanceAll = async (...params: Parameters<typeof this.orderbookSdk.withdrawAllAssets>): Promise<void> => {
+    console.log("params", params);
+    await this.orderbookSdk.withdrawAllAssets(...params);
   };
 
   depositSpotBalance = async (
@@ -180,11 +192,31 @@ export class FuelNetwork {
     };
   };
 
-  fetchSpotMatcherFee = async (): Promise<number> => {
+  fetchSpotMatcherFee = async () => {
     return this.orderbookSdk.fetchMatcherFee();
   };
 
-  fetchSpotUserMarketBalance = async (accountAddress: Bech32Address): Promise<UserMarketBalance> => {
-    return this.orderbookSdk.fetchUserMarketBalance(accountAddress);
+  fetchSpotProtocolFee = async () => {
+    return this.orderbookSdk.fetchProtocolFee();
+  };
+
+  fetchSpotProtocolFeeForUser = async (...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeForUser>) => {
+    return this.orderbookSdk.fetchProtocolFeeForUser(...params);
+  };
+
+  fetchSpotProtocolFeeAmountForUser = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeAmountForUser>
+  ) => {
+    return this.orderbookSdk.fetchProtocolFeeAmountForUser(...params);
+  };
+
+  fetchSpotUserMarketBalance = async (...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalance>) => {
+    return this.orderbookSdk.fetchUserMarketBalance(...params);
+  };
+
+  fetchUserMarketBalanceByContracts = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalanceByContracts>
+  ) => {
+    return this.orderbookSdk.fetchUserMarketBalanceByContracts(...params);
   };
 }

@@ -58,9 +58,8 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
     }
   };
 
-  const ETH = bcNetwork.getTokenBySymbol("ETH");
   const balanceData = Array.from(balanceStore.balances)
-    .filter(([assetId, balance]) => balance && balance.gt(BN.ZERO) && assetId !== ETH.assetId)
+    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
     .map(([assetId, balance]) => {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const contractBalance =

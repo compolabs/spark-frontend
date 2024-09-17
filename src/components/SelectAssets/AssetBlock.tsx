@@ -27,10 +27,16 @@ export interface IAssetBlock {
     assetId: string;
   };
   styleToken?: CSSProperties;
+  type?: "rounded" | "square";
 }
 
 const AssetBlock: React.FC<IAssetBlock> = observer(
-  ({ styleToken, options: { showBalance = "balance", showNullBalance = true, isShowBalance = true }, token }) => {
+  ({
+    styleToken,
+    options: { showBalance = "balance", showNullBalance = true, isShowBalance = true },
+    token,
+    type = "square",
+  }) => {
     if (!token?.asset?.priceFeed) return <></>;
     const { oracleStore } = useStores();
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.asset.priceFeed), DEFAULT_DECIMALS);
@@ -41,7 +47,7 @@ const AssetBlock: React.FC<IAssetBlock> = observer(
         <SmartFlex alignItems="center" gap="10px">
           <TokenIcon src={token.asset.logo} />
           <div>
-            <Text type={TEXT_TYPES.BUTTON} primary>
+            <Text type={type === "rounded" ? TEXT_TYPES.H_NEW : TEXT_TYPES.BUTTON} primary>
               {token.asset.symbol}
             </Text>
             {isShowBalance && <Text type={TEXT_TYPES.BODY}>{token.asset.name}</Text>}

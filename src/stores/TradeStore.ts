@@ -1,3 +1,4 @@
+import { toBech32 } from "fuels";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -35,6 +36,12 @@ class TradeStore {
     low: BN.ZERO,
   };
 
+  matcherFee = BN.ZERO;
+  tradeFee = {
+    makerFee: BN.ZERO,
+    takerFee: BN.ZERO,
+  };
+
   private marketInfoUpdater: IntervalUpdater;
   private marketPricesUpdater: IntervalUpdater;
 
@@ -59,6 +66,7 @@ class TradeStore {
       () => {
         this.updateMarketInfo();
         this.updateMarketPrices();
+        this.fetchMatcherFee();
       },
       { fireImmediately: true },
     );
@@ -76,7 +84,7 @@ class TradeStore {
   selectActiveMarket = (marketId?: string) => {
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!marketId) return;
+    if (!marketId || marketId === this.marketSymbol) return;
 
     const getMarket = <T extends SpotMarket | PerpMarket>(markets: T[]) =>
       markets.find((market) => market.symbol === marketId);
@@ -135,6 +143,35 @@ class TradeStore {
     });
   };
 
+  fetchMatcherFee = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    if (!this.market) return;
+
+    const matcherFee = await bcNetwork.fetchSpotMatcherFee();
+    const decimals = this.market.quoteToken.decimals;
+
+    this.matcherFee = BN.formatUnits(matcherFee, decimals);
+  };
+
+  fetchTradeFee = async (quoteAmount: string) => {
+    const { accountStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    if (!accountStore.address || !this.market) return;
+
+    const address = toBech32(accountStore.address!);
+
+    const tradeFee = await bcNetwork.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
+
+    const decimals = this.market.quoteToken.decimals;
+
+    this.tradeFee = {
+      makerFee: BN.formatUnits(tradeFee.makerFee, decimals),
+      takerFee: BN.formatUnits(tradeFee.takerFee, decimals),
+    };
+  };
+
   serialize = (): ISerializedTradeStore => ({
     favMarkets: this.favMarkets.join(","),
   });
@@ -143,7 +180,7 @@ class TradeStore {
     this.setInitialized(false);
     this._setLoading(true);
 
-    await Promise.all([this.initSpotMarket()]).catch(console.error);
+    await this.initSpotMarket().catch(console.error);
 
     this._setLoading(false);
     this.setInitialized(true);
@@ -160,6 +197,7 @@ class TradeStore {
       const market = markets[0];
       const indexerInfo = CONFIG.APP.indexers[market.contractAddress as keyof typeof CONFIG.APP.indexers];
       bcNetwork.setActiveMarket(market.contractAddress, indexerInfo);
+      this.setMarketSymbol(market.symbol);
 
       this.setSpotMarkets(markets);
       await this.updateMarketPrices();

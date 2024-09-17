@@ -29,26 +29,28 @@ const ARROW_HEIGHT = 18;
 const ARROW_WIDTH = 50;
 const GAP = 16;
 
-const createOverlayCopy = (element: HTMLElement): HTMLElement => {
-  const copyContainer = document.createElement("div");
-  copyContainer.style.position = "absolute";
-  copyContainer.style.zIndex = "10000";
-  copyContainer.style.top = `${element.getBoundingClientRect().top}px`;
-  copyContainer.style.left = `${element.getBoundingClientRect().left}px`;
-  copyContainer.style.width = `${element.offsetWidth}px`;
-  copyContainer.style.height = `${element.offsetHeight}px`;
+// TODO: There seems to be a serious problem on mobile devices. We need to figure out why there’s such jittering when highlighting elements.
 
-  const clone = element.cloneNode(true) as HTMLElement;
-  copyContainer.appendChild(clone);
+// const createOverlayCopy = (element: HTMLElement): HTMLElement => {
+//   const copyContainer = document.createElement("div");
+//   copyContainer.style.position = "absolute";
+//   copyContainer.style.zIndex = "10000";
+//   copyContainer.style.top = `${element.getBoundingClientRect().top}px`;
+//   copyContainer.style.left = `${element.getBoundingClientRect().left}px`;
+//   copyContainer.style.width = `${element.offsetWidth}px`;
+//   copyContainer.style.height = `${element.offsetHeight}px`;
 
-  document.body.appendChild(copyContainer);
+//   const clone = element.cloneNode(true) as HTMLElement;
+//   copyContainer.appendChild(clone);
 
-  return copyContainer;
-};
+//   document.body.appendChild(copyContainer);
 
-const removeOverlayCopy = (copyContainer: HTMLElement) => {
-  document.body.removeChild(copyContainer);
-};
+//   return copyContainer;
+// };
+
+// const removeOverlayCopy = (copyContainer: HTMLElement) => {
+//   document.body.removeChild(copyContainer);
+// };
 
 export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
   const media = useMedia();
@@ -61,7 +63,7 @@ export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
   const stepRef = useRef<HTMLDivElement>(null);
   const stepArrowRef = useRef<HTMLImageElement>(null);
   const targetRef = useRef<HTMLElement | null>(null);
-  const targetCopyRef = useRef<HTMLElement | null>(null);
+  // const targetCopyRef = useRef<HTMLElement | null>(null);
 
   const calculatePosition = () => {
     if (steps.length === 0 || !stepRef.current) return;
@@ -78,7 +80,7 @@ export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
       const { width: stepWidth, height: stepHeight } = stepRef.current.getBoundingClientRect();
 
       // Create a copy of the target element and place it at the top of the DOM
-      targetCopyRef.current = createOverlayCopy(targetRef.current);
+      // targetCopyRef.current = createOverlayCopy(targetRef.current);
 
       const stepPossibleLeft = left + width - stepWidth;
       const maxLeft = window.innerWidth - GAP - stepWidth;
@@ -128,10 +130,10 @@ export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
   }, [steps, currentStepIndex]);
 
   const handleNextStep = () => {
-    if (targetCopyRef.current) {
-      // Remove the copied element when no longer needed
-      removeOverlayCopy(targetCopyRef.current);
-    }
+    // if (targetCopyRef.current) {
+    //   // Remove the copied element when no longer needed
+    //   removeOverlayCopy(targetCopyRef.current);
+    // }
 
     if (currentStepIndex < totalSteps - 1) {
       setCurrentStepIndex(currentStepIndex + 1);

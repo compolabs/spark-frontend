@@ -28,8 +28,6 @@ import { SpotMarketOrder } from "@entity";
 
 import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
 
-import { useSpotOrderbookVM } from "./SpotOrderbookVM";
-
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
 export enum SPOT_ORDER_FILTER {
@@ -47,7 +45,7 @@ const SPOT_SETTINGS_ICONS = {
 };
 
 export const SpotOrderBook: React.FC<IProps> = observer(() => {
-  const vm = useSpotOrderbookVM();
+  const { spotOrderBookStore } = useStores();
   const orderSpotVm = useCreateOrderVM();
   const media = useMedia();
   const theme = useTheme();
@@ -57,18 +55,19 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const [isSettingsOpen, openSettings, closeSettings] = useFlag();
 
   useEffect(() => {
-    vm.calcSize(media.mobile);
+    spotOrderBookStore.calcSize(media.mobile);
   }, [media.mobile]);
 
   const handleCalcSize = useCallback(() => {
-    vm.calcSize(media.mobile);
+    spotOrderBookStore.calcSize(media.mobile);
   }, [media.mobile]);
 
   useEventListener("resize", handleCalcSize);
 
-  const isOrderBookEmpty = vm.allBuyOrders.length === 0 && vm.allSellOrders.length === 0;
+  const isOrderBookEmpty =
+    spotOrderBookStore.allBuyOrders.length === 0 && spotOrderBookStore.allSellOrders.length === 0;
 
-  if (vm.isOrderBookLoading && isOrderBookEmpty) {
+  if (spotOrderBookStore.isOrderBookLoading && isOrderBookEmpty) {
     return <Loader size={32} hideText />;
   }
 
@@ -89,9 +88,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       <SettingIcon
         key={index}
         alt="filter"
-        selected={vm.orderFilter === index}
+        selected={spotOrderBookStore.orderFilter === index}
         src={value}
-        onClick={() => vm.setOrderFilter(index)}
+        onClick={() => spotOrderBookStore.setOrderFilter(index)}
       />
     ));
   };
@@ -101,9 +100,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       return (
         <SpreadContainer>
           <Text type={TEXT_TYPES.H} primary>
-            {vm.spreadPrice}
+            {spotOrderBookStore.spreadPrice}
           </Text>
-          <Text>{`(${vm.spreadPercent}%)`}</Text>
+          <Text>{`(${spotOrderBookStore.spreadPercent}%)`}</Text>
         </SpreadContainer>
       );
     }
@@ -111,31 +110,35 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     return (
       <SpreadContainer>
         <Text type={TEXT_TYPES.SUPPORTING}>SPREAD</Text>
-        <Text primary>{vm.spreadPrice}</Text>
-        <Text>{`(${vm.spreadPercent}%) `}</Text>
+        <Text primary>{spotOrderBookStore.spreadPrice}</Text>
+        <Text>{`(${spotOrderBookStore.spreadPercent}%) `}</Text>
       </SpreadContainer>
     );
   };
 
-  const indexOfDecimal = SPOT_DECIMAL_OPTIONS.indexOf(vm.decimalGroup);
+  const indexOfDecimal = SPOT_DECIMAL_OPTIONS.indexOf(spotOrderBookStore.decimalGroup);
 
   const handleDecimalSelect = (index: string) => {
     const value = SPOT_DECIMAL_OPTIONS[Number(index)];
-    vm.setDecimalGroup(value);
+    spotOrderBookStore.setDecimalGroup(value);
   };
 
   const renderOrders = (orders: SpotMarketOrder[], type: "sell" | "buy") => {
     const orderMode = type === "sell" ? ORDER_MODE.BUY : ORDER_MODE.SELL;
     const volumePercent = (ord: SpotMarketOrder) =>
-      type === "sell" ? ord.initialAmount.div(vm.totalSell) : ord.initialQuoteAmount.div(vm.totalBuy);
+      type === "sell"
+        ? ord.initialAmount.div(spotOrderBookStore.totalSell)
+        : ord.initialQuoteAmount.div(spotOrderBookStore.totalBuy);
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
 
     return orders.map((o, index) => (
       <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
         <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
         <Text primary>{o.currentAmountUnits.toFormat(4)}</Text>
-        <TextOverflow color={color}>{o.priceUnits.toFormat(vm.decimalGroup)}</TextOverflow>
-        <Text primary>{numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(vm.decimalGroup)}a`)}</Text>
+        <TextOverflow color={color}>{o.priceUnits.toFormat(spotOrderBookStore.decimalGroup)}</TextOverflow>
+        <Text primary>
+          {numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`)}
+        </Text>
       </OrderRow>
     ));
   };
@@ -160,33 +163,56 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
           <Text type={TEXT_TYPES.SUPPORTING}>{`Total ${market?.quoteToken.symbol}`}</Text>
         </OrderBookHeader>
         <Container
-          fitContent={vm.orderFilter === SPOT_ORDER_FILTER.SELL || vm.orderFilter === SPOT_ORDER_FILTER.BUY}
-          reverse={vm.orderFilter === SPOT_ORDER_FILTER.SELL}
+          fitContent={
+            spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL ||
+            spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY
+          }
+          reverse={spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL}
         >
-          {vm.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
+          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
             <Plug
-              length={vm.sellOrders.length < +vm.oneSizeOrders ? +vm.oneSizeOrders - 1 - vm.sellOrders.length : 0}
+              length={
+                spotOrderBookStore.sellOrders.length < +spotOrderBookStore.oneSizeOrders
+                  ? +spotOrderBookStore.oneSizeOrders - 1 - spotOrderBookStore.sellOrders.length
+                  : 0
+              }
             />
           )}
-          {vm.orderFilter === SPOT_ORDER_FILTER.SELL && (
+          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
             <Plug
-              length={vm.sellOrders.length < +vm.amountOfOrders ? +vm.amountOfOrders - 1 - vm.sellOrders.length : 0}
+              length={
+                spotOrderBookStore.sellOrders.length < +spotOrderBookStore.amountOfOrders
+                  ? +spotOrderBookStore.amountOfOrders - 1 - spotOrderBookStore.sellOrders.length
+                  : 0
+              }
             />
           )}
 
-          {vm.orderFilter !== SPOT_ORDER_FILTER.BUY && renderOrders(vm.sellOrders, "sell")}
+          {spotOrderBookStore.orderFilter !== SPOT_ORDER_FILTER.BUY &&
+            renderOrders(spotOrderBookStore.sellOrders, "sell")}
 
-          {vm.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && renderSpread()}
+          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && renderSpread()}
 
-          {vm.orderFilter !== SPOT_ORDER_FILTER.SELL && renderOrders(vm.buyOrders, "buy")}
+          {spotOrderBookStore.orderFilter !== SPOT_ORDER_FILTER.SELL &&
+            renderOrders(spotOrderBookStore.buyOrders, "buy")}
 
-          {vm.orderFilter === SPOT_ORDER_FILTER.BUY && (
+          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY && (
             <Plug
-              length={vm.buyOrders.length < +vm.amountOfOrders ? +vm.amountOfOrders - 1 - vm.buyOrders.length : 0}
+              length={
+                spotOrderBookStore.buyOrders.length < +spotOrderBookStore.amountOfOrders
+                  ? +spotOrderBookStore.amountOfOrders - 1 - spotOrderBookStore.buyOrders.length
+                  : 0
+              }
             />
           )}
-          {vm.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
-            <Plug length={vm.buyOrders.length < +vm.oneSizeOrders ? +vm.oneSizeOrders - 1 - vm.buyOrders.length : 0} />
+          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
+            <Plug
+              length={
+                spotOrderBookStore.buyOrders.length < +spotOrderBookStore.oneSizeOrders
+                  ? +spotOrderBookStore.oneSizeOrders - 1 - spotOrderBookStore.buyOrders.length
+                  : 0
+              }
+            />
           )}
         </Container>
 
@@ -195,10 +221,10 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
           filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([_, value]) => value)}
           isOpen={isSettingsOpen}
           selectedDecimal={String(indexOfDecimal)}
-          selectedFilter={vm.orderFilter}
+          selectedFilter={spotOrderBookStore.orderFilter}
           onClose={closeSettings}
           onDecimalSelect={handleDecimalSelect}
-          onFilterSelect={vm.setOrderFilter}
+          onFilterSelect={spotOrderBookStore.setOrderFilter}
         />
       </OrderbookContainer>
     </Root>

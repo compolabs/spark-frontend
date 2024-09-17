@@ -8,7 +8,6 @@ import SideBar from "@components/SideBar";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
-import DepositAssets from "@screens/Assets/DepositAssets/DepositAssets";
 import MainAssets from "@screens/Assets/MainAssets/MainAssets";
 import WithdrawAssets from "@screens/Assets/WithdrawAssets/WithdrawAssets";
 
@@ -41,6 +40,7 @@ const SideManageAssets = observer(() => {
   const [isFirstOpen, setIsFirstOpen] = useState(true);
   const [isBack, setIsBack] = useState(true);
   const setStep = (step: number) => {
+    console.log("step", step);
     setIsBack(step > quickAssetsStore.currentStep);
     setIsFirstOpen(false);
     setTimeout(() => {
@@ -48,10 +48,9 @@ const SideManageAssets = observer(() => {
     }, 100);
   };
   const MainAssetsComponent = () => <MainAssets setStep={setStep} />;
-  const DepositAssetsComponent = () => <DepositAssets setStep={setStep} />;
   const WithdrawAssetsComponent = () => <WithdrawAssets setStep={setStep} />;
 
-  const steps = [MainAssetsComponent, DepositAssetsComponent, WithdrawAssetsComponent];
+  const steps = [MainAssetsComponent, WithdrawAssetsComponent];
   const CurrentComponent = steps[quickAssetsStore.currentStep];
 
   const handleClose = () => {
