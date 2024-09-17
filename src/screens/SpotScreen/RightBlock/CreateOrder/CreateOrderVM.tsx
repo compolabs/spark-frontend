@@ -406,7 +406,6 @@ class CreateOrderVM {
 
     deposit = {
       ...deposit,
-      amountToSpend: this.inputAmount.toString(),
     };
 
     const order: FulfillOrderManyWithDepositParams = {
