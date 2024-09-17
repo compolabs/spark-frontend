@@ -9,8 +9,11 @@ import { Nullable } from "tsdef";
 import { media } from "@themes/breakpoints";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
+import DocsIcon from "@assets/icons/docs.svg?react";
 import SwapIcon from "@assets/icons/swap.svg?react";
 import TradeIcon from "@assets/icons/switch.svg?react";
+import GithubIcon from "@assets/social/github.svg?react";
+import XIcon from "@assets/social/x.svg?react";
 
 import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
@@ -24,13 +27,14 @@ import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
 
 type MenuChildItem = {
   title: string;
-  desc: string;
   icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   link: string;
+  desc?: string;
 };
 
 type MenuItem = {
   title: string;
+  isGradient?: boolean;
   link?: string;
   dataOnboardingKey?: string;
   children?: MenuChildItem[];
@@ -40,6 +44,7 @@ const MENU_ITEMS: Array<MenuItem> = [
   { title: "DASHBOARD" },
   {
     title: "TRADE",
+    isGradient: true,
     children: [
       {
         title: "SPOT",
@@ -56,9 +61,26 @@ const MENU_ITEMS: Array<MenuItem> = [
     ],
   },
   { title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" },
-  { title: "DOCS", link: DOCS_LINK },
-  { title: "GITHUB", link: GITHUB_LINK },
-  { title: "TWITTER", link: TWITTER_LINK },
+  {
+    title: "MORE",
+    children: [
+      {
+        title: "DOCS",
+        link: DOCS_LINK,
+        icon: DocsIcon,
+      },
+      {
+        title: "GITHUB",
+        link: GITHUB_LINK,
+        icon: GithubIcon,
+      },
+      {
+        title: "X / TWITTER",
+        link: TWITTER_LINK,
+        icon: XIcon,
+      },
+    ],
+  },
 ];
 
 const DROPDOWN_VARIANTS = {
@@ -102,23 +124,25 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
   useOnClickOutside(dropdownRef, handleClickOutside);
 
-  const renderChildMenuItem = ({ title, link, icon: Icon, desc }: MenuChildItem) => {
+  const renderChildMenuItem = ({ title, link, icon: Icon, desc }: MenuChildItem, isGradient?: boolean) => {
     const isActive = location.pathname.includes(link);
 
     return (
       <NavLink key={title} to={link} onClick={handleMenuItemClick}>
-        <DropdownMenu isActive={isActive}>
-          <Icon height={24} width={24} />
+        <DropdownMenu isActive={isActive} isGradient={isGradient}>
+          <IconContainer>
+            <Icon height={24} width={24} />
+          </IconContainer>
           <DropdownMenuContent>
             <DropdownMenuTitle>{title}</DropdownMenuTitle>
-            <Text type={TEXT_TYPES.BODY}>{desc}</Text>
+            {desc && <Text type={TEXT_TYPES.BODY}>{desc}</Text>}
           </DropdownMenuContent>
         </DropdownMenu>
       </NavLink>
     );
   };
 
-  const renderMenuItem = ({ title, link, dataOnboardingKey, children }: MenuItem) => {
+  const renderMenuItem = ({ title, isGradient, link, dataOnboardingKey, children }: MenuItem) => {
     const dataOnboardingDeviceKey = `${dataOnboardingKey}-${isMobile ? "mobile" : "desktop"}`;
     const isActive = Boolean(link && location.pathname.includes(link));
 
@@ -133,6 +157,8 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
       const isActive = isDropdownOpen || isAnyChildrenActive;
 
+      const titleComponent = isGradient ? <BaseGradientText>{title}</BaseGradientText> : title;
+
       return (
         <DropdownContainer key={title} ref={dropdownRef}>
           <Element
@@ -141,7 +167,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
             isDropdown
             onClick={handleDropdownToggle}
           >
-            <BaseGradientText>{title}</BaseGradientText>
+            {titleComponent}
             <ArrowIconStyled isOpen={isDropdownOpen} />
           </Element>
           <AnimatePresence mode="wait">
@@ -154,7 +180,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
                 variants={DROPDOWN_VARIANTS}
                 onClick={handleDropdownToggle}
               >
-                {children.map(renderChildMenuItem)}
+                {children.map((item) => renderChildMenuItem(item, isGradient))}
               </Dropdown>
             )}
           </AnimatePresence>
@@ -306,11 +332,10 @@ const DropdownMenuTitle = styled(Text)`
   }
 `;
 
-const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean }>`
+const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean; isGradient?: boolean }>`
   padding: 8px 16px;
   gap: 8px;
   align-items: center;
-
   cursor: pointer;
 
   & > svg {
@@ -318,7 +343,7 @@ const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean }>`
     min-height: 24px;
   }
 
-  ${({ isActive }) =>
+  ${({ isActive, isGradient }) =>
     isActive &&
     css`
       background-color: #232323;
@@ -326,10 +351,13 @@ const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean }>`
       ${DropdownMenuTitle} {
         width: fit-content;
 
-        background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        ${isGradient &&
+        css`
+          background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        `}
       }
     `};
 
@@ -339,10 +367,14 @@ const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean }>`
     ${DropdownMenuTitle} {
       width: fit-content;
 
-      background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      ${({ isGradient }) =>
+        isGradient &&
+        css`
+          background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        `}
     }
   }
 
@@ -357,4 +389,8 @@ const DropdownMenuContent = styled(SmartFlex)`
   ${media.mobile} {
     gap: 4px;
   }
+`;
+
+const IconContainer = styled(SmartFlex)`
+  color: ${({ theme }) => theme.colors.iconSecondary};
 `;
