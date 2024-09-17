@@ -7,13 +7,12 @@ import Button from "@components/Button";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
-import { Token } from "@src/entity";
-import useFlag from "@src/hooks/useFlag";
 import { media } from "@themes/breakpoints";
 
 import ArrowDownIcon from "@assets/icons/arrowDown.svg?react";
 import Spinner from "@assets/icons/spinner.svg?react";
 
+import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
@@ -25,6 +24,7 @@ import BN from "@utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
 
 import { FuelNetwork } from "@blockchain";
+import { Token } from "@entity";
 
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";

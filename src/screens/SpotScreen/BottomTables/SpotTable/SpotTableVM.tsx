@@ -2,8 +2,6 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { Subscription } from "@src/typings/utils";
-
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
 
@@ -14,6 +12,8 @@ import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder } from "@entity";
+
+import { Subscription } from "@src/typings/utils";
 
 const ctx = React.createContext<SpotTableVM | null>(null);
 

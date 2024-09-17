@@ -13,10 +13,10 @@ import MaxButton from "@components/MaxButton";
 import { RadioButton } from "@components/RadioButton.tsx";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
+import Slider from "@components/Slider";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
-import Slider from "@src/components/Slider";
 import { media } from "@themes/breakpoints";
 
 import useFlag from "@hooks/useFlag";

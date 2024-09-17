@@ -3,8 +3,6 @@ import { Nullable } from "tsdef";
 
 import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { Subscription } from "@src/typings/utils";
-
 import { RootStore } from "@stores";
 
 import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
@@ -16,6 +14,8 @@ import { groupOrders } from "@utils/groupOrders";
 
 import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder } from "@entity";
+
+import { Subscription } from "@src/typings/utils";
 
 class SpotOrderBookStore {
   private readonly rootStore: RootStore;

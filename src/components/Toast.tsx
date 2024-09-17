@@ -2,7 +2,7 @@ import React from "react";
 import { ToastContentProps } from "react-toastify";
 import styled from "@emotion/styled";
 
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
 
 import CloseIcon from "@assets/icons/close.svg?react";
 import InfoIcon from "@assets/icons/info.svg?react";
