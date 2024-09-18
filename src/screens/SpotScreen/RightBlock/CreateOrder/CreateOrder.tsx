@@ -62,7 +62,7 @@ const CreateOrder: React.FC = observer(() => {
 
   const handlePercentChange = (v: number) => {
     const assetId = vm.isSell ? baseToken.assetId : quoteToken.assetId;
-    const findToken = balanceStore.getFormatedContractBalance().find((el) => el.assetId === assetId);
+    const findToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === assetId);
     if (!findToken) return;
     const balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
     if (balance.isZero()) return;

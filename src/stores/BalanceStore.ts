@@ -147,7 +147,7 @@ export class BalanceStore {
   };
 
   getFormatContractBalanceInfo = (assetId: string) => {
-    const balances = this.getFormatedContractBalance();
+    const balances = this.getFormattedContractBalance();
     return balances ? (balances.find((el) => el.assetId === assetId)?.balance ?? "0") : "0";
   };
 
@@ -266,17 +266,17 @@ export class BalanceStore {
       );
   };
 
-  getFormatedContractBalance = () => {
+  getFormattedContractBalance = () => {
     const data = this.getSmartContractBalance();
     if (Object.keys(data).length === 0) return [];
-    const formatedBalance = [];
+    const formattedBalance = [];
     const bcNetwork = FuelNetwork.getInstance();
     const { balanceStore } = this.rootStore;
     for (const assetId in data) {
       const token = bcNetwork!.getTokenByAssetId(assetId);
       const balance = balanceStore.balances.get(assetId) ?? BN.ZERO;
       const totalBalance = data[assetId].plus(balance);
-      formatedBalance.push({
+      formattedBalance.push({
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toString(),
         contractBalance: BN.formatUnits(data[assetId], token.decimals).toString(),
@@ -284,7 +284,7 @@ export class BalanceStore {
         assetId,
       });
     }
-    return formatedBalance;
+    return formattedBalance;
   };
 
   private fetchBalances = async (): Promise<Balances> => {

@@ -146,7 +146,7 @@ class CreateOrderVM {
     const { market } = tradeStore;
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const activeToken = balanceStore.getFormatedContractBalance().find((el) => el.assetId === token);
+    const activeToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === token);
     if (!activeToken) return false;
     const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
     return balance ? amount.gt(balance) : false;
@@ -184,7 +184,7 @@ class CreateOrderVM {
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const tokenList = balanceStore.getFormatedContractBalance();
+    const tokenList = balanceStore.getFormattedContractBalance();
     const findToken = tokenList.find((el) => el.assetId === assetId);
     if (!findToken) return;
     let balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
@@ -263,7 +263,7 @@ class CreateOrderVM {
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const activeToken = balanceStore.getFormatedContractBalance().find((el) => el.assetId === assetId);
+    const activeToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === assetId);
     if (!activeToken) return;
     const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
 

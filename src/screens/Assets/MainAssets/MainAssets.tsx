@@ -33,7 +33,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
-  const balanceList = balanceStore.getFormatedContractBalance();
+  const balanceList = balanceStore.getFormattedContractBalance();
   const hasPositiveBalance = balanceList.some((item) => !new BN(item.balance).isZero());
   const accumulateBalance = balanceList.reduce(
     (acc, account) => {

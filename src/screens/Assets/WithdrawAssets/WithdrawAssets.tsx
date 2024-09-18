@@ -55,7 +55,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     }
   };
 
-  const balanceList = balanceStore.getFormatedContractBalance();
+  const balanceList = balanceStore.getFormattedContractBalance();
 
   useEffect(() => {
     setAssets(balanceList[0]);
