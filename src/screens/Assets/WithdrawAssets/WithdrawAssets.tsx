@@ -35,7 +35,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsLoading] = useState(false);
-  const { quickAssetsStore, balanceStore, swapStore } = useStores();
+  const { quickAssetsStore, balanceStore } = useStores();
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
@@ -55,7 +55,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     }
   };
 
-  const balanceList = swapStore.getFormatedContractBalance();
+  const balanceList = balanceStore.getFormatedContractBalance();
 
   useEffect(() => {
     setAssets(balanceList[0]);

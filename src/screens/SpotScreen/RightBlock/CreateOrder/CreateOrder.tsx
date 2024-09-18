@@ -41,7 +41,7 @@ const ORDER_OPTIONS = [
 const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore, swapStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore } = useStores();
   const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
@@ -62,7 +62,7 @@ const CreateOrder: React.FC = observer(() => {
 
   const handlePercentChange = (v: number) => {
     const assetId = vm.isSell ? baseToken.assetId : quoteToken.assetId;
-    const findToken = swapStore.getFormatedContractBalance().find((el) => el.assetId === assetId);
+    const findToken = balanceStore.getFormatedContractBalance().find((el) => el.assetId === assetId);
     if (!findToken) return;
     const balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
     if (balance.isZero()) return;

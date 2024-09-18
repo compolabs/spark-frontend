@@ -254,55 +254,6 @@ class SwapStore {
   setReceiveAmount(value: string) {
     this.receiveAmount = value;
   }
-
-  getSmartContractBalance = () => {
-    const { balanceStore } = this.rootStore;
-    return CONFIG.APP.markets
-      .flatMap((market) => {
-        const marketBalance = balanceStore.myMarketBalanceList[market.contractId];
-        return [
-          {
-            assetId: market.baseAssetId,
-            balance: new BN(marketBalance?.liquid?.base ?? 0),
-          },
-          {
-            assetId: market.quoteAssetId,
-            balance: new BN(marketBalance?.liquid?.quote ?? 0),
-          },
-        ];
-      })
-      .reduce(
-        (acc, { assetId, balance }) => {
-          if (!acc[assetId]) {
-            acc[assetId] = BN.ZERO;
-          }
-          acc[assetId] = acc[assetId].plus(balance);
-          return acc;
-        },
-        {} as Record<string, BN>,
-      );
-  };
-
-  getFormatedContractBalance = () => {
-    const data = this.getSmartContractBalance();
-    if (Object.keys(data).length === 0) return [];
-    const formatedBalance = [];
-    const bcNetwork = FuelNetwork.getInstance();
-    const { balanceStore } = this.rootStore;
-    for (const assetId in data) {
-      const token = bcNetwork!.getTokenByAssetId(assetId);
-      const balance = balanceStore.balances.get(assetId) ?? BN.ZERO;
-      const totalBalance = data[assetId].plus(balance);
-      formatedBalance.push({
-        asset: token,
-        walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-        contractBalance: BN.formatUnits(data[assetId], token.decimals).toString(),
-        balance: BN.formatUnits(totalBalance, token.decimals).toString(),
-        assetId,
-      });
-    }
-    return formatedBalance;
-  };
 }
 
 export default SwapStore;

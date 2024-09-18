@@ -10,7 +10,6 @@ import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { assetsMock } from "@screens/Assets/MainAssets/const";
-import { InfoBlockAssets } from "@screens/Assets/MainAssets/InfoBlockAssets";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 import closeThin from "@src/assets/icons/closeThin.svg";
 import DepositAssets from "@src/assets/icons/depositAssets.svg?react";
@@ -27,20 +26,28 @@ interface MainAssets {
 }
 
 const MainAssets = observer(({ setStep }: MainAssets) => {
-  const { balanceStore, accountStore } = useStores();
-  const { oracleStore, settingsStore, quickAssetsStore, swapStore } = useStores();
+  const { balanceStore } = useStores();
+  const { oracleStore, quickAssetsStore } = useStores();
   const { isConnected } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const bcNetwork = FuelNetwork.getInstance();
-  const isShowDepositInfo = !settingsStore?.isShowDepositInfo.includes(accountStore.address ?? "");
-  const balanceList = swapStore.getFormatedContractBalance();
+  const balanceList = balanceStore.getFormatedContractBalance();
   const hasPositiveBalance = balanceList.some((item) => !new BN(item.balance).isZero());
-  const accumulateBalanceContract = balanceList.reduce((acc, account) => {
-    const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
-    return acc.plus(new BN(account.balance).multipliedBy(price));
-  }, BN.ZERO);
+  const accumulateBalance = balanceList.reduce(
+    (acc, account) => {
+      const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
+      const balanceValue = new BN(account.balance).multipliedBy(price);
+      const contractBalanceValue = new BN(account.contractBalance).multipliedBy(price);
+
+      return {
+        balance: acc.balance.plus(balanceValue),
+        contractBalance: acc.contractBalance.plus(contractBalanceValue),
+      };
+    },
+    { balance: BN.ZERO, contractBalance: BN.ZERO },
+  );
 
   const handleWithdraw = async () => {
     setIsLoading(true);
@@ -73,7 +80,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
         <WalletBlock gap="8px" column>
           {isConnected ? (
             <>
-              {accumulateBalanceContract.gt(0) && (
+              {accumulateBalance.balance.gt(0) && (
                 <>
                   {balanceList.map((el) => (
                     <AssetItem key={el.assetId}>
@@ -85,7 +92,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
                       Overall
                     </Text>
                     <Text color={theme.colors.greenLight}>
-                      ${new BN(isConnected ? accumulateBalanceContract : BN.ZERO).toSignificant(2)}
+                      ${new BN(isConnected ? accumulateBalance.balance : BN.ZERO).toSignificant(2)}
                     </Text>
                   </OverallBlock>
                 </>
@@ -105,7 +112,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
                   Overall
                 </Text>
                 <Text color={theme.colors.greenLight}>
-                  ${new BN(isConnected ? accumulateBalanceContract : BN.ZERO).toSignificant(2)}
+                  ${new BN(isConnected ? accumulateBalance.balance : BN.ZERO).toSignificant(2)}
                 </Text>
               </OverallBlock>
               <BoxShadow />
@@ -141,7 +148,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             Connect wallet
           </Button>
         )}
-        {accumulateBalanceContract.gt(0) && (
+        {accumulateBalance.contractBalance.gt(0) && (
           <SmartFlexBlock>
             <ButtonConfirm fitContent onClick={() => setStep(1)}>
               Withdraw
