@@ -6,13 +6,15 @@ import Button from "@components/Button";
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
 import { BigNumberInput } from "@components/TokenInput/BigNumberInput";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { Token } from "@src/entity";
-import BN from "@src/utils/BN";
-
-import Text, { TEXT_TYPES } from "../Text";
 
 import { TokenSelect } from "@screens/SwapScreen/TokenSelect";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+
+import { Token } from "@entity";
+
+import Text, { TEXT_TYPES } from "../Text";
 
 export interface AssetBlockData {
   asset: Token;
@@ -23,7 +25,7 @@ export interface AssetBlockData {
   price?: string;
 }
 
-interface IProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
+interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   selected?: string;
   onSelect: (option: AssetBlockData, index: number) => void;
   onChangeValue: (value: BN) => void;
@@ -53,7 +55,7 @@ const presentData = [
   },
 ];
 
-const SelectAssetsInput = <T,>({
+const SelectAssetsInput = ({
   showBalance,
   selected,
   onSelect,
@@ -62,7 +64,7 @@ const SelectAssetsInput = <T,>({
   onChangeValue,
   amount,
   decimals = DEFAULT_DECIMALS,
-}: IProps<T>) => {
+}: IProps) => {
   const theme = useTheme();
   const selectedOption = dataAssets.find(({ assetId }) => selected === assetId);
   const [selectPresent, setSelectPresent] = useState(0);
@@ -145,7 +147,7 @@ const ButtonPresent = styled(Button)<{ el: number; selectPresent: number }>`
   padding: 5px !important;
   height: auto !important;
   width: auto !important;
-  background: ${({ theme, el, selectPresent }) => (el === selectPresent ? "#535353" : "#53535326")};
+  background: ${({ el, selectPresent }) => (el === selectPresent ? "#535353" : "#53535326")};
   border-radius: 4px;
   ${TextPresent} {
     color: ${({ theme, el, selectPresent }) => (el === selectPresent ? "white" : theme.colors.textSecondary)};

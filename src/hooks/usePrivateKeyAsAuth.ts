@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import { useStores } from "@src/stores";
+import { useStores } from "@stores";
 
 const PK_KEY = "pk";
 

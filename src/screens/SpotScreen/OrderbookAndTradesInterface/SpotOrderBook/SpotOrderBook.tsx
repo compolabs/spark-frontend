@@ -4,23 +4,27 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 import numeral from "numeral";
 
-import sellAndBuyIcon from "@src/assets/icons/buyAndSellOrderBookIcon.svg";
-import buyIcon from "@src/assets/icons/buyOrderBookIcon.svg";
-import sellIcon from "@src/assets/icons/sellOrderBookIcon.svg";
-import { Row } from "@src/components/Flex";
-import Loader from "@src/components/Loader";
-import { SpotOrderSettingsSheet } from "@src/components/Modal";
-import Select from "@src/components/Select";
-import { SmartFlex } from "@src/components/SmartFlex";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import { SpotMarketOrder } from "@src/entity";
-import { useEventListener } from "@src/hooks/useEventListener";
-import useFlag from "@src/hooks/useFlag";
-import { useMedia } from "@src/hooks/useMedia";
-import { media } from "@src/themes/breakpoints";
-import BN from "@src/utils/BN";
-import { hexToRgba } from "@src/utils/hexToRgb";
+import { Row } from "@components/Flex";
+import Loader from "@components/Loader";
+import { SpotOrderSettingsSheet } from "@components/Modal";
+import Select from "@components/Select";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import sellAndBuyIcon from "@assets/icons/buyAndSellOrderBookIcon.svg";
+import buyIcon from "@assets/icons/buyOrderBookIcon.svg";
+import sellIcon from "@assets/icons/sellOrderBookIcon.svg";
+
+import { useEventListener } from "@hooks/useEventListener";
+import useFlag from "@hooks/useFlag";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+
+import BN from "@utils/BN";
+import { hexToRgba } from "@utils/hexToRgb";
+
+import { SpotMarketOrder } from "@entity";
 
 import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
 
@@ -80,7 +84,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       return <SettingIcon alt="filter" src={sellAndBuyIcon} onClick={openSettings} />;
     }
 
-    return Object.entries(SPOT_SETTINGS_ICONS).map(([key, value], index) => (
+    return Object.entries(SPOT_SETTINGS_ICONS).map(([_, value], index) => (
       <SettingIcon
         key={index}
         alt="filter"
@@ -214,7 +218,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
 
         <SpotOrderSettingsSheet
           decimals={SPOT_DECIMAL_OPTIONS}
-          filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([key, value]) => value)}
+          filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([_, value]) => value)}
           isOpen={isSettingsOpen}
           selectedDecimal={String(indexOfDecimal)}
           selectedFilter={spotOrderBookStore.orderFilter}

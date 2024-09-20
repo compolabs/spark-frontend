@@ -2,16 +2,19 @@ import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import SettingsIcon from "@src/assets/icons/gear.svg?react";
-import LightningIcon from "@src/assets/icons/lightning.svg?react";
-import ArrowUpIcon from "@src/assets/icons/arrowUp.svg?react";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
-import { media } from "@src/themes/breakpoints";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import ArrowUpIcon from "@assets/icons/arrowUp.svg?react";
+import SettingsIcon from "@assets/icons/gear.svg?react";
+import LightningIcon from "@assets/icons/lightning.svg?react";
+
+import { useStores } from "@stores";
+
+import BN from "@utils/BN";
 
 import { SlippageSettings } from "./SlippageSettings";
-import { useStores } from "@stores";
-import BN from "@src/utils/BN";
-import { SmartFlex } from "@components/SmartFlex";
 
 interface InfoBlockProps {
   slippage: number;

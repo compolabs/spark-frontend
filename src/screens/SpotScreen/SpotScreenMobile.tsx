@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import MenuOverlay from "@src/components/MenuOverlay";
-import { SmartFlex } from "@src/components/SmartFlex";
-import BottomTables from "@src/screens/SpotScreen/BottomTables";
-import Chart from "@src/screens/SpotScreen/Chart";
-import MarketStatisticsBar from "@src/screens/SpotScreen/MarketStatisticsBar";
-import StatusBar from "@src/screens/SpotScreen/StatusBar/StatusBar";
-import { media } from "@src/themes/breakpoints";
+import MenuOverlay from "@components/MenuOverlay";
+import { SmartFlex } from "@components/SmartFlex";
+import { media } from "@themes/breakpoints";
+
 import { useStores } from "@stores";
+
+import BottomTables from "@screens/SpotScreen/BottomTables";
+import Chart from "@screens/SpotScreen/Chart";
+import MarketStatisticsBar from "@screens/SpotScreen/MarketStatisticsBar";
+import StatusBar from "@screens/SpotScreen/StatusBar/StatusBar";
 
 import { SpotOrderBook } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 import CreateOrder from "./RightBlock/CreateOrder";

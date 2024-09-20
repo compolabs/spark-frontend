@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
 
 const Chip = styled(Text)`
   display: flex;

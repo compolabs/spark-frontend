@@ -4,10 +4,12 @@ import { observer } from "mobx-react";
 
 import ModalSheet from "@components/ModalSheet";
 import SideBar from "@components/SideBar";
+
+import { useMedia } from "@hooks/useMedia";
+import { useStores } from "@stores";
+
 import MainAssets from "@screens/Assets/MainAssets/MainAssets";
 import WithdrawAssets from "@screens/Assets/WithdrawAssets/WithdrawAssets";
-import { useMedia } from "@src/hooks/useMedia";
-import { useStores } from "@stores";
 
 interface ResolverDevice {
   children: React.ReactNode;

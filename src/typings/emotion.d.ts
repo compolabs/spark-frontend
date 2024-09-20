@@ -1,4 +1,4 @@
-import {themes} from "@src/themes/ThemeProvider";
+import {themes} from "@themes/ThemeProvider";
 
 import "@emotion/react";
 

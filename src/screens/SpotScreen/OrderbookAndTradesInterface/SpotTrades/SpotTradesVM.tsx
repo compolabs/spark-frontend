@@ -1,10 +1,11 @@
 import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 
-import { FuelNetwork } from "@src/blockchain";
-import { SpotMarketTrade } from "@src/entity";
-import useVM from "@src/hooks/useVM";
+import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
+
+import { FuelNetwork } from "@blockchain";
+import { SpotMarketTrade } from "@entity";
 
 const ctx = React.createContext<SpotTradesVM | null>(null);
 

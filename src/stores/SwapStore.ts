@@ -1,17 +1,19 @@
-import { AssetType, GetOrdersParams, LimitType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import _ from "lodash";
 import { autorun, makeAutoObservable, reaction } from "mobx";
 
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import BN from "@src/utils/BN";
-import { parseNumberWithCommas } from "@src/utils/swapUtils";
+import { AssetType, GetOrdersParams, LimitType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
+import { CONFIG } from "@utils/getConfig";
+import { handleWalletErrors } from "@utils/handleWalletErrors";
+import { parseNumberWithCommas } from "@utils/swapUtils";
+
+import { FuelNetwork } from "@blockchain";
+import { Token } from "@entity";
 
 import RootStore from "./RootStore";
-import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
-import { handleWalletErrors } from "@src/utils/handleWalletErrors";
-import _ from "lodash";
-import { CONFIG } from "@src/utils/getConfig.ts";
-import { Token } from "@src/entity";
 
 class SwapStore {
   tokens: Token[];
@@ -204,7 +206,7 @@ class SwapStore {
           volumeFormatted,
           this.buyToken.symbol,
         ),
-        hash: "tx.transactionId,",
+        hash: tx.transactionId,
       });
       return true;
     } catch (error: any) {

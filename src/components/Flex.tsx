@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
 
 export interface IFlexProps {
   justifyContent?: "start" | "flex-end" | "space-around" | "space-between" | "center";

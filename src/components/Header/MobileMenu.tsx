@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import { useStores } from "@src/stores";
+import { useStores } from "@stores";
 
 import Button from "../Button";
 import MenuOverlay from "../MenuOverlay";
@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalletConnect, onClose }) => {
-  const { accountStore, quickAssetsStore } = useStores();
+  const { accountStore } = useStores();
 
   const handleAccountClick = () => {
     onAccountClick();

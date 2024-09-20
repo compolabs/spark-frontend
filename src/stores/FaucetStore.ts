@@ -1,12 +1,14 @@
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@src/blockchain";
-import { FUEL_FAUCET } from "@src/constants";
-import BN from "@src/utils/BN";
-import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
-import { handleWalletErrors } from "@src/utils/handleWalletErrors";
 import RootStore from "@stores/RootStore";
+
+import { FUEL_FAUCET } from "@constants";
+import BN from "@utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
+import { handleWalletErrors } from "@utils/handleWalletErrors";
+
+import { FuelNetwork } from "@blockchain";
 
 export const FAUCET_AMOUNTS: Record<string, number> = {
   ETH: 0.002,

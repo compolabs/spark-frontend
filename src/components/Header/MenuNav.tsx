@@ -6,15 +6,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { Nullable } from "tsdef";
 
-import ArrowIcon from "@src/assets/icons/arrowUp.svg?react";
-import SwapIcon from "@src/assets/icons/swap.svg?react";
-import TradeIcon from "@src/assets/icons/switch.svg?react";
-import { DOCS_LINK, GITHUB_LINK, ROUTES, TWITTER_LINK } from "@src/constants";
-import { useMedia } from "@src/hooks/useMedia";
-import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
-import { useStores } from "@src/stores";
-import { media } from "@src/themes/breakpoints";
-import { isExternalLink } from "@src/utils/isExternalLink";
+import { media } from "@themes/breakpoints";
+
+import ArrowIcon from "@assets/icons/arrowUp.svg?react";
+import SwapIcon from "@assets/icons/swap.svg?react";
+import TradeIcon from "@assets/icons/switch.svg?react";
+
+import { useMedia } from "@hooks/useMedia";
+import { useOnClickOutside } from "@hooks/useOnClickOutside";
+import { useStores } from "@stores";
+
+import { DOCS_LINK, GITHUB_LINK, ROUTES, TWITTER_LINK } from "@constants";
+import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
@@ -315,7 +318,7 @@ const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean }>`
     min-height: 24px;
   }
 
-  ${({ isActive, theme }) =>
+  ${({ isActive }) =>
     isActive &&
     css`
       background-color: #232323;

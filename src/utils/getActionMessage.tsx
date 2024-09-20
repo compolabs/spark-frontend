@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-import Text, { TEXT_TYPES } from "@src/components/Text";
+import Text, { TEXT_TYPES } from "@components/Text";
 
 export const enum ACTION_MESSAGE_TYPE {
   MINTING_TEST_TOKENS,

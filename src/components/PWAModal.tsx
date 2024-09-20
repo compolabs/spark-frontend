@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import IOSScreen1Icon from "@src/assets/pwa/ios-pwa-1.svg?react";
-import IOSScreen2Icon from "@src/assets/pwa/ios-pwa-2.svg?react";
-import CircleIcon from "@src/assets/pwa/ios-pwa-3.svg?react";
-import ArrowIcon from "@src/assets/pwa/ios-pwa-4.svg?react";
-import { useMedia } from "@src/hooks/useMedia";
-import { media } from "@src/themes/breakpoints";
-import { getDeviceInfo } from "@src/utils/getDeviceInfo";
+import { media } from "@themes/breakpoints";
+
+import IOSScreen1Icon from "@assets/pwa/ios-pwa-1.svg?react";
+import IOSScreen2Icon from "@assets/pwa/ios-pwa-2.svg?react";
+import CircleIcon from "@assets/pwa/ios-pwa-3.svg?react";
+import ArrowIcon from "@assets/pwa/ios-pwa-4.svg?react";
+
+import { useMedia } from "@hooks/useMedia";
+
+import { getDeviceInfo } from "@utils/getDeviceInfo";
 
 import { Dialog } from "./Dialog";
 import SizedBox from "./SizedBox";

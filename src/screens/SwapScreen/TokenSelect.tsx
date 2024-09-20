@@ -1,16 +1,29 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 
-import SearchInput from "@components/SearchInput";
-import { SmartFlex } from "@components/SmartFlex";
-import arrowIcon from "@src/assets/icons/arrowUp.svg";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
-import { media } from "@src/themes/breakpoints";
-import Tooltip from "@components/Tooltip";
-import AssetBlock from "@components/SelectAssets/AssetBlock";
-import SizedBox from "@components/SizedBox";
 import { Column } from "@components/Flex";
+import SearchInput from "@components/SearchInput";
+import AssetBlock from "@components/SelectAssets/AssetBlock";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
+import SizedBox from "@components/SizedBox";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Tooltip from "@components/Tooltip";
+import { media } from "@themes/breakpoints";
+
+import arrowIcon from "@assets/icons/arrowUp.svg";
+
+export type TokenOption = {
+  key: string;
+  title: string;
+  symbol: string;
+  img: string;
+  balance: string;
+  priceFeed: string;
+  assetId: string;
+  decimals: number;
+  precision: number;
+};
 
 interface TokenSelectProps {
   assets: AssetBlockData[];

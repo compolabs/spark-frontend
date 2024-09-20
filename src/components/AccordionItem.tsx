@@ -3,8 +3,9 @@ import styled from "@emotion/styled";
 import { AccordionItem as RawAccordionItem } from "@szhsin/react-accordion";
 import { AccordionItemProps } from "@szhsin/react-accordion/types/components/AccordionItem";
 
-import ArrowIcon from "@src/assets/icons/arrowUp.svg?react";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
+
+import ArrowIcon from "@assets/icons/arrowUp.svg?react";
 
 type Props = {
   hideBottomBorder?: boolean;

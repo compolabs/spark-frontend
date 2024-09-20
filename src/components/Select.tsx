@@ -2,8 +2,9 @@ import React, { HTMLAttributes, useState } from "react";
 import styled from "@emotion/styled";
 
 import SizedBox from "@components/SizedBox";
-import arrowIcon from "@src/assets/icons/arrowUp.svg";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
+
+import arrowIcon from "@assets/icons/arrowUp.svg";
 
 import { Column } from "./Flex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "./Text";
