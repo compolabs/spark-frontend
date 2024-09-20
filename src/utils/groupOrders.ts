@@ -1,5 +1,6 @@
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { SpotMarketOrder } from "@src/entity";
+import { DEFAULT_DECIMALS } from "@constants";
+
+import { SpotMarketOrder } from "@entity";
 
 import BN from "./BN";
 

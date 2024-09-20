@@ -1,22 +1,21 @@
-import React from "react";
-import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { SpotMarketOrder } from "@src/entity";
-import { Subscription } from "@src/typings/utils";
-import BN from "@src/utils/BN";
-import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
-import { groupOrders } from "@src/utils/groupOrders";
+import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { RootStore } from "@stores";
 
-import { SPOT_ORDER_FILTER } from "@src/screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
+import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 
-interface IProps {
-  children: React.ReactNode;
-}
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
+import { groupOrders } from "@utils/groupOrders";
+
+import { FuelNetwork } from "@blockchain";
+import { SpotMarketOrder } from "@entity";
+
+import { Subscription } from "@src/typings/utils";
 
 class SpotOrderBookStore {
   private readonly rootStore: RootStore;
@@ -39,7 +38,7 @@ class SpotOrderBookStore {
 
     reaction(
       () => [rootStore.initialized, rootStore.tradeStore.market],
-      ([initialized, market]) => {
+      ([initialized]) => {
         if (!initialized) return;
 
         this.updateOrderBook();

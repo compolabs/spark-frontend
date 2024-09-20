@@ -1,8 +1,9 @@
 import { makeAutoObservable } from "mobx";
 
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { toCurrency } from "@src/utils/toCurrency";
+import { DEFAULT_DECIMALS } from "@constants";
+import { toCurrency } from "@utils/toCurrency";
+
+import { FuelNetwork } from "@blockchain";
 
 import BN from "../utils/BN";
 

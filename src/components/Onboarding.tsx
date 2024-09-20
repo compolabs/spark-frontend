@@ -1,10 +1,12 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 
-import CloseIcon from "@src/assets/icons/close.svg?react";
-import arrowIcon from "@src/assets/icons/onboardingArrow.svg";
-import { IMedia, useMedia } from "@src/hooks/useMedia";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
+
+import CloseIcon from "@assets/icons/close.svg?react";
+import arrowIcon from "@assets/icons/onboardingArrow.svg";
+
+import { IMedia, useMedia } from "@hooks/useMedia";
 
 import Button from "./Button";
 import { SmartFlex } from "./SmartFlex";

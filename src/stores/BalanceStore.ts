@@ -1,14 +1,16 @@
-import { AssetType, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
 import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
-import { FuelNetwork } from "@src/blockchain";
-import { Balances } from "@src/blockchain/types";
-import BN from "@src/utils/BN";
-import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
-import { CONFIG } from "@src/utils/getConfig";
-import { handleWalletErrors } from "@src/utils/handleWalletErrors";
-import { IntervalUpdater } from "@src/utils/IntervalUpdater";
+import { AssetType, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
+
+import BN from "@utils/BN";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
+import { CONFIG } from "@utils/getConfig";
+import { handleWalletErrors } from "@utils/handleWalletErrors";
+import { IntervalUpdater } from "@utils/IntervalUpdater";
+
+import { FuelNetwork } from "@blockchain";
+import { Balances } from "@blockchain/types";
 
 import RootStore from "./RootStore";
 

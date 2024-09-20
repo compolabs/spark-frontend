@@ -2,7 +2,7 @@ import { Account, B256Address } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@src/blockchain";
+import { FuelNetwork } from "@blockchain";
 
 import RootStore from "./RootStore";
 

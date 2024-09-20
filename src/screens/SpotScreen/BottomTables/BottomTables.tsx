@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
 
 import SpotTable from "./SpotTable";
 

@@ -2,13 +2,16 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
-import XIcon from "@src/assets/social/x.svg?react";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { FUEL_LINK, TWITTER_LINK } from "@src/constants";
-import { useMedia } from "@src/hooks/useMedia";
-import { media } from "@src/themes/breakpoints";
-import { getDeviceInfo } from "@src/utils/getDeviceInfo";
+import { media } from "@themes/breakpoints";
+
+import XIcon from "@assets/social/x.svg?react";
+
+import { useMedia } from "@hooks/useMedia";
+
+import { FUEL_LINK, TWITTER_LINK } from "@constants";
+import { getDeviceInfo } from "@utils/getDeviceInfo";
 
 import tweets from "./tweets";
 

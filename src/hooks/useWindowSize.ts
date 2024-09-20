@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useEventListener } from "@src/hooks/useEventListener";
+import { useEventListener } from "@hooks/useEventListener";
 
 interface Size {
   width: number;

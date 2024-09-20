@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import styled from "@emotion/styled";
 
+import Button from "@components/Button";
+import Loader from "@components/Loader";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import Button from "@src/components/Button";
-import Loader from "@src/components/Loader";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { DOCS_LINK, TWITTER_LINK } from "@src/constants";
+
+import { DOCS_LINK, TWITTER_LINK } from "@constants";
 
 const UnderConstruction: React.FC = () => {
   useEffect(() => {

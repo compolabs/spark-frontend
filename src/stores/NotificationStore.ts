@@ -1,9 +1,11 @@
 import { toast, ToastOptions, TypeOptions } from "react-toastify";
 import { makeAutoObservable } from "mobx";
 
-import { createToast, NotificationProps } from "@src/components/Toast";
-import { getDeviceInfo } from "@src/utils/getDeviceInfo";
+import { createToast, NotificationProps } from "@components/Toast";
+
 import RootStore from "@stores/RootStore";
+
+import { getDeviceInfo } from "@utils/getDeviceInfo";
 
 type NotificationParams = Omit<NotificationProps, "type"> & {
   options?: ToastOptions;

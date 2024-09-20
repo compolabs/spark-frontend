@@ -4,12 +4,13 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
-import Button from "@src/components/Button";
-import { Checkbox } from "@src/components/Checkbox";
-import { Dialog } from "@src/components/Dialog";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import { useWallet } from "@src/hooks/useWallet";
-import { useStores } from "@src/stores";
+import Button from "@components/Button";
+import { Checkbox } from "@components/Checkbox";
+import { Dialog } from "@components/Dialog";
+import Text, { TEXT_TYPES } from "@components/Text";
+
+import { useWallet } from "@hooks/useWallet";
+import { useStores } from "@stores";
 
 type IProps = Omit<IDialogPropTypes, "onClose"> & {
   onClose: () => void;

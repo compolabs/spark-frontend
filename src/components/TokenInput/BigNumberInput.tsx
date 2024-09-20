@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { Nullable } from "tsdef";
 
-import { DEFAULT_DECIMALS } from "@src/constants";
-import BN from "@src/utils/BN";
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
 
 type HTMLInputProps = React.ClassAttributes<HTMLInputElement> & React.InputHTMLAttributes<HTMLInputElement>;
 

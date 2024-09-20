@@ -2,10 +2,12 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { observer } from "mobx-react";
 
-import Loader from "@src/components/Loader";
-import { useMedia } from "@src/hooks/useMedia";
-import { CreateOrderVMProvider } from "@src/screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
+import Loader from "@components/Loader";
+
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+
+import { CreateOrderVMProvider } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 
 import SpotScreenDesktop from "./SpotScreenDesktop";
 import SpotScreenMobile from "./SpotScreenMobile";

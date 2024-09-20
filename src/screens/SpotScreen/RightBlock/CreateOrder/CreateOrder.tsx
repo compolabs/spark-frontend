@@ -1,34 +1,31 @@
 import React from "react";
-import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
+
+import { BN, LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 
 import AccordionItem from "@components/AccordionItem";
+import Button, { ButtonGroup } from "@components/Button";
+import { ConnectWalletButton } from "@components/ConnectWalletButton";
 import { Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
 import { RadioButton } from "@components/RadioButton.tsx";
 import Select from "@components/Select";
+import SizedBox from "@components/SizedBox";
 import Slider from "@components/Slider";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
-import Button, { ButtonGroup } from "@src/components/Button";
-import { ConnectWalletButton } from "@src/components/ConnectWalletButton";
-import SizedBox from "@src/components/SizedBox";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@src/constants";
-import useFlag from "@src/hooks/useFlag";
-import { useMedia } from "@src/hooks/useMedia";
-import {
-  ACTIVE_INPUT,
-  ORDER_MODE,
-  ORDER_TYPE,
-  useCreateOrderVM,
-} from "@src/screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
-import { media } from "@src/themes/breakpoints";
-import BN from "@src/utils/BN";
+import { media } from "@themes/breakpoints";
+
+import useFlag from "@hooks/useFlag";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
+import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+
+import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "./CreateOrderVM";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [

@@ -3,8 +3,9 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import WalletIcon from "@src/assets/icons/wallet.svg?react";
-import Text, { TEXT_TYPES } from "@src/components/Text";
+import Text, { TEXT_TYPES } from "@components/Text";
+
+import WalletIcon from "@assets/icons/wallet.svg?react";
 
 interface BalanceSectionProps {
   isLoaded: boolean | null;

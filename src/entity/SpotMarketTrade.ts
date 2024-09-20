@@ -1,8 +1,10 @@
-import { BN, TradeOrderEvent } from "@compolabs/spark-orderbook-ts-sdk";
 import dayjs, { Dayjs } from "dayjs";
 
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
+import { BN, TradeOrderEvent } from "@compolabs/spark-orderbook-ts-sdk";
+
+import { DEFAULT_DECIMALS } from "@constants";
+
+import { FuelNetwork } from "@blockchain";
 
 import { Token } from "./Token";
 

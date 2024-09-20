@@ -1,4 +1,4 @@
-import BN from "@src/utils/BN";
+import BN from "@utils/BN";
 
 export type FetchTradesParams = {
   limit: number;

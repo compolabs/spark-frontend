@@ -14,7 +14,7 @@ const Tab = styled(Text)<IProps>`
   justify-content: center;
   white-space: nowrap;
   padding: 8px 4px;
-  cursor: ${({ theme, disabled }) => (disabled ? "not-allowed" : "pointer")};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   color: ${({ theme, active, disabled }) =>
     active ? theme.colors.textPrimary : !disabled ? theme.colors.textSecondary : theme.colors.textDisabled};
   border-bottom: 2px solid ${({ theme, active }) => (active ? theme.colors.textPrimary : "transparent")};

@@ -3,13 +3,16 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import Chip from "@components/Chip";
+import { SmartFlex } from "@components/SmartFlex";
 import { TableText } from "@components/Table";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
-import { FuelNetwork } from "@src/blockchain";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { MINIMAL_ETH_REQUIRED } from "@src/constants";
-import { useMedia } from "@src/hooks/useMedia";
+
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+
+import { MINIMAL_ETH_REQUIRED } from "@constants";
+
+import { FuelNetwork } from "@blockchain";
 
 import MintButtons from "./MintButtons";
 

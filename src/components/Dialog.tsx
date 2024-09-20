@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import RcDialog, { DialogProps } from "rc-dialog";
 
-import { useOnClickOutside } from "@src/hooks/useOnClickOutside";
+import { useOnClickOutside } from "@hooks/useOnClickOutside";
 
 export const Dialog: React.FC<DialogProps> = observer(({ children, ...rest }) => {
   const dialogRef = useRef<HTMLDivElement>(null);

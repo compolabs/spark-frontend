@@ -1,10 +1,11 @@
 import { Config } from "react-popper-tooltip";
 
-import tableLargeSize from "@src/assets/icons/tableLargeSize.svg";
-import tableMediumSize from "@src/assets/icons/tableMediumSize.svg";
-import tableSizeExtraSmall from "@src/assets/icons/tableSizeExtraSmall.svg";
-import tableSmallSize from "@src/assets/icons/tableSmallSize.svg";
-import { TRADE_TABLE_SIZE } from "@src/stores/SettingsStore";
+import tableLargeSize from "@assets/icons/tableLargeSize.svg";
+import tableMediumSize from "@assets/icons/tableMediumSize.svg";
+import tableSizeExtraSmall from "@assets/icons/tableSizeExtraSmall.svg";
+import tableSmallSize from "@assets/icons/tableSmallSize.svg";
+
+import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
 export const MAX_TABLE_HEIGHT = {
   [TRADE_TABLE_SIZE.XS]: "120px",

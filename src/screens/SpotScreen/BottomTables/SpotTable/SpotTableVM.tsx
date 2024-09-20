@@ -2,15 +2,18 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@src/blockchain";
-import { SpotMarketOrder } from "@src/entity";
-import useVM from "@src/hooks/useVM";
-import { Subscription } from "@src/typings/utils";
-import { formatSpotMarketOrders } from "@src/utils/formatSpotMarketOrders";
-import { ACTION_MESSAGE_TYPE, getActionMessage } from "@src/utils/getActionMessage";
-import { CONFIG } from "@src/utils/getConfig";
-import { handleWalletErrors } from "@src/utils/handleWalletErrors";
+import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
+
+import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
+import { CONFIG } from "@utils/getConfig";
+import { handleWalletErrors } from "@utils/handleWalletErrors";
+
+import { FuelNetwork } from "@blockchain";
+import { SpotMarketOrder } from "@entity";
+
+import { Subscription } from "@src/typings/utils";
 
 const ctx = React.createContext<SpotTableVM | null>(null);
 

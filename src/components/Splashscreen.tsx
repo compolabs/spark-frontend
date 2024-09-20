@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import CheckIcon from "@src/assets/icons/check.svg?react";
-import LogoIcon from "@src/assets/icons/logo-small.svg?react";
-import WalletIcon from "@src/assets/icons/wallet.svg?react";
-import spacemanImage from "@src/assets/images/spaceman.webp";
-import splashScreenOrderbookIcon from "@src/assets/splash/splash-screen-orderbook.svg";
-import splashScreenSwapIcon from "@src/assets/splash/splash-screen-swap.svg";
-import { useMedia } from "@src/hooks/useMedia";
-import { useStores } from "@src/stores";
+import CheckIcon from "@assets/icons/check.svg?react";
+import LogoIcon from "@assets/icons/logo-small.svg?react";
+import WalletIcon from "@assets/icons/wallet.svg?react";
+import spacemanImage from "@assets/images/spaceman.webp";
+import splashScreenOrderbookIcon from "@assets/splash/splash-screen-orderbook.svg";
+import splashScreenSwapIcon from "@assets/splash/splash-screen-swap.svg";
+
+import { useMedia } from "@hooks/useMedia";
+import { useStores } from "@stores";
 
 import Button from "./Button";
 import { Onboarding, Step } from "./Onboarding";

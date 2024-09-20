@@ -7,16 +7,20 @@ import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
-import { ModalEnums, TypeTranaction } from "@screens/Assets/enums/actionEnums";
-import arrowLeftShort from "@src/assets/icons/arrowLeftShort.svg";
-import closeThin from "@src/assets/icons/closeThin.svg";
-import DataBase from "@src/assets/icons/dataBase.svg?react";
-import Spinner from "@src/assets/icons/spinner.svg?react";
-import WalletIcon from "@src/assets/icons/wallet.svg?react";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import BN from "@src/utils/BN";
+
+import arrowLeftShort from "@assets/icons/arrowLeftShort.svg";
+import closeThin from "@assets/icons/closeThin.svg";
+import DataBase from "@assets/icons/dataBase.svg?react";
+import Spinner from "@assets/icons/spinner.svg?react";
+import WalletIcon from "@assets/icons/wallet.svg?react";
+
 import { useStores } from "@stores";
+
+import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
+import { ModalEnums, TypeTransaction } from "@screens/Assets/enums/actionEnums";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
 
 interface WithdrawAssets {
   setStep: (value: number) => void;
@@ -26,7 +30,7 @@ export interface ShowAction {
   hash: string;
   transactionInfo: {
     token: IAssetBlock["token"];
-    type: TypeTranaction;
+    type: TypeTransaction;
     amount: string;
   };
   typeModal: ModalEnums;
