@@ -78,7 +78,7 @@ export const SwapScreen: React.FC = observer(() => {
   }, []);
 
   const generateBalanceData = (assets: Token[]) => {
-    const d = swapStore.getFormatedContractBalance();
+    const d = balanceStore.getFormattedContractBalance();
     return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
   };
 

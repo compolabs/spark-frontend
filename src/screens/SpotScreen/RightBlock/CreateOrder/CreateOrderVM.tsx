@@ -145,11 +145,11 @@ class CreateOrderVM {
   }
 
   get isSpotInputError(): boolean {
-    const { tradeStore, swapStore } = this.rootStore;
+    const { tradeStore, balanceStore } = this.rootStore;
     const { market } = tradeStore;
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const activeToken = swapStore.getFormatedContractBalance().find((el) => el.assetId === token);
+    const activeToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === token);
     if (!activeToken) return false;
     const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
     return balance ? amount.gt(balance) : false;
@@ -181,14 +181,16 @@ class CreateOrderVM {
   fetchExchangeFeeDebounce = _.debounce(this.fetchExchangeFee, 250);
 
   private onSpotMaxClick = () => {
-    const { tradeStore, balanceStore, mixPanelStore } = this.rootStore;
+    const { tradeStore, mixPanelStore, balanceStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-
-    let balance = balanceStore.getContractBalanceInfo(assetId).amount ?? BN.ZERO;
+    const tokenList = balanceStore.getFormattedContractBalance();
+    const findToken = tokenList.find((el) => el.assetId === assetId);
+    if (!findToken) return;
+    let balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
     if (assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
       balance = balance.minus(HALF_GWEI);
     }
@@ -259,12 +261,12 @@ class CreateOrderVM {
   }
 
   private updatePercent(): void {
-    const { tradeStore, swapStore } = this.rootStore;
+    const { tradeStore, balanceStore } = this.rootStore;
 
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const activeToken = swapStore.getFormatedContractBalance().find((el) => el.assetId === assetId);
+    const activeToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === assetId);
     if (!activeToken) return;
     const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
 
@@ -409,7 +411,6 @@ class CreateOrderVM {
 
     deposit = {
       ...deposit,
-      amountToSpend: this.inputAmount.toString(),
     };
 
     const order: FulfillOrderManyWithDepositParams = {

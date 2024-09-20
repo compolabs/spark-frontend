@@ -118,6 +118,7 @@ export class FuelNetwork {
   fulfillOrderManyWithDeposit = async (
     ...params: Parameters<typeof this.orderbookSdk.fulfillOrderManyWithDeposit>
   ): Promise<WriteTransactionResponse> => {
+    console.log("order", ...params);
     return this.orderbookSdk.fulfillOrderManyWithDeposit(...params);
   };
 
