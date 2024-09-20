@@ -270,16 +270,18 @@ const CreateOrder: React.FC = observer(() => {
             />
             {renderOrderTooltip()}
           </SelectOrderTypeContainer>
-          <TokenInput
-            amount={vm.inputPrice}
-            decimals={DEFAULT_DECIMALS}
-            disabled={isInputPriceDisabled}
-            displayDecimals={priceDisplayDecimals}
-            label="Price"
-            setAmount={handleSetPrice}
-            onBlur={vm.setActiveInput}
-            onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Price)}
-          />
+          {settingsStore.orderType === ORDER_TYPE.Limit && (
+            <TokenInput
+              amount={vm.inputPrice}
+              decimals={DEFAULT_DECIMALS}
+              disabled={isInputPriceDisabled}
+              displayDecimals={priceDisplayDecimals}
+              label="Price"
+              setAmount={handleSetPrice}
+              onBlur={vm.setActiveInput}
+              onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Price)}
+            />
+          )}
         </StyledRow>
         <InputContainerWithError>
           <TokenInput
@@ -293,22 +295,24 @@ const CreateOrder: React.FC = observer(() => {
             onBlur={vm.setActiveInput}
             onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
           />
-          <InputContainerWithMaxButton>
-            <StyledMaxButton fitContent onClick={vm.onMaxClick}>
-              MAX
-            </StyledMaxButton>
-            <SizedBox height={14} />
-            <TokenInput
-              amount={vm.inputTotal}
-              assetId={quoteToken.assetId}
-              decimals={quoteToken.decimals}
-              error={vm.isSell ? undefined : vm.isInputError}
-              errorMessage={`Not enough ${quoteToken.symbol}`}
-              setAmount={vm.setInputTotal}
-              onBlur={vm.setActiveInput}
-              onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
-            />
-          </InputContainerWithMaxButton>
+          {settingsStore.orderType === ORDER_TYPE.Limit && (
+            <InputContainerWithMaxButton>
+              <StyledMaxButton fitContent onClick={vm.onMaxClick}>
+                MAX
+              </StyledMaxButton>
+              <SizedBox height={14} />
+              <TokenInput
+                amount={vm.inputTotal}
+                assetId={quoteToken.assetId}
+                decimals={quoteToken.decimals}
+                error={vm.isSell ? undefined : vm.isInputError}
+                errorMessage={`Not enough ${quoteToken.symbol}`}
+                setAmount={vm.setInputTotal}
+                onBlur={vm.setActiveInput}
+                onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
+              />
+            </InputContainerWithMaxButton>
+          )}
         </InputContainerWithError>
         <SmartFlex column>
           <SliderContainer>

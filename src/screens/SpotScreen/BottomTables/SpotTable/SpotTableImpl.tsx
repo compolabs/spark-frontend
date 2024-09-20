@@ -16,6 +16,7 @@ import { toCurrency } from "@src/utils/toCurrency";
 import { BaseTable } from "../BaseTable";
 
 import { useSpotTableVMProvider } from "./SpotTableVM";
+import { Pagination } from "@components/Pagination.tsx";
 
 const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();

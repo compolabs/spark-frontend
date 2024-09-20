@@ -7,6 +7,7 @@ import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 
 import { SmartFlex } from "./SmartFlex";
 import Tooltip from "./Tooltip";
+import { Pagination } from "@components/Pagination.tsx";
 
 interface IProps {
   columns: ColumnDef<any, any>[];
@@ -73,6 +74,7 @@ const Table: React.FC<IProps> = observer(({ columns, data, onClick, fitContent, 
           ))}
         </tbody>
       </table>
+      <Pagination currentPage={0} totalPages={10}></Pagination>
       {loading && <Text style={{ cursor: "pointer", padding: "16px 0" }}>Loading...</Text>}
     </Root>
   );
