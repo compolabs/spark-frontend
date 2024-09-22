@@ -5,9 +5,11 @@ import { ToastContainer } from "react-toastify";
 import { FuelProvider } from "@fuels/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import ThemeWrapper from "@src/themes/ThemeProvider";
-import { loadState } from "@src/utils/localStorage";
+import ThemeWrapper from "@themes/ThemeProvider";
+
 import { RootStore, storesContext } from "@stores";
+
+import { loadState } from "@utils/localStorage";
 
 import GlobalStyles from "./themes/GlobalStyles";
 import App from "./App";

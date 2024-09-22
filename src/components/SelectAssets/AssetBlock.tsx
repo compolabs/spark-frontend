@@ -5,10 +5,13 @@ import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { Token } from "@src/entity";
-import BN from "@src/utils/BN";
+
 import { useStores } from "@stores";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+
+import { Token } from "@entity";
 
 export interface IAssetBlock {
   options: {

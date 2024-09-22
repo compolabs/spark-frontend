@@ -2,9 +2,11 @@ import { EvmPriceServiceConnection, Price, PriceFeed } from "@pythnetwork/pyth-e
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@src/blockchain";
-import BN from "@src/utils/BN";
 import RootStore from "@stores/RootStore";
+
+import BN from "@utils/BN";
+
+import { FuelNetwork } from "@blockchain";
 
 const PYTH_URL = "https://hermes.pyth.network";
 

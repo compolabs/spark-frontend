@@ -14,11 +14,10 @@ interface IProps {
   data: any[];
   fitContent?: boolean;
   withHover?: boolean;
-  onClick?: () => void;
   loading?: boolean;
 }
 
-const Table: React.FC<IProps> = observer(({ columns, data, onClick, fitContent, withHover, loading, ...rest }) => {
+const Table: React.FC<IProps> = observer(({ columns, data, fitContent, withHover, loading, ...rest }) => {
   const table = useReactTable({
     columns,
     data,

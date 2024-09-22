@@ -1,8 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 
-import { useStores } from "@src/stores";
-import { MODAL_TYPE } from "@src/stores/ModalStore";
+import { useStores } from "@stores";
+import { MODAL_TYPE } from "@stores/ModalStore";
 
 import Button, { ButtonProps } from "./Button";
 

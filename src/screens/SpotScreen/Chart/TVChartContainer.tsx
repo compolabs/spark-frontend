@@ -4,7 +4,7 @@
 // import { observer } from "mobx-react-lite";
 
 // import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@src/charting_library";
-// import { CHARTS_STORAGE, TV_DATAFEED } from "@src/constants";
+// import { CHARTS_STORAGE, TV_DATAFEED } from "@constants";
 
 // export interface ChartContainerProps {
 //   symbol: ChartingLibraryWidgetOptions["symbol"];

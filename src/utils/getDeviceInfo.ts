@@ -1,4 +1,4 @@
-import { breakpoints } from "@src/themes/breakpoints";
+import { breakpoints } from "@themes/breakpoints";
 
 const isIOS = () => {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent);

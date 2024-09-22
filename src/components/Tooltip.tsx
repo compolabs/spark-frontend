@@ -13,7 +13,7 @@ interface IProps {
 }
 
 const Tooltip: React.FC<IProps> = ({ containerStyles, children, content, config }) => {
-  const { getTooltipProps, setTooltipRef, setTriggerRef, tooltipRef, triggerRef, visible } = usePopperTooltip({
+  const { getTooltipProps, setTooltipRef, setTriggerRef, triggerRef, visible } = usePopperTooltip({
     ...config,
   });
 

@@ -9,17 +9,22 @@ import AssetBlock from "@components/SelectAssets/AssetBlock";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+
+import closeThin from "@assets/icons/closeThin.svg";
+import DepositAssets from "@assets/icons/depositAssets.svg?react";
+import Spinner from "@assets/icons/spinner.svg?react";
+
+import useFlag from "@hooks/useFlag";
+import { useWallet } from "@hooks/useWallet";
+import { useStores } from "@stores";
+
 import { assetsMock } from "@screens/Assets/MainAssets/const";
 import ConnectWalletDialog from "@screens/ConnectWallet";
-import closeThin from "@src/assets/icons/closeThin.svg";
-import DepositAssets from "@src/assets/icons/depositAssets.svg?react";
-import Spinner from "@src/assets/icons/spinner.svg?react";
-import { FuelNetwork } from "@src/blockchain";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import useFlag from "@src/hooks/useFlag";
-import { useWallet } from "@src/hooks/useWallet";
-import BN from "@src/utils/BN";
-import { useStores } from "@stores";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+
+import { FuelNetwork } from "@blockchain";
 
 interface MainAssets {
   setStep: (value: number) => void;

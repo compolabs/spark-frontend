@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useConnectUI, useFuel } from "@fuels/react";
 import { Account } from "fuels";
 
-import { useStores } from "@src/stores";
+import { useStores } from "@stores";
 
 export const useWallet = () => {
   const { fuel } = useFuel();
   const { accountStore } = useStores();
-  const { connect, isConnecting, dialog } = useConnectUI();
+  const { connect, isConnecting } = useConnectUI();
 
   const [isConnected, setIsConnected] = useState(false);
   const [wallet, setWallet] = useState<Account | null>(null);

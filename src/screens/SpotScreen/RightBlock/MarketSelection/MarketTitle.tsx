@@ -1,9 +1,10 @@
 import React from "react";
 import styled from "@emotion/styled";
 
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { SmartFlex } from "@src/components/SmartFlex";
-import { SpotMarket } from "@src/entity";
+
+import { SpotMarket } from "@entity";
 
 interface IProps {
   market: SpotMarket;

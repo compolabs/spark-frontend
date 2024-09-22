@@ -4,9 +4,11 @@ import { observer } from "mobx-react-lite";
 
 import Chip from "@components/Chip";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
-import { FuelNetwork } from "@src/blockchain";
-import { media } from "@src/themes/breakpoints";
-import BN from "@src/utils/BN";
+import { media } from "@themes/breakpoints";
+
+import BN from "@utils/BN";
+
+import { FuelNetwork } from "@blockchain";
 
 import AmountInput from "./AmountInput";
 import { BigNumberInput } from "./BigNumberInput";

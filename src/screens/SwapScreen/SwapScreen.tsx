@@ -3,26 +3,32 @@ import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import ArrowDownIcon from "@src/assets/icons/arrowDown.svg?react";
-import Spinner from "@src/assets/icons/spinner.svg?react";
-import { FuelNetwork } from "@src/blockchain";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@src/components/Text";
-import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@src/constants";
-import { useMedia } from "@src/hooks/useMedia";
-import { useWallet } from "@src/hooks/useWallet";
-import { useStores } from "@src/stores";
-import { media } from "@src/themes/breakpoints";
-import BN from "@src/utils/BN";
-import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@src/utils/swapUtils";
+import Button from "@components/Button";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import ArrowDownIcon from "@assets/icons/arrowDown.svg?react";
+import Spinner from "@assets/icons/spinner.svg?react";
+
+import useFlag from "@hooks/useFlag";
+import { useMedia } from "@hooks/useMedia";
+import { useWallet } from "@hooks/useWallet";
+import { useStores } from "@stores";
+
+import ConnectWalletDialog from "@screens/ConnectWallet";
+
+import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+import BN from "@utils/BN";
+import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
+
+import { FuelNetwork } from "@blockchain";
+import { Token } from "@entity";
+
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
 import { TokenSelect } from "./TokenSelect";
-import Button from "@components/Button";
-import useFlag from "@src/hooks/useFlag";
-import ConnectWalletDialog from "@screens/ConnectWallet";
-import { SmartFlex } from "@components/SmartFlex";
-import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
-import { Token } from "@src/entity";
 
 const INITIAL_SLIPPAGE = 1;
 

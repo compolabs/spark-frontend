@@ -1,9 +1,12 @@
-import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 import { makeAutoObservable } from "mobx";
 
-import { ORDER_TYPE } from "@src/screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
-import { THEME_TYPE } from "@src/themes/ThemeProvider";
+import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
+
+import { THEME_TYPE } from "@themes/ThemeProvider";
+
 import RootStore from "@stores/RootStore";
+
+import { ORDER_TYPE } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 
 export interface ISerializedSettingStore {
   isUserAgreedWithTerms?: boolean;

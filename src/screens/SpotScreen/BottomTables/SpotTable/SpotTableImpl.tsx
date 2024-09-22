@@ -5,13 +5,16 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
+import { SmartFlex } from "@components/SmartFlex";
+import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { SmartFlex } from "@src/components/SmartFlex";
-import Table from "@src/components/Table";
-import { SpotMarketOrder } from "@src/entity";
-import { useMedia } from "@src/hooks/useMedia";
-import { media } from "@src/themes/breakpoints";
-import { toCurrency } from "@src/utils/toCurrency";
+import { media } from "@themes/breakpoints";
+
+import { useMedia } from "@hooks/useMedia";
+
+import { toCurrency } from "@utils/toCurrency";
+
+import { SpotMarketOrder } from "@entity";
 
 import { BaseTable } from "../BaseTable";
 

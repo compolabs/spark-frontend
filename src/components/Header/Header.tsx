@@ -3,14 +3,16 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
-import DataBase from "@src/assets/icons/dataBase.svg?react";
-import Logo from "@src/assets/icons/logo.svg?react";
-import Menu from "@src/assets/icons/menu.svg?react";
-import useFlag from "@src/hooks/useFlag";
-import { useMedia } from "@src/hooks/useMedia";
-import { MODAL_TYPE } from "@src/stores/ModalStore";
-import { media } from "@src/themes/breakpoints";
+import { media } from "@themes/breakpoints";
+
+import DataBase from "@assets/icons/dataBase.svg?react";
+import Logo from "@assets/icons/logo.svg?react";
+import Menu from "@assets/icons/menu.svg?react";
+
+import useFlag from "@hooks/useFlag";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+import { MODAL_TYPE } from "@stores/ModalStore";
 
 import { ConnectWalletButton } from "../ConnectWalletButton";
 import { AccountInfoSheet } from "../Modal";

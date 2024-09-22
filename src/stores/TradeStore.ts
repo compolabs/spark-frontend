@@ -2,14 +2,16 @@ import { toBech32 } from "fuels";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@src/blockchain";
-import { SpotMarketVolume } from "@src/blockchain/types";
-import { DEFAULT_DECIMALS, DEFAULT_MARKET } from "@src/constants";
-import { PerpMarket, SpotMarket } from "@src/entity";
-import BN from "@src/utils/BN";
-import { CONFIG } from "@src/utils/getConfig";
-import { IntervalUpdater } from "@src/utils/IntervalUpdater";
 import RootStore from "@stores/RootStore";
+
+import { DEFAULT_DECIMALS, DEFAULT_MARKET } from "@constants";
+import BN from "@utils/BN";
+import { CONFIG } from "@utils/getConfig";
+import { IntervalUpdater } from "@utils/IntervalUpdater";
+
+import { FuelNetwork } from "@blockchain";
+import { SpotMarketVolume } from "@blockchain/types";
+import { PerpMarket, SpotMarket } from "@entity";
 
 export interface ISerializedTradeStore {
   favMarkets: Nullable<string>;
@@ -47,7 +49,7 @@ class TradeStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
-    const { oracleStore, accountStore } = rootStore;
+    const { oracleStore } = rootStore;
 
     if (initState) {
       const favMarkets = initState.favMarkets?.split(",").filter(Boolean);

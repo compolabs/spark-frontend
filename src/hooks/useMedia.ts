@@ -1,4 +1,4 @@
-import { breakpoints, BreakPointTypes } from "@src/themes/breakpoints";
+import { breakpoints, BreakPointTypes } from "@themes/breakpoints";
 
 import { useWindowSize } from "./useWindowSize";
 

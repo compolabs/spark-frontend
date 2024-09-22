@@ -3,8 +3,10 @@ import styled from "@emotion/styled";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import CloseIcon from "@src/assets/icons/close.svg?react";
-import StartsIcon from "@src/assets/icons/starts.svg?react";
+
+import CloseIcon from "@assets/icons/close.svg?react";
+import StartsIcon from "@assets/icons/starts.svg?react";
+
 import { useStores } from "@stores";
 
 export const InfoBlockAssets = () => {

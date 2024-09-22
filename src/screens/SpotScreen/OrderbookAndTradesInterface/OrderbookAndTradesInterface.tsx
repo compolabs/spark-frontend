@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 
 import Button, { ButtonGroup } from "@components/Button";
 import SizedBox from "@components/SizedBox";
-import Text, { TEXT_TYPES } from "@src/components/Text";
+import Text, { TEXT_TYPES } from "@components/Text";
 
 import { SpotOrderBook } from "./SpotOrderBook/SpotOrderBook";
 import { SpotTrades } from "./SpotTrades/SpotTrades";

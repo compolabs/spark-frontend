@@ -2,8 +2,8 @@ import { Account, B256Address, Fuel, Provider, Wallet, WalletLocked, WalletUnloc
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FUEL_CONFIG } from "@src/constants";
-import { CONFIG } from "@src/utils/getConfig";
+import { FUEL_CONFIG } from "@constants";
+import { CONFIG } from "@utils/getConfig";
 
 import { NETWORK_ERROR, NetworkError } from "./NetworkError";
 import { Balances } from "./types";

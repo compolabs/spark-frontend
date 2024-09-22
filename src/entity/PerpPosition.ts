@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 
-import { FuelNetwork } from "@src/blockchain";
+import { FuelNetwork } from "@blockchain";
 
 import BN from "../utils/BN";
 

@@ -3,16 +3,18 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { Column, DesktopRow, Row } from "@src/components/Flex";
-import SizedBox from "@src/components/SizedBox";
-import { SmartFlex } from "@src/components/SmartFlex";
-import Text, { TEXT_TYPES } from "@src/components/Text";
-import { DEFAULT_DECIMALS } from "@src/constants";
-import { useMedia } from "@src/hooks/useMedia";
-import { useStores } from "@src/stores";
-import { media } from "@src/themes/breakpoints";
-import BN from "@src/utils/BN";
-import { toCurrency } from "@src/utils/toCurrency";
+import { Column, DesktopRow, Row } from "@components/Flex";
+import SizedBox from "@components/SizedBox";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
+
+import { useMedia } from "@hooks/useMedia";
+import { useStores } from "@stores";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
+import { toCurrency } from "@utils/toCurrency";
 
 const MarketStatistics: React.FC = observer(() => {
   const { oracleStore, tradeStore } = useStores();
@@ -20,7 +22,6 @@ const MarketStatistics: React.FC = observer(() => {
   const media = useMedia();
 
   const baseToken = tradeStore.market?.baseToken;
-  const quoteToken = tradeStore.market?.quoteToken;
 
   const indexPriceBn = baseToken?.priceFeed
     ? BN.formatUnits(oracleStore.getTokenIndexPrice(baseToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
