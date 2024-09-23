@@ -21,6 +21,7 @@ export const range = (start: number, end: number) => {
 
 export const Pagination = ({ currentPage, totalPages, sibling = 2, onChange }: PaginationProps) => {
   const pagination = useMemo(() => {
+    return [currentPage]; // TODO: Заглушка пока нет выдачи paginationInfo с
     const totalPageCount = Math.ceil(totalPages);
     const totalPageNumbers = 6;
 
@@ -105,4 +106,5 @@ const ArrowIconStyledRight = styled(ArrowIcon)`
 
 const PaginationText = styled.span`
   font-size: 14px;
+  color: ${({ theme }) => theme.colors.textPrimary};
 `;

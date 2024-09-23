@@ -53,7 +53,6 @@ class SpotTableVM {
     reaction(
       () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected, this.offset],
       ([market, initialized, isConnected, offset]) => {
-        console.log("this.offset", offset);
         if (!initialized || !market || !isConnected) {
           this.setMyOrders([]);
           this.setMyOrdersHistory([]);
@@ -180,6 +179,7 @@ class SpotTableVM {
   private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
 
   private setMyOrdersHistory = (myOrdersHistory: SpotMarketOrder[]) => (this.myOrdersHistory = myOrdersHistory);
+
   setOffset = (currentPage: number) => {
     this.offset = (currentPage - 1) * this.limit;
   };

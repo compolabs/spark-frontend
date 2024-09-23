@@ -122,14 +122,19 @@ const SpotTableImpl: React.FC = observer(() => {
   const vm = useSpotTableVMProvider();
   const theme = useTheme();
   const media = useMedia();
-
   const [tabIndex, setTabIndex] = useState(0);
   const columns = [ORDER_COLUMNS(vm, theme), HISTORY_COLUMNS(theme)];
-
+  const [page, setPage] = useState(1);
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: vm.myOrders.length },
     { title: "HISTORY", disabled: false, rowCount: vm.myOrdersHistory.length },
   ];
+
+  const handleTab = (e: number) => {
+    setTabIndex(e);
+    setPage(1);
+    vm.setOffset(0);
+  };
 
   const renderMobileRows = () => {
     const orderData = vm.myOrders.map((ord, i) => (
@@ -227,9 +232,14 @@ const SpotTableImpl: React.FC = observer(() => {
 
   const tabToData = [vm.myOrders, vm.myOrdersHistory];
   const data = tabToData[tabIndex];
+  console.log("!!", data.length >= 9 && page !== 1, data.length >= 9, page > 2);
+  console.log("1", data.length);
+  console.log("2", page);
+  console.log("========");
 
   const handleChangePagination = (e: number) => {
     vm.setOffset(e);
+    setPage(e);
   };
 
   const renderTable = () => {
@@ -252,12 +262,14 @@ const SpotTableImpl: React.FC = observer(() => {
 
   return (
     <>
-      <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={setTabIndex}>
+      <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={handleTab}>
         {renderTable()}
       </BaseTable>
-      <PaginationContainer>
-        <Pagination currentPage={0} totalPages={10} onChange={handleChangePagination}></Pagination>
-      </PaginationContainer>
+      {data.length >= 10 || page > 1 ? (
+        <PaginationContainer>
+          <Pagination currentPage={page} totalPages={10} onChange={handleChangePagination} />
+        </PaginationContainer>
+      ) : null}
       {!!vm.myOrders.length && tabIndex === 0 && (
         //todo здесь была кнопка cancel all orders
         <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
