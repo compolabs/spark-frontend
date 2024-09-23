@@ -1,22 +1,18 @@
-import React, { useState } from "react";
-import { Config } from "react-popper-tooltip";
+import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import { Row } from "@components/Flex";
-import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import Tab from "@components/Tab";
 import Text, { TEXT_TYPES } from "@components/Text";
-import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
-
-import tableSizeSelector from "@assets/icons/tablesSize.svg";
 
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
-import { MAX_TABLE_HEIGHT, RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "./constants";
+import { MAX_TABLE_HEIGHT } from "./constants";
+import { TableActionButtons } from "./TableActionButtons";
 
 interface Props {
   tabs: { title: string; disabled: boolean; rowCount: number }[];
@@ -27,19 +23,6 @@ interface Props {
 
 export const BaseTable: React.FC<Props> = observer(({ tabs, activeTab, onTabClick, children }) => {
   const { settingsStore } = useStores();
-
-  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-
-  const tooltipConfig: Config = {
-    ...RESIZE_TOOLTIP_CONFIG,
-    visible: isTooltipVisible,
-    onVisibleChange: setIsTooltipVisible,
-  };
-
-  const handleTableSize = (size: TRADE_TABLE_SIZE) => {
-    settingsStore.setTradeTableSize(size);
-    setIsTooltipVisible(false);
-  };
 
   return (
     <Root gap="16px" size={settingsStore.tradeTableSize} column>
@@ -63,35 +46,7 @@ export const BaseTable: React.FC<Props> = observer(({ tabs, activeTab, onTabClic
               )}
             </Tab>
           ))}
-          <TableSizeSelector>
-            <Tooltip
-              config={tooltipConfig}
-              content={
-                <div>
-                  {TABLE_SIZES_CONFIG.map(({ size, icon, title }) => (
-                    <TableSize
-                      key={title}
-                      active={settingsStore.tradeTableSize === size}
-                      onClick={() => handleTableSize(size)}
-                    >
-                      <img alt={title} src={icon} />
-                      <SizedBox width={4} />
-                      <Text type={TEXT_TYPES.BUTTON} nowrap>
-                        {title.toUpperCase()}
-                      </Text>
-                    </TableSize>
-                  ))}
-                </div>
-              }
-            >
-              <img
-                alt="Table Size"
-                src={tableSizeSelector}
-                style={{ cursor: "pointer" }}
-                onClick={() => setIsTooltipVisible(true)}
-              />
-            </Tooltip>
-          </TableSizeSelector>
+          <TableActionButtons />
         </TabContainer>
         <TableContainer className="better-scroll">{children}</TableContainer>
       </TableRoot>
@@ -135,34 +90,10 @@ const TabContainer = styled(Row)`
   }
 `;
 
-const TableSizeSelector = styled.div`
-  position: absolute;
-  right: 12px;
-  top: 4px;
-
-  ${media.mobile} {
-    display: none;
-  }
-`;
-
 const TableContainer = styled(SmartFlex)`
   width: 100%;
   height: 100%;
   overflow-y: scroll;
-`;
-
-const TableSize = styled.div<{ active?: boolean }>`
-  display: flex;
-  align-items: center;
-  padding: 4px 12px;
-  width: 100%;
-  cursor: pointer;
-
-  ${({ active, theme }) => active && `background: ${theme.colors.borderPrimary}`};
-
-  :hover {
-    background: ${({ theme }) => theme.colors.borderSecondary};
-  }
 `;
 
 const Badge = styled.div`
