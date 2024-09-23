@@ -5,6 +5,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
+import { Pagination } from "@components/Pagination/Pagination.tsx";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -19,7 +20,6 @@ import { SpotMarketOrder } from "@entity";
 import { BaseTable } from "../BaseTable";
 
 import { useSpotTableVMProvider } from "./SpotTableVM";
-import { Pagination } from "@components/Pagination.tsx";
 
 const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();
@@ -228,6 +228,10 @@ const SpotTableImpl: React.FC = observer(() => {
   const tabToData = [vm.myOrders, vm.myOrdersHistory];
   const data = tabToData[tabIndex];
 
+  const handleChangePagination = (e: number) => {
+    vm.setOffset(e);
+  };
+
   const renderTable = () => {
     if (!data.length) {
       return (
@@ -251,6 +255,9 @@ const SpotTableImpl: React.FC = observer(() => {
       <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={setTabIndex}>
         {renderTable()}
       </BaseTable>
+      <PaginationContainer>
+        <Pagination currentPage={0} totalPages={10} onChange={handleChangePagination}></Pagination>
+      </PaginationContainer>
       {!!vm.myOrders.length && tabIndex === 0 && (
         //todo здесь была кнопка cancel all orders
         <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
@@ -266,6 +273,13 @@ export const TableText = styled(Text)`
   align-items: center;
 `;
 
+const PaginationContainer = styled.div`
+  background: ${({ theme }) => theme.colors.bgSecondary};
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+`;
 const CancelButton = styled(Chip)`
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;

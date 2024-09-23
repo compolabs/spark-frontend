@@ -1,7 +1,11 @@
 import React, { useMemo } from "react";
-import { PaginationButton } from "@components/Pagination-button.tsx";
-import ArrowIcon from "@src/assets/icons/arrowUp.svg?react";
 import styled from "@emotion/styled";
+
+import { PaginationButton } from "@components/Pagination/Pagination-button.tsx";
+import { PaginationEntity } from "@components/Pagination/Pagination-entity.tsx";
+import { SmartFlex } from "@components/SmartFlex.tsx";
+
+import ArrowIcon from "@assets/icons/arrowUp.svg?react";
 
 interface PaginationProps {
   currentPage: number;
@@ -15,7 +19,7 @@ export const range = (start: number, end: number) => {
   return Array.from({ length: end - start + 1 }, (_, index) => index + start);
 };
 
-export const Pagination = ({ currentPage, totalPages, showDots = true, sibling = 2, onChange }: PaginationProps) => {
+export const Pagination = ({ currentPage, totalPages, sibling = 2, onChange }: PaginationProps) => {
   const pagination = useMemo(() => {
     const totalPageCount = Math.ceil(totalPages);
     const totalPageNumbers = 6;
@@ -60,48 +64,45 @@ export const Pagination = ({ currentPage, totalPages, showDots = true, sibling =
   }
 
   return (
-    <div className="ui-flex ui-gap-[8px]" data-testid="pagination">
-      <PaginationButton
-        data-testid="changePreviousPage"
-        disabled={currentPage === 1}
-        onClick={() => handleClick(currentPage - 1)}
-      >
+    <SmartFlex alignItems="center" gap="16px" justifyContent="space-between">
+      <PaginationButton disabled={currentPage === 1} onClick={() => handleClick(currentPage - 1)}>
         <ArrowIconStyled />
       </PaginationButton>
       {pagination.map((value, index) => {
         if (value === "...") {
           return (
-            <PaginationButton key={`dot-${index}`} disabled>
-              <span>...</span>
-            </PaginationButton>
+            <PaginationEntity key={`dot-${index}`} disabled>
+              <PaginationText>...</PaginationText>
+            </PaginationEntity>
           );
         }
 
         return (
-          <PaginationButton
+          <PaginationEntity
             key={index}
+            disabled={currentPage === (value as number)}
             selected={currentPage === (value as number)}
-            // disabled={currentPage === (value as number)}
-            // onClick={() => handleClick(value as number)}
-            // data-testid={`changePage_${value}`}
+            onClick={() => handleClick(value as number)}
           >
-            <span>{value}</span>
-          </PaginationButton>
+            <PaginationText>{value}</PaginationText>
+          </PaginationEntity>
         );
       })}
-      <PaginationButton
-        disabled={currentPage === totalPages}
-        // onClick={() => handleClick(currentPage + 1)}
-        // data-testid="changeNextPage"
-      >
-        {/*<IconChevronRight className="ui-m-auto ui-scale-50" />*/}
+      <PaginationButton disabled={currentPage === totalPages} onClick={() => handleClick(currentPage + 1)}>
+        <ArrowIconStyledRight />
       </PaginationButton>
-    </div>
+    </SmartFlex>
   );
 };
 
 const ArrowIconStyled = styled(ArrowIcon)`
   transform: rotate(90deg);
-  color: wheat;
-  fill: red;
+`;
+
+const ArrowIconStyledRight = styled(ArrowIcon)`
+  transform: rotate(-90deg);
+`;
+
+const PaginationText = styled.span`
+  font-size: 14px;
 `;

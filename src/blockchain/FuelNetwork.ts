@@ -150,6 +150,7 @@ export class FuelNetwork {
   };
 
   subscribeSpotOrders = (...params: Parameters<typeof this.orderbookSdk.subscribeOrders>) => {
+    console.log("1");
     return this.orderbookSdk.subscribeOrders(...params);
   };
 
