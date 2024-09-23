@@ -117,6 +117,8 @@ const HISTORY_COLUMNS = (theme: Theme) => [
   }),
 ];
 
+const minNeedLengthPagination = 10;
+const startPage = 1;
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const SpotTableImpl: React.FC = observer(() => {
   const vm = useSpotTableVMProvider();
@@ -124,7 +126,7 @@ const SpotTableImpl: React.FC = observer(() => {
   const media = useMedia();
   const [tabIndex, setTabIndex] = useState(0);
   const columns = [ORDER_COLUMNS(vm, theme), HISTORY_COLUMNS(theme)];
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(startPage);
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: vm.myOrders.length },
     { title: "HISTORY", disabled: false, rowCount: vm.myOrdersHistory.length },
@@ -232,10 +234,6 @@ const SpotTableImpl: React.FC = observer(() => {
 
   const tabToData = [vm.myOrders, vm.myOrdersHistory];
   const data = tabToData[tabIndex];
-  console.log("!!", data.length >= 9 && page !== 1, data.length >= 9, page > 2);
-  console.log("1", data.length);
-  console.log("2", page);
-  console.log("========");
 
   const handleChangePagination = (e: number) => {
     vm.setOffset(e);
@@ -265,9 +263,9 @@ const SpotTableImpl: React.FC = observer(() => {
       <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={handleTab}>
         {renderTable()}
       </BaseTable>
-      {data.length >= 10 || page > 1 ? (
+      {data.length >= minNeedLengthPagination || page > startPage ? (
         <PaginationContainer>
-          <Pagination currentPage={page} totalPages={10} onChange={handleChangePagination} />
+          <Pagination currentPage={page} onChange={handleChangePagination} />
         </PaginationContainer>
       ) : null}
       {!!vm.myOrders.length && tabIndex === 0 && (

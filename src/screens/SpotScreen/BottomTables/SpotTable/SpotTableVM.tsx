@@ -145,7 +145,6 @@ class SpotTableVM {
     if (this.subscriptionToHistoryOrders) {
       this.subscriptionToHistoryOrders.unsubscribe();
     }
-    console.log("history");
     this.subscriptionToHistoryOrders = bcNetwork
       .subscribeSpotOrders({
         limit,

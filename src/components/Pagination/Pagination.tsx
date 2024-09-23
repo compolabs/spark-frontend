@@ -9,7 +9,7 @@ import ArrowIcon from "@assets/icons/arrowUp.svg?react";
 
 interface PaginationProps {
   currentPage: number;
-  totalPages: number;
+  totalPages?: number;
   showDots?: boolean;
   sibling?: number;
   onChange?: (page: PaginationProps["currentPage"]) => void;
@@ -19,50 +19,50 @@ export const range = (start: number, end: number) => {
   return Array.from({ length: end - start + 1 }, (_, index) => index + start);
 };
 
-export const Pagination = ({ currentPage, totalPages, sibling = 2, onChange }: PaginationProps) => {
+export const Pagination = ({ currentPage, onChange }: PaginationProps) => {
   const pagination = useMemo(() => {
     return [currentPage]; // TODO: Заглушка пока нет выдачи paginationInfo с
-    const totalPageCount = Math.ceil(totalPages);
-    const totalPageNumbers = 6;
-
-    if (totalPageNumbers >= totalPageCount) {
-      return range(1, totalPageCount);
-    }
-
-    const leftSiblingIndex = Math.max(currentPage - 1, 1);
-    const rightSiblingIndex = Math.min(currentPage + 1, totalPageCount);
-    const shouldShowLeftDots = leftSiblingIndex - 1 > sibling;
-    const shouldShowRightDots = rightSiblingIndex < totalPageCount - sibling;
-    const firstPageIndex = 1;
-    const lastPageIndex = totalPageCount;
-
-    if (!shouldShowLeftDots && shouldShowRightDots) {
-      const leftItemCount = 3 + sibling;
-      const leftRange = range(1, leftItemCount);
-      return [...leftRange, "...", totalPageCount];
-    }
-
-    if (shouldShowLeftDots && !shouldShowRightDots) {
-      const rightItemCount = 3 + sibling;
-      const rightRange = range(totalPageCount - rightItemCount + 1, totalPageCount);
-      return [firstPageIndex, "...", ...rightRange];
-    }
-
-    if (shouldShowLeftDots && shouldShowRightDots) {
-      const middleRange = range(leftSiblingIndex, rightSiblingIndex);
-      return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
-    }
-
-    return range(firstPageIndex, lastPageIndex);
-  }, [totalPages, currentPage]);
+    // const totalPageCount = Math.ceil(totalPages);
+    // const totalPageNumbers = 6;
+    //
+    // if (totalPageNumbers >= totalPageCount) {
+    //   return range(1, totalPageCount);
+    // }
+    //
+    // const leftSiblingIndex = Math.max(currentPage - 1, 1);
+    // const rightSiblingIndex = Math.min(currentPage + 1, totalPageCount);
+    // const shouldShowLeftDots = leftSiblingIndex - 1 > sibling;
+    // const shouldShowRightDots = rightSiblingIndex < totalPageCount - sibling;
+    // const firstPageIndex = 1;
+    // const lastPageIndex = totalPageCount;
+    //
+    // if (!shouldShowLeftDots && shouldShowRightDots) {
+    //   const leftItemCount = 3 + sibling;
+    //   const leftRange = range(1, leftItemCount);
+    //   return [...leftRange, "...", totalPageCount];
+    // }
+    //
+    // if (shouldShowLeftDots && !shouldShowRightDots) {
+    //   const rightItemCount = 3 + sibling;
+    //   const rightRange = range(totalPageCount - rightItemCount + 1, totalPageCount);
+    //   return [firstPageIndex, "...", ...rightRange];
+    // }
+    //
+    // if (shouldShowLeftDots && shouldShowRightDots) {
+    //   const middleRange = range(leftSiblingIndex, rightSiblingIndex);
+    //   return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
+    // }
+    //
+    // return range(firstPageIndex, lastPageIndex);
+  }, [currentPage]);
 
   const handleClick = (page: number) => {
     onChange?.(page);
   };
 
-  if (!totalPages) {
-    return null;
-  }
+  // if (!totalPages) {
+  //   return null;
+  // }
 
   return (
     <SmartFlex alignItems="center" gap="16px" justifyContent="space-between">
@@ -70,7 +70,7 @@ export const Pagination = ({ currentPage, totalPages, sibling = 2, onChange }: P
         <ArrowIconStyled />
       </PaginationButton>
       {pagination.map((value, index) => {
-        if (value === "...") {
+        if (value.toString() === "...") {
           return (
             <PaginationEntity key={`dot-${index}`} disabled>
               <PaginationText>...</PaginationText>
@@ -89,7 +89,7 @@ export const Pagination = ({ currentPage, totalPages, sibling = 2, onChange }: P
           </PaginationEntity>
         );
       })}
-      <PaginationButton disabled={currentPage === totalPages} onClick={() => handleClick(currentPage + 1)}>
+      <PaginationButton onClick={() => handleClick(currentPage + 1)}>
         <ArrowIconStyledRight />
       </PaginationButton>
     </SmartFlex>
