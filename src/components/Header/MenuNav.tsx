@@ -160,7 +160,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
       const titleComponent = isGradient ? <BaseGradientText>{title}</BaseGradientText> : title;
 
       return (
-        <DropdownContainer key={title} ref={dropdownRef}>
+        <DropdownContainer key={title}>
           <Element
             data-onboarding={dataOnboardingDeviceKey}
             isActive={isActive}
@@ -174,6 +174,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
             {isDropdownOpen && (
               <Dropdown
                 key="dropdown"
+                ref={dropdownRef}
                 animate="open"
                 exit="closed"
                 initial="closed"
