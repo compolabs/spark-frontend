@@ -5,6 +5,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
+import { Pagination } from "@components/Pagination/Pagination.tsx";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -116,19 +117,26 @@ const HISTORY_COLUMNS = (theme: Theme) => [
   }),
 ];
 
+const minNeedLengthPagination = 10;
+const startPage = 1;
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const SpotTableImpl: React.FC = observer(() => {
   const vm = useSpotTableVMProvider();
   const theme = useTheme();
   const media = useMedia();
-
   const [tabIndex, setTabIndex] = useState(0);
   const columns = [ORDER_COLUMNS(vm, theme), HISTORY_COLUMNS(theme)];
-
+  const [page, setPage] = useState(startPage);
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: vm.myOrders.length },
     { title: "HISTORY", disabled: false, rowCount: vm.myOrdersHistory.length },
   ];
+
+  const handleTab = (e: number) => {
+    setTabIndex(e);
+    setPage(1);
+    vm.setOffset(0);
+  };
 
   const renderMobileRows = () => {
     const orderData = vm.myOrders.map((ord, i) => (
@@ -227,6 +235,11 @@ const SpotTableImpl: React.FC = observer(() => {
   const tabToData = [vm.myOrders, vm.myOrdersHistory];
   const data = tabToData[tabIndex];
 
+  const handleChangePagination = (e: number) => {
+    vm.setOffset(e);
+    setPage(e);
+  };
+
   const renderTable = () => {
     if (!data.length) {
       return (
@@ -247,9 +260,14 @@ const SpotTableImpl: React.FC = observer(() => {
 
   return (
     <>
-      <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={setTabIndex}>
+      <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={handleTab}>
         {renderTable()}
       </BaseTable>
+      {data.length >= minNeedLengthPagination || page > startPage ? (
+        <PaginationContainer>
+          <Pagination currentPage={page} onChange={handleChangePagination} />
+        </PaginationContainer>
+      ) : null}
       {!!vm.myOrders.length && tabIndex === 0 && (
         //todo здесь была кнопка cancel all orders
         <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
@@ -265,6 +283,13 @@ export const TableText = styled(Text)`
   align-items: center;
 `;
 
+const PaginationContainer = styled.div`
+  background: ${({ theme }) => theme.colors.bgSecondary};
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+`;
 const CancelButton = styled(Chip)`
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;
