@@ -99,7 +99,7 @@ class FaucetStore {
     }
 
     if (token.symbol === "ETH") {
-      window.open(`${FUEL_FAUCET}${accountStore.address}`, "blank");
+      window.open(`${FUEL_FAUCET}/?address=${accountStore.address}&redirectUrl=${window.location.origin}`, "blank");
       return;
     }
 

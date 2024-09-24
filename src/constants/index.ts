@@ -13,7 +13,7 @@ export const ROUTES = {
 export const isProduction = window.location.host === "app.sprk.fi";
 
 export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/sepolia";
-export const FUEL_FAUCET = "https://faucet-testnet.fuel.network/?address=";
+export const FUEL_FAUCET = "https://faucet-testnet.fuel.network";
 export const TV_DATAFEED = "https://spark-tv-datafeed.spark-defi.com/api/v1";
 export const CHARTS_STORAGE = "https://tv-backend-v4.herokuapp.com/";
 
