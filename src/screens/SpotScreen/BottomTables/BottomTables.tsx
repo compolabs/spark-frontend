@@ -4,15 +4,16 @@ import { observer } from "mobx-react";
 
 import { media } from "@themes/breakpoints";
 
+import BottomTablesSkeletonWrapper from "./BottomTablesSkeletonWrapper";
 import SpotTable from "./SpotTable";
 
 const BottomTables: React.FC = observer(() => {
-  const TableComponent = SpotTable;
-
   return (
-    <StyledBottomTables>
-      <TableComponent />
-    </StyledBottomTables>
+    <BottomTablesSkeletonWrapper>
+      <StyledBottomTables>
+        <SpotTable />
+      </StyledBottomTables>
+    </BottomTablesSkeletonWrapper>
   );
 });
 

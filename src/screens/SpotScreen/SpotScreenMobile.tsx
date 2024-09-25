@@ -92,15 +92,9 @@ const MobileContent = styled.div`
   grid-template-columns: 140px 1fr;
   gap: 8px;
   width: 100%;
-  height: fit-content;
 `;
 
 const ContentWrapper = styled(SmartFlex)`
   background-color: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
-  height: fit-content;
-
-  &:first-of-type {
-    height: 100%;
-  }
 `;

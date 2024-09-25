@@ -14,6 +14,7 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
 import MarketStatistics from "./MarketStatistics";
+import MarketStatisticsBarSkeletonWrapper from "./MarketStatisticsBarSkeletonWrapper";
 
 interface IProps {
   isChartOpen?: boolean;
@@ -57,7 +58,6 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
         focused={tradeStore.marketSelectionOpened}
         onClick={() => tradeStore.setMarketSelectionOpened(!tradeStore.marketSelectionOpened)}
       >
-        {/*todo добавить скелетон лоадер*/}
         <SmartFlex gap="8px" center>
           {renderLeftIcons()}
           <SmartFlex gap="4px" center>
@@ -72,13 +72,15 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
   };
 
   return (
-    <Root>
-      {renderMarketSelector()}
-      {media.desktop && <MarketStatistics />}
-      <SwitchContainer isVisible={!isChartOpen && !tradeStore.marketSelectionOpened} onClick={handleSwitchClick}>
-        <SwitchIcon />
-      </SwitchContainer>
-    </Root>
+    <MarketStatisticsBarSkeletonWrapper isReady={tradeStore.initialized}>
+      <Root>
+        {renderMarketSelector()}
+        {media.desktop && <MarketStatistics />}
+        <SwitchContainer isVisible={!isChartOpen && !tradeStore.marketSelectionOpened} onClick={handleSwitchClick}>
+          <SwitchIcon />
+        </SwitchContainer>
+      </Root>
+    </MarketStatisticsBarSkeletonWrapper>
   );
 });
 

@@ -1,38 +1,46 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import { observer } from "mobx-react-lite";
 
 import Button, { ButtonGroup } from "@components/Button";
 import SizedBox from "@components/SizedBox";
 import Text, { TEXT_TYPES } from "@components/Text";
 
+import { useStores } from "@stores";
+
 import { SpotOrderBook } from "./SpotOrderBook/SpotOrderBook";
 import { SpotTrades } from "./SpotTrades/SpotTrades";
 import { SpotTradesVMProvider } from "./SpotTrades/SpotTradesVM";
+import OrderbookAndTradesSkeletonWrapper from "./OrderbookAndTradesSkeletonWrapper";
 
-const OrderbookAndTradesInterface: React.FC = () => {
+const OrderbookAndTradesInterface: React.FC = observer(() => {
   const [isOrderbook, setIsOrderbook] = useState(true);
 
+  const { spotOrderBookStore } = useStores();
+
   return (
-    <SpotTradesVMProvider>
-      <Root>
-        <ButtonGroup style={{ padding: "0 12px" }}>
-          <Button active={isOrderbook} onClick={() => setIsOrderbook(true)}>
-            <Text primary={isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
-              orderbook
-            </Text>
-          </Button>
-          <Button active={!isOrderbook} onClick={() => setIsOrderbook(false)}>
-            <Text primary={!isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
-              trades
-            </Text>
-          </Button>
-        </ButtonGroup>
-        <SizedBox height={8} />
-        {isOrderbook ? <SpotOrderBook /> : <SpotTrades />}
-      </Root>
-    </SpotTradesVMProvider>
+    <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
+      <SpotTradesVMProvider>
+        <Root>
+          <ButtonGroup style={{ padding: "0 12px" }}>
+            <Button active={isOrderbook} onClick={() => setIsOrderbook(true)}>
+              <Text primary={isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
+                orderbook
+              </Text>
+            </Button>
+            <Button active={!isOrderbook} onClick={() => setIsOrderbook(false)}>
+              <Text primary={!isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
+                trades
+              </Text>
+            </Button>
+          </ButtonGroup>
+          <SizedBox height={8} />
+          {isOrderbook ? <SpotOrderBook /> : <SpotTrades />}
+        </Root>
+      </SpotTradesVMProvider>
+    </OrderbookAndTradesSkeletonWrapper>
   );
-};
+});
 
 export default OrderbookAndTradesInterface;
 

@@ -22,8 +22,6 @@
 
     "baseUrl": ".",
     "paths": {
-      "@src": ["src"],
-      "@src/*": ["src/*"],
       "@themes": ["src/themes"],
       "@themes/*": ["src/themes/*"],
       "@components": ["src/components"],
@@ -43,7 +41,9 @@
       "@entity": ["src/entity"],
       "@entity/*": ["src/entity/*"],
       "@constants": ["src/constants"],
-      "@constants/*": ["src/constants/*"]
+      "@constants/*": ["src/constants/*"],
+      "@src": ["src"],
+      "@src/*": ["src/*"]
     }
   },
   "include": ["src"],

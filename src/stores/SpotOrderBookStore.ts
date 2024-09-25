@@ -27,7 +27,7 @@ class SpotOrderBookStore {
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
   amountOfOrders: number = 0;
 
-  isOrderBookLoading = false;
+  isOrderBookLoading = true;
 
   private buySubscription: Nullable<Subscription> = null;
   private sellSubscription: Nullable<Subscription> = null;
@@ -134,6 +134,7 @@ class SpotOrderBookStore {
       .subscribeSpotActiveOrders<OrderType.Buy>({ ...params, orderType: OrderType.Buy })
       .subscribe({
         next: ({ data }) => {
+          this.isOrderBookLoading = false;
           if (!data) return;
 
           const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, market!.quoteToken.assetId);
@@ -155,6 +156,7 @@ class SpotOrderBookStore {
       .subscribeSpotActiveOrders<OrderType.Sell>({ ...params, orderType: OrderType.Sell })
       .subscribe({
         next: ({ data }) => {
+          this.isOrderBookLoading = false;
           if (!data) return;
 
           const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, market!.quoteToken.assetId);

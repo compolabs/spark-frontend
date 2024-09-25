@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import numeral from "numeral";
 
 import { Row } from "@components/Flex";
-import Loader from "@components/Loader";
 import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
@@ -27,6 +26,7 @@ import { hexToRgba } from "@utils/hexToRgb";
 import { SpotMarketOrder } from "@entity";
 
 import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
+import OrderbookAndTradesSkeletonWrapper from "../OrderbookAndTradesSkeletonWrapper";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -66,18 +66,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
 
   const isOrderBookEmpty =
     spotOrderBookStore.allBuyOrders.length === 0 && spotOrderBookStore.allSellOrders.length === 0;
-
-  if (spotOrderBookStore.isOrderBookLoading && isOrderBookEmpty) {
-    return <Loader size={32} hideText />;
-  }
-
-  if (isOrderBookEmpty) {
-    return (
-      <Root center column>
-        <Text type={TEXT_TYPES.SUPPORTING}>No orders yet</Text>
-      </Root>
-    );
-  }
 
   const renderSettingsIcons = () => {
     if (media.mobile) {
@@ -143,91 +131,101 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     ));
   };
 
+  if (isOrderBookEmpty) {
+    return (
+      <Root center column>
+        <Text type={TEXT_TYPES.SUPPORTING}>No orders yet</Text>
+      </Root>
+    );
+  }
+
   return (
-    <Root>
-      <SettingsContainer>
-        <StyledSelect
-          options={SPOT_DECIMAL_OPTIONS.map((v, index) => ({
-            title: new BN(10).pow(-v).toString(),
-            key: index.toString(),
-          }))}
-          selected={String(indexOfDecimal)}
-          onSelect={({ key }) => handleDecimalSelect(key)}
-        />
-        {renderSettingsIcons()}
-      </SettingsContainer>
-      <OrderbookContainer>
-        <OrderBookHeader>
-          <Text type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</Text>
-          <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
-          <Text type={TEXT_TYPES.SUPPORTING}>{`Total ${market?.quoteToken.symbol}`}</Text>
-        </OrderBookHeader>
-        <Container
-          fitContent={
-            spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL ||
-            spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY
-          }
-          reverse={spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL}
-        >
-          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
-            <Plug
-              length={
-                spotOrderBookStore.sellOrders.length < +spotOrderBookStore.oneSizeOrders
-                  ? +spotOrderBookStore.oneSizeOrders - 1 - spotOrderBookStore.sellOrders.length
-                  : 0
-              }
-            />
-          )}
-          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
-            <Plug
-              length={
-                spotOrderBookStore.sellOrders.length < +spotOrderBookStore.amountOfOrders
-                  ? +spotOrderBookStore.amountOfOrders - 1 - spotOrderBookStore.sellOrders.length
-                  : 0
-              }
-            />
-          )}
+    <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
+      <Root>
+        <SettingsContainer>
+          <StyledSelect
+            options={SPOT_DECIMAL_OPTIONS.map((v, index) => ({
+              title: new BN(10).pow(-v).toString(),
+              key: index.toString(),
+            }))}
+            selected={String(indexOfDecimal)}
+            onSelect={({ key }) => handleDecimalSelect(key)}
+          />
+          {renderSettingsIcons()}
+        </SettingsContainer>
+        <OrderbookContainer>
+          <OrderBookHeader>
+            <Text type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</Text>
+            <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
+            <Text type={TEXT_TYPES.SUPPORTING}>{`Total ${market?.quoteToken.symbol}`}</Text>
+          </OrderBookHeader>
+          <Container
+            fitContent={
+              spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL ||
+              spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY
+            }
+            reverse={spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL}
+          >
+            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
+              <Plug
+                length={
+                  spotOrderBookStore.sellOrders.length < +spotOrderBookStore.oneSizeOrders
+                    ? +spotOrderBookStore.oneSizeOrders - 1 - spotOrderBookStore.sellOrders.length
+                    : 0
+                }
+              />
+            )}
+            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
+              <Plug
+                length={
+                  spotOrderBookStore.sellOrders.length < +spotOrderBookStore.amountOfOrders
+                    ? +spotOrderBookStore.amountOfOrders - 1 - spotOrderBookStore.sellOrders.length
+                    : 0
+                }
+              />
+            )}
 
-          {spotOrderBookStore.orderFilter !== SPOT_ORDER_FILTER.BUY &&
-            renderOrders(spotOrderBookStore.sellOrders, "sell")}
+            {spotOrderBookStore.orderFilter !== SPOT_ORDER_FILTER.BUY &&
+              renderOrders(spotOrderBookStore.sellOrders, "sell")}
 
-          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && renderSpread()}
+            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && renderSpread()}
 
-          {spotOrderBookStore.orderFilter !== SPOT_ORDER_FILTER.SELL &&
-            renderOrders(spotOrderBookStore.buyOrders, "buy")}
+            {spotOrderBookStore.orderFilter !== SPOT_ORDER_FILTER.SELL &&
+              renderOrders(spotOrderBookStore.buyOrders, "buy")}
 
-          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY && (
-            <Plug
-              length={
-                spotOrderBookStore.buyOrders.length < +spotOrderBookStore.amountOfOrders
-                  ? +spotOrderBookStore.amountOfOrders - 1 - spotOrderBookStore.buyOrders.length
-                  : 0
-              }
-            />
-          )}
-          {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
-            <Plug
-              length={
-                spotOrderBookStore.buyOrders.length < +spotOrderBookStore.oneSizeOrders
-                  ? +spotOrderBookStore.oneSizeOrders - 1 - spotOrderBookStore.buyOrders.length
-                  : 0
-              }
-            />
-          )}
-        </Container>
+            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY && (
+              <Plug
+                length={
+                  spotOrderBookStore.buyOrders.length < +spotOrderBookStore.amountOfOrders
+                    ? +spotOrderBookStore.amountOfOrders - 1 - spotOrderBookStore.buyOrders.length
+                    : 0
+                }
+              />
+            )}
+            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
+              <Plug
+                length={
+                  spotOrderBookStore.buyOrders.length < +spotOrderBookStore.oneSizeOrders
+                    ? +spotOrderBookStore.oneSizeOrders - 1 - spotOrderBookStore.buyOrders.length
+                    : 0
+                }
+              />
+            )}
+          </Container>
 
-        <SpotOrderSettingsSheet
-          decimals={SPOT_DECIMAL_OPTIONS}
-          filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([_, value]) => value)}
-          isOpen={isSettingsOpen}
-          selectedDecimal={String(indexOfDecimal)}
-          selectedFilter={spotOrderBookStore.orderFilter}
-          onClose={closeSettings}
-          onDecimalSelect={handleDecimalSelect}
-          onFilterSelect={spotOrderBookStore.setOrderFilter}
-        />
-      </OrderbookContainer>
-    </Root>
+          <SpotOrderSettingsSheet
+            decimals={SPOT_DECIMAL_OPTIONS}
+            filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([_, value]) => value)}
+            isOpen={isSettingsOpen}
+            selectedDecimal={String(indexOfDecimal)}
+            selectedFilter={spotOrderBookStore.orderFilter}
+            onClose={closeSettings}
+            onDecimalSelect={handleDecimalSelect}
+            onFilterSelect={spotOrderBookStore.setOrderFilter}
+          />
+        </OrderbookContainer>
+      </Root>
+    </OrderbookAndTradesSkeletonWrapper>
   );
 });
 

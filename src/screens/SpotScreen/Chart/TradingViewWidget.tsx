@@ -3,9 +3,9 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Loader from "@components/Loader";
-
 import { useStores } from "@stores";
+
+import ChartSkeletonWrapper from "./ChartSkeletonWrapper";
 
 const tvScriptLoadingPromise = () =>
   new Promise((resolve) => {
@@ -22,9 +22,8 @@ const TRADING_VIEW_ID = "tradingview_chart_container";
 
 const CHART_CHECK_INTERVAL = 1000;
 
-const TradingViewWidget = observer(() => {
+const TradingViewWidget: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(true);
-  const isScriptInjected = useRef(false);
   const widgetRef = useRef<any>();
 
   const theme = useTheme();
@@ -61,8 +60,6 @@ const TradingViewWidget = observer(() => {
   };
 
   useLayoutEffect(() => {
-    if (isScriptInjected.current) return;
-
     tvScriptLoadingPromise().then(createWidget);
   }, [market]);
 
@@ -81,7 +78,7 @@ const TradingViewWidget = observer(() => {
 
   return (
     <Root className="tradingview-widget-container">
-      {isLoading && <Loader hideText />}
+      <ChartSkeletonWrapper isReady={!isLoading} />
       <div id={TRADING_VIEW_ID} />
     </Root>
   );
