@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 
 import SkeletonWrapper, { Dimensions } from "@components/SkeletonWrapper";
+import { media } from "@themes/breakpoints";
 
 import { clone } from "@utils/clone";
 
@@ -36,7 +37,12 @@ const BottomTablesSkeletonWrapper = styled(clone(SkeletonWrapper, { skeletonLayo
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
 
-  max-height: ${MAX_TABLE_HEIGHT[3]};
+  height: ${MAX_TABLE_HEIGHT[2]};
+
+  ${media.mobile} {
+    height: auto;
+    flex-grow: 1;
+  }
 `;
 
 export default BottomTablesSkeletonWrapper;

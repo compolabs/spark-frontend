@@ -26,22 +26,23 @@ const SkeletonWrapper: React.FC<SkeletonWrapperProps> = observer(
     const [containerWidth, setContainerWidth] = useState(0);
     const [containerHeight, setContainerHeight] = useState(0);
 
+    const updateDimensions = () => {
+      if (!mainContainer.current) return;
+
+      const { width, height } = mainContainer.current.getBoundingClientRect();
+      setContainerWidth(width);
+      setContainerHeight(height);
+    };
+
     useEffect(() => {
-      const updateDimensions = () => {
-        if (!mainContainer.current) return;
-
-        const { width, height } = mainContainer.current.getBoundingClientRect();
-        setContainerWidth(width);
-        setContainerHeight(height);
-      };
-
       updateDimensions();
+
       window.addEventListener("resize", updateDimensions);
 
       return () => {
         window.removeEventListener("resize", updateDimensions);
       };
-    }, []);
+    }, [isReady]);
 
     if (isReady && children) {
       return <>{children}</>;

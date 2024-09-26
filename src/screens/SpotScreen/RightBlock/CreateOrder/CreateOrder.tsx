@@ -39,7 +39,7 @@ const ORDER_OPTIONS = [
 const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore, spotOrderBookStore } = useStores();
   const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
@@ -244,7 +244,7 @@ const CreateOrder: React.FC = observer(() => {
     elementOption && handleSetTimeInForce(elementOption.timeInForce);
   };
   return (
-    <CreateOrderSkeletonWrapper isReady={!vm.isLoading}>
+    <CreateOrderSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root column>
         <ButtonGroup>
           <Button active={!vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.BUY)}>
