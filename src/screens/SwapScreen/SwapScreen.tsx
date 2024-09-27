@@ -68,6 +68,7 @@ export const SwapScreen: React.FC = observer(() => {
   const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(nativeBalanceContract);
 
   const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
+  const isBuy = swapStore.isBuy;
 
   useEffect(() => {
     const updateToken = setInterval(async () => {
@@ -82,20 +83,70 @@ export const SwapScreen: React.FC = observer(() => {
     return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
   };
 
+  const generateButton = () => {
+    const orders = isBuy() ? spotOrderBookStore.sellOrders.reverse() : spotOrderBookStore.buyOrders;
+    let accumulateAmount = new BN(isBuy() ? swapStore.receiveAmount : swapStore.payAmount);
+    orders.forEach((order) => {
+      accumulateAmount = accumulateAmount.minus(BN.formatUnits(order.currentAmount, swapStore.buyToken.precision));
+      if (accumulateAmount.isLessThanOrEqualTo(0)) {
+        return (
+          <ButtonBordered green onClick={openConnectDialog}>
+            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_BIG_NEW}>
+              Not enough liquidity for exchange SWAP
+            </Text>
+          </ButtonBordered>
+        );
+      }
+    });
+    if (isLoaded) {
+      return (
+        <>
+          <SwapButton
+            data-onboarding={dataOnboardingSwapKey}
+            disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
+            onClick={swapTokens}
+          >
+            <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>
+              {isLoading ? (
+                <Spinner height={14} />
+              ) : (
+                `Swap ${swapStore.sellToken.symbol} to ${swapStore.buyToken.symbol}`
+              )}
+            </Text>
+          </SwapButton>
+        </>
+      );
+    } else {
+      return (
+        <ButtonBordered green onClick={openConnectDialog}>
+          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_BIG_NEW}>
+            Connect wallet to start trading
+          </Text>
+        </ButtonBordered>
+      );
+    }
+  };
+
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOnPress(false);
     const newPayAmount = replaceComma(e.target.value);
-
     if (!isValidAmountInput(newPayAmount)) {
       return;
     }
 
     swapStore.setPayAmount(newPayAmount);
+
+    if (newPayAmount === "") {
+      swapStore.setReceiveAmount(new BN(0).toFixed(swapStore.buyToken.precision));
+      return;
+    }
     const isBuy = swapStore.isBuy;
     const price = !isBuy()
       ? spotOrderBookStore.buyOrders[0].price
       : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1].price;
-    const receiveAmount = BN.parseUnits(new BN(newPayAmount).dividedBy(price), DEFAULT_DECIMALS);
+    const receiveAmount = !isBuy()
+      ? BN.formatUnits(new BN(newPayAmount).multipliedBy(price), DEFAULT_DECIMALS)
+      : BN.parseUnits(new BN(newPayAmount).dividedBy(price), DEFAULT_DECIMALS);
     swapStore.setReceiveAmount(receiveAmount.toFixed(swapStore.buyToken.precision));
   };
 
@@ -108,6 +159,11 @@ export const SwapScreen: React.FC = observer(() => {
     }
 
     swapStore.setReceiveAmount(newReceiveAmount);
+
+    if (newReceiveAmount === "") {
+      swapStore.setPayAmount(new BN(0).toFixed(swapStore.sellToken.precision));
+      return;
+    }
 
     const isBuy = swapStore.isBuy;
     const price = !isBuy()
@@ -245,31 +301,7 @@ export const SwapScreen: React.FC = observer(() => {
           )}
         </SwapBox>
       </SwapContainer>
-      <SmartFlexStyled>
-        {isLoaded ? (
-          <>
-            <SwapButton
-              data-onboarding={dataOnboardingSwapKey}
-              disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
-              onClick={swapTokens}
-            >
-              <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>
-                {isLoading ? (
-                  <Spinner height={14} />
-                ) : (
-                  `Swap ${swapStore.sellToken.symbol} to ${swapStore.buyToken.symbol}`
-                )}
-              </Text>
-            </SwapButton>
-          </>
-        ) : (
-          <ButtonBordered green onClick={openConnectDialog}>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_BIG_NEW}>
-              Connect wallet to start trading
-            </Text>
-          </ButtonBordered>
-        )}
-      </SmartFlexStyled>
+      <SmartFlexStyled>{generateButton()}</SmartFlexStyled>
       {isLoaded && !isBalanceZero && <InfoBlock slippage={slippage} updateSlippage={setSlippage} />}
       {isLoaded && !isBalanceZero && isHaveExchangeFee && (
         <Text type={TEXT_TYPES.BUTTON} attention>
@@ -410,7 +442,7 @@ const SwitchTokens = styled.button<{ disabled: boolean; isLoaded: boolean }>`
   border: none;
   position: absolute;
   left: calc(50% - 14px);
-  top: ${({ isLoaded }) => (isLoaded ? "112px" : "100px")}; // TODO: height of first section, check for mobile
+  top: ${({ isLoaded }) => (isLoaded ? "118px" : "100px")}; // TODO: height of first section, check for mobile
   background-color: ${({ theme }) => theme.colors.greenLight};
   width: 28px;
   height: 44px;
