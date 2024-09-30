@@ -84,7 +84,7 @@ export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, sav
             ))}
           </ButtonsContainer>
         </Content>
-        <Text type={TEXT_TYPES.INFO}>
+        <Text type={TEXT_TYPES.TEXT}>
           Maximum price slippage you’re willing to accept for your order to be executed, indicating the difference
           between expected and actual trade prices.
         </Text>
@@ -196,7 +196,7 @@ const ConfirmButton = styled.button`
   transition: all 0.2s ease;
   ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON]}
   ${media.mobile} {
-    ${TEXT_TYPES_MAP[TEXT_TYPES.TITLE]}
+    ${TEXT_TYPES_MAP[TEXT_TYPES.TEXT]}
     height: 54px;
   }
 

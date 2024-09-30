@@ -21,7 +21,7 @@ export const RadioButton: React.FC<Props> = ({ label, value, isSelected, onChang
     <Root key={value}>
       <StyledInput checked={isSelected} type="radio" value={value} onChange={handleClick} />
       <StyledRadio checked={isSelected} />
-      <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY_NEW}>
+      <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
         {label}
       </Text>
     </Root>

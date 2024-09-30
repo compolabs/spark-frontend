@@ -134,7 +134,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
             <Icon height={24} width={24} />
           </IconContainer>
           <DropdownMenuContent>
-            <DropdownMenuTitle>{title}</DropdownMenuTitle>
+            <DropdownMenuTitle type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</DropdownMenuTitle>
             {desc && <Text type={TEXT_TYPES.BODY}>{desc}</Text>}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -255,11 +255,7 @@ const Tab = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean }>`
 `;
 
 const Row = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean }>`
-  font-family: Space Grotesk;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-
+  ${TEXT_TYPES_MAP[TEXT_TYPES.TEXT_BIG]}
   color: ${({ theme, isActive }) => (isActive ? theme.colors.textPrimary : theme.colors.textSecondary)};
 
   display: flex;
@@ -319,18 +315,9 @@ const BaseGradientText = styled.span`
 `;
 
 const DropdownMenuTitle = styled(Text)`
-  font-family: Space Grotesk;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 16px;
   text-transform: uppercase;
 
   color: ${({ theme }) => theme.colors.textPrimary};
-
-  ${media.mobile} {
-    font-size: 16px;
-  }
 `;
 
 const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean; isGradient?: boolean }>`

@@ -77,7 +77,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
       <SmartFlex alignItems="center" justifyContent="space-between" column>
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
-          <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
+          <TextTitle type={TEXT_TYPES.TEXT_BIG} primary>
             Assets
           </TextTitle>
           <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
@@ -128,7 +128,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       {!hasPositiveBalance && isConnected && (
         <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
           <DepositAssets />
-          <TextTitleDeposit>
+          <TextTitleDeposit type={TEXT_TYPES.TEXT_BIG}>
             It looks like your wallet is empty. Tap the{" "}
             <LinkStyled
               href="/#/faucet"
@@ -202,15 +202,11 @@ const BottomColumn = styled(Column)`
 `;
 const TextTitle = styled(Text)`
   width: 182px;
-  line-height: 20px;
-  letter-spacing: 0.32px;
   text-align: left;
 `;
 
 const TextTitleDeposit = styled(TextTitle)`
   text-align: center;
-  font-size: 14px;
-  width: 184px;
 `;
 
 const AssetsContainer = styled(SmartFlex)`

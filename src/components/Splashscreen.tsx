@@ -109,14 +109,14 @@ export const SplashScreen: React.FC = observer(() => {
           <SelectModeContainer>
             <TitleContainer>
               <SmartFlex gap="8px" center>
-                <DescriptionStyled>Hey, and welcome to</DescriptionStyled>
+                <DescriptionStyled type={TEXT_TYPES.SUPPORTING}>Hey, and welcome to</DescriptionStyled>
                 <LogoIcon />
               </SmartFlex>
-              <TitleStyled>Select trading mode to begin</TitleStyled>
+              <TitleStyled type={TEXT_TYPES.H_TEXT}>Select trading mode to begin</TitleStyled>
             </TitleContainer>
             <ModeContainer>{SPLASH_SCREEN_INFO.map(renderModeButton)}</ModeContainer>
             <StyledButton green onClick={() => handleGoClick()}>
-              <ButtonText type={TEXT_TYPES.TITLE} primary>
+              <ButtonText type={TEXT_TYPES.TEXT_BIG} primary>
                 Let&apos;s go!
               </ButtonText>
             </StyledButton>
@@ -246,10 +246,6 @@ const TitleContainer = styled(SmartFlex)`
 `;
 
 const DescriptionStyled = styled(Text)`
-  font-family: Space Grotesk;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
   text-align: center;
 
   color: ${({ theme }) => theme.colors.textSecondary};
@@ -257,11 +253,6 @@ const DescriptionStyled = styled(Text)`
 
 const TitleStyled = styled(Text)`
   width: 240px;
-
-  font-family: Space Grotesk;
-  font-size: 32px;
-  font-weight: 400;
-  line-height: 32px;
   text-align: center;
 
   color: ${({ theme }) => theme.colors.textPrimary};
