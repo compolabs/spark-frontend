@@ -195,18 +195,18 @@ const ONBOARDING_SWAP_STEPS: Step[] = [
     mobileKey: "assets-mobile",
     desc: "Deposit assets to start trading",
   },
-  {
-    desktopKey: "swap-desktop",
-    mobileKey: "swap-mobile",
-    beforeAction: (media) => {
-      if (media.desktop) return;
-
-      // Close mobile menu
-      const el = document.querySelector<HTMLElement>("[data-onboarding='menu-mobile']");
-      el?.click();
-    },
-    desc: "Start trading",
-  },
+  // {
+  //   desktopKey: "swap-desktop",
+  //   mobileKey: "swap-mobile",
+  //   beforeAction: (media) => {
+  //     if (media.desktop) return;
+  //
+  //     // Close mobile menu
+  //     const el = document.querySelector<HTMLElement>("[data-onboarding='menu-mobile']");
+  //     el?.click();
+  //   },
+  //   desc: "Start trading",
+  // },
 ];
 
 const Root = styled(SmartFlex)`
