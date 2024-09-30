@@ -53,7 +53,7 @@ const TYPE_ROUTE_MAP = {
 export const SplashScreen: React.FC = observer(() => {
   const media = useMedia();
   const navigate = useNavigate();
-  const [mode, setMode] = useState(SPLASH_SCREEN_TYPE.SWAP);
+  const [mode, setMode] = useState(SPLASH_SCREEN_TYPE.ORDERBOOK);
   const { settingsStore } = useStores();
 
   const [isSplashScreenVisible, setSplashScreenVisible] = useState(!settingsStore.isCompleteOnboardingProcess);
@@ -86,9 +86,10 @@ export const SplashScreen: React.FC = observer(() => {
     return (
       <ModeButtonContainer
         key={info.name}
+        disabled={info.type === SPLASH_SCREEN_TYPE.SWAP}
         isSelected={isSelected}
-        onClick={() => handleModeClick(info.type)}
-        onDoubleClick={() => handleGoToMode(info.type)}
+        onClick={() => info.type !== SPLASH_SCREEN_TYPE.SWAP && handleModeClick(info.type)}
+        onDoubleClick={() => info.type !== SPLASH_SCREEN_TYPE.SWAP && handleGoToMode(info.type)}
       >
         <img alt={info.name} src={info.icon} />
         <SmartFlex gap="6px" column>
@@ -274,16 +275,15 @@ const ModeContainer = styled(SmartFlex)`
   z-index: 1;
 `;
 
-const ModeButtonContainer = styled(SmartFlex)<{ isSelected?: boolean }>`
+const ModeButtonContainer = styled(SmartFlex)<{ isSelected?: boolean; disabled?: boolean }>`
   padding: 11px 12px;
   gap: 16px;
   align-items: center;
   background-color: #151515;
   border-radius: 8px;
-
   position: relative;
 
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 
   background-clip: padding-box;
   border: solid 1px transparent;
