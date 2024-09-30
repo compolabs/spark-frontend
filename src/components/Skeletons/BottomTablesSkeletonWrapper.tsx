@@ -8,29 +8,15 @@ import { clone } from "@utils/clone";
 
 import { MAX_TABLE_HEIGHT } from "../../screens/SpotScreen/BottomTables/constants";
 
+const createSkeletonLayout = (padding: number, widthFactor: number, data: Dimensions) => {
+  const maxInnerWidth = data.width - 2 * padding;
+
+  return <rect height="40" rx="6" ry="6" width={maxInnerWidth * widthFactor} x={padding} y={padding} />;
+};
+
 const SKELETON_LAYOUTS = {
-  mobile: (data: Dimensions) => {
-    const padding = 16;
-
-    const maxInnerWidth = data.width - 2 * padding;
-
-    return (
-      <>
-        <rect height="40" rx="6" ry="6" width={maxInnerWidth * 0.6} x={padding} y={padding} />
-      </>
-    );
-  },
-  desktop: (data: Dimensions) => {
-    const padding = 12;
-
-    const maxInnerWidth = data.width - 2 * padding;
-
-    return (
-      <>
-        <rect height="40" rx="6" ry="6" width={maxInnerWidth * 0.3} x={padding} y={padding} />
-      </>
-    );
-  },
+  mobile: (data: Dimensions) => createSkeletonLayout(16, 0.6, data),
+  desktop: (data: Dimensions) => createSkeletonLayout(12, 0.3, data),
 };
 
 const BottomTablesSkeletonWrapper = styled(clone(SkeletonWrapper, { skeletonLayouts: SKELETON_LAYOUTS }))`
