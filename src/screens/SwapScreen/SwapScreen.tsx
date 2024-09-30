@@ -176,7 +176,7 @@ export const SwapScreen: React.FC = observer(() => {
           <SwapBox>
             <BoxHeader>
               <ActionContainer>
-                <Text type={TEXT_TYPES.TEXT_NEW}>Sell</Text>
+                <Text type={TEXT_TYPES.TEXT}>Sell</Text>
                 {isLoaded && !isBalanceZero && (
                   <ActionTag onClick={fillPayAmount} onPress={onPress}>
                     <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
@@ -218,7 +218,7 @@ export const SwapScreen: React.FC = observer(() => {
 
           <SwapBox>
             <BoxHeader>
-              <Text type={TEXT_TYPES.TEXT_NEW}>Buy</Text>
+              <Text type={TEXT_TYPES.TEXT}>Buy</Text>
               <TokenSelect
                 assets={generateBalanceData(buyTokenOptions)}
                 selectedOption={generateBalanceData([swapStore.buyToken])[0]}
@@ -255,7 +255,7 @@ export const SwapScreen: React.FC = observer(() => {
               disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
               onClick={swapTokens}
             >
-              <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>
+              <Text type={TEXT_TYPES.BUTTON_BIG}>
                 {isLoading ? (
                   <Spinner height={14} />
                 ) : (
@@ -315,7 +315,7 @@ const textAnimation = keyframes`
 `;
 
 const ConnectWalletButtonStyled = styled(ConnectWalletButton)`
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_BIG_NEW]}
+  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_BIG]}
   border-radius: 10px;
   padding: 12px 16px !important;
   height: 56px !important;
@@ -392,7 +392,7 @@ const SwapInput = styled.input`
   outline: none;
   color: white;
 
-  ${TEXT_TYPES_MAP[TEXT_TYPES.H_NUMBERS_NEW]}
+  ${TEXT_TYPES_MAP[TEXT_TYPES.H_NUMBERS]}
 
   ${media.mobile} {
     font-size: 24px;

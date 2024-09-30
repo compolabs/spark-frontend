@@ -22,10 +22,10 @@ export const InfoBlockAssets = () => {
         <StartsIcon />
         <CloseIconAbsolute onClick={handleClose} />
       </div>
-      <TextTitle color="primary" type={TEXT_TYPES.TITLE_MODAL}>
+      <TextTitle color="primary" type={TEXT_TYPES.TEXT_BIG}>
         Why do I have to deposit anything?
       </TextTitle>
-      <TextInfo type={TEXT_TYPES.INFO}>
+      <TextInfo type={TEXT_TYPES.TEXT}>
         Deposited assets stores on-chain in a smart-contract for quick order execution. Spark doesn’t store anything. We
         are not a CEX.
       </TextInfo>

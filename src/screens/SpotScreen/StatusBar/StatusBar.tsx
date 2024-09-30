@@ -3,8 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text from "@components/Text";
-import { media } from "@themes/breakpoints";
+import Text, { TEXT_TYPES } from "@components/Text";
 
 import XIcon from "@assets/social/x.svg?react";
 
@@ -33,7 +32,7 @@ const StatusBar: React.FC = observer(() => {
           <XIconStyled />
         </LinkStyled>
       )}
-      <FooterText>
+      <FooterText type={TEXT_TYPES.TEXT}>
         Powered by&nbsp;<LinkStyled href={FUEL_LINK}>Fuel</LinkStyled>
       </FooterText>
     </StatusBarContainer>
@@ -67,14 +66,7 @@ const XIconStyled = styled(XIcon)`
 const FooterText = styled(Text)`
   display: flex;
   align-items: center;
-
-  font-size: 14px;
   color: ${({ theme }) => theme.colors.textPrimary};
-
-  ${media.mobile} {
-    font-size: 14px;
-  }
-
   ${LinkStyled} {
     color: ${({ theme }) => theme.colors.greenLight};
   }

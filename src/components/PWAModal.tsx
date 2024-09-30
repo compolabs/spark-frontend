@@ -38,7 +38,9 @@ export const PWAModal: React.FC = () => {
   return (
     <DialogStyled visible={isVisible}>
       <PWAContainer>
-        <GreetingText color={theme.colors.greenLight}>One more thing :)</GreetingText>
+        <Text color={theme.colors.greenLight} type={TEXT_TYPES.SUPPORTING}>
+          One more thing :)
+        </Text>
         <SkipText onClick={handleClose}>SKIP</SkipText>
         <TitleText color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
           Add Sprk.fi app to Homescreen for faster trading
@@ -80,14 +82,6 @@ const PWAContainer = styled(SmartFlex)`
   border-radius: 16px;
 `;
 
-const GreetingText = styled(Text)`
-  font-size: 12px;
-
-  ${media.mobile} {
-    font-size: 12px;
-  }
-`;
-
 const TitleText = styled(Text)`
   font-size: 16px;
   text-align: center;
@@ -100,14 +94,9 @@ const TitleText = styled(Text)`
 `;
 
 const DescriptionText = styled(Text)`
-  font-size: 12px;
   text-align: center;
 
   padding: 0 32px;
-
-  ${media.mobile} {
-    font-size: 12px;
-  }
 `;
 
 const SkipText = styled(Text)`

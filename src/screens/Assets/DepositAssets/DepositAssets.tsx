@@ -88,7 +88,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
       <SmartFlex alignItems="center" justifyContent="space-between">
         <SmartFlex alignItems="center" gap="10px">
           <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
-          <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
+          <TextTitle type={TEXT_TYPES.TEXT_BIG} primary>
             Deposit
           </TextTitle>
         </SmartFlex>
@@ -122,7 +122,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
         ) : (
           <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
             <ErrorWallet />
-            <TextTitleDeposit>
+            <TextTitleDeposit type={TEXT_TYPES.TEXT}>
               You wallet is empty.
               <br /> To get test tokens use{" "}
               <LinkStyled
@@ -167,9 +167,7 @@ const TextTitle = styled(Text)`
 
 const TextTitleDeposit = styled(Text)`
   text-align: center;
-  font-size: 14px;
   width: 400px;
-  line-height: 20px;
 `;
 
 const DepositedAssets = styled(SmartFlex)`

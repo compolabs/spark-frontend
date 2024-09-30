@@ -14,7 +14,7 @@ import BN from "@utils/BN";
 
 import { Token } from "@entity";
 
-import Text, { TEXT_TYPES } from "../Text";
+import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
 
 export interface AssetBlockData {
   asset: Token;
@@ -181,12 +181,7 @@ const SmartFlexInput = styled(SmartFlex)<{
 
 const TransparentInput = styled(BigNumberInput)`
   color: white;
-  font-family: "Space Grotesk";
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 16px; /* 66.667% */
-  letter-spacing: 0.48px;
+  ${TEXT_TYPES_MAP[TEXT_TYPES.H_TEXT]};
   background: transparent;
   border: none;
   width: 80%;

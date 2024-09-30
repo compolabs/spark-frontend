@@ -38,7 +38,7 @@ const Wrap = styled.div<{ variant: IProps["variant"] }>`
           }
 
           input {
-            ${TEXT_TYPES_MAP[TEXT_TYPES.INFO]}
+            ${TEXT_TYPES_MAP[TEXT_TYPES.TEXT]}
           }
         `;
       case "default":
