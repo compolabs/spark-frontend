@@ -8,10 +8,11 @@ import Text, { TEXT_TYPES } from "@components/Text";
 
 import { useStores } from "@stores";
 
+import OrderbookAndTradesSkeletonWrapper from "../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";
+
 import { SpotOrderBook } from "./SpotOrderBook/SpotOrderBook";
 import { SpotTrades } from "./SpotTrades/SpotTrades";
 import { SpotTradesVMProvider } from "./SpotTrades/SpotTradesVM";
-import OrderbookAndTradesSkeletonWrapper from "./OrderbookAndTradesSkeletonWrapper";
 
 const OrderbookAndTradesInterface: React.FC = observer(() => {
   const [isOrderbook, setIsOrderbook] = useState(true);

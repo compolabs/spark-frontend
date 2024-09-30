@@ -1,8 +1,9 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import ContentLoader, { IContentLoaderProps } from "react-content-loader";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { useEventListener } from "@hooks/useEventListener";
 import { useMedia } from "@hooks/useMedia";
 
 export type Dimensions = { width: number; height: number };
@@ -34,15 +35,9 @@ const SkeletonWrapper: React.FC<SkeletonWrapperProps> = observer(
       setContainerHeight(height);
     };
 
-    useEffect(() => {
+    useEventListener("resize", () => {
       updateDimensions();
-
-      window.addEventListener("resize", updateDimensions);
-
-      return () => {
-        window.removeEventListener("resize", updateDimensions);
-      };
-    }, [isReady]);
+    });
 
     if (isReady && children) {
       return <>{children}</>;

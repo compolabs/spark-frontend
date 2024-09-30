@@ -18,8 +18,8 @@ import { toCurrency } from "@utils/toCurrency";
 
 import { SpotMarketOrder } from "@entity";
 
+import BottomTablesSkeletonWrapper from "../../../../components/Skeletons/BottomTablesSkeletonWrapper";
 import { BaseTable } from "../BaseTable";
-import BottomTablesSkeletonWrapper from "../BottomTablesSkeletonWrapper";
 
 import { useSpotTableVMProvider } from "./SpotTableVM";
 

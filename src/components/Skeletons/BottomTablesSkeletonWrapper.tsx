@@ -6,7 +6,7 @@ import { media } from "@themes/breakpoints";
 
 import { clone } from "@utils/clone";
 
-import { MAX_TABLE_HEIGHT } from "./constants";
+import { MAX_TABLE_HEIGHT } from "../../screens/SpotScreen/BottomTables/constants";
 
 const SKELETON_LAYOUTS = {
   mobile: (data: Dimensions) => {

@@ -25,8 +25,8 @@ import { hexToRgba } from "@utils/hexToRgb";
 
 import { SpotMarketOrder } from "@entity";
 
+import OrderbookAndTradesSkeletonWrapper from "../../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";
 import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
-import OrderbookAndTradesSkeletonWrapper from "../OrderbookAndTradesSkeletonWrapper";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 

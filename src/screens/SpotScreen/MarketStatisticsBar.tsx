@@ -13,8 +13,9 @@ import SwitchIcon from "@assets/icons/switch.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
+import MarketStatisticsBarSkeletonWrapper from "../../components/Skeletons/MarketStatisticsBarSkeletonWrapper";
+
 import MarketStatistics from "./MarketStatistics";
-import MarketStatisticsBarSkeletonWrapper from "./MarketStatisticsBarSkeletonWrapper";
 
 interface IProps {
   isChartOpen?: boolean;

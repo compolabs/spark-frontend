@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 
 import { useStores } from "@stores";
 
-import ChartSkeletonWrapper from "./ChartSkeletonWrapper";
+import ChartSkeletonWrapper from "../../../components/Skeletons/ChartSkeletonWrapper";
 
 const tvScriptLoadingPromise = () =>
   new Promise((resolve) => {

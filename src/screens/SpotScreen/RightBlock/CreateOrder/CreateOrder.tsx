@@ -25,7 +25,8 @@ import { useStores } from "@stores";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 
-import CreateOrderSkeletonWrapper from "./CreateOrderSkeletonWrapper";
+import CreateOrderSkeletonWrapper from "../../../../components/Skeletons/CreateOrderSkeletonWrapper";
+
 import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "./CreateOrderVM";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 

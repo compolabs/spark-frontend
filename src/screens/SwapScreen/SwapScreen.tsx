@@ -24,10 +24,11 @@ import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/
 import { FuelNetwork } from "@blockchain";
 import { Token } from "@entity";
 
+import SwapButtonSkeletonWrapper from "../../components/Skeletons/SwapButtonSkeletonWrapper";
+import SwapSkeletonWrapper from "../../components/Skeletons/SwapSkeletonWrapper";
+
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
-import SwapButtonSkeletonWrapper from "./SwapButtonSkeletonWrapper";
-import SwapSkeletonWrapper from "./SwapSkeletonWrapper";
 import { TokenSelect } from "./TokenSelect";
 
 const INITIAL_SLIPPAGE = 1;
