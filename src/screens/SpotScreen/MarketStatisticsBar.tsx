@@ -13,6 +13,8 @@ import SwitchIcon from "@assets/icons/switch.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
+import MarketStatisticsBarSkeletonWrapper from "../../components/Skeletons/MarketStatisticsBarSkeletonWrapper";
+
 import MarketStatistics from "./MarketStatistics";
 
 interface IProps {
@@ -57,7 +59,6 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
         focused={tradeStore.marketSelectionOpened}
         onClick={() => tradeStore.setMarketSelectionOpened(!tradeStore.marketSelectionOpened)}
       >
-        {/*todo добавить скелетон лоадер*/}
         <SmartFlex gap="8px" center>
           {renderLeftIcons()}
           <SmartFlex gap="4px" center>
@@ -72,13 +73,15 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
   };
 
   return (
-    <Root>
-      {renderMarketSelector()}
-      {media.desktop && <MarketStatistics />}
-      <SwitchContainer isVisible={!isChartOpen && !tradeStore.marketSelectionOpened} onClick={handleSwitchClick}>
-        <SwitchIcon />
-      </SwitchContainer>
-    </Root>
+    <MarketStatisticsBarSkeletonWrapper isReady={tradeStore.initialized}>
+      <Root>
+        {renderMarketSelector()}
+        {media.desktop && <MarketStatistics />}
+        <SwitchContainer isVisible={!isChartOpen && !tradeStore.marketSelectionOpened} onClick={handleSwitchClick}>
+          <SwitchIcon />
+        </SwitchContainer>
+      </Root>
+    </MarketStatisticsBarSkeletonWrapper>
   );
 });
 

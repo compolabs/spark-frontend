@@ -22,8 +22,6 @@ const MenuOverlay: React.FC<IProps> = ({ isOpen, children, top = 0, offsetTop = 
     };
   }, [isOpen]);
 
-  console.log(zIndex);
-
   return (
     <Root fullOffset={fullOffset} isOpen={isOpen} top={top} zIndex={zIndex}>
       {children}
