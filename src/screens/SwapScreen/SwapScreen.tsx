@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
+import { ConnectWalletButton } from "@components/ConnectWalletButton";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
@@ -12,12 +13,9 @@ import { media } from "@themes/breakpoints";
 import ArrowDownIcon from "@assets/icons/arrowDown.svg?react";
 import Spinner from "@assets/icons/spinner.svg?react";
 
-import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
-
-import ConnectWalletDialog from "@screens/ConnectWallet";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 import BN from "@utils/BN";
@@ -25,6 +23,9 @@ import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/
 
 import { FuelNetwork } from "@blockchain";
 import { Token } from "@entity";
+
+import SwapButtonSkeletonWrapper from "../../components/Skeletons/SwapButtonSkeletonWrapper";
+import SwapSkeletonWrapper from "../../components/Skeletons/SwapSkeletonWrapper";
 
 import { BalanceSection } from "./BalanceSection";
 import { InfoBlock } from "./InfoBlock";
@@ -37,7 +38,6 @@ export const SwapScreen: React.FC = observer(() => {
   const theme = useTheme();
   const media = useMedia();
   const { swapStore, balanceStore, tradeStore, spotOrderBookStore } = useStores();
-  const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [isLoading, setIsloading] = useState(false);
@@ -68,7 +68,6 @@ export const SwapScreen: React.FC = observer(() => {
   const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(nativeBalanceContract);
 
   const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
-  const isBuy = swapStore.isBuy;
 
   useEffect(() => {
     const updateToken = setInterval(async () => {
@@ -83,70 +82,20 @@ export const SwapScreen: React.FC = observer(() => {
     return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
   };
 
-  const generateButton = () => {
-    const orders = isBuy() ? spotOrderBookStore.sellOrders.reverse() : spotOrderBookStore.buyOrders;
-    let accumulateAmount = new BN(isBuy() ? swapStore.receiveAmount : swapStore.payAmount);
-    orders.forEach((order) => {
-      accumulateAmount = accumulateAmount.minus(BN.formatUnits(order.currentAmount, swapStore.buyToken.precision));
-      if (accumulateAmount.isLessThanOrEqualTo(0)) {
-        return (
-          <ButtonBordered green onClick={openConnectDialog}>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_BIG_NEW}>
-              Not enough liquidity for exchange SWAP
-            </Text>
-          </ButtonBordered>
-        );
-      }
-    });
-    if (isLoaded) {
-      return (
-        <>
-          <SwapButton
-            data-onboarding={dataOnboardingSwapKey}
-            disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
-            onClick={swapTokens}
-          >
-            <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>
-              {isLoading ? (
-                <Spinner height={14} />
-              ) : (
-                `Swap ${swapStore.sellToken.symbol} to ${swapStore.buyToken.symbol}`
-              )}
-            </Text>
-          </SwapButton>
-        </>
-      );
-    } else {
-      return (
-        <ButtonBordered green onClick={openConnectDialog}>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_BIG_NEW}>
-            Connect wallet to start trading
-          </Text>
-        </ButtonBordered>
-      );
-    }
-  };
-
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOnPress(false);
     const newPayAmount = replaceComma(e.target.value);
+
     if (!isValidAmountInput(newPayAmount)) {
       return;
     }
 
     swapStore.setPayAmount(newPayAmount);
-
-    if (newPayAmount === "") {
-      swapStore.setReceiveAmount(new BN(0).toFixed(swapStore.buyToken.precision));
-      return;
-    }
     const isBuy = swapStore.isBuy;
     const price = !isBuy()
       ? spotOrderBookStore.buyOrders[0].price
       : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1].price;
-    const receiveAmount = !isBuy()
-      ? BN.formatUnits(new BN(newPayAmount).multipliedBy(price), DEFAULT_DECIMALS)
-      : BN.parseUnits(new BN(newPayAmount).dividedBy(price), DEFAULT_DECIMALS);
+    const receiveAmount = BN.parseUnits(new BN(newPayAmount).dividedBy(price), DEFAULT_DECIMALS);
     swapStore.setReceiveAmount(receiveAmount.toFixed(swapStore.buyToken.precision));
   };
 
@@ -159,11 +108,6 @@ export const SwapScreen: React.FC = observer(() => {
     }
 
     swapStore.setReceiveAmount(newReceiveAmount);
-
-    if (newReceiveAmount === "") {
-      swapStore.setPayAmount(new BN(0).toFixed(swapStore.sellToken.precision));
-      return;
-    }
 
     const isBuy = swapStore.isBuy;
     const price = !isBuy()
@@ -227,90 +171,107 @@ export const SwapScreen: React.FC = observer(() => {
         <Title>Swap</Title>
         <Text type={TEXT_TYPES.BUTTON}>Easiest way to trade assets on Fuel</Text>
       </Text>
-      <SwapContainer>
-        <SwapBox>
-          <BoxHeader>
-            <ActionContainer>
-              <Text type={TEXT_TYPES.TEXT_NEW}>Sell</Text>
-              {isLoaded && !isBalanceZero && (
-                <ActionTag onClick={fillPayAmount} onPress={onPress}>
-                  <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
-                    Max
-                  </Text>
-                </ActionTag>
-              )}
-            </ActionContainer>
-            <TokenSelect
-              assets={generateBalanceData(tokens)}
-              selectedOption={generateBalanceData([swapStore.sellToken])[0]}
-              showBalance="balance"
-              type="rounded"
-              onSelect={(item) => {
-                handleChangeMarketId(tokens, item, "sell");
-              }}
+      <SwapSkeletonWrapper isReady={true}>
+        <SwapContainer>
+          <SwapBox>
+            <BoxHeader>
+              <ActionContainer>
+                <Text type={TEXT_TYPES.TEXT_NEW}>Sell</Text>
+                {isLoaded && !isBalanceZero && (
+                  <ActionTag onClick={fillPayAmount} onPress={onPress}>
+                    <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+                      Max
+                    </Text>
+                  </ActionTag>
+                )}
+              </ActionContainer>
+              <TokenSelect
+                assets={generateBalanceData(tokens)}
+                selectedOption={generateBalanceData([swapStore.sellToken])[0]}
+                showBalance="balance"
+                type="rounded"
+                onSelect={(item) => {
+                  handleChangeMarketId(tokens, item, "sell");
+                }}
+              />
+            </BoxHeader>
+            <SwapInput
+              autoComplete="off"
+              id="pay-amount"
+              type="text"
+              value={swapStore.payAmount}
+              onChange={onPayAmountChange}
             />
-          </BoxHeader>
-          <SwapInput
-            autoComplete="off"
-            id="pay-amount"
-            type="text"
-            value={swapStore.payAmount}
-            onChange={onPayAmountChange}
-          />
-          {isLoaded && !isBalanceZero && (
-            <BalanceSection
-              balance={generateBalanceData([swapStore.sellToken])[0].balance}
-              balanceUSD={payAmountUSD}
-              handleMaxAmount={fillPayAmount}
-              isLoaded={isLoaded}
-            />
-          )}
-        </SwapBox>
+            {isLoaded && !isBalanceZero && (
+              <BalanceSection
+                balance={generateBalanceData([swapStore.sellToken])[0].balance}
+                balanceUSD={payAmountUSD}
+                handleMaxAmount={fillPayAmount}
+                isLoaded={isLoaded}
+              />
+            )}
+          </SwapBox>
 
-        <SwitchTokens disabled={false} isLoaded={isLoaded && !isBalanceZero} onClick={swapStore.onSwitchTokens}>
-          <ArrowDownIcon />
-        </SwitchTokens>
+          <SwitchTokens disabled={false} isLoaded={isLoaded && !isBalanceZero} onClick={swapStore.onSwitchTokens}>
+            <ArrowDownIcon />
+          </SwitchTokens>
 
-        <SwapBox>
-          <BoxHeader>
-            <Text type={TEXT_TYPES.TEXT_NEW}>Buy</Text>
-            <TokenSelect
-              assets={generateBalanceData(buyTokenOptions)}
-              selectedOption={generateBalanceData([swapStore.buyToken])[0]}
-              showBalance="balance"
-              type="rounded"
-              onSelect={(item) => {
-                handleChangeMarketId(buyTokenOptions, item, "buy");
-              }}
+          <SwapBox>
+            <BoxHeader>
+              <Text type={TEXT_TYPES.TEXT_NEW}>Buy</Text>
+              <TokenSelect
+                assets={generateBalanceData(buyTokenOptions)}
+                selectedOption={generateBalanceData([swapStore.buyToken])[0]}
+                showBalance="balance"
+                type="rounded"
+                onSelect={(item) => {
+                  handleChangeMarketId(buyTokenOptions, item, "buy");
+                }}
+              />
+            </BoxHeader>
+            <SwapInput
+              autoComplete="off"
+              id="receive-amount"
+              type="text"
+              value={swapStore.receiveAmount}
+              onChange={onReceivedTokensChange}
             />
-          </BoxHeader>
-          <SwapInput
-            autoComplete="off"
-            id="receive-amount"
-            type="text"
-            value={swapStore.receiveAmount}
-            onChange={onReceivedTokensChange}
-          />
-          {isLoaded && !isBalanceZero && (
-            <BalanceSection
-              balance={generateBalanceData([swapStore.buyToken])[0]?.balance ?? "0"}
-              balanceUSD={receiveAmountUSD}
-              handleMaxAmount={fillPayAmount}
-              isLoaded={isLoaded}
-            />
-          )}
-        </SwapBox>
-      </SwapContainer>
-      <SmartFlexStyled>{generateButton()}</SmartFlexStyled>
+            {isLoaded && !isBalanceZero && (
+              <BalanceSection
+                balance={generateBalanceData([swapStore.buyToken])[0]?.balance ?? "0"}
+                balanceUSD={receiveAmountUSD}
+                handleMaxAmount={fillPayAmount}
+                isLoaded={isLoaded}
+              />
+            )}
+          </SwapBox>
+        </SwapContainer>
+      </SwapSkeletonWrapper>
+      <SwapButtonSkeletonWrapper isReady={true}>
+        <SmartFlexStyled>
+          <ConnectWalletButtonStyled connectText="Connect wallet to start trading">
+            <SwapButton
+              data-onboarding={dataOnboardingSwapKey}
+              disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}
+              onClick={swapTokens}
+            >
+              <Text type={TEXT_TYPES.BUTTON_BIG_NEW}>
+                {isLoading ? (
+                  <Spinner height={14} />
+                ) : (
+                  `Swap ${swapStore.sellToken.symbol} to ${swapStore.buyToken.symbol}`
+                )}
+              </Text>
+            </SwapButton>
+          </ConnectWalletButtonStyled>
+        </SmartFlexStyled>
+      </SwapButtonSkeletonWrapper>
       {isLoaded && !isBalanceZero && <InfoBlock slippage={slippage} updateSlippage={setSlippage} />}
       {isLoaded && !isBalanceZero && isHaveExchangeFee && (
         <Text type={TEXT_TYPES.BUTTON} attention>
           Not enough ETH to pay an exchange fee
         </Text>
       )}
-      {isConnectDialogVisible ? (
-        <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />
-      ) : null}
     </Root>
   );
 });
@@ -353,7 +314,8 @@ const textAnimation = keyframes`
     }
 `;
 
-const ButtonBordered = styled(Button)`
+const ConnectWalletButtonStyled = styled(ConnectWalletButton)`
+  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_BIG_NEW]}
   border-radius: 10px;
   padding: 12px 16px !important;
   height: 56px !important;
@@ -442,7 +404,7 @@ const SwitchTokens = styled.button<{ disabled: boolean; isLoaded: boolean }>`
   border: none;
   position: absolute;
   left: calc(50% - 14px);
-  top: ${({ isLoaded }) => (isLoaded ? "118px" : "100px")}; // TODO: height of first section, check for mobile
+  top: ${({ isLoaded }) => (isLoaded ? "112px" : "100px")}; // TODO: height of first section, check for mobile
   background-color: ${({ theme }) => theme.colors.greenLight};
   width: 28px;
   height: 44px;

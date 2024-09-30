@@ -12,11 +12,13 @@ import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useMedia } from "@hooks/useMedia";
+import { useStores } from "@stores";
 
 import { toCurrency } from "@utils/toCurrency";
 
 import { SpotMarketOrder } from "@entity";
 
+import BottomTablesSkeletonWrapper from "../../../../components/Skeletons/BottomTablesSkeletonWrapper";
 import { BaseTable } from "../BaseTable";
 
 import { useSpotTableVMProvider } from "./SpotTableVM";
@@ -121,6 +123,7 @@ const minNeedLengthPagination = 10;
 const startPage = 1;
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const SpotTableImpl: React.FC = observer(() => {
+  const { accountStore } = useStores();
   const vm = useSpotTableVMProvider();
   const theme = useTheme();
   const media = useMedia();
@@ -259,7 +262,7 @@ const SpotTableImpl: React.FC = observer(() => {
   };
 
   return (
-    <>
+    <BottomTablesSkeletonWrapper isReady={vm.initialized || !accountStore.isConnected}>
       <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={handleTab}>
         {renderTable()}
       </BaseTable>
@@ -272,7 +275,7 @@ const SpotTableImpl: React.FC = observer(() => {
         //todo здесь была кнопка cancel all orders
         <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
       )}
-    </>
+    </BottomTablesSkeletonWrapper>
   );
 });
 

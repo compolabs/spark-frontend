@@ -25,6 +25,8 @@ import { useStores } from "@stores";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 
+import CreateOrderSkeletonWrapper from "../../../../components/Skeletons/CreateOrderSkeletonWrapper";
+
 import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "./CreateOrderVM";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
@@ -38,7 +40,7 @@ const ORDER_OPTIONS = [
 const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore, spotOrderBookStore } = useStores();
   const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
@@ -243,106 +245,109 @@ const CreateOrder: React.FC = observer(() => {
     elementOption && handleSetTimeInForce(elementOption.timeInForce);
   };
   return (
-    <Root column>
-      <ButtonGroup>
-        <Button active={!vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.BUY)}>
-          <Text primary={!vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
-            buy
-          </Text>
-        </Button>
-        <Button active={vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.SELL)}>
-          <Text primary={vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
-            sell
-          </Text>
-        </Button>
-      </ButtonGroup>
-      <ParamsContainer>
-        <StyledRow>
-          <SelectOrderTypeContainer>
-            <Select
-              label="Order type"
-              options={ORDER_OPTIONS}
-              selected={settingsStore.orderType}
-              onSelect={onSelectOrderType}
-            />
-            {renderOrderTooltip()}
-          </SelectOrderTypeContainer>
-          {settingsStore.orderType === ORDER_TYPE.Limit && (
-            <TokenInput
-              amount={vm.inputPrice}
-              decimals={DEFAULT_DECIMALS}
-              disabled={isInputPriceDisabled}
-              displayDecimals={priceDisplayDecimals}
-              label="Price"
-              setAmount={handleSetPrice}
-              onBlur={vm.setActiveInput}
-              onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Price)}
-            />
-          )}
-        </StyledRow>
-        <InputContainerWithError>
-          <TokenInput
-            amount={vm.inputAmount}
-            assetId={baseToken.assetId}
-            decimals={baseToken.decimals}
-            error={vm.isSell ? vm.isInputError : undefined}
-            errorMessage={`Not enough ${baseToken.symbol}`}
-            label="Order size"
-            setAmount={vm.setInputAmount}
-            onBlur={vm.setActiveInput}
-            onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
-          />
-          {settingsStore.orderType === ORDER_TYPE.Limit && (
-            <InputContainerWithMaxButton>
-              <StyledMaxButton fitContent onClick={vm.onMaxClick}>
-                MAX
-              </StyledMaxButton>
-              <SizedBox height={14} />
-              <TokenInput
-                amount={vm.inputTotal}
-                assetId={quoteToken.assetId}
-                decimals={quoteToken.decimals}
-                error={vm.isSell ? undefined : vm.isInputError}
-                errorMessage={`Not enough ${quoteToken.symbol}`}
-                setAmount={vm.setInputTotal}
-                onBlur={vm.setActiveInput}
-                onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
+    <CreateOrderSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
+      <Root column>
+        <ButtonGroup>
+          <Button active={!vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.BUY)}>
+            <Text primary={!vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
+              buy
+            </Text>
+          </Button>
+          <Button active={vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.SELL)}>
+            <Text primary={vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
+              sell
+            </Text>
+          </Button>
+        </ButtonGroup>
+        <ParamsContainer>
+          <StyledRow>
+            <SelectOrderTypeContainer>
+              <Select
+                label="Order type"
+                options={ORDER_OPTIONS}
+                selected={settingsStore.orderType}
+                onSelect={onSelectOrderType}
               />
-            </InputContainerWithMaxButton>
-          )}
-        </InputContainerWithError>
-        <SmartFlex column>
-          <SliderContainer>
-            <Slider
-              max={100}
-              min={0}
-              percent={vm.inputPercent.toNumber()}
-              step={1}
-              value={vm.inputPercent.toNumber()}
-              onChange={(v) => handlePercentChange(v as number)}
+              {renderOrderTooltip()}
+            </SelectOrderTypeContainer>
+            {settingsStore.orderType === ORDER_TYPE.Limit && (
+              <TokenInput
+                amount={vm.inputPrice}
+                decimals={DEFAULT_DECIMALS}
+                disabled={isInputPriceDisabled}
+                displayDecimals={priceDisplayDecimals}
+                label="Price"
+                setAmount={handleSetPrice}
+                onBlur={vm.setActiveInput}
+                onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Price)}
+              />
+            )}
+          </StyledRow>
+          <InputContainerWithError>
+            <TokenInput
+              amount={vm.inputAmount}
+              assetId={baseToken.assetId}
+              decimals={baseToken.decimals}
+              error={vm.isSell ? vm.isInputError : undefined}
+              errorMessage={`Not enough ${baseToken.symbol}`}
+              label="Order size"
+              setAmount={vm.setInputAmount}
+              onBlur={vm.setActiveInput}
+              onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
             />
-          </SliderContainer>
-          <Row alignItems="center" justifyContent="space-between">
-            <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
-            <Row alignItems="center" mainAxisSize="fit-content">
-              <Text type={TEXT_TYPES.BODY} primary>
-                {getAvailableAmount()}
-              </Text>
-              <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+            {settingsStore.orderType === ORDER_TYPE.Limit && (
+              <InputContainerWithMaxButton>
+                <StyledMaxButton fitContent onClick={vm.onMaxClick}>
+                  MAX
+                </StyledMaxButton>
+                <SizedBox height={14} />
+                <TokenInput
+                  amount={vm.inputTotal}
+                  assetId={quoteToken.assetId}
+                  decimals={quoteToken.decimals}
+                  error={vm.isSell ? undefined : vm.isInputError}
+                  errorMessage={`Not enough ${quoteToken.symbol}`}
+                  setAmount={vm.setInputTotal}
+                  onBlur={vm.setActiveInput}
+                  onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
+                />
+              </InputContainerWithMaxButton>
+            )}
+          </InputContainerWithError>
+          <SmartFlex column>
+            <SliderContainer>
+              <Slider
+                max={100}
+                min={0}
+                percent={vm.inputPercent.toNumber()}
+                step={1}
+                value={vm.inputPercent.toNumber()}
+                onChange={(v) => handlePercentChange(v as number)}
+              />
+            </SliderContainer>
+            <Row alignItems="center" justifyContent="space-between">
+              <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
+              <Row alignItems="center" mainAxisSize="fit-content">
+                <Text type={TEXT_TYPES.BODY} primary>
+                  {getAvailableAmount()}
+                </Text>
+                <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+              </Row>
             </Row>
-          </Row>
-        </SmartFlex>
-        {renderInstruction()}
-        {renderOrderDetails()}
-      </ParamsContainer>
-      <ConnectWalletButton connectText="Connect wallet to trade">{renderButton()}</ConnectWalletButton>
+          </SmartFlex>
+          {renderInstruction()}
+          {renderOrderDetails()}
+        </ParamsContainer>
+        <ConnectWalletButton connectText="Connect wallet to trade">{renderButton()}</ConnectWalletButton>
 
-      <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
-    </Root>
+        <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
+      </Root>
+    </CreateOrderSkeletonWrapper>
   );
 });
 
 export default CreateOrder;
+
 const Root = styled(SmartFlex)`
   padding: 12px;
   width: 100%;

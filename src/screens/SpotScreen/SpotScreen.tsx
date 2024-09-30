@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { observer } from "mobx-react";
 
-import Loader from "@components/Loader";
-
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
@@ -30,10 +28,6 @@ const SpotScreen: React.FC = observer(() => {
   useEffect(() => {
     tradeStore.selectActiveMarket(marketId);
   }, [marketId]);
-
-  if (!tradeStore.initialized) {
-    return <Loader />;
-  }
 
   return (
     // SpotScreenImpl оборачивается в CreateOrderSpotVMProvider чтобы при нажатии на ордер в OrderbookAndTradesInterface устанавливать значение в RightBlock
