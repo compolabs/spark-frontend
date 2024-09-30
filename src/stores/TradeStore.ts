@@ -23,8 +23,6 @@ const MARKET_PRICES_UPDATE_INTERVAL = 5 * 1000; // 5 sec
 class TradeStore {
   private readonly rootStore: RootStore;
 
-  initialized = false;
-  loading = false;
   favMarkets: string[] = [];
   spotMarkets: SpotMarket[] = [];
   marketSelectionOpened = false;
@@ -77,6 +75,15 @@ class TradeStore {
 
   get market() {
     return this.spotMarkets.find((market) => market.symbol === this.marketSymbol);
+  }
+
+  get initialized() {
+    const isMarketInfoReady = !(
+      this.spotMarketInfo.high.isZero() ||
+      this.spotMarketInfo.low.isZero() ||
+      this.spotMarketInfo.volume.isZero()
+    );
+    return Boolean(this.spotMarkets.length && isMarketInfoReady);
   }
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
@@ -177,13 +184,7 @@ class TradeStore {
   });
 
   private initMarket = async () => {
-    this.setInitialized(false);
-    this._setLoading(true);
-
     await this.initSpotMarket().catch(console.error);
-
-    this._setLoading(false);
-    this.setInitialized(true);
   };
 
   private initSpotMarket = async () => {
@@ -209,10 +210,6 @@ class TradeStore {
   private setFavMarkets = (v: string[]) => (this.favMarkets = v);
 
   private setSpotMarkets = (v: SpotMarket[]) => (this.spotMarkets = v);
-
-  private setInitialized = (l: boolean) => (this.initialized = l);
-
-  private _setLoading = (l: boolean) => (this.loading = l);
 }
 
 export default TradeStore;
