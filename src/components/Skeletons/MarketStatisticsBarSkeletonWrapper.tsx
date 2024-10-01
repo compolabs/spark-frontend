@@ -23,7 +23,7 @@ const SKELETON_LAYOUTS = {
     const padding = 12;
     const rectWidth = 102;
 
-    const maxInnerWidth = data.width - 2 * padding;
+    const maxInnerWidth = Math.max(data.width - 2 * padding, 0);
 
     const rectGap = 16;
     const totalRectWidth = (rectWidth + rectGap) * 4 - rectGap;

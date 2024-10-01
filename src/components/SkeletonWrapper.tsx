@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import ContentLoader, { IContentLoaderProps } from "react-content-loader";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -27,17 +27,19 @@ const SkeletonWrapper: React.FC<SkeletonWrapperProps> = observer(
     const [containerWidth, setContainerWidth] = useState(0);
     const [containerHeight, setContainerHeight] = useState(0);
 
-    const updateDimensions = () => {
+    const updateDimensions = useCallback(() => {
       if (!mainContainer.current) return;
 
       const { width, height } = mainContainer.current.getBoundingClientRect();
       setContainerWidth(width);
       setContainerHeight(height);
-    };
+    }, [isReady]);
 
-    useEventListener("resize", () => {
+    useEventListener("resize", updateDimensions);
+
+    useEffect(() => {
       updateDimensions();
-    });
+    }, [updateDimensions]);
 
     if (isReady && children) {
       return <>{children}</>;

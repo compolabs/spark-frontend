@@ -65,7 +65,6 @@ class SpotTableVM {
   }
 
   get initialized() {
-    console.log(this.isOpenOrdersLoaded && this.isHistoryOrdersLoaded);
     return this.isOpenOrdersLoaded && this.isHistoryOrdersLoaded;
   }
 

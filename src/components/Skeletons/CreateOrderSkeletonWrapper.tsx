@@ -9,19 +9,26 @@ const SKELETON_LAYOUTS = {
   mobile: (data: Dimensions) => {
     const padding = 16;
 
-    const maxInnerWidth = data.width - 2 * padding;
+    const maxInnerWidth = Math.max(data.width - 2 * padding, 0);
     const halfContainerWidth = maxInnerWidth / 2;
 
     return (
       <>
         <rect height="40" rx="6" ry="6" width={maxInnerWidth} x={padding} y={padding} />
 
-        <rect height="20" rx="6" ry="6" width={halfContainerWidth - padding / 2} x={padding} y={padding + 40 + 23} />
         <rect
           height="20"
           rx="6"
           ry="6"
-          width={halfContainerWidth - padding}
+          width={Math.max(halfContainerWidth - padding / 2, 0)}
+          x={padding}
+          y={padding + 40 + 23}
+        />
+        <rect
+          height="20"
+          rx="6"
+          ry="6"
+          width={Math.max(halfContainerWidth - padding, 0)}
           x={halfContainerWidth + 2 * padding}
           y={padding + 40 + 23}
         />
@@ -29,7 +36,7 @@ const SKELETON_LAYOUTS = {
           height="20"
           rx="6"
           ry="6"
-          width={halfContainerWidth - padding / 2}
+          width={Math.max(halfContainerWidth - padding / 2, 0)}
           x={padding}
           y={padding + 40 + 23 + 20 + 35}
         />
@@ -37,7 +44,7 @@ const SKELETON_LAYOUTS = {
           height="20"
           rx="6"
           ry="6"
-          width={halfContainerWidth - padding}
+          width={Math.max(halfContainerWidth - padding, 0)}
           x={halfContainerWidth + 2 * padding}
           y={padding + 40 + 23 + 20 + 35}
         />
@@ -49,28 +56,28 @@ const SKELETON_LAYOUTS = {
   desktop: (data: Dimensions) => {
     const padding = 12;
 
-    const maxInnerWidth = data.width - 2 * padding;
+    const maxInnerWidth = Math.max(data.width - 2 * padding, 0);
     const halfContainerWidth = maxInnerWidth / 2;
 
     return (
       <>
         <rect height="40" rx="6" ry="6" width={maxInnerWidth} x={padding} y={padding} />
 
-        <rect height="20" rx="6" ry="6" width={halfContainerWidth - padding / 2} x={padding} y="62" />
+        <rect height="20" rx="6" ry="6" width={Math.max(halfContainerWidth - padding / 2, 0)} x={padding} y="62" />
         <rect
           height="20"
           rx="6"
           ry="6"
-          width={halfContainerWidth - padding}
+          width={Math.max(halfContainerWidth - padding, 0)}
           x={halfContainerWidth + 2 * padding}
           y="62"
         />
-        <rect height="20" rx="6" ry="6" width={halfContainerWidth - padding / 2} x={padding} y="117" />
+        <rect height="20" rx="6" ry="6" width={Math.max(halfContainerWidth - padding / 2, 0)} x={padding} y="117" />
         <rect
           height="20"
           rx="6"
           ry="6"
-          width={halfContainerWidth - padding}
+          width={Math.max(halfContainerWidth - padding, 0)}
           x={halfContainerWidth + 2 * padding}
           y="117"
         />

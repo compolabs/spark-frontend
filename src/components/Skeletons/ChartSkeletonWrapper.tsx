@@ -6,7 +6,7 @@ import SkeletonWrapper, { Dimensions } from "@components/SkeletonWrapper";
 import { clone } from "@utils/clone";
 
 const createSkeletonLayout = (padding: number, yOffset: number, data: Dimensions) => {
-  const maxInnerWidth = data.width - 2 * padding;
+  const maxInnerWidth = Math.max(data.width - 2 * padding, 0);
 
   return (
     <>
