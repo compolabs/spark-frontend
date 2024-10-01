@@ -268,7 +268,7 @@ const SpotTableImpl: React.FC = observer(() => {
       </BaseTable>
       {data.length >= minNeedLengthPagination || page > startPage - 1 ? (
         <PaginationContainer>
-          <Pagination currentPage={page} onChange={handleChangePagination} />
+          <Pagination currentPage={page} lengthData={data.length} onChange={handleChangePagination} />
         </PaginationContainer>
       ) : null}
       {!!vm.myOrders.length && tabIndex === 0 && (

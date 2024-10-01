@@ -13,13 +13,14 @@ interface PaginationProps {
   showDots?: boolean;
   sibling?: number;
   onChange?: (page: PaginationProps["currentPage"]) => void;
+  lengthData: number;
 }
 
 export const range = (start: number, end: number) => {
   return Array.from({ length: end - start + 1 }, (_, index) => index + start);
 };
 
-export const Pagination = ({ currentPage, onChange }: PaginationProps) => {
+export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProps) => {
   const pagination = useMemo(() => {
     return [currentPage]; // TODO: Заглушка пока нет выдачи paginationInfo с
     // const totalPageCount = Math.ceil(totalPages);
@@ -89,7 +90,7 @@ export const Pagination = ({ currentPage, onChange }: PaginationProps) => {
           </PaginationEntity>
         );
       })}
-      <PaginationButton onClick={() => handleClick(currentPage + 1)}>
+      <PaginationButton disabled={lengthData < 1} onClick={() => handleClick(currentPage + 1)}>
         <ArrowIconStyledRight />
       </PaginationButton>
     </SmartFlex>
