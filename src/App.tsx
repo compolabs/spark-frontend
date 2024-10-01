@@ -4,21 +4,23 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
+import Header from "@components/Header";
+import { PWAModal } from "@components/PWAModal";
+import { SplashScreen } from "@components/Splashscreen";
+
+import { useClearUrlParam } from "@hooks/useClearUrlParam";
+import { usePrivateKeyAsAuth } from "@hooks/usePrivateKeyAsAuth";
+import { useStores } from "@stores";
+import { MODAL_TYPE } from "@stores/ModalStore";
 
 import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets";
+import ConnectWalletDialog from "@screens/ConnectWallet";
+import UnderConstruction from "@screens/Errors/UnderConstruction";
+import Faucet from "@screens/Faucet";
+import SpotScreen from "@screens/SpotScreen";
+import { SwapScreen } from "@screens/SwapScreen";
 
-import Header from "./components/Header";
-import { PWAModal } from "./components/PWAModal";
-import { SplashScreen } from "./components/Splashscreen";
-import { usePrivateKeyAsAuth } from "./hooks/usePrivateKeyAsAuth";
-import ConnectWalletDialog from "./screens/ConnectWallet";
-import UnderConstruction from "./screens/Errors/UnderConstruction";
-import Faucet from "./screens/Faucet";
-import SpotScreen from "./screens/SpotScreen";
-import { SwapScreen } from "./screens/SwapScreen";
-import { MODAL_TYPE } from "./stores/ModalStore";
-import { DEFAULT_MARKET, ROUTES } from "./constants";
-import { useStores } from "./stores";
+import { DEFAULT_MARKET, ROUTES } from "@constants";
 
 const isUnderConstruction = false;
 
@@ -26,6 +28,10 @@ const DEFAULT_SPOT_ROUTE = `/spot/${DEFAULT_MARKET}`;
 
 const App: React.FC = observer(() => {
   const { modalStore } = useStores();
+
+  // This hooks is used to clear unnecessary URL parameters,
+  // specifically "tx_id", after returning from the faucet
+  useClearUrlParam("tx_id");
 
   usePrivateKeyAsAuth();
 
