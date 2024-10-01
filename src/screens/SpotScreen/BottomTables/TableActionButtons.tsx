@@ -3,6 +3,8 @@ import { Config } from "react-popper-tooltip";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
+import { OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -17,6 +19,7 @@ import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
 import { Checkbox } from "@src/components/Checkbox";
 
+import { useSpotTableVMProvider } from "./SpotTable/SpotTableVM";
 import { RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "./constants";
 
 const useTooltipConfig = (isVisible: boolean, setIsVisible: React.Dispatch<React.SetStateAction<boolean>>): Config => ({
@@ -26,6 +29,7 @@ const useTooltipConfig = (isVisible: boolean, setIsVisible: React.Dispatch<React
 });
 
 export const TableActionButtons: React.FC = observer(() => {
+  const vm = useSpotTableVMProvider();
   const { settingsStore } = useStores();
 
   const [isResizeTooltipVisible, setIsResizeTooltipVisible] = useState(false);
@@ -60,7 +64,7 @@ export const TableActionButtons: React.FC = observer(() => {
   const renderSettingsTooltipContent = () => {
     return (
       <SettingsTooltipContainer>
-        <SmartFlex alignItems="flex-start" gap="12px" column>
+        {/* <SmartFlex alignItems="flex-start" gap="12px" column>
           <Text type={TEXT_TYPES.BODY} secondary>
             Type
           </Text>
@@ -74,17 +78,17 @@ export const TableActionButtons: React.FC = observer(() => {
               LIMIT
             </Text>
           </Checkbox>
-        </SmartFlex>
+        </SmartFlex> */}
         <SmartFlex alignItems="flex-start" gap="12px" column>
           <Text type={TEXT_TYPES.BODY} secondary>
             Side
           </Text>
-          <Checkbox checked>
+          <Checkbox checked={vm.filterIsBuyOrderTypeEnabled} onChange={() => vm.toggleFilterOrderType(OrderType.Buy)}>
             <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
               BUY
             </Text>
           </Checkbox>
-          <Checkbox checked>
+          <Checkbox checked={vm.filterIsSellOrderTypeEnabled} onChange={() => vm.toggleFilterOrderType(OrderType.Sell)}>
             <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
               SELL
             </Text>
