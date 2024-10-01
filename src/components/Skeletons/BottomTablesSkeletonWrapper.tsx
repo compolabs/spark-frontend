@@ -9,7 +9,7 @@ import { clone } from "@utils/clone";
 import { MAX_TABLE_HEIGHT } from "../../screens/SpotScreen/BottomTables/constants";
 
 const createSkeletonLayout = (padding: number, widthFactor: number, data: Dimensions) => {
-  const maxInnerWidth = data.width - 2 * padding;
+  const maxInnerWidth = Math.max(data.width - 2 * padding, 0);
 
   return <rect height="40" rx="6" ry="6" width={maxInnerWidth * widthFactor} x={padding} y={padding} />;
 };
