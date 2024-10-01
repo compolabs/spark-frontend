@@ -7,11 +7,9 @@ import { media } from "@themes/breakpoints";
 import SpotTable from "./SpotTable";
 
 const BottomTables: React.FC = observer(() => {
-  const TableComponent = SpotTable;
-
   return (
     <StyledBottomTables>
-      <TableComponent />
+      <SpotTable />
     </StyledBottomTables>
   );
 });

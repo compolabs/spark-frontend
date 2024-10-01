@@ -74,7 +74,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
       <SmartFlex alignItems="center" justifyContent="space-between">
         <SmartFlex alignItems="center" gap="10px">
           <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
-          <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
+          <TextTitle type={TEXT_TYPES.TEXT_BIG} primary>
             Withdraw
           </TextTitle>
         </SmartFlex>

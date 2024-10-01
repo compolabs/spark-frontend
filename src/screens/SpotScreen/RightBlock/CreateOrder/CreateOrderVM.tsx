@@ -96,6 +96,9 @@ class CreateOrderVM {
         const order = this.isSell
           ? spotOrderBookStore.buyOrders[0]
           : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1];
+
+        if (!order) return;
+
         if (orderType === ORDER_TYPE.Market) {
           this.setInputPriceThrottle(order.price);
         } else if (

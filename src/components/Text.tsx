@@ -11,26 +11,17 @@ import styled from "@emotion/styled";
 */
 
 export enum TEXT_TYPES {
-  H = 1,
-  BODY = 2,
-  BUTTON = 3,
-  BUTTON_SECONDARY = 4,
-  SUPPORTING = 5,
-  SUPPORTING_NUMBERS = 6,
-  TITLE = 7,
-  TITLE_MODAL = 8,
-  INFO = 9,
-  H_NEW = 10,
-  BODY_NEW = 11,
-  BUTTON_NEW = 12,
-  BUTTON_SECONDARY_NEW = 13,
-  SUPPORTING_TEXT_NEW = 14,
-  SUPPORTING_NUMBERS_NEW = 15,
-  H_NUMBERS_NEW = 16,
-  H_TEXT_NEW = 17,
-  BUTTON_BIG_NEW = 18,
-  TEXT_BIG_NEW = 19,
-  TEXT_NEW = 20,
+  H = 2,
+  BODY = 3,
+  BUTTON = 4,
+  BUTTON_SECONDARY = 5,
+  SUPPORTING = 6,
+  SUPPORTING_NUMBERS = 7,
+  H_NUMBERS = 8,
+  H_TEXT = 9,
+  BUTTON_BIG = 10,
+  TEXT_BIG = 11,
+  TEXT = 12,
 }
 
 interface IProps {
@@ -132,7 +123,7 @@ export const textBig = `
   line-height: 24px;
 `;
 
-export const textNew = `
+export const text = `
   font-family: "Space Grotesk";
   font-size: 14px;
   font-style: normal;
@@ -140,104 +131,18 @@ export const textNew = `
   line-height: 16px;
 `;
 
-// TODO: это старые стили их нужно будет удалить
-export const titleStyle = `
-  font-family: Space Grotesk;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 14px;
-`;
-
-export const titleModalStyle = `
-  font-family: Space Grotesk;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 14px;
-`;
-
-export const hStyle = `
-  font-family: JetBrains Mono;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 18px;
-`;
-
-export const bodyStyle = `
-  font-family: JetBrains Mono;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 14px;
-  letter-spacing: 0.2px;
-`;
-
-export const infoStyle = `
-  font-family: JetBrains Mono;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 16px;
-`;
-
-export const buttonStyle = `
-  font-family: Space Grotesk;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 16px;
-`;
-
-export const buttonSecondaryStyle = `
-  font-family: Space Grotesk;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 16px; 
-  text-transform: uppercase;
-`;
-
-export const supportStyle = `
-  font-family: Space Grotesk;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 12px; 
-  letter-spacing: 0.2px;
-`;
-
-export const supportNumbersStyle = `
-  font-family: Space Grotesk;
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 11px; 
-  letter-spacing: 0.2px;
-`;
-
 export const TEXT_TYPES_MAP = {
-  [TEXT_TYPES.H]: hStyle,
-  [TEXT_TYPES.BODY]: bodyStyle,
-  [TEXT_TYPES.BUTTON]: buttonStyle,
-  [TEXT_TYPES.BUTTON_SECONDARY]: buttonSecondaryStyle,
-  [TEXT_TYPES.SUPPORTING]: supportStyle,
-  [TEXT_TYPES.SUPPORTING_NUMBERS]: supportNumbersStyle,
-  [TEXT_TYPES.TITLE]: titleStyle,
-  [TEXT_TYPES.TITLE_MODAL]: titleModalStyle,
-  [TEXT_TYPES.INFO]: infoStyle,
-  [TEXT_TYPES.H_NEW]: h,
-  [TEXT_TYPES.BODY_NEW]: body,
-  [TEXT_TYPES.BUTTON_NEW]: button,
-  [TEXT_TYPES.BUTTON_SECONDARY_NEW]: buttonSecondary,
-  [TEXT_TYPES.SUPPORTING_TEXT_NEW]: supportingText,
-  [TEXT_TYPES.SUPPORTING_NUMBERS_NEW]: supportingNumbers,
-  [TEXT_TYPES.H_NUMBERS_NEW]: hNumbers,
-  [TEXT_TYPES.H_TEXT_NEW]: hText,
-  [TEXT_TYPES.BUTTON_BIG_NEW]: buttonBig,
-  [TEXT_TYPES.TEXT_BIG_NEW]: textBig,
-  [TEXT_TYPES.TEXT_NEW]: textNew,
+  [TEXT_TYPES.H]: h,
+  [TEXT_TYPES.BODY]: body,
+  [TEXT_TYPES.BUTTON]: button,
+  [TEXT_TYPES.BUTTON_SECONDARY]: buttonSecondary,
+  [TEXT_TYPES.SUPPORTING]: supportingText,
+  [TEXT_TYPES.SUPPORTING_NUMBERS]: supportingNumbers,
+  [TEXT_TYPES.H_NUMBERS]: hNumbers,
+  [TEXT_TYPES.H_TEXT]: hText,
+  [TEXT_TYPES.BUTTON_BIG]: buttonBig,
+  [TEXT_TYPES.TEXT_BIG]: textBig,
+  [TEXT_TYPES.TEXT]: text,
 };
 
 const Text = styled.div<IProps>`

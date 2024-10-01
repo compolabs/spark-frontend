@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -21,7 +22,7 @@ import { useStores } from "@stores";
 import { assetsMock } from "@screens/Assets/MainAssets/const";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 
-import { DEFAULT_DECIMALS } from "@constants";
+import { DEFAULT_DECIMALS, ROUTES } from "@constants";
 import BN from "@utils/BN";
 
 import { FuelNetwork } from "@blockchain";
@@ -77,7 +78,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
       <SmartFlex alignItems="center" justifyContent="space-between" column>
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
-          <TextTitle type={TEXT_TYPES.TITLE_MODAL} primary>
+          <TextTitle type={TEXT_TYPES.TEXT_BIG} primary>
             Assets
           </TextTitle>
           <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
@@ -85,7 +86,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
         <WalletBlock gap="8px" column>
           {isConnected ? (
             <>
-              {accumulateBalance.balance.gt(0) && (
+              {accumulateBalance.balance.isPositive() && (
                 <>
                   {balanceList.map((el) => (
                     <AssetItem key={el.assetId}>
@@ -106,11 +107,9 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
           ) : (
             <>
               {assetsMockData.map((el) => (
-                <>
-                  <AssetItem key={el.assetId}>
-                    <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
-                  </AssetItem>
-                </>
+                <AssetItem key={el.assetId}>
+                  <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
+                </AssetItem>
               ))}
               <OverallBlock justifyContent="space-between">
                 <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
@@ -128,10 +127,10 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
       {!hasPositiveBalance && isConnected && (
         <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
           <DepositAssets />
-          <TextTitleDeposit>
+          <TextTitleDeposit type={TEXT_TYPES.TEXT_BIG}>
             It looks like your wallet is empty. Tap the{" "}
             <LinkStyled
-              href="/#/faucet"
+              to={ROUTES.FAUCET}
               onClick={() => {
                 quickAssetsStore.setQuickAssets(false);
               }}
@@ -153,7 +152,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
             Connect wallet
           </Button>
         )}
-        {accumulateBalance.contractBalance.gt(0) && (
+        {accumulateBalance.contractBalance.isPositive() && (
           <SmartFlexBlock>
             <ButtonConfirm fitContent onClick={() => setStep(1)}>
               Withdraw
@@ -169,6 +168,7 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
 });
 
 export default MainAssets;
+
 const ButtonConfirm = styled(Button)`
   width: 100%;
 `;
@@ -202,15 +202,11 @@ const BottomColumn = styled(Column)`
 `;
 const TextTitle = styled(Text)`
   width: 182px;
-  line-height: 20px;
-  letter-spacing: 0.32px;
   text-align: left;
 `;
 
 const TextTitleDeposit = styled(TextTitle)`
   text-align: center;
-  font-size: 14px;
-  width: 184px;
 `;
 
 const AssetsContainer = styled(SmartFlex)`
@@ -242,7 +238,7 @@ const CloseButton = styled.img`
   }
 `;
 
-const LinkStyled = styled.a`
+const LinkStyled = styled(Link)`
   color: ${({ theme }) => theme.colors.greenLight};
   text-decoration: underline;
   &:hover {

@@ -101,6 +101,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.3.1
+      react-content-loader:
+        specifier: ^7.0.2
+        version: 7.0.2(react@18.3.1)
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
@@ -5928,6 +5931,12 @@ packages:
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
+
+  react-content-loader@7.0.2:
+    resolution: {integrity: sha512-773S98JTyC8VB2nu7LXUhpHx8tZMieGxMcx3qTe7IkohT6Br7d9AXnIXs/wQ6IhlUdKQcw6JLKk1QKigYCWDRA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16.0.0'
 
   react-devtools-core@5.3.1:
     resolution: {integrity: sha512-7FSb9meX0btdBQLwdFOwt6bGqvRPabmVMMslv8fgoSPqXyuGpgQe36kx8gR86XPw7aV1yVouTp6fyZ0EH+NfUw==}
@@ -14982,6 +14991,10 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-is: 18.3.1
+
+  react-content-loader@7.0.2(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   react-devtools-core@5.3.1(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:

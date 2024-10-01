@@ -53,7 +53,7 @@ const TYPE_ROUTE_MAP = {
 export const SplashScreen: React.FC = observer(() => {
   const media = useMedia();
   const navigate = useNavigate();
-  const [mode, setMode] = useState(SPLASH_SCREEN_TYPE.SWAP);
+  const [mode, setMode] = useState(SPLASH_SCREEN_TYPE.ORDERBOOK);
   const { settingsStore } = useStores();
 
   const [isSplashScreenVisible, setSplashScreenVisible] = useState(!settingsStore.isCompleteOnboardingProcess);
@@ -86,9 +86,10 @@ export const SplashScreen: React.FC = observer(() => {
     return (
       <ModeButtonContainer
         key={info.name}
+        disabled={info.type === SPLASH_SCREEN_TYPE.SWAP}
         isSelected={isSelected}
-        onClick={() => handleModeClick(info.type)}
-        onDoubleClick={() => handleGoToMode(info.type)}
+        onClick={() => info.type !== SPLASH_SCREEN_TYPE.SWAP && handleModeClick(info.type)}
+        onDoubleClick={() => info.type !== SPLASH_SCREEN_TYPE.SWAP && handleGoToMode(info.type)}
       >
         <img alt={info.name} src={info.icon} />
         <SmartFlex gap="6px" column>
@@ -109,14 +110,14 @@ export const SplashScreen: React.FC = observer(() => {
           <SelectModeContainer>
             <TitleContainer>
               <SmartFlex gap="8px" center>
-                <DescriptionStyled>Hey, and welcome to</DescriptionStyled>
+                <DescriptionStyled type={TEXT_TYPES.SUPPORTING}>Hey, and welcome to</DescriptionStyled>
                 <LogoIcon />
               </SmartFlex>
-              <TitleStyled>Select trading mode to begin</TitleStyled>
+              <TitleStyled type={TEXT_TYPES.H_TEXT}>Select trading mode to begin</TitleStyled>
             </TitleContainer>
             <ModeContainer>{SPLASH_SCREEN_INFO.map(renderModeButton)}</ModeContainer>
             <StyledButton green onClick={() => handleGoClick()}>
-              <ButtonText type={TEXT_TYPES.TITLE} primary>
+              <ButtonText type={TEXT_TYPES.TEXT_BIG} primary>
                 Let&apos;s go!
               </ButtonText>
             </StyledButton>
@@ -246,10 +247,6 @@ const TitleContainer = styled(SmartFlex)`
 `;
 
 const DescriptionStyled = styled(Text)`
-  font-family: Space Grotesk;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
   text-align: center;
 
   color: ${({ theme }) => theme.colors.textSecondary};
@@ -257,11 +254,6 @@ const DescriptionStyled = styled(Text)`
 
 const TitleStyled = styled(Text)`
   width: 240px;
-
-  font-family: Space Grotesk;
-  font-size: 32px;
-  font-weight: 400;
-  line-height: 32px;
   text-align: center;
 
   color: ${({ theme }) => theme.colors.textPrimary};
@@ -274,16 +266,15 @@ const ModeContainer = styled(SmartFlex)`
   z-index: 1;
 `;
 
-const ModeButtonContainer = styled(SmartFlex)<{ isSelected?: boolean }>`
+const ModeButtonContainer = styled(SmartFlex)<{ isSelected?: boolean; disabled?: boolean }>`
   padding: 11px 12px;
   gap: 16px;
   align-items: center;
   background-color: #151515;
   border-radius: 8px;
-
   position: relative;
 
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 
   background-clip: padding-box;
   border: solid 1px transparent;

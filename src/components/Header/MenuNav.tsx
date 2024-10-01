@@ -10,8 +10,6 @@ import { media } from "@themes/breakpoints";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
 import DocsIcon from "@assets/icons/docs.svg?react";
-import SwapIcon from "@assets/icons/swap.svg?react";
-import TradeIcon from "@assets/icons/switch.svg?react";
 import GithubIcon from "@assets/social/github.svg?react";
 import XIcon from "@assets/social/x.svg?react";
 
@@ -45,20 +43,21 @@ const MENU_ITEMS: Array<MenuItem> = [
   {
     title: "TRADE",
     isGradient: true,
-    children: [
-      {
-        title: "SPOT",
-        desc: "Advanced trading with order book and limit orders.",
-        link: ROUTES.SPOT,
-        icon: TradeIcon,
-      },
-      {
-        title: "SWAP",
-        desc: "Simple token exchange with instant trades.",
-        link: ROUTES.SWAP,
-        icon: SwapIcon,
-      },
-    ],
+    link: ROUTES.SPOT,
+    // children: [],
+    // {
+    //   title: "SPOT",
+    //   desc: "Advanced trading with order book and limit orders.",
+    //   link: ROUTES.SPOT,
+    //   icon: TradeIcon,
+    // },
+    // {
+    //   title: "SWAP",
+    //   desc: "Simple token exchange with instant trades.",
+    //   link: ROUTES.SWAP,
+    //   icon: SwapIcon,
+    // },
+    // ],
   },
   { title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" },
   {
@@ -134,7 +133,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
             <Icon height={24} width={24} />
           </IconContainer>
           <DropdownMenuContent>
-            <DropdownMenuTitle>{title}</DropdownMenuTitle>
+            <DropdownMenuTitle type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</DropdownMenuTitle>
             {desc && <Text type={TEXT_TYPES.BODY}>{desc}</Text>}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -150,14 +149,15 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
       setOpenDropdown(openDropdown === title ? null : title);
     };
 
+    console.log("isGradient", isGradient);
+    const titleComponent = isGradient ? <BaseGradientText>{title}</BaseGradientText> : title;
+
     if (children) {
       const isDropdownOpen = openDropdown === title;
 
       const isAnyChildrenActive = children.some((item) => location.pathname.includes(item.link));
 
       const isActive = isDropdownOpen || isAnyChildrenActive;
-
-      const titleComponent = isGradient ? <BaseGradientText>{title}</BaseGradientText> : title;
 
       return (
         <DropdownContainer key={title}>
@@ -201,14 +201,14 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
           target="_blank"
           onClick={() => mixPanelStore.trackEvent("desktopHeaderClick", { route: title })}
         >
-          <Element>{title}</Element>
+          <Element>{titleComponent}</Element>
         </a>
       );
     }
 
     return (
       <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleMenuItemClick}>
-        <Element isActive={isActive}>{title}</Element>
+        <Element isActive={isActive}>{titleComponent}</Element>
       </NavLink>
     );
   };
@@ -255,11 +255,7 @@ const Tab = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean }>`
 `;
 
 const Row = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean }>`
-  font-family: Space Grotesk;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-
+  ${TEXT_TYPES_MAP[TEXT_TYPES.TEXT_BIG]}
   color: ${({ theme, isActive }) => (isActive ? theme.colors.textPrimary : theme.colors.textSecondary)};
 
   display: flex;
@@ -319,18 +315,9 @@ const BaseGradientText = styled.span`
 `;
 
 const DropdownMenuTitle = styled(Text)`
-  font-family: Space Grotesk;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 16px;
   text-transform: uppercase;
 
   color: ${({ theme }) => theme.colors.textPrimary};
-
-  ${media.mobile} {
-    font-size: 16px;
-  }
 `;
 
 const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean; isGradient?: boolean }>`

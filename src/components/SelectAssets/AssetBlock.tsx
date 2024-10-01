@@ -47,7 +47,7 @@ const AssetBlock: React.FC<IAssetBlock> = observer(
         <SmartFlex alignItems="center" gap="10px">
           <TokenIcon src={token.asset.logo} />
           <div>
-            <Text type={type === "rounded" ? TEXT_TYPES.H_NEW : TEXT_TYPES.BUTTON} primary>
+            <Text type={type === "rounded" ? TEXT_TYPES.H : TEXT_TYPES.BUTTON} primary>
               {token.asset.symbol}
             </Text>
             {isShowBalance && <Text type={TEXT_TYPES.BODY}>{token.asset.name}</Text>}
@@ -55,7 +55,7 @@ const AssetBlock: React.FC<IAssetBlock> = observer(
         </SmartFlex>
         {isShowBalance && (
           <div>
-            <Text style={{ textAlign: "right" }} type={TEXT_TYPES.INFO} primary>
+            <Text style={{ textAlign: "right" }} type={TEXT_TYPES.TEXT} primary>
               {new BN(token[showBalance]).toSignificant(token.asset.decimals)}
             </Text>
             <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type={TEXT_TYPES.BODY}>

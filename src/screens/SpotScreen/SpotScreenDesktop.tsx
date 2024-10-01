@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { Column } from "@components/Flex";
+import { SmartFlex } from "@components/SmartFlex";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
@@ -24,10 +24,10 @@ const SpotScreenDesktop: React.FC = observer(() => {
       <MarketStatisticsBar />
       {tradeStore.marketSelectionOpened && <MarketSelection />}
       <ContentContainer>
-        <Column crossAxisSize="max" mainAxisSize="stretch" style={{ flex: 5 }}>
+        <SmartFlex gap="4px" column>
           <Chart />
           <BottomTables />
-        </Column>
+        </SmartFlex>
         <OrderbookAndTradesInterface />
         <RightBlock />
       </ContentContainer>

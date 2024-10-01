@@ -30,7 +30,7 @@ export const BalanceBlock: React.FC<IBalanceBlock> = ({ icon, nameWallet, token,
         <Text type={TEXT_TYPES.BUTTON}>{nameWallet}</Text>
       </SmartFlex>
       <SmartFlex column>
-        <Text style={{ textAlign: "right" }} type={TEXT_TYPES.INFO} primary>
+        <Text style={{ textAlign: "right" }} type={TEXT_TYPES.TEXT} primary>
           {new BN(token[showBalance]).toSignificant(token.asset.decimals)}
         </Text>
         <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type={TEXT_TYPES.BODY}>

@@ -49,17 +49,16 @@ class SpotTableVM {
     makeAutoObservable(this);
     this.rootStore = rootStore;
     const { accountStore, tradeStore } = this.rootStore;
-    const { limit } = this;
     reaction(
       () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected, this.offset],
-      ([market, initialized, isConnected, offset]) => {
+      ([market, initialized, isConnected]) => {
         if (!initialized || !market || !isConnected) {
           this.setMyOrders([]);
           this.setMyOrdersHistory([]);
           return;
         }
 
-        this.subscribeToOrders(limit, offset as number);
+        this.subscribeToOrders();
       },
       { fireImmediately: true },
     );
@@ -108,7 +107,7 @@ class SpotTableVM {
     this.withdrawingAssetId = null;
   };
 
-  private subscribeToOpenOrders = (sortDesc: OrderSortingFunction, limit: number, offset: number) => {
+  private subscribeToOpenOrders = (sortDesc: OrderSortingFunction) => {
     const { accountStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -118,8 +117,8 @@ class SpotTableVM {
 
     this.subscriptionToOpenOrders = bcNetwork
       .subscribeSpotOrders({
-        limit,
-        offset,
+        limit: this.limit,
+        offset: this.offset,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Active"],
@@ -138,7 +137,7 @@ class SpotTableVM {
       });
   };
 
-  private subscribeToHistoryOrders = (sortDesc: OrderSortingFunction, limit: number, offset: number) => {
+  private subscribeToHistoryOrders = (sortDesc: OrderSortingFunction) => {
     const { accountStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -147,8 +146,8 @@ class SpotTableVM {
     }
     this.subscriptionToHistoryOrders = bcNetwork
       .subscribeSpotOrders({
-        limit,
-        offset,
+        limit: this.limit,
+        offset: this.offset,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Closed", "Canceled"],
@@ -168,11 +167,11 @@ class SpotTableVM {
       });
   };
 
-  private subscribeToOrders = (limit: number, offset: number) => {
+  private subscribeToOrders = () => {
     const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
 
-    this.subscribeToOpenOrders(sortDesc, limit, offset);
-    this.subscribeToHistoryOrders(sortDesc, limit, offset);
+    this.subscribeToOpenOrders(sortDesc);
+    this.subscribeToHistoryOrders(sortDesc);
   };
 
   private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
