@@ -16,6 +16,7 @@ export const useWallet = () => {
     await fuel.disconnect();
     await accountStore.disconnect();
     balanceStore.clearBalance();
+    setWallet(null);
   }, []);
 
   useEffect(() => {
