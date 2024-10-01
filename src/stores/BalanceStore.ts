@@ -97,7 +97,19 @@ export class BalanceStore {
     });
     return nonZeroBalances;
   }
-
+  clearBalance = () => {
+    this.myMarketBalanceList = {};
+    this.myMarketBalance = {
+      locked: {
+        base: BN.ZERO,
+        quote: BN.ZERO,
+      },
+      liquid: {
+        base: BN.ZERO,
+        quote: BN.ZERO,
+      },
+    };
+  };
   update = async () => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();

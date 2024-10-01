@@ -75,7 +75,7 @@ const Root = styled(SmartFlex)<{ size: TRADE_TABLE_SIZE }>`
   height: ${({ size }) => MAX_TABLE_HEIGHT[size]};
   transition: height 200ms;
   ${media.mobile} {
-    height: 100%;
+    height: calc(100% - 48px);
   }
 `;
 
