@@ -32,9 +32,11 @@ export const useWallet = () => {
   }, [fuel, isConnecting]);
 
   useEffect(() => {
-    if (!isConnected || !wallet) return;
-
-    accountStore.connect(wallet);
+    if (!isConnected || !wallet) {
+      setWallet(null);
+    } else {
+      accountStore.connect(wallet);
+    }
   }, [isConnected, wallet, accountStore]);
 
   return {
