@@ -6,7 +6,7 @@ import { useStores } from "@stores";
 
 export const useWallet = () => {
   const { fuel } = useFuel();
-  const { accountStore } = useStores();
+  const { accountStore, balanceStore } = useStores();
   const { connect, isConnecting } = useConnectUI();
 
   const [isConnected, setIsConnected] = useState(false);
@@ -15,6 +15,8 @@ export const useWallet = () => {
   const handleDisconnect = useCallback(async () => {
     await fuel.disconnect();
     await accountStore.disconnect();
+    balanceStore.clearBalance();
+    setWallet(null);
   }, []);
 
   useEffect(() => {
@@ -32,9 +34,11 @@ export const useWallet = () => {
   }, [fuel, isConnecting]);
 
   useEffect(() => {
-    if (!isConnected || !wallet) return;
-
-    accountStore.connect(wallet);
+    if (!isConnected || !wallet) {
+      setWallet(null);
+    } else {
+      accountStore.connect(wallet);
+    }
   }, [isConnected, wallet, accountStore]);
 
   return {
