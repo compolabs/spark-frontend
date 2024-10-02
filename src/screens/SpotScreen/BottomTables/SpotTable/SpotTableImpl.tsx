@@ -292,6 +292,7 @@ const PaginationContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 12px;
+  border-radius: 0px 0px 10px 10px;
 `;
 const CancelButton = styled(Chip)`
   cursor: pointer;
