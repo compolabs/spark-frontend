@@ -124,7 +124,10 @@ class TradeStore {
 
     if (!this.market) return;
 
-    const info = await FuelNetwork.getInstance().fetchSpotVolume();
+    const info = await FuelNetwork.getInstance().fetchSpotVolume({
+      limit: 1000,
+      market: this.market.contractAddress,
+    });
     const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(this.market.baseToken.priceFeed), DEFAULT_DECIMALS);
     const volume = baseTokenAmount.multipliedBy(price);

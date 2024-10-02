@@ -149,7 +149,6 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
       setOpenDropdown(openDropdown === title ? null : title);
     };
 
-    console.log("isGradient", isGradient);
     const titleComponent = isGradient ? <BaseGradientText>{title}</BaseGradientText> : title;
 
     if (children) {

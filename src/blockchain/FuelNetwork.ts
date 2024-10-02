@@ -181,8 +181,8 @@ export class FuelNetwork {
     }
   };
 
-  fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    const data = await this.orderbookSdk.fetchVolume();
+  fetchSpotVolume = async (...params: Parameters<typeof this.orderbookSdk.fetchVolume>): Promise<SpotMarketVolume> => {
+    const data = await this.orderbookSdk.fetchVolume(...params);
 
     return {
       low: new BN(data.low24h),
