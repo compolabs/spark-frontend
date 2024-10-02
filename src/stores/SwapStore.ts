@@ -141,6 +141,7 @@ class SwapStore {
     const bcNetwork = FuelNetwork.getInstance();
     const params: GetOrdersParams = {
       limit: 50, // or more if needed
+      market: tradeStore.market!.contractAddress,
       asset: baseToken?.assetId,
       status: ["Active"],
     };

@@ -6,7 +6,7 @@ import { Token } from "@entity";
 
 import configJSON from "@src/config.json";
 
-const CURRENT_CONFIG_VER = "1.2.0";
+const CURRENT_CONFIG_VER = "1.3.0";
 
 function createConfig() {
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");

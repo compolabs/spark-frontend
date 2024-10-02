@@ -29,7 +29,7 @@ export class FuelNetwork {
     this.orderbookSdk = new SparkOrderBookSdk({
       networkUrl: CONFIG.APP.networkUrl,
       contractAddresses: {
-        orderbook: CONFIG.APP.contracts.orderbook,
+        registry: CONFIG.APP.contracts.registry,
         multiAsset: CONFIG.APP.contracts.multiAsset,
       },
     });

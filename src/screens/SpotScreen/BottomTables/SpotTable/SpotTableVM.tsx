@@ -119,6 +119,7 @@ class SpotTableVM {
       .subscribeSpotOrders({
         limit: this.limit,
         offset: this.offset,
+        market: tradeStore.market!.contractAddress,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Active"],
@@ -148,6 +149,7 @@ class SpotTableVM {
       .subscribeSpotOrders({
         limit: this.limit,
         offset: this.offset,
+        market: tradeStore.market!.contractAddress,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Closed", "Canceled"],

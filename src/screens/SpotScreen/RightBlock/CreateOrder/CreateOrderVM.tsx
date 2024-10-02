@@ -387,6 +387,7 @@ class CreateOrderVM {
 
     const params: GetOrdersParams = {
       limit: 50,
+      market: market.contractAddress,
       asset: market.baseToken.assetId ?? "",
       status: ["Active"],
     };
