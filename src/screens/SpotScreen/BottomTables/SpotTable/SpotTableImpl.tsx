@@ -268,7 +268,7 @@ const SpotTableImpl: React.FC = observer(() => {
       </BaseTable>
       {data.length >= minNeedLengthPagination || page > startPage - 1 ? (
         <PaginationContainer>
-          <Pagination currentPage={page} onChange={handleChangePagination} />
+          <Pagination currentPage={page} lengthData={data.length} onChange={handleChangePagination} />
         </PaginationContainer>
       ) : null}
       {!!vm.myOrders.length && tabIndex === 0 && (
@@ -292,6 +292,7 @@ const PaginationContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 12px;
+  border-radius: 0px 0px 10px 10px;
 `;
 const CancelButton = styled(Chip)`
   cursor: pointer;

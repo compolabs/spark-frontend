@@ -106,7 +106,7 @@ const TableRoot = styled.div`
   flex-direction: column;
   border: 1px solid ${({ theme }) => theme.colors.bgSecondary};
   flex: 1;
-  border-radius: 10px;
+  border-radius: 10px 10px 0px 0px;
   max-width: 100%;
   height: 100%;
 
