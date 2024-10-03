@@ -78,12 +78,13 @@ class TradeStore {
   }
 
   get initialized() {
-    const isMarketInfoReady = !(
-      this.spotMarketInfo.high.isZero() ||
-      this.spotMarketInfo.low.isZero() ||
-      this.spotMarketInfo.volume.isZero()
-    );
-    return Boolean(this.spotMarkets.length && isMarketInfoReady);
+    // const isMarketInfoReady = !(
+    //   this.spotMarketInfo.high.isZero() ||
+    //   this.spotMarketInfo.low.isZero() ||
+    //   this.spotMarketInfo.volume.isZero()
+    // );
+    // return Boolean(this.spotMarkets.length && isMarketInfoReady);
+    return true;
   }
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
@@ -175,6 +176,8 @@ class TradeStore {
     const tradeFee = await bcNetwork.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
 
     const decimals = this.market.quoteToken.decimals;
+
+    console.log("fee", tradeFee, quoteAmount);
 
     this.tradeFee = {
       makerFee: BN.formatUnits(tradeFee.makerFee, decimals),

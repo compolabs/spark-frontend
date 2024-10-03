@@ -117,8 +117,7 @@ export class BalanceStore {
 
     if (!accountStore.address || !wallet) return;
 
-    const [balances] = await Promise.all([this.fetchBalances(), this.fetchUserMarketBalance()]);
-    await this.fetchUserMarketBalanceByContracts();
+    const [balances] = await Promise.all([this.fetchBalances(), this.fetchUserMarketBalanceByContracts()]);
 
     try {
       for (const [tokenAddress, balance] of Object.entries(balances)) {
@@ -305,22 +304,6 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     return bcNetwork.getBalances();
-  };
-
-  private fetchUserMarketBalance = async () => {
-    const { accountStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
-
-    if (!accountStore.address) return;
-
-    try {
-      // TODO: After type fix in sdk
-      const address = Address.fromB256(accountStore.address);
-      const balanceData = await bcNetwork.fetchSpotUserMarketBalance(address.bech32Address);
-      this.setMyMarketBalance(balanceData);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   private fetchUserMarketBalanceByContracts = async () => {

@@ -330,6 +330,8 @@ class CreateOrderVM {
     try {
       let hash: Undefinable<string> = "";
 
+      console.log(marketContracts);
+
       if (timeInForce === LimitType.GTC) {
         hash = await this.createGTCOrder(type, deposit, marketContracts);
       } else {
@@ -408,24 +410,23 @@ class CreateOrderVM {
       })
       .filter((el) => el !== null);
 
+    console.log(orderList.map((el) => el.id));
+
     const price =
       settingsStore.orderType === ORDER_TYPE.Market
         ? orderList[orderList.length - 1].price.toString()
         : this.inputPrice.toString();
 
-    deposit = {
-      ...deposit,
-    };
-
     const order: FulfillOrderManyWithDepositParams = {
+      ...deposit,
       amount: this.inputAmount.toString(),
       orderType: type,
       limitType: settingsStore.timeInForce,
       price,
       orders: orderList.map((el) => el.id),
       slippage: "10000",
-      ...deposit,
     };
+    console.log("123123123");
     const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
     return data.transactionId;
   };

@@ -161,10 +161,6 @@ export class FuelNetwork {
     return this.orderbookSdk.subscribeTradeOrderEvents(...params);
   };
 
-  fetchSpotMarketPrice = async (...params: Parameters<typeof this.orderbookSdk.fetchMarketPrice>): Promise<BN> => {
-    return this.orderbookSdk.fetchMarketPrice(...params);
-  };
-
   fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
     const { data } = await this.orderbookSdk.fetchActiveOrders(params);
 
