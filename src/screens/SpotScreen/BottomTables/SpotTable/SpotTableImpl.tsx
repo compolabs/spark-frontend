@@ -123,7 +123,7 @@ const minNeedLengthPagination = 10;
 const startPage = 1;
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
 const SpotTableImpl: React.FC = observer(() => {
-  const { accountStore } = useStores();
+  const { accountStore, settingsStore } = useStores();
   const vm = useSpotTableVMProvider();
   const theme = useTheme();
   const media = useMedia();
@@ -262,7 +262,10 @@ const SpotTableImpl: React.FC = observer(() => {
   };
 
   return (
-    <BottomTablesSkeletonWrapper isReady={vm.initialized || !accountStore.isConnected}>
+    <BottomTablesSkeletonWrapper
+      isReady={vm.initialized || !accountStore.isConnected}
+      size={settingsStore.tradeTableSize}
+    >
       <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={handleTab}>
         {renderTable()}
       </BaseTable>
