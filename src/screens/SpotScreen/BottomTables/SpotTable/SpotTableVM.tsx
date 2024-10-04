@@ -2,6 +2,8 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
+import { OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
 
@@ -42,8 +44,32 @@ class SpotTableVM {
 
   isOpenOrdersLoaded = false;
   isHistoryOrdersLoaded = false;
+
+  // filters
   offset = 0;
   limit = 10;
+
+  filterIsSellOrderTypeEnabled = true;
+  filterIsBuyOrderTypeEnabled = true;
+  toggleFilterOrderType = (orderType: OrderType) => {
+    if (orderType === OrderType.Sell) {
+      if (this.filterIsSellOrderTypeEnabled && !this.filterIsBuyOrderTypeEnabled) {
+        this.filterIsSellOrderTypeEnabled = false;
+        this.filterIsBuyOrderTypeEnabled = true;
+        return;
+      }
+      this.filterIsSellOrderTypeEnabled = !this.filterIsSellOrderTypeEnabled;
+      return;
+    }
+
+    if (this.filterIsBuyOrderTypeEnabled && !this.filterIsSellOrderTypeEnabled) {
+      // Cannot uncheck 'buy' because 'sell' is already unchecked
+      this.filterIsBuyOrderTypeEnabled = false;
+      this.filterIsSellOrderTypeEnabled = true;
+      return;
+    }
+    this.filterIsBuyOrderTypeEnabled = !this.filterIsBuyOrderTypeEnabled;
+  };
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this);
@@ -66,6 +92,21 @@ class SpotTableVM {
 
   get initialized() {
     return this.isOpenOrdersLoaded && this.isHistoryOrdersLoaded;
+  }
+
+  get tableFilters() {
+    const orderType =
+      this.filterIsSellOrderTypeEnabled && this.filterIsBuyOrderTypeEnabled
+        ? undefined
+        : this.filterIsSellOrderTypeEnabled
+          ? OrderType.Sell
+          : OrderType.Buy;
+
+    return {
+      limit: this.limit,
+      offset: this.offset,
+      orderType,
+    };
   }
 
   cancelOrder = async (order: SpotMarketOrder) => {
@@ -117,8 +158,7 @@ class SpotTableVM {
 
     this.subscriptionToOpenOrders = bcNetwork
       .subscribeSpotOrders({
-        limit: this.limit,
-        offset: this.offset,
+        ...this.tableFilters,
         market: tradeStore.market!.contractAddress,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
@@ -147,8 +187,7 @@ class SpotTableVM {
     }
     this.subscriptionToHistoryOrders = bcNetwork
       .subscribeSpotOrders({
-        limit: this.limit,
-        offset: this.offset,
+        ...this.tableFilters,
         market: tradeStore.market!.contractAddress,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
