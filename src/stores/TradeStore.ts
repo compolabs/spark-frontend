@@ -177,8 +177,6 @@ class TradeStore {
 
     const decimals = this.market.quoteToken.decimals;
 
-    console.log("fee", tradeFee, quoteAmount);
-
     this.tradeFee = {
       makerFee: BN.formatUnits(tradeFee.makerFee, decimals),
       takerFee: BN.formatUnits(tradeFee.takerFee, decimals),
