@@ -19,7 +19,9 @@ const SKELETON_LAYOUTS = {
   desktop: (data: Dimensions) => createSkeletonLayout(12, 0.3, data),
 };
 
-const BottomTablesSkeletonWrapper = styled(clone(SkeletonWrapper, { skeletonLayouts: SKELETON_LAYOUTS }))`
+const BottomTablesSkeletonWrapper = styled(clone(SkeletonWrapper, { skeletonLayouts: SKELETON_LAYOUTS }))<{
+  size?: keyof typeof MAX_TABLE_HEIGHT;
+}>`
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
 
