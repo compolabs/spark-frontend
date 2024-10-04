@@ -6,6 +6,8 @@ import { observer } from "mobx-react";
 import { useEventListener } from "@hooks/useEventListener";
 import { useMedia } from "@hooks/useMedia";
 
+import { MAX_TABLE_HEIGHT } from "@screens/SpotScreen/BottomTables/constants.ts";
+
 export type Dimensions = { width: number; height: number };
 
 interface SkeletonWrapperProps {
@@ -17,6 +19,7 @@ interface SkeletonWrapperProps {
   };
   contentLoaderProps?: IContentLoaderProps;
   className?: string;
+  size?: keyof typeof MAX_TABLE_HEIGHT;
 }
 
 const SkeletonWrapper: React.FC<SkeletonWrapperProps> = observer(

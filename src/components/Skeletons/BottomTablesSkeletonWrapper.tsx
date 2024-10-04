@@ -23,7 +23,7 @@ const BottomTablesSkeletonWrapper = styled(clone(SkeletonWrapper, { skeletonLayo
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
 
-  height: ${MAX_TABLE_HEIGHT[2]};
+  height: calc(${({ size }) => `${MAX_TABLE_HEIGHT[size ?? 2]} + 48px`});
 
   ${media.mobile} {
     height: auto;
