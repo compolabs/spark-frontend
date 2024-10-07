@@ -159,6 +159,7 @@ class SpotTableVM {
     this.subscriptionToOpenOrders = bcNetwork
       .subscribeSpotOrders({
         ...this.tableFilters,
+        market: tradeStore.market!.contractAddress,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Active"],
@@ -187,6 +188,7 @@ class SpotTableVM {
     this.subscriptionToHistoryOrders = bcNetwork
       .subscribeSpotOrders({
         ...this.tableFilters,
+        market: tradeStore.market!.contractAddress,
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Closed", "Canceled"],

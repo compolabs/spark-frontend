@@ -29,7 +29,7 @@ export class FuelNetwork {
     this.orderbookSdk = new SparkOrderBookSdk({
       networkUrl: CONFIG.APP.networkUrl,
       contractAddresses: {
-        orderbook: CONFIG.APP.contracts.orderbook,
+        registry: CONFIG.APP.contracts.registry,
         multiAsset: CONFIG.APP.contracts.multiAsset,
       },
     });
@@ -161,10 +161,6 @@ export class FuelNetwork {
     return this.orderbookSdk.subscribeTradeOrderEvents(...params);
   };
 
-  fetchSpotMarketPrice = async (...params: Parameters<typeof this.orderbookSdk.fetchMarketPrice>): Promise<BN> => {
-    return this.orderbookSdk.fetchMarketPrice(...params);
-  };
-
   fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
     const { data } = await this.orderbookSdk.fetchActiveOrders(params);
 
@@ -181,8 +177,8 @@ export class FuelNetwork {
     }
   };
 
-  fetchSpotVolume = async (): Promise<SpotMarketVolume> => {
-    const data = await this.orderbookSdk.fetchVolume();
+  fetchSpotVolume = async (...params: Parameters<typeof this.orderbookSdk.fetchVolume>): Promise<SpotMarketVolume> => {
+    const data = await this.orderbookSdk.fetchVolume(...params);
 
     return {
       low: new BN(data.low24h),

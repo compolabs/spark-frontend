@@ -78,12 +78,13 @@ class TradeStore {
   }
 
   get initialized() {
-    const isMarketInfoReady = !(
-      this.spotMarketInfo.high.isZero() ||
-      this.spotMarketInfo.low.isZero() ||
-      this.spotMarketInfo.volume.isZero()
-    );
-    return Boolean(this.spotMarkets.length && isMarketInfoReady);
+    // const isMarketInfoReady = !(
+    //   this.spotMarketInfo.high.isZero() ||
+    //   this.spotMarketInfo.low.isZero() ||
+    //   this.spotMarketInfo.volume.isZero()
+    // );
+    // return Boolean(this.spotMarkets.length && isMarketInfoReady);
+    return true;
   }
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
@@ -124,7 +125,10 @@ class TradeStore {
 
     if (!this.market) return;
 
-    const info = await FuelNetwork.getInstance().fetchSpotVolume();
+    const info = await FuelNetwork.getInstance().fetchSpotVolume({
+      limit: 1000,
+      market: this.market.contractAddress,
+    });
     const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(this.market.baseToken.priceFeed), DEFAULT_DECIMALS);
     const volume = baseTokenAmount.multipliedBy(price);

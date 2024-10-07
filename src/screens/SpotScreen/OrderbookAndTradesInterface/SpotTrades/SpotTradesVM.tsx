@@ -1,11 +1,14 @@
 import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
+import { Nullable } from "tsdef";
 
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
 
 import { FuelNetwork } from "@blockchain";
 import { SpotMarketTrade } from "@entity";
+
+import { Subscription } from "@src/typings/utils";
 
 const ctx = React.createContext<SpotTradesVM | null>(null);
 
@@ -18,8 +21,9 @@ export const SpotTradesVMProvider: React.FC<PropsWithChildren> = ({ children }) 
 export const useSpotTradesVM = () => useVM(ctx);
 
 class SpotTradesVM {
-  public trades: SpotMarketTrade[] = [];
+  private subscriptionToTradeOrderEvents: Nullable<Subscription> = null;
 
+  trades: SpotMarketTrade[] = [];
   isInitialLoadComplete = false;
 
   constructor(private rootStore: RootStore) {
@@ -42,9 +46,14 @@ class SpotTradesVM {
 
     const bcNetwork = FuelNetwork.getInstance();
 
-    bcNetwork
+    if (this.subscriptionToTradeOrderEvents) {
+      this.subscriptionToTradeOrderEvents.unsubscribe();
+    }
+
+    this.subscriptionToTradeOrderEvents = bcNetwork
       .subscribeSpotTradeOrderEvents({
         limit: 50,
+        market: market!.contractAddress,
       })
       .subscribe({
         next: ({ data }) => {
