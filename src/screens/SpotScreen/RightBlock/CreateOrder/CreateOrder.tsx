@@ -288,7 +288,7 @@ const CreateOrder: React.FC = observer(() => {
               amount={vm.inputAmount}
               assetId={baseToken.assetId}
               decimals={baseToken.decimals}
-              error={vm.isSell ? vm.isInputError : undefined}
+              error={vm.isSell || settingsStore.orderType === ORDER_TYPE.Market ? vm.isInputError : undefined}
               errorMessage={`Not enough ${baseToken.symbol}`}
               label="Order size"
               setAmount={vm.setInputAmount}
