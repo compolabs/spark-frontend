@@ -29,17 +29,6 @@
   ],
   "markets": [
     {
-      "marketName": "ETHUSDC",
-      "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
-      "baseAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
-      "baseAssetDecimals": 9,
-      "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1536,
-      "contractId": "0xc18094a283193c9b4726d2f644ed07ec9806bbe60a0688d45bffb26c379c1428"
-    },
-    {
       "marketName": "BTCUSDC",
       "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
       "baseAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
@@ -48,15 +37,11 @@
       "quoteAssetDecimals": 6,
       "priceDecimals": 9,
       "version": 1536,
-      "contractId": "0x7b88385ae73dd3ccc62012e7a52cddd05c7e82ad54a5df721dfa0c1f8b5998f0"
+      "contractId": "0x63c9d3bdb690fdf10aca74b536d4c7ba1d5faaeb61d005ab01bf474d3aa78c17"
     }
   ],
   "indexers": {
-    "0x7b88385ae73dd3ccc62012e7a52cddd05c7e82ad54a5df721dfa0c1f8b5998f0": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
-    },
-    "0xc18094a283193c9b4726d2f644ed07ec9806bbe60a0688d45bffb26c379c1428": {
+    "0x63c9d3bdb690fdf10aca74b536d4c7ba1d5faaeb61d005ab01bf474d3aa78c17": {
       "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
       "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
     }
