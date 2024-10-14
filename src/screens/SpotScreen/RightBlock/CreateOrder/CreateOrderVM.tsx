@@ -338,7 +338,7 @@ class CreateOrderVM {
 
       const token = isBuy ? market.baseToken : market.quoteToken;
       const amount = isBuy ? this.inputAmount : this.inputTotal;
-
+      this.setInputTotal(BN.ZERO);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           BN.formatUnits(amount, token.decimals).toSignificant(2),
@@ -350,7 +350,11 @@ class CreateOrderVM {
       });
       mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
-      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED)());
+      const action =
+        settingsStore.orderType === ORDER_TYPE.Market
+          ? ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED
+          : ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED_INSTRUCTION;
+      handleWalletErrors(notificationStore, error, getActionMessage(action)());
     }
 
     await balanceStore.update();
@@ -428,7 +432,7 @@ class CreateOrderVM {
 
   selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {
     const { settingsStore } = this.rootStore;
-
+    settingsStore.setTimeInForce(LimitType.GTC);
     settingsStore.setOrderType(ORDER_TYPE.Limit);
     this.setOrderMode(mode);
     this.setInputPrice(order.price);
