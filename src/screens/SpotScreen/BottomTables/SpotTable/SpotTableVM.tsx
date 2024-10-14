@@ -76,7 +76,7 @@ class SpotTableVM {
     this.rootStore = rootStore;
     const { accountStore, tradeStore } = this.rootStore;
     reaction(
-      () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected, this.offset],
+      () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected, this.tableFilters],
       ([market, initialized, isConnected]) => {
         if (!initialized || !market || !isConnected) {
           this.setMyOrders([]);
@@ -101,6 +101,14 @@ class SpotTableVM {
         : this.filterIsSellOrderTypeEnabled
           ? OrderType.Sell
           : OrderType.Buy;
+
+    console.log(orderType);
+
+    console.log({
+      limit: this.limit,
+      offset: this.offset,
+      orderType,
+    });
 
     return {
       limit: this.limit,
@@ -220,6 +228,11 @@ class SpotTableVM {
   private setMyOrdersHistory = (myOrdersHistory: SpotMarketOrder[]) => (this.myOrdersHistory = myOrdersHistory);
 
   setOffset = (currentPage: number) => {
+    if (currentPage === 0) {
+      this.offset = 0;
+      return;
+    }
+
     this.offset = (currentPage - 1) * this.limit;
   };
 }
