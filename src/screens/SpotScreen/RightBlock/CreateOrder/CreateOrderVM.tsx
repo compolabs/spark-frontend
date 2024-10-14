@@ -350,7 +350,11 @@ class CreateOrderVM {
       });
       mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
-      handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED)());
+      const action =
+        settingsStore.orderType === ORDER_TYPE.Market
+          ? ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED
+          : ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED_INSTRUCTION;
+      handleWalletErrors(notificationStore, error, getActionMessage(action)());
     }
 
     await balanceStore.update();
