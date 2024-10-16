@@ -37,17 +37,17 @@
       "quoteAssetDecimals": 6,
       "priceDecimals": 9,
       "version": 1536,
-      "contractId": "0x63c9d3bdb690fdf10aca74b536d4c7ba1d5faaeb61d005ab01bf474d3aa78c17"
+      "contractId": "0xf45e20b88787a8be585eb9f13c94aae099407651e094dadc8d92bd0a34ebdeb2"
     }
   ],
   "indexers": {
-    "0x63c9d3bdb690fdf10aca74b536d4c7ba1d5faaeb61d005ab01bf474d3aa78c17": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
+    "0xf45e20b88787a8be585eb9f13c94aae099407651e094dadc8d92bd0a34ebdeb2": {
+      "httpUrl": "https://indexer.bigdevenergy.link/c57663f/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/c57663f/v1/graphql"
     }
   },
   "contracts": {
-    "registry": "0x194987ad2314d2de50646078ac1841f00b2dffda863a7d3dd421d220eb83d019",
+    "registry": "0x5fda5dcd2380a694c3d77d981261263bfe82f983c1d3df62b2bdbe047cf3cc73",
     "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
   },
   "networkUrl": "https://testnet.fuel.network/v1/graphql",
