@@ -155,7 +155,6 @@ class SpotTableVM {
     if (this.subscriptionToOpenOrders) {
       this.subscriptionToOpenOrders.unsubscribe();
     }
-    console.log("123");
     this.subscriptionToOpenOrders = bcNetwork
       .subscribeSpotOrders({
         ...this.tableFilters,
@@ -166,7 +165,6 @@ class SpotTableVM {
       })
       .subscribe({
         next: ({ data }) => {
-          console.log("data", data);
           if (!data) return;
 
           const sortedOrder = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId).sort(sortDesc);
@@ -186,13 +184,6 @@ class SpotTableVM {
     if (this.subscriptionToHistoryOrders) {
       this.subscriptionToHistoryOrders.unsubscribe();
     }
-    console.log("!!", {
-      ...this.tableFilters,
-      market: tradeStore.market!.contractAddress,
-      asset: tradeStore.market!.baseToken.assetId,
-      user: accountStore.address!,
-      status: ["Closed", "Canceled"],
-    });
     this.subscriptionToHistoryOrders = bcNetwork
       .subscribeSpotOrders({
         ...this.tableFilters,
