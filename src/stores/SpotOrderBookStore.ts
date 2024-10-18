@@ -13,12 +13,16 @@ import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { groupOrders } from "@utils/groupOrders";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarketOrder } from "@entity";
+import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
 class SpotOrderBookStore {
   private readonly rootStore: RootStore;
+  private subscriptionToTradeOrderEvents: Nullable<Subscription> = null;
+
+  trades: SpotMarketTrade[] = [];
+  isInitialLoadComplete = false;
 
   allBuyOrders: SpotMarketOrder[] = [];
   allSellOrders: SpotMarketOrder[] = [];
@@ -42,6 +46,16 @@ class SpotOrderBookStore {
         if (!initialized) return;
 
         this.updateOrderBook();
+      },
+      { fireImmediately: true },
+    );
+
+    reaction(
+      () => [this.rootStore.tradeStore.market, this.rootStore.initialized],
+      ([market, initialized]) => {
+        if (!initialized || !market) return;
+
+        this.subscribeTrades();
       },
       { fireImmediately: true },
     );
@@ -197,6 +211,47 @@ class SpotOrderBookStore {
 
     const spread = minSellPrice.minus(maxBuyPrice);
     return spread.div(maxBuyPrice).times(100).toFormat(2);
+  }
+
+  subscribeTrades = () => {
+    const { tradeStore } = this.rootStore;
+    const market = tradeStore.market;
+
+    const bcNetwork = FuelNetwork.getInstance();
+
+    if (this.subscriptionToTradeOrderEvents) {
+      this.subscriptionToTradeOrderEvents.unsubscribe();
+    }
+
+    this.subscriptionToTradeOrderEvents = bcNetwork
+      .subscribeSpotTradeOrderEvents({
+        limit: 50,
+        market: market!.contractAddress,
+      })
+      .subscribe({
+        next: ({ data }) => {
+          if (!data) return;
+
+          const trades = data.TradeOrderEvent.map(
+            (trade) =>
+              new SpotMarketTrade({
+                ...trade,
+                baseAssetId: market!.baseToken.assetId,
+                quoteAssetId: market!.quoteToken.assetId,
+              }),
+          );
+
+          this.trades = trades;
+
+          if (!this.isInitialLoadComplete) {
+            this.isInitialLoadComplete = true;
+          }
+        },
+      });
+  };
+
+  get isTradesLoading() {
+    return !this.isInitialLoadComplete;
   }
 }
 

@@ -9,15 +9,15 @@ import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
-import { useSpotTradesVM } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotTrades/SpotTradesVM";
+import { useStores } from "@stores";
 
 export const SpotTrades: React.FC = observer(() => {
-  const vm = useSpotTradesVM();
+  const { spotOrderBookStore } = useStores();
   const theme = useTheme();
 
-  const isOrderBookEmpty = vm.trades.length === 0;
+  const isOrderBookEmpty = spotOrderBookStore.trades.length === 0;
 
-  if (vm.isTradesLoading && isOrderBookEmpty) {
+  if (spotOrderBookStore.isTradesLoading && isOrderBookEmpty) {
     return <Loader size={32} hideText />;
   }
 
@@ -37,7 +37,7 @@ export const SpotTrades: React.FC = observer(() => {
       </Header>
 
       <Container className="better-scroll">
-        {vm.trades.map((trade) => (
+        {spotOrderBookStore.trades.map((trade) => (
           <Row key={"trade" + trade.id}>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
               {trade.formatTradeAmount}

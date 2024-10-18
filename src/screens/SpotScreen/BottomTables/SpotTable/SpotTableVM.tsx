@@ -155,7 +155,6 @@ class SpotTableVM {
     if (this.subscriptionToOpenOrders) {
       this.subscriptionToOpenOrders.unsubscribe();
     }
-
     this.subscriptionToOpenOrders = bcNetwork
       .subscribeSpotOrders({
         ...this.tableFilters,
