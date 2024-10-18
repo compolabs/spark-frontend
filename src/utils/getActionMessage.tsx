@@ -18,6 +18,7 @@ export const enum ACTION_MESSAGE_TYPE {
   CREATING_SWAP,
   CREATING_SWAP_FAILED,
   WITHDRAWING_ALL_TOKENS_FAILED,
+  CREATING_ORDER_FAILED_INSTRUCTION,
 }
 
 type ActionMessageArgs = {
@@ -40,6 +41,7 @@ type ActionMessageArgs = {
   ];
   [ACTION_MESSAGE_TYPE.CANCELING_ORDER]: [];
   [ACTION_MESSAGE_TYPE.CANCELING_ORDER_FAILED]: [];
+  [ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED_INSTRUCTION]: [];
 };
 
 type ActionMessage = {
@@ -122,6 +124,11 @@ const MESSAGE_TEMPLATES: ActionMessage = {
   [ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED]: () => (
     <TextContainer type={TEXT_TYPES.BUTTON} attention>
       Order creation failed
+    </TextContainer>
+  ),
+  [ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED_INSTRUCTION]: () => (
+    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+      The order cannot be executed, please check the correctness of the order data entered.
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.CREATING_SWAP]: (amountFrom, symbolFrom, amountTo, symbolTo) => (

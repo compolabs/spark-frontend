@@ -93,7 +93,6 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       position: sticky;
       top: 0;
       background: ${({ theme }) => theme.colors.bgPrimary};
-      z-index: 2;
     }
 
     tr {
