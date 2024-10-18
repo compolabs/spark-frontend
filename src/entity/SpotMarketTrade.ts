@@ -19,8 +19,8 @@ export class SpotMarketTrade {
   readonly baseToken: Token;
   readonly quoteToken: Token;
 
-  readonly tradeSize: TradeOrderEvent["trade_size"];
-  readonly tradePrice: TradeOrderEvent["trade_price"];
+  readonly tradeSize: TradeOrderEvent["tradeSize"];
+  readonly tradePrice: TradeOrderEvent["tradePrice"];
 
   readonly timestamp: Dayjs;
 
@@ -32,8 +32,8 @@ export class SpotMarketTrade {
     this.baseToken = bcNetwork.getTokenByAssetId(params.baseAssetId);
     this.quoteToken = bcNetwork.getTokenByAssetId(params.quoteAssetId);
 
-    this.tradeSize = params.trade_size;
-    this.tradePrice = params.trade_price;
+    this.tradeSize = params.tradeSize;
+    this.tradePrice = params.tradePrice;
 
     this.timestamp = dayjs(params.timestamp);
   }

@@ -102,14 +102,6 @@ class SpotTableVM {
           ? OrderType.Sell
           : OrderType.Buy;
 
-    console.log(orderType);
-
-    console.log({
-      limit: this.limit,
-      offset: this.offset,
-      orderType,
-    });
-
     return {
       limit: this.limit,
       offset: this.offset,
