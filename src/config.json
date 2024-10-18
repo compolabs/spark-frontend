@@ -1,6 +1,6 @@
 {
-  "version": "1.4.0",
-  "contractVer": 1536,
+  "version": "1.5.0",
+  "contractVer": 1538,
   "tokens": [
     {
       "name": "Ethereum",
@@ -36,8 +36,8 @@
       "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
       "quoteAssetDecimals": 6,
       "priceDecimals": 9,
-      "version": 1536,
-      "contractId": "0xc18094a283193c9b4726d2f644ed07ec9806bbe60a0688d45bffb26c379c1428"
+      "version": 1538,
+      "contractId": "0x3830aa30ddd4843dd13b6af7ae4fb59d8c5933b1a98cba9a80897c8ba5557307"
     },
     {
       "marketName": "BTCUSDC",
@@ -47,22 +47,22 @@
       "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
       "quoteAssetDecimals": 6,
       "priceDecimals": 9,
-      "version": 1536,
-      "contractId": "0x7b88385ae73dd3ccc62012e7a52cddd05c7e82ad54a5df721dfa0c1f8b5998f0"
+      "version": 1538,
+      "contractId": "0x81acb82a64ff799836c19f4e7f9871cf6d13a1e5d286e815f91c26a1b92a8195"
     }
   ],
   "indexers": {
-    "0x7b88385ae73dd3ccc62012e7a52cddd05c7e82ad54a5df721dfa0c1f8b5998f0": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
+    "0x81acb82a64ff799836c19f4e7f9871cf6d13a1e5d286e815f91c26a1b92a8195": {
+      "httpUrl": "https://indexer.bigdevenergy.link/db00b61/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/db00b61/v1/graphql"
     },
-    "0xc18094a283193c9b4726d2f644ed07ec9806bbe60a0688d45bffb26c379c1428": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
+    "0x3830aa30ddd4843dd13b6af7ae4fb59d8c5933b1a98cba9a80897c8ba5557307": {
+      "httpUrl": "https://indexer.bigdevenergy.link/db00b61/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/db00b61/v1/graphql"
     }
   },
   "contracts": {
-    "registry": "0x194987ad2314d2de50646078ac1841f00b2dffda863a7d3dd421d220eb83d019",
+    "registry": "0xd76662328e464549b6f619401992127bed9b5cff3b46a3516e6b509d810b7035",
     "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
   },
   "networkUrl": "https://testnet.fuel.network/v1/graphql",
