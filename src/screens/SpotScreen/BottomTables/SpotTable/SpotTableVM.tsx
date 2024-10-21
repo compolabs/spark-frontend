@@ -150,7 +150,7 @@ class SpotTableVM {
   };
 
   private subscribeToOpenOrders = (sortDesc: OrderSortingFunction) => {
-    const { accountStore, tradeStore } = this.rootStore;
+    const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (this.subscriptionToOpenOrders) {
@@ -160,8 +160,6 @@ class SpotTableVM {
     this.subscriptionToOpenOrders = bcNetwork
       .subscribeSpotOrders({
         ...this.tableFilters,
-        market: [tradeStore.market!.contractAddress],
-        asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Active"],
       })

@@ -90,7 +90,7 @@ class TradeStore {
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
 
   selectActiveMarket = (marketId?: string) => {
-    // const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = FuelNetwork.getInstance();
 
     if (!marketId || marketId === this.marketSymbol) return;
 
@@ -101,8 +101,8 @@ class TradeStore {
 
     if (!spotMarket) return;
 
-    // const indexerInfo = CONFIG.APP.indexers[spotMarket.contractAddress as keyof typeof CONFIG.APP.indexers];
-    // bcNetwork.setActiveMarket(spotMarket.contractAddress, indexerInfo);
+    const indexerInfo = CONFIG.APP.indexers[spotMarket.contractAddress as keyof typeof CONFIG.APP.indexers];
+    bcNetwork.setActiveMarket(spotMarket.contractAddress, indexerInfo);
 
     this.setMarketSymbol(marketId!);
   };
