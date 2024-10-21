@@ -306,7 +306,6 @@ class CreateOrderVM {
     const depositAmountWithFee = BN.parseUnits(this.exchangeFee, market.quoteToken.decimals).plus(
       BN.parseUnits(tradeStore.matcherFee, market.quoteToken.decimals),
     );
-
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
       amountFee: depositAmountWithFee.toString(),
@@ -386,7 +385,7 @@ class CreateOrderVM {
     deposit: DepositInfo,
     marketContracts: string[],
   ): Promise<string> => {
-    const { settingsStore } = this.rootStore;
+    const { settingsStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     const params: GetOrdersParams = {
@@ -417,15 +416,30 @@ class CreateOrderVM {
         ? orderList[orderList.length - 1].price.toString()
         : this.inputPrice.toString();
 
+    if (!tradeStore.market) return "";
+
+    const baseDecimals = tradeStore.market.baseToken.decimals;
+    const quoteDecimals = tradeStore.market.quoteToken.decimals;
+    const newInputTotal = this.inputTotal.minus(deposit.amountFee);
+    const newInputAmount = Math.divideWithDifferentDecimals(
+      newInputTotal,
+      quoteDecimals,
+      this.inputPrice,
+      DEFAULT_DECIMALS,
+      baseDecimals,
+    );
+
     const order: FulfillOrderManyWithDepositParams = {
       ...deposit,
-      amount: this.inputAmount.toString(),
+      amountToSpend: newInputTotal.toString(),
+      amount: newInputAmount.toString(),
       orderType: type,
       limitType: settingsStore.timeInForce,
       price,
       orders: orderList.map((el) => el.id),
       slippage: "10000",
     };
+    console.log("order", order);
     const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
     return data.transactionId;
   };
