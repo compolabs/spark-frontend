@@ -226,7 +226,7 @@ class SpotOrderBookStore {
     this.subscriptionToTradeOrderEvents = bcNetwork
       .subscribeSpotTradeOrderEvents({
         limit: 50,
-        market: market!.contractAddress,
+        market: [market!.contractAddress],
       })
       .subscribe({
         next: ({ data }) => {
