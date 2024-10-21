@@ -23,11 +23,12 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
         user: "",
         price,
         amount: BN.ZERO.toString(),
-        initial_amount: BN.ZERO.toString(),
-        order_type: order.orderType,
+        initialAmount: BN.ZERO.toString(),
+        orderType: order.orderType,
         asset: order.baseToken.assetId,
         quoteAssetId: order.quoteToken.assetId,
         timestamp: order.timestamp.toString(),
+        market: order.market,
       });
     }
 

@@ -16,8 +16,9 @@ export type SpotMarketOrderParams = {
 export class SpotMarketOrder {
   readonly id: Order["id"];
   readonly user: Order["user"];
-  readonly orderType: Order["order_type"];
+  readonly orderType: Order["orderType"];
   readonly status: Order["status"];
+  readonly market: Order["market"];
 
   readonly baseToken: Token;
   readonly quoteToken: Token;
@@ -44,11 +45,13 @@ export class SpotMarketOrder {
     this.baseToken = bcNetwork.getTokenByAssetId(order.asset);
     this.quoteToken = bcNetwork.getTokenByAssetId(order.quoteAssetId);
 
-    this.orderType = order.order_type;
+    this.orderType = order.orderType;
 
     this.price = new BN(order.price);
 
-    this.initialAmount = new BN(order.initial_amount);
+    this.market = order.market;
+
+    this.initialAmount = new BN(order.initialAmount);
     this.initialQuoteAmount = this.getQuoteAmount(this.initialAmount, this.price);
 
     this.currentAmount = new BN(order.amount);

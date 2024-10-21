@@ -106,7 +106,7 @@ class FaucetStore {
     this.mint(assetId);
   };
 
-  disabled = (assetId: string) => {
+  isDisabled = (assetId: string) => {
     const { accountStore, faucetStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
