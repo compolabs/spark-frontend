@@ -124,7 +124,8 @@ class SpotTableVM {
     }
 
     try {
-      const tx = await bcNetwork?.cancelSpotOrder(order.id);
+      const bcNetworkCopy = await bcNetwork.chain();
+      const tx = await bcNetworkCopy.writeWithMarket(order.market).cancelOrder(order.id);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
         hash: tx.transactionId,
@@ -159,7 +160,7 @@ class SpotTableVM {
     this.subscriptionToOpenOrders = bcNetwork
       .subscribeSpotOrders({
         ...this.tableFilters,
-        market: tradeStore.market!.contractAddress,
+        market: [tradeStore.market!.contractAddress],
         asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Active"],
@@ -179,7 +180,7 @@ class SpotTableVM {
   };
 
   private subscribeToHistoryOrders = (sortDesc: OrderSortingFunction) => {
-    const { accountStore, tradeStore } = this.rootStore;
+    const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     if (this.subscriptionToHistoryOrders) {
@@ -188,8 +189,6 @@ class SpotTableVM {
     this.subscriptionToHistoryOrders = bcNetwork
       .subscribeSpotOrders({
         ...this.tableFilters,
-        market: tradeStore.market!.contractAddress,
-        asset: tradeStore.market!.baseToken.assetId,
         user: accountStore.address!,
         status: ["Closed", "Canceled"],
       })

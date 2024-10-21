@@ -18,6 +18,7 @@ export class SpotMarketOrder {
   readonly user: Order["user"];
   readonly orderType: Order["orderType"];
   readonly status: Order["status"];
+  readonly market: Order["market"];
 
   readonly baseToken: Token;
   readonly quoteToken: Token;
@@ -47,6 +48,8 @@ export class SpotMarketOrder {
     this.orderType = order.orderType;
 
     this.price = new BN(order.price);
+
+    this.market = order.market;
 
     this.initialAmount = new BN(order.initialAmount);
     this.initialQuoteAmount = this.getQuoteAmount(this.initialAmount, this.price);

@@ -115,7 +115,7 @@ class SpotOrderBookStore {
 
     const params: Omit<GetActiveOrdersParams, "orderType"> = {
       limit: 100,
-      market: market.contractAddress,
+      market: [market.contractAddress],
       asset: market.baseToken.assetId,
     };
 

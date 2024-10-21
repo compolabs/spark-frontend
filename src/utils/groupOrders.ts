@@ -28,6 +28,7 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
         asset: order.baseToken.assetId,
         quoteAssetId: order.quoteToken.assetId,
         timestamp: order.timestamp.toString(),
+        market: order.market,
       });
     }
 

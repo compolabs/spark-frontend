@@ -161,7 +161,7 @@ export class FuelNetwork {
     return this.orderbookSdk.subscribeTradeOrderEvents(...params);
   };
 
-  fetchSpotOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
+  fetchSpotActiveOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
     const { data } = await this.orderbookSdk.fetchActiveOrders(params);
 
     const formatOrder = (order: Order) =>
@@ -213,5 +213,9 @@ export class FuelNetwork {
     ...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalanceByContracts>
   ) => {
     return this.orderbookSdk.fetchUserMarketBalanceByContracts(...params);
+  };
+
+  chain = async (...params: Parameters<typeof this.orderbookSdk.chain>) => {
+    return this.orderbookSdk.chain(...params);
   };
 }
