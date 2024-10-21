@@ -17,15 +17,14 @@ import BN from "@utils/BN";
 import { toCurrency } from "@utils/toCurrency";
 
 const MarketStatistics: React.FC = observer(() => {
-  const { oracleStore, tradeStore } = useStores();
+  const { tradeStore, spotOrderBookStore } = useStores();
   const theme = useTheme();
   const media = useMedia();
 
-  const baseToken = tradeStore.market?.baseToken;
-
-  const indexPriceBn = baseToken?.priceFeed
-    ? BN.formatUnits(oracleStore.getTokenIndexPrice(baseToken.priceFeed), DEFAULT_DECIMALS).toFormat(2)
-    : BN.ZERO.toString();
+  const indexPriceBn =
+    spotOrderBookStore?.trades.length > 0
+      ? BN.formatUnits(spotOrderBookStore.trades[0]?.tradePrice, DEFAULT_DECIMALS).toFormat(2)
+      : BN.ZERO.toString();
 
   const indexPrice = toCurrency(indexPriceBn);
   const volume24h = toCurrency(tradeStore.spotMarketInfo.volume.toSignificant(2));
