@@ -77,15 +77,20 @@ function subscribeActiveOrders(spark: SparkOrderbook, orderType: OrderType, mark
   //   $priceOrder: order_by!
   // ) {
   //   ${queryObject}(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
-  //     id
-  //     asset
-  //     amount
-  //     initialAmount
-  //     orderType
-  //     price
-  //     status
-  //     user
-  //     timestamp
+  // id
+  // market
+  // tradeSize
+  // tradePrice
+  // buyer
+  // buyOrderId
+  // buyerBaseAmount
+  // buyerQuoteAmount
+  // seller
+  // sellOrderId
+  // sellerBaseAmount
+  // sellerQuoteAmount
+  // sellerIsMaker
+  // timestamp
   //   }
   // }
   const subscription = spark.subscribeActiveOrders<any>({ limit, orderType, market });
@@ -106,15 +111,20 @@ function subscribeAllOrders(spark: SparkOrderbook, limit: number) {
   //   $priceOrder: order_by!
   // ) {
   //   Order(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
-  //     id
-  //     asset
-  //     amount
-  //     initialAmount
-  //     orderType
-  //     price
-  //     status
-  //     user
-  //     timestamp
+  // id
+  // market
+  // tradeSize
+  // tradePrice
+  // buyer
+  // buyOrderId
+  // buyerBaseAmount
+  // buyerQuoteAmount
+  // seller
+  // sellOrderId
+  // sellerBaseAmount
+  // sellerQuoteAmount
+  // sellerIsMaker
+  // timestamp
   //   }
   // }
   const allOrdersSubscription = spark.subscribeOrders({ limit });
@@ -144,15 +154,20 @@ async function fetchAllOrders(spark: SparkOrderbook, limit: number) {
   //   $priceOrder: order_by!
   // ) {
   //   Order(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
-  //     id
-  //     asset
-  //     amount
-  //     initialAmount
-  //     orderType
-  //     price
-  //     status
-  //     user
-  //     timestamp
+  // id
+  // market
+  // tradeSize
+  // tradePrice
+  // buyer
+  // buyOrderId
+  // buyerBaseAmount
+  // buyerQuoteAmount
+  // seller
+  // sellOrderId
+  // sellerBaseAmount
+  // sellerQuoteAmount
+  // sellerIsMaker
+  // timestamp
   //   }
   // }
   const orders = await spark.fetchOrders({ limit });
@@ -170,15 +185,20 @@ async function fetchActiveOrders(spark: SparkOrderbook, orderType: OrderType, ma
   //   $priceOrder: order_by!
   // ) {
   //   ${queryObject}(limit: $limit, offset: $offset, where: $where, order_by: { price: $priceOrder }) {
-  //     id
-  //     asset
-  //     amount
-  //     initialAmount
-  //     orderType
-  //     price
-  //     status
-  //     user
-  //     timestamp
+  // id
+  // market
+  // tradeSize
+  // tradePrice
+  // buyer
+  // buyOrderId
+  // buyerBaseAmount
+  // buyerQuoteAmount
+  // seller
+  // sellOrderId
+  // sellerBaseAmount
+  // sellerQuoteAmount
+  // sellerIsMaker
+  // timestamp
   //   }
   // }
   const activeOrders: any = await spark.fetchActiveOrders<any>({
@@ -196,10 +216,8 @@ async function fetchActiveOrders(spark: SparkOrderbook, orderType: OrderType, ma
 async function fetchTradeVolume(spark: SparkOrderbook) {
   // query ($limit: Int!, $orderBy: order_by!) {
   //   TradeOrderEvent(limit: $limit, order_by: { timestamp: $orderBy }) {
-  //     id
   //     tradePrice
   //     tradeSize
-  //     timestamp
   //   }
   // }
   const volume = await spark.fetchVolume({
