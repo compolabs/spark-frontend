@@ -23,7 +23,7 @@ const MintButtons: React.FC<IProps> = observer(({ assetId, disabled }) => {
 
   return (
     <Button
-      disabled={disabled || faucetStore.disabled(assetId)}
+      disabled={disabled || faucetStore.isDisabled(assetId)}
       style={{ width: 120 }}
       onClick={() => {
         mixPanelStore.trackEvent("mintTokenInFaucet", { assetId });

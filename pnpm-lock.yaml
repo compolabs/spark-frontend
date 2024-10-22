@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@compolabs/spark-orderbook-ts-sdk':
-        specifier: ^1.10.1
-        version: 1.10.1(@types/react@18.3.4)(fuels@0.94.8)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.11.3
+        version: 1.11.3(@types/react@18.3.4)(fuels@0.94.8)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@emotion/react':
         specifier: ^11.11.3
         version: 11.13.3(@types/react@18.3.4)(react@18.3.1)
@@ -988,8 +988,8 @@ packages:
   '@coinbase/wallet-sdk@4.0.4':
     resolution: {integrity: sha512-74c040CRnGhfRjr3ArnkAgud86erIqdkPHNt5HR1k9u97uTIZCJww9eGYT67Qf7gHPpGS/xW8Be1D4dvRm63FA==}
 
-  '@compolabs/spark-orderbook-ts-sdk@1.10.1':
-    resolution: {integrity: sha512-Pswve8uOu7K80JZidNK5dsLHOiGVSkwx/xUkyQ+mMtxZn2oH7KeHa2xTyZ07hcjqf2swtN1t8p+0oAbze4yHBw==}
+  '@compolabs/spark-orderbook-ts-sdk@1.11.3':
+    resolution: {integrity: sha512-uShcYyRD73MoqK55PUNyTxBs3r0Dn+v6i+jnOGfICYjr7cG+lHh9eJ/16cKwJ/a6Dq2JwOZY1N6wbLSyfKn6ZA==}
     engines: {node: '>=18'}
     peerDependencies:
       fuels: '>=0.94.8'
@@ -8276,7 +8276,7 @@ snapshots:
       preact: 10.23.2
       sha.js: 2.4.11
 
-  '@compolabs/spark-orderbook-ts-sdk@1.10.1(@types/react@18.3.4)(fuels@0.94.8)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@compolabs/spark-orderbook-ts-sdk@1.11.3(@types/react@18.3.4)(fuels@0.94.8)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@apollo/client': 3.11.8(@types/react@18.3.4)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       bignumber.js: 9.1.2

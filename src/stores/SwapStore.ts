@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { autorun, makeAutoObservable, reaction } from "mobx";
 
-import { AssetType, GetOrdersParams, LimitType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { AssetType, GetActiveOrdersParams, LimitType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
@@ -139,17 +139,15 @@ class SwapStore {
     const baseToken = tradeStore.market?.baseToken;
     const isBuy = baseToken?.assetId === this.buyToken.assetId;
     const bcNetwork = FuelNetwork.getInstance();
-    const params: GetOrdersParams = {
+    const params: GetActiveOrdersParams = {
       limit: 50, // or more if needed
-      market: tradeStore.market!.contractAddress,
+      market: [tradeStore.market!.contractAddress],
       asset: baseToken?.assetId,
-      status: ["Active"],
+      orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     };
 
-    const orders = await bcNetwork!.fetchSpotOrders({
-      ...params,
-      orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
-    });
+    const orders = await bcNetwork!.fetchSpotActiveOrders(params);
+
     // TODO: check if there is enough price sum to fulfill the order
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
     const formattedVolume = BN.parseUnits(this.receiveAmount, this.buyToken.decimals).toString();

@@ -7,7 +7,7 @@ import {
   AssetType,
   CreateOrderWithDepositParams,
   FulfillOrderManyWithDepositParams,
-  GetOrdersParams,
+  GetActiveOrdersParams,
   LimitType,
   OrderType,
 } from "@compolabs/spark-orderbook-ts-sdk";
@@ -388,16 +388,17 @@ class CreateOrderVM {
     const { settingsStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    const params: GetOrdersParams = {
-      limit: 50,
-      market: market.contractAddress,
-      asset: market.baseToken.assetId ?? "",
-      status: ["Active"],
-    };
     const isBuy = type === OrderType.Buy;
 
-    const oppositeOrderType = isBuy ? OrderType.Sell : OrderType.Buy;
-    const orders = await bcNetwork.fetchSpotOrders({ ...params, orderType: oppositeOrderType });
+    const params: GetActiveOrdersParams = {
+      limit: 50,
+      market: [market.contractAddress],
+      asset: market.baseToken.assetId ?? "",
+      orderType: isBuy ? OrderType.Sell : OrderType.Buy,
+    };
+
+    const orders = await bcNetwork.fetchSpotActiveOrders(params);
+
     let total = this.inputTotal;
     let spend = BN.ZERO;
     const orderList = orders

@@ -129,7 +129,7 @@ class SpotOrderBookStore {
 
     const params: Omit<GetActiveOrdersParams, "orderType"> = {
       limit: 100,
-      market: market.contractAddress,
+      market: [market.contractAddress],
       asset: market.baseToken.assetId,
     };
 
@@ -226,7 +226,7 @@ class SpotOrderBookStore {
     this.subscriptionToTradeOrderEvents = bcNetwork
       .subscribeSpotTradeOrderEvents({
         limit: 50,
-        market: market!.contractAddress,
+        market: [market!.contractAddress],
       })
       .subscribe({
         next: ({ data }) => {
