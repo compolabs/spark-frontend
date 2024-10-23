@@ -440,7 +440,6 @@ class CreateOrderVM {
       orders: orderList.map((el) => el.id),
       slippage: "10000",
     };
-    console.log("order", order);
     const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
     return data.transactionId;
   };
