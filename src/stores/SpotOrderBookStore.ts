@@ -76,10 +76,8 @@ class SpotOrderBookStore {
 
   private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
     const sortedOrders = this._sortOrders(orders.slice());
-    const sliceIndex = this.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY ? -this.oneSizeOrders : -this.amountOfOrders;
-    const slicedOrders = sortedOrders.slice(sliceIndex);
 
-    return reverse ? slicedOrders.reverse() : slicedOrders;
+    return reverse ? sortedOrders.reverse() : sortedOrders;
   }
 
   get buyOrders(): SpotMarketOrder[] {
@@ -97,14 +95,6 @@ class SpotOrderBookStore {
   get totalSell(): BN {
     return this.sellOrders.reduce((acc, order) => acc.plus(order.initialAmount), BN.ZERO);
   }
-
-  calcSize = (isMobile: boolean) => {
-    const orderbookHeight = isMobile ? 420 : window.innerHeight - 210;
-    const rowHeight = 19;
-    this.setAmountOfOrders(Math.floor((orderbookHeight - 24) / rowHeight));
-  };
-
-  setAmountOfOrders = (value: number) => (this.amountOfOrders = value);
 
   setDecimalGroup = (value: number) => {
     this.decimalGroup = value;
@@ -199,7 +189,8 @@ class SpotOrderBookStore {
   get spreadPrice(): string {
     const maxBuyPrice = this.getMaxBuyPrice();
     const minSellPrice = this.getMinSellPrice();
-
+    console.log("maxBuyPrice", maxBuyPrice.toString());
+    console.log("minSellPrice", minSellPrice.toString());
     const spread = minSellPrice.minus(maxBuyPrice);
     return BN.formatUnits(spread, DEFAULT_DECIMALS).toSignificant(2);
   }
