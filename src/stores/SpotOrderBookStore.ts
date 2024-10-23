@@ -83,7 +83,6 @@ class SpotOrderBookStore {
   }
 
   get buyOrders(): SpotMarketOrder[] {
-    console.log("this.allBuyOrders", this.allBuyOrders);
     return this._getOrders(this.allBuyOrders, true);
   }
 
