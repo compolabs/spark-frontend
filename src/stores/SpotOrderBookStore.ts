@@ -230,7 +230,6 @@ class SpotOrderBookStore {
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
-
           const trades = data.TradeOrderEvent.map(
             (trade) =>
               new SpotMarketTrade({

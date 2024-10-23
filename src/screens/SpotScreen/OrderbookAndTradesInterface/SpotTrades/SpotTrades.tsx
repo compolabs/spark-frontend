@@ -42,7 +42,7 @@ export const SpotTrades: React.FC = observer(() => {
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
               {trade.formatTradeAmount}
             </Text>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+            <Text color={trade.sellerIsMaker ? theme.colors.redLight : theme.colors.greenLight} type={TEXT_TYPES.BODY}>
               {trade.formatPrice}
             </Text>
             <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>

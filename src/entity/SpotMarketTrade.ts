@@ -21,6 +21,7 @@ export class SpotMarketTrade {
 
   readonly tradeSize: TradeOrderEvent["tradeSize"];
   readonly tradePrice: TradeOrderEvent["tradePrice"];
+  readonly sellerIsMaker: boolean;
 
   readonly timestamp: Dayjs;
 
@@ -36,6 +37,7 @@ export class SpotMarketTrade {
     this.tradePrice = params.tradePrice;
 
     this.timestamp = dayjs(params.timestamp);
+    this.sellerIsMaker = params.sellerIsMaker;
   }
 
   get formatPrice() {
