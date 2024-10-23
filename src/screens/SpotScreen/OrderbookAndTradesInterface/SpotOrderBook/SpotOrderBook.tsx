@@ -109,7 +109,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
     const newOrder = [...orders];
     newOrder.reverse();
-    // if (type === "buy") newOrder.reverse();
     return (
       <>
         {newOrder.map((o, index) => (
