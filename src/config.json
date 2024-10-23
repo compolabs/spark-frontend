@@ -53,12 +53,12 @@
   ],
   "indexers": {
     "0x598181fdf206ef2109967be6c4ad75c338a1f082f27d98fedeacd5591c34552c": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
+      "httpUrl": "https://indexer.bigdevenergy.link/b5c0882/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/b5c0882/v1/graphql"
     },
     "0x048a023f12e789daca61c3d0f3f122682c45e7a5a1734dbb7411b4a4cff21d42": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
+      "httpUrl": "https://indexer.bigdevenergy.link/b5c0882/v1/graphql",
+      "wsUrl": "wss://indexer.bigdevenergy.link/b5c0882/v1/graphql"
     }
   },
   "contracts": {
