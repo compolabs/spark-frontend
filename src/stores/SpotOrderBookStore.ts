@@ -65,37 +65,36 @@ class SpotOrderBookStore {
     return +new BN(this.amountOfOrders).div(2).toFixed(0) - 1;
   }
 
-  get buyOrders() {
-    return this.allBuyOrders
-      .slice()
-      .sort((a, b) => {
-        if (a.price === null && b.price === null) return 0;
-        if (a.price === null && b.price !== null) return 1;
-        if (a.price === null && b.price === null) return -1;
-        return a.price.lt(b.price) ? 1 : -1;
-      })
-      .reverse()
-      .slice(this.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY ? -this.oneSizeOrders : -this.amountOfOrders)
-      .reverse();
+  private _sortOrders(orders: SpotMarketOrder[]): SpotMarketOrder[] {
+    return orders.sort((a, b) => {
+      if (a.price === null && b.price === null) return 0;
+      if (a.price === null && b.price !== null) return 1;
+      if (a.price !== null && b.price === null) return -1;
+      return a.price.lt(b.price) ? 1 : -1;
+    });
   }
 
-  get sellOrders() {
-    return this.allSellOrders
-      .slice()
-      .sort((a, b) => {
-        if (a.price === null && b.price === null) return 0;
-        if (a.price === null && b.price !== null) return 1;
-        if (a.price === null && b.price === null) return -1;
-        return a.price.lt(b.price) ? 1 : -1;
-      })
-      .slice(this.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY ? -this.oneSizeOrders : -this.amountOfOrders);
+  private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
+    const sortedOrders = this._sortOrders(orders.slice());
+    const sliceIndex = this.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY ? -this.oneSizeOrders : -this.amountOfOrders;
+    const slicedOrders = sortedOrders.slice(sliceIndex);
+
+    return reverse ? slicedOrders.reverse() : slicedOrders;
   }
 
-  get totalBuy() {
+  get buyOrders(): SpotMarketOrder[] {
+    return this._getOrders(this.allBuyOrders, true);
+  }
+
+  get sellOrders(): SpotMarketOrder[] {
+    return this._getOrders(this.allSellOrders);
+  }
+
+  get totalBuy(): BN {
     return this.buyOrders.reduce((acc, order) => acc.plus(order.initialQuoteAmount), BN.ZERO);
   }
 
-  get totalSell() {
+  get totalSell(): BN {
     return this.sellOrders.reduce((acc, order) => acc.plus(order.initialAmount), BN.ZERO);
   }
 
@@ -231,7 +230,6 @@ class SpotOrderBookStore {
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
-
           const trades = data.TradeOrderEvent.map(
             (trade) =>
               new SpotMarketTrade({

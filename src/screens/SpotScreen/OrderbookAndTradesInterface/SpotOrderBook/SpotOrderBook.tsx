@@ -1,10 +1,10 @@
-import React, { HTMLAttributes, useCallback, useEffect } from "react";
+import React, { HTMLAttributes } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 import numeral from "numeral";
 
-import { Row } from "@components/Flex";
+import { Column, Row } from "@components/Flex";
 import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
@@ -15,7 +15,6 @@ import sellAndBuyIcon from "@assets/icons/buyAndSellOrderBookIcon.svg";
 import buyIcon from "@assets/icons/buyOrderBookIcon.svg";
 import sellIcon from "@assets/icons/sellOrderBookIcon.svg";
 
-import { useEventListener } from "@hooks/useEventListener";
 import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
@@ -53,16 +52,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const market = tradeStore.market;
 
   const [isSettingsOpen, openSettings, closeSettings] = useFlag();
-
-  useEffect(() => {
-    spotOrderBookStore.calcSize(media.mobile);
-  }, [media.mobile]);
-
-  const handleCalcSize = useCallback(() => {
-    spotOrderBookStore.calcSize(media.mobile);
-  }, [media.mobile]);
-
-  useEventListener("resize", handleCalcSize);
 
   const isOrderBookEmpty =
     spotOrderBookStore.allBuyOrders.length === 0 && spotOrderBookStore.allSellOrders.length === 0;
@@ -118,17 +107,21 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         ? ord.initialAmount.div(spotOrderBookStore.totalSell)
         : ord.initialQuoteAmount.div(spotOrderBookStore.totalBuy);
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
-
-    return orders.map((o, index) => (
-      <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
-        <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
-        <Text primary>{o.currentAmountUnits.toFormat(4)}</Text>
-        <TextOverflow color={color}>{o.priceUnits.toFormat(spotOrderBookStore.decimalGroup)}</TextOverflow>
-        <Text primary>
-          {numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`)}
-        </Text>
-      </OrderRow>
-    ));
+    return (
+      <>
+        {orders.map((o, index) => (
+          <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
+            <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
+            <Text primary>{o.currentAmountUnits.toFormat(4)}</Text>
+            <TextOverflow color={color}>{o.priceUnits.toFormat(spotOrderBookStore.decimalGroup)}</TextOverflow>
+            <Text primary>
+              {numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`)}
+            </Text>
+          </OrderRow>
+        ))}
+        <Plug length={70 - orders.length} />
+      </>
+    );
   };
 
   if (isOrderBookEmpty) {
@@ -166,50 +159,26 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
             }
             reverse={spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL}
           >
-            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
-              <Plug
-                length={
-                  spotOrderBookStore.sellOrders.length < +spotOrderBookStore.oneSizeOrders
-                    ? +spotOrderBookStore.oneSizeOrders - 1 - spotOrderBookStore.sellOrders.length
-                    : 0
-                }
-              />
-            )}
-            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
-              <Plug
-                length={
-                  spotOrderBookStore.sellOrders.length < +spotOrderBookStore.amountOfOrders
-                    ? +spotOrderBookStore.amountOfOrders - 1 - spotOrderBookStore.sellOrders.length
-                    : 0
-                }
-              />
-            )}
-
-            {spotOrderBookStore.orderFilter !== SPOT_ORDER_FILTER.BUY &&
-              renderOrders(spotOrderBookStore.sellOrders, "sell")}
-
-            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && renderSpread()}
-
-            {spotOrderBookStore.orderFilter !== SPOT_ORDER_FILTER.SELL &&
-              renderOrders(spotOrderBookStore.buyOrders, "buy")}
-
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY && (
-              <Plug
-                length={
-                  spotOrderBookStore.buyOrders.length < +spotOrderBookStore.amountOfOrders
-                    ? +spotOrderBookStore.amountOfOrders - 1 - spotOrderBookStore.buyOrders.length
-                    : 0
-                }
-              />
+              <SmartFlexOrder flexDirection="column">
+                {renderOrders(spotOrderBookStore.buyOrders, "buy")}
+              </SmartFlexOrder>
             )}
+
+            {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
+              <SmartFlexOrder flexDirection="column">
+                {renderOrders(spotOrderBookStore.sellOrders.reverse(), "sell")}
+              </SmartFlexOrder>
+            )}
+
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
-              <Plug
-                length={
-                  spotOrderBookStore.buyOrders.length < +spotOrderBookStore.oneSizeOrders
-                    ? +spotOrderBookStore.oneSizeOrders - 1 - spotOrderBookStore.buyOrders.length
-                    : 0
-                }
-              />
+              <OrderBookColumn>
+                <SmartFlexOrder flexDirection="column-reverse">
+                  {renderOrders(spotOrderBookStore.sellOrders.reverse(), "sell")}
+                </SmartFlexOrder>
+                <SmartFlex>{renderSpread()}</SmartFlex>
+                <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
+              </OrderBookColumn>
             )}
           </Container>
 
@@ -242,6 +211,17 @@ const Plug: React.FC<{
     ))}
   </>
 );
+const SmartFlexOrder = styled(SmartFlex)<{ flexDirection?: string }>`
+  flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
+  flex-grow: 1;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+`;
+const OrderBookColumn = styled(Column)`
+  height: 100%;
+  width: 100%;
+`;
 
 const TextOverflow = styled(Text)`
   white-space: nowrap;
