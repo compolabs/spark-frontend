@@ -178,29 +178,32 @@ class SpotOrderBookStore {
     );
   }
 
-  private getMaxBuyPrice(): BN {
+  private get getMaxBuyPrice(): BN {
     return this.getPrice(this.allBuyOrders, "max");
   }
 
-  private getMinSellPrice(): BN {
+  private get getMinSellPrice(): BN {
     return this.getPrice(this.allSellOrders, "min");
   }
 
+  get spread(): BN {
+    return this.getMinSellPrice.minus(this.getMaxBuyPrice);
+  }
+
+  get isSpreadValid(): boolean {
+    if (this.getMinSellPrice.isZero() || this.getMaxBuyPrice.isZero()) {
+      return false;
+    }
+
+    return true;
+  }
+
   get spreadPrice(): string {
-    const maxBuyPrice = this.getMaxBuyPrice();
-    const minSellPrice = this.getMinSellPrice();
-    console.log("maxBuyPrice", maxBuyPrice.toString());
-    console.log("minSellPrice", minSellPrice.toString());
-    const spread = minSellPrice.minus(maxBuyPrice);
-    return BN.formatUnits(spread, DEFAULT_DECIMALS).toSignificant(2);
+    return BN.formatUnits(this.spread, DEFAULT_DECIMALS).toSignificant(2);
   }
 
   get spreadPercent(): string {
-    const maxBuyPrice = this.getMaxBuyPrice();
-    const minSellPrice = this.getMinSellPrice();
-
-    const spread = minSellPrice.minus(maxBuyPrice);
-    return spread.div(maxBuyPrice).times(100).toFormat(2);
+    return BN.ratioOf(this.spread, this.getMaxBuyPrice).toFormat(2);
   }
 
   subscribeTrades = () => {
