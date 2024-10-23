@@ -1,5 +1,6 @@
 {
   "version": "1.5.0",
+  "isMainnet": false,
   "contractVer": 1538,
   "tokens": [
     {
