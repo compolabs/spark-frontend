@@ -107,9 +107,11 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         ? ord.initialAmount.div(spotOrderBookStore.totalSell)
         : ord.initialQuoteAmount.div(spotOrderBookStore.totalBuy);
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
+    const newOrder = [...orders];
+    newOrder.reverse();
     return (
       <>
-        {orders.map((o, index) => (
+        {newOrder.map((o, index) => (
           <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
             <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
             <Text primary>{o.currentAmountUnits.toFormat(4)}</Text>
@@ -157,24 +159,20 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
               spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL ||
               spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY
             }
-            reverse={spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL}
+            // reverse={spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL}
           >
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY && (
-              <SmartFlexOrder flexDirection="column">
-                {renderOrders(spotOrderBookStore.buyOrders, "buy")}
-              </SmartFlexOrder>
+              <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
             )}
 
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
-              <SmartFlexOrder flexDirection="column">
-                {renderOrders(spotOrderBookStore.sellOrders.reverse(), "sell")}
-              </SmartFlexOrder>
+              <SmartFlexOrder>{renderOrders(spotOrderBookStore.sellOrders, "sell")}</SmartFlexOrder>
             )}
 
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
               <OrderBookColumn>
                 <SmartFlexOrder flexDirection="column-reverse">
-                  {renderOrders(spotOrderBookStore.sellOrders.reverse(), "sell")}
+                  {renderOrders(spotOrderBookStore.sellOrders, "sell")}
                 </SmartFlexOrder>
                 <SmartFlex>{renderSpread()}</SmartFlex>
                 <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
