@@ -73,13 +73,16 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   };
 
   const renderSpread = () => {
+    const price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
+    const percent = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPercent : "-";
+
     if (media.mobile) {
       return (
         <SpreadContainer>
           <Text type={TEXT_TYPES.H} primary>
-            {spotOrderBookStore.spreadPrice}
+            {price}
           </Text>
-          <Text>{`(${spotOrderBookStore.spreadPercent}%)`}</Text>
+          <Text>{`(${percent}%)`}</Text>
         </SpreadContainer>
       );
     }
@@ -87,8 +90,8 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     return (
       <SpreadContainer>
         <Text type={TEXT_TYPES.SUPPORTING}>SPREAD</Text>
-        <Text primary>{spotOrderBookStore.spreadPrice}</Text>
-        <Text>{`(${spotOrderBookStore.spreadPercent}%) `}</Text>
+        <Text primary>{price}</Text>
+        <Text>{`(${percent}%) `}</Text>
       </SpreadContainer>
     );
   };
