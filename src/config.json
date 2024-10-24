@@ -62,8 +62,8 @@
     }
   },
   "contracts": {
-    "registry": "0xd76662328e464549b6f619401992127bed9b5cff3b46a3516e6b509d810b7035",
-    "multiAsset": "0xd737149903a8b50d44111ae7728cbd14952faaa78718996d80a995cdf03a2ba5"
+    "registry": "0xd737149903a8b50d44111ae7728cbd14952faaa78718996d80a995cdf03a2ba5",
+    "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
   },
   "networkUrl": "https://testnet.fuel.network/v1/graphql",
   "explorerUrl": "https://app-testnet.fuel.network"
