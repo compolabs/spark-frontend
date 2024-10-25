@@ -69,6 +69,10 @@ export class FuelNetwork {
     return CONFIG.TOKENS;
   };
 
+  getIsMainet = (): boolean => {
+    return CONFIG.APP.isMainnet;
+  };
+
   getTokenBySymbol = (symbol: string): Token => {
     return CONFIG.TOKENS_BY_SYMBOL[symbol];
   };
