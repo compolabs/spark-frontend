@@ -22,7 +22,7 @@ import { SwapScreen } from "@screens/SwapScreen";
 
 import { DEFAULT_MARKET, ROUTES } from "@constants";
 
-const isUnderConstruction = false;
+const isUnderConstruction = true;
 
 const DEFAULT_SPOT_ROUTE = `/spot/${DEFAULT_MARKET}`;
 
