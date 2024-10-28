@@ -29,7 +29,6 @@ class SpotOrderBookStore {
 
   decimalGroup = 2;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
-  amountOfOrders: number = 0;
 
   isOrderBookLoading = true;
 
@@ -61,23 +60,15 @@ class SpotOrderBookStore {
     );
   }
 
-  get oneSizeOrders() {
-    return +new BN(this.amountOfOrders).div(2).toFixed(0) - 1;
-  }
-
   private _sortOrders(orders: SpotMarketOrder[]): SpotMarketOrder[] {
-    return orders.sort((a, b) => {
-      if (a.price === null && b.price === null) return 0;
-      if (a.price === null && b.price !== null) return 1;
-      if (a.price !== null && b.price === null) return -1;
-      return a.price.lt(b.price) ? 1 : -1;
-    });
+    return orders.sort((a, b) => (a.price.lt(b.price) ? 1 : -1));
   }
 
   private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
     const sortedOrders = this._sortOrders(orders.slice());
+    const groupedOrders = groupOrders(sortedOrders, this.decimalGroup);
 
-    return reverse ? sortedOrders.reverse() : sortedOrders;
+    return reverse ? groupedOrders.reverse() : groupedOrders;
   }
 
   get buyOrders(): SpotMarketOrder[] {
@@ -98,12 +89,6 @@ class SpotOrderBookStore {
 
   setDecimalGroup = (value: number) => {
     this.decimalGroup = value;
-
-    const buyOrdersCombinedByDecimal = groupOrders(this.allBuyOrders, value);
-    const sellOrdersCombinedByDecimal = groupOrders(this.allSellOrders, value);
-
-    this.allBuyOrders = buyOrdersCombinedByDecimal;
-    this.allSellOrders = sellOrdersCombinedByDecimal;
   };
 
   setOrderFilter = (value: SPOT_ORDER_FILTER) => (this.orderFilter = value);
@@ -126,48 +111,58 @@ class SpotOrderBookStore {
     this.subscribeToSellOrders(bcNetwork, params);
   };
 
-  private subscribeToBuyOrders(bcNetwork: FuelNetwork, params: Omit<GetActiveOrdersParams, "orderType">) {
-    if (this.buySubscription) {
-      this.buySubscription.unsubscribe();
+  private subscribeToOrders(
+    orderType: OrderType,
+    subscription: Subscription | null,
+    updateOrders: (orders: SpotMarketOrder[]) => void,
+    bcNetwork: FuelNetwork,
+    params: Omit<GetActiveOrdersParams, "orderType">,
+  ) {
+    if (subscription) {
+      subscription.unsubscribe();
     }
 
     const { tradeStore } = this.rootStore;
     const market = tradeStore.market;
 
-    this.buySubscription = bcNetwork
-      .subscribeSpotActiveOrders<OrderType.Buy>({ ...params, orderType: OrderType.Buy })
-      .subscribe({
-        next: ({ data }) => {
-          this.isOrderBookLoading = false;
-          if (!data) return;
+    const newSubscription = bcNetwork.subscribeSpotActiveOrders({ ...params, orderType }).subscribe({
+      next: ({ data }) => {
+        this.isOrderBookLoading = false;
+        if (!data) return;
 
-          const buyOrders = formatSpotMarketOrders(data.ActiveBuyOrder, market!.quoteToken.assetId);
-          const buyOrdersCombinedByDecimal = groupOrders(buyOrders, this.decimalGroup);
-          this.allBuyOrders = buyOrdersCombinedByDecimal;
-        },
-      });
+        const orders = formatSpotMarketOrders(
+          "ActiveBuyOrder" in data ? data.ActiveBuyOrder : data.ActiveSellOrder,
+          market!.quoteToken.assetId,
+        );
+        updateOrders(orders);
+      },
+    });
+
+    if (orderType === OrderType.Buy) {
+      this.buySubscription = newSubscription;
+    } else {
+      this.sellSubscription = newSubscription;
+    }
+  }
+
+  private subscribeToBuyOrders(bcNetwork: FuelNetwork, params: Omit<GetActiveOrdersParams, "orderType">) {
+    this.subscribeToOrders(
+      OrderType.Buy,
+      this.buySubscription,
+      (orders) => (this.allBuyOrders = orders),
+      bcNetwork,
+      params,
+    );
   }
 
   private subscribeToSellOrders(bcNetwork: FuelNetwork, params: Omit<GetActiveOrdersParams, "orderType">) {
-    if (this.sellSubscription) {
-      this.sellSubscription.unsubscribe();
-    }
-
-    const { tradeStore } = this.rootStore;
-    const market = tradeStore.market;
-
-    this.sellSubscription = bcNetwork
-      .subscribeSpotActiveOrders<OrderType.Sell>({ ...params, orderType: OrderType.Sell })
-      .subscribe({
-        next: ({ data }) => {
-          this.isOrderBookLoading = false;
-          if (!data) return;
-
-          const sellOrders = formatSpotMarketOrders(data.ActiveSellOrder, market!.quoteToken.assetId);
-          const sellOrdersCombinedByDecimal = groupOrders(sellOrders, this.decimalGroup);
-          this.allSellOrders = sellOrdersCombinedByDecimal;
-        },
-      });
+    this.subscribeToOrders(
+      OrderType.Sell,
+      this.sellSubscription,
+      (orders) => (this.allSellOrders = orders),
+      bcNetwork,
+      params,
+    );
   }
 
   private getPrice(orders: SpotMarketOrder[], priceType: "max" | "min"): BN {
