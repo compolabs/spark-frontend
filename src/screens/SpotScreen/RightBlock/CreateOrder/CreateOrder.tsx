@@ -339,7 +339,7 @@ const CreateOrder: React.FC = observer(() => {
               </Row>
             </Row>
             {settingsStore.orderType === ORDER_TYPE.Market && (
-              <Row style={{ marginTop: 10 }} alignItems="center" justifyContent="space-between">
+              <Row alignItems="center" justifyContent="space-between" style={{ marginTop: 10 }}>
                 <Text type={TEXT_TYPES.SUPPORTING}>Slipage</Text>
                 <TokenInput
                   amount={vm.slippage}
