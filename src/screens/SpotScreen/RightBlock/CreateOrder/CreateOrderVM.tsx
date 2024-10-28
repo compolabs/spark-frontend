@@ -427,8 +427,9 @@ class CreateOrderVM {
     const baseDecimals = tradeStore.market.baseToken.decimals;
     const quoteDecimals = tradeStore.market.quoteToken.decimals;
     const newInputTotal = this.inputTotal.minus(deposit.amountFee);
+    const fullPrecent = "10000";
     const slippage =
-      settingsStore.orderType === ORDER_TYPE.Market ? this.slippage.multipliedBy(100).toString() : "10000";
+      settingsStore.orderType === ORDER_TYPE.Market ? this.slippage.multipliedBy(100).toString() : fullPrecent;
     const newInputAmount = Math.divideWithDifferentDecimals(
       newInputTotal,
       quoteDecimals,
