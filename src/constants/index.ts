@@ -1,7 +1,4 @@
 import { defaultConnectors } from "@fuels/connectors";
-import { coinbaseWallet, walletConnect } from "@wagmi/connectors";
-import { createConfig, http, injected } from "@wagmi/core";
-import { sepolia } from "@wagmi/core/chains";
 
 export const ROUTES = {
   ROOT: "/",
@@ -42,31 +39,9 @@ const METADATA = {
   icons: ["https://app.sprk.fi/pwa-192x192.png"],
 };
 
-const wagmiConfig = createConfig({
-  chains: [sepolia],
-  transports: {
-    [sepolia.id]: http(),
-  },
-  connectors: [
-    injected({ shimDisconnect: false }),
-    walletConnect({
-      projectId: WC_PROJECT_ID,
-      metadata: METADATA,
-      showQrModal: false,
-    }),
-    coinbaseWallet({
-      appName: METADATA.name,
-      appLogoUrl: METADATA.icons[0],
-      darkMode: true,
-      reloadOnDisconnect: true,
-    }),
-  ],
-});
-
 export const FUEL_CONFIG = {
   connectors: defaultConnectors({
     devMode: import.meta.env.DEV,
     wcProjectId: WC_PROJECT_ID,
-    ethWagmiConfig: wagmiConfig,
   }),
 };

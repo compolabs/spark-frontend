@@ -89,6 +89,10 @@ const CreateOrder: React.FC = observer(() => {
     vm.setInputPrice(amount);
   };
 
+  const handleSetSlippage = (slippage: BN) => {
+    vm.setInputSlippage(slippage);
+  };
+
   const disabledOrderTypes = [ORDER_TYPE.Limit, ORDER_TYPE.LimitFOK, ORDER_TYPE.LimitIOC];
   const isInputPriceDisabled = !disabledOrderTypes.includes(settingsStore.orderType);
 
@@ -334,6 +338,19 @@ const CreateOrder: React.FC = observer(() => {
                 <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
               </Row>
             </Row>
+            {settingsStore.orderType === ORDER_TYPE.Market && (
+              <Row alignItems="center" justifyContent="space-between">
+                <Text type={TEXT_TYPES.SUPPORTING}>Slipage</Text>
+                <TokenInput
+                  amount={vm.slippage}
+                  decimals={0}
+                  displayDecimals={2}
+                  max={new BN(100)}
+                  setAmount={handleSetSlippage}
+                  styleInputContainer={{ width: 80, marginLeft: "auto" }}
+                />
+              </Row>
+            )}
           </SmartFlex>
           {renderInstruction()}
           {renderOrderDetails()}
