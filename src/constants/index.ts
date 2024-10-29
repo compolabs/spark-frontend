@@ -7,6 +7,8 @@ export const ROUTES = {
   SWAP: "/swap",
 };
 
+export const BRIDGE_LINK = "https://app.fuel.network/bridge";
+
 export const isProduction = window.location.host === "app.sprk.fi";
 
 export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/sepolia";
