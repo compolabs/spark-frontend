@@ -202,6 +202,7 @@ class TradeStore {
       const market = markets[0];
       const indexerInfo = CONFIG.APP.indexers[market.contractAddress as keyof typeof CONFIG.APP.indexers];
       bcNetwork.setActiveMarket(market.contractAddress, indexerInfo);
+      console.log(market.symbol);
       this.setMarketSymbol(market.symbol);
 
       this.setSpotMarkets(markets);

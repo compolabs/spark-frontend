@@ -39,24 +39,9 @@
       "priceDecimals": 9,
       "version": 1539,
       "contractId": "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998"
-    },
-    {
-      "marketName": "BTCUSDC",
-      "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
-      "baseAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-      "baseAssetDecimals": 8,
-      "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1539,
-      "contractId": "0xc5ed0d9b17beedd1c6c10a84bb496f12a5082aa3ce2ad55630bbcac22c64fcf4"
     }
   ],
   "indexers": {
-    "0xc5ed0d9b17beedd1c6c10a84bb496f12a5082aa3ce2ad55630bbcac22c64fcf4": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
-    },
     "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998": {
       "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
       "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"

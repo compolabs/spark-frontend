@@ -20,14 +20,12 @@ import Faucet from "@screens/Faucet";
 import SpotScreen from "@screens/SpotScreen";
 import { SwapScreen } from "@screens/SwapScreen";
 
-import { DEFAULT_MARKET, ROUTES } from "@constants";
+import { ROUTES } from "@constants";
 
 const isUnderConstruction = false;
 
-const DEFAULT_SPOT_ROUTE = `/spot/${DEFAULT_MARKET}`;
-
 const App: React.FC = observer(() => {
-  const { modalStore } = useStores();
+  const { modalStore, tradeStore } = useStores();
 
   // This hooks is used to clear unnecessary URL parameters,
   // specifically "tx_id", after returning from the faucet
@@ -47,12 +45,12 @@ const App: React.FC = observer(() => {
         <Route element={<SwapScreen />} path={ROUTES.SWAP} />
         <Route element={<Faucet />} path={ROUTES.FAUCET} />
         <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
-        <Route element={<Navigate to={DEFAULT_SPOT_ROUTE} />} path={ROUTES.ROOT} />
+        <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
       </Routes>
       <SideManageAssets />
       <PWAModal />
       <SplashScreen />
-      <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={() => modalStore.close()} />
+      <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
     </Root>
   );
 });
