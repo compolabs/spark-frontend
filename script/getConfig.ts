@@ -1,10 +1,15 @@
 import fs from "fs/promises";
 
-export default function getConfig() {
+export default function getConfig(branch: string) {
   return {
     name: "download-config",
     async buildStart() {
-      const url = "https://raw.githubusercontent.com/compolabs/spark-frontend-config/refs/heads/main/config.json";
+      const isMain = branch === "main";
+      const config = isMain ? "config" : "config-dev";
+
+      console.log(`\nCurrent env: ${isMain ? "😱😱 MAINNET 😱😱" : "🟠🟠 DEVELOPMENT 🟠🟠"}\n`);
+
+      const url = `https://raw.githubusercontent.com/compolabs/spark-frontend-config/refs/heads/main/${config}.json`;
       const res = await fetch(url);
       const json = await res.json();
 
