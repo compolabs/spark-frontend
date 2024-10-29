@@ -171,7 +171,7 @@ export class FuelNetwork {
     const formatOrder = (order: Order) =>
       new SpotMarketOrder({
         ...order,
-        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.USDC.assetId,
+        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId,
       });
 
     if ("ActiveSellOrder" in data) {

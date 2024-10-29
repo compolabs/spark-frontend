@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useCallback } from "react";
-import { createChart, IChartApi, UTCTimestamp } from "lightweight-charts";
-import dataMock from "./mock.json";
-import { chartConfig, histogramConfig, candlestickSeriesConfig } from "@screens/SpotScreen/Chart/configChart";
+import React, { useCallback, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
+import { createChart, IChartApi, UTCTimestamp } from "lightweight-charts";
+
+import { candlestickSeriesConfig, chartConfig, histogramConfig } from "@screens/SpotScreen/Chart/configChart";
+
+import dataMock from "./mock.json";
 
 interface TradeOrderEvent {
   id: string;

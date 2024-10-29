@@ -167,7 +167,7 @@ class SpotTableVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId).sort(sortDesc);
+          const sortedOrder = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId).sort(sortDesc);
           this.setMyOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -193,9 +193,11 @@ class SpotTableVM {
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
-          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.USDC.assetId).sort(
+          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId).sort(
             sortDesc,
           );
+
+          console.log(sortedOrdersHistory);
           this.setMyOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {

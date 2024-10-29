@@ -104,6 +104,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   };
 
   const renderOrders = (orders: SpotMarketOrder[], type: "sell" | "buy") => {
+    console.log("orders!!", orders);
     const orderMode = type === "sell" ? ORDER_MODE.BUY : ORDER_MODE.SELL;
     const volumePercent = (ord: SpotMarketOrder) =>
       type === "sell"
@@ -177,7 +178,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
                 <SmartFlexOrder flexDirection="column-reverse">
                   {renderOrders(spotOrderBookStore.sellOrders, "sell")}
                 </SmartFlexOrder>
-                <SmartFlex>{renderSpread()}</SmartFlex>
+                {renderSpread()}
                 <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
               </OrderBookColumn>
             )}
@@ -391,6 +392,7 @@ const SpreadContainer = styled(SmartFlex)`
   background: ${({ theme }) => theme.colors.bgPrimary};
   align-items: center;
   gap: 12px;
+  width: 100%;
 `;
 
 const ProgressBar = styled.span<{ type: "buy" | "sell"; fulfillPercent?: number }>`

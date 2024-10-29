@@ -17,7 +17,7 @@ import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 
-import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, ROUTES, TWITTER_LINK } from "@constants";
+import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, TWITTER_LINK } from "@constants";
 import { CONFIG } from "@utils/getConfig.ts";
 import { isExternalLink } from "@utils/isExternalLink";
 
@@ -61,7 +61,10 @@ const MENU_ITEMS: Array<MenuItem> = [
     // ],
   },
   ...(CONFIG.APP.isMainnet
-    ? [{ title: "BRIDGE", link: BRIDGE_LINK, dataOnboardingKey: "mint" }]
+    ? [
+        { title: "BRIDGE", link: BRIDGE_LINK },
+        { title: "Points", link: POINTS_LINK },
+      ]
     : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" }]),
   {
     title: "MORE",

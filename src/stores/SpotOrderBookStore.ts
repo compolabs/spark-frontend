@@ -1,3 +1,4 @@
+import { HistogramData } from "lightweight-charts";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -10,6 +11,7 @@ import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterfa
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
+import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 
 import { FuelNetwork } from "@blockchain";
@@ -34,6 +36,9 @@ class SpotOrderBookStore {
 
   private buySubscription: Nullable<Subscription> = null;
   private sellSubscription: Nullable<Subscription> = null;
+
+  ohlcvData: Map<number, OhlcvData> = new Map();
+  historgramData: HistogramData[] = [];
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -60,15 +65,19 @@ class SpotOrderBookStore {
     );
   }
 
-  private _sortOrders(orders: SpotMarketOrder[]): SpotMarketOrder[] {
-    return orders.sort((a, b) => (a.price.lt(b.price) ? 1 : -1));
+  private _sortOrders(orders: SpotMarketOrder[], reverse: boolean): SpotMarketOrder[] {
+    return orders.sort((a, b) => {
+      if (reverse) {
+        return a.price.lt(b.price) ? -1 : 1;
+      } else {
+        return a.price.lt(b.price) ? 1 : -1;
+      }
+    });
   }
 
   private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
-    const sortedOrders = this._sortOrders(orders.slice());
-    const groupedOrders = groupOrders(sortedOrders, this.decimalGroup);
-
-    return reverse ? groupedOrders.reverse() : groupedOrders;
+    const groupedOrders = groupOrders(orders, this.decimalGroup);
+    return this._sortOrders(groupedOrders.slice(), reverse);
   }
 
   get buyOrders(): SpotMarketOrder[] {
@@ -229,6 +238,10 @@ class SpotOrderBookStore {
           );
 
           this.trades = trades;
+
+          const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
+          this.ohlcvData = ohlcvData.ohlcvMap;
+          this.historgramData = ohlcvData.historgramData;
 
           if (!this.isInitialLoadComplete) {
             this.isInitialLoadComplete = true;
