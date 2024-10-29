@@ -63,16 +63,16 @@ class SpotOrderBookStore {
   private _sortOrders(orders: SpotMarketOrder[], reverse: boolean): SpotMarketOrder[] {
     return orders.sort((a, b) => {
       if (reverse) {
-        return a.price.lt(b.price) ? 1 : -1;
-      } else {
         return a.price.lt(b.price) ? -1 : 1;
+      } else {
+        return a.price.lt(b.price) ? 1 : -1;
       }
     });
   }
 
   private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
-    const sortedOrders = this._sortOrders(orders.slice(), reverse);
-    return groupOrders(sortedOrders, this.decimalGroup);
+    const groupedOrders = groupOrders(orders, this.decimalGroup);
+    return this._sortOrders(groupedOrders.slice(), reverse);
   }
 
   get buyOrders(): SpotMarketOrder[] {
