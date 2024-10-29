@@ -6,7 +6,7 @@ export default function getConfig(branch: string) {
     name: "download-config",
     async buildStart() {
       // const isMain = branch === "main" || branch === "mainnet";
-      const isMain = false;
+      const isMain = true;
       const config = isMain ? "config" : "config-dev";
 
       console.log(`\nCurrent env: ${isMain ? "😱😱 MAINNET 😱😱" : "🟠🟠 DEVELOPMENT 🟠🟠"}\n`);
