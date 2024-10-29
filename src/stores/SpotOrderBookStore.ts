@@ -1,3 +1,4 @@
+import { HistogramData } from "lightweight-charts";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -10,6 +11,7 @@ import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterfa
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
+import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 
 import { FuelNetwork } from "@blockchain";
@@ -34,6 +36,9 @@ class SpotOrderBookStore {
 
   private buySubscription: Nullable<Subscription> = null;
   private sellSubscription: Nullable<Subscription> = null;
+
+  ohlcvData: Map<number, OhlcvData> = new Map();
+  historgramData: HistogramData[] = [];
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -233,6 +238,10 @@ class SpotOrderBookStore {
           );
 
           this.trades = trades;
+
+          const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
+          this.ohlcvData = ohlcvData.ohlcvMap;
+          this.historgramData = ohlcvData.historgramData;
 
           if (!this.isInitialLoadComplete) {
             this.isInitialLoadComplete = true;

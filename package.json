@@ -36,6 +36,7 @@
     "framer-motion": "^11.0.3",
     "fuels": "^0.94.8",
     "gh-pages": "^6.1.1",
+    "lightweight-charts": "^4.2.1",
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.53.0",
     "mobx": "^6.12.0",
