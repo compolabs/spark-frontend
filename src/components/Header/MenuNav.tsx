@@ -22,6 +22,7 @@ import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
+import {CONFIG} from "@utils/getConfig.ts";
 
 type MenuChildItem = {
   title: string;
@@ -59,7 +60,10 @@ const MENU_ITEMS: Array<MenuItem> = [
     // },
     // ],
   },
-  { title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" },
+  ...(CONFIG.APP.isMainnet
+          ? [{ title: "BRIDGE", link: ROUTES.BRIDGE, dataOnboardingKey: "mint" }]
+          : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" }]
+  ),
   {
     title: "MORE",
     children: [

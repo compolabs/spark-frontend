@@ -4,6 +4,7 @@ export const ROUTES = {
   ROOT: "/",
   SPOT: "/spot",
   FAUCET: "/faucet",
+  BRIDGE: "https://app.fuel.network/bridge",
   SWAP: "/swap",
 };
 
