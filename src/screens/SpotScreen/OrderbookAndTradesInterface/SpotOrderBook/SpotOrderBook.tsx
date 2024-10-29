@@ -104,7 +104,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   };
 
   const renderOrders = (orders: SpotMarketOrder[], type: "sell" | "buy") => {
-    console.log("orders!!", orders);
     const orderMode = type === "sell" ? ORDER_MODE.BUY : ORDER_MODE.SELL;
     const volumePercent = (ord: SpotMarketOrder) =>
       type === "sell"

@@ -11,7 +11,6 @@ const roundPrice = (price: BN, decimals: number): BN => {
 
 export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMarketOrder[] => {
   const groupedOrders: { [key: string]: SpotMarketOrder } = {};
-  console.log("1", orders);
   orders.forEach((order) => {
     const roundedPrice = roundPrice(order.price, DEFAULT_DECIMALS - decimals);
     const price = roundedPrice.toString();
@@ -36,6 +35,5 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
     groupedOrders[price].addCurrentAmount(order.currentAmount);
   });
 
-  console.log("2", groupedOrders);
   return Object.values(groupedOrders);
 };

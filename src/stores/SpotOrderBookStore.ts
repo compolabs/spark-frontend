@@ -37,7 +37,7 @@ class SpotOrderBookStore {
   private buySubscription: Nullable<Subscription> = null;
   private sellSubscription: Nullable<Subscription> = null;
 
-  ohlcvData: Map<number, OhlcvData> = new Map();
+  ohlcvData: OhlcvData[] = [];
   historgramData: HistogramData[] = [];
 
   constructor(rootStore: RootStore) {
@@ -240,7 +240,7 @@ class SpotOrderBookStore {
           this.trades = trades;
 
           const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
-          this.ohlcvData = ohlcvData.ohlcvMap;
+          this.ohlcvData = ohlcvData.ohlcvData;
           this.historgramData = ohlcvData.historgramData;
 
           if (!this.isInitialLoadComplete) {

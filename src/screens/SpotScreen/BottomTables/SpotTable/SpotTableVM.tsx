@@ -197,7 +197,6 @@ class SpotTableVM {
             sortDesc,
           );
 
-          console.log(sortedOrdersHistory);
           this.setMyOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {

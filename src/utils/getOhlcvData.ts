@@ -81,6 +81,7 @@ export const getOhlcvData = (events: TradeOrderEvent[] | TradeOrderEvent, curren
   if (intervals.length === 0) {
     return {
       ohlcvMap: new Map(),
+      ohlcvData: [] as OhlcvData[],
       historgramData: [] as HistogramData[],
     };
   }
@@ -123,6 +124,7 @@ export const getOhlcvData = (events: TradeOrderEvent[] | TradeOrderEvent, curren
 
   return {
     ohlcvMap,
+    ohlcvData,
     historgramData,
   };
 };
