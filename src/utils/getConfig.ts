@@ -6,7 +6,7 @@ import { Token } from "@entity";
 
 import configJSON from "@src/config.json";
 
-const CURRENT_CONFIG_VER = "1.6.0";
+const CURRENT_CONFIG_VER = "1.6.1";
 
 function createConfig() {
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
@@ -26,7 +26,20 @@ function createConfig() {
     });
   });
 
-  const tokensBySymbol = tokens.reduce((acc, t) => ({ ...acc, [t.symbol]: t }), {} as Record<string, Token>);
+  // TODO: Refactor this workaround that adds duplicate tokens without the 't' prefix.
+  const tokensBySymbol = tokens.reduce(
+    (acc, t) => {
+      acc[t.symbol] = t;
+
+      if (t.symbol.startsWith("t")) {
+        const aliasSymbol = t.symbol.slice(1);
+        acc[aliasSymbol] = { ...t, symbol: aliasSymbol };
+      }
+
+      return acc;
+    },
+    {} as Record<string, Token>,
+  );
   const tokensByAssetId = tokens.reduce(
     (acc, t) => ({ ...acc, [t.assetId.toLowerCase()]: t }),
     {} as Record<string, Token>,

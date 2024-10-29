@@ -65,7 +65,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
       const contractBalance =
         token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
       const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
-      const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed ?? ""), DEFAULT_DECIMALS);
+      const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed), DEFAULT_DECIMALS);
       return {
         price: price.toString(),
         asset: token,

@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 import Button from "@components/Button";
 import { Column } from "@components/Flex";
 import AssetBlock from "@components/SelectAssets/AssetBlock";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -19,7 +20,6 @@ import useFlag from "@hooks/useFlag";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 
-import { assetsMock } from "@screens/Assets/MainAssets/const";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 
 import { DEFAULT_DECIMALS, ROUTES } from "@constants";
@@ -65,13 +65,19 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     quickAssetsStore.setQuickAssets(false);
   };
 
-  const assetsMockData = assetsMock.map((el) => {
-    const token = bcNetwork!.getTokenByAssetId(el.assetId);
-    return {
-      asset: token,
-      ...el,
-    };
-  });
+  const assetsMockData: AssetBlockData[] = bcNetwork
+    .getTokenList()
+    .slice(0, 3)
+    .map((token) => {
+      return {
+        asset: token,
+        assetId: token.assetId,
+        walletBalance: BN.ZERO.toString(),
+        contractBalance: BN.ZERO.toString(),
+        balance: BN.ZERO.toString(),
+        price: BN.ZERO.toString(),
+      };
+    });
 
   return (
     <AssetsContainer justifyContent="space-between" column>
