@@ -17,12 +17,12 @@ import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 
-import { DOCS_LINK, GITHUB_LINK, ROUTES, TWITTER_LINK } from "@constants";
+import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, ROUTES, TWITTER_LINK } from "@constants";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
-import {CONFIG} from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig.ts";
 
 type MenuChildItem = {
   title: string;
@@ -61,9 +61,8 @@ const MENU_ITEMS: Array<MenuItem> = [
     // ],
   },
   ...(CONFIG.APP.isMainnet
-          ? [{ title: "BRIDGE", link: ROUTES.BRIDGE, dataOnboardingKey: "mint" }]
-          : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" }]
-  ),
+    ? [{ title: "BRIDGE", link: BRIDGE_LINK, dataOnboardingKey: "mint" }]
+    : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" }]),
   {
     title: "MORE",
     children: [

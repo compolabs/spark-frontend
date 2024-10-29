@@ -4,9 +4,10 @@ export const ROUTES = {
   ROOT: "/",
   SPOT: "/spot",
   FAUCET: "/faucet",
-  BRIDGE: "https://app.fuel.network/bridge",
   SWAP: "/swap",
 };
+
+export const BRIDGE_LINK = "https://app.fuel.network/bridge";
 
 export const isProduction = window.location.host === "app.sprk.fi";
 
