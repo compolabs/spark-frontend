@@ -4,7 +4,7 @@
   "contractVer": 1539,
   "tokens": [
     {
-      "name": "TRMP",
+      "name": "Trump",
       "symbol": "TRMP",
       "decimals": 9,
       "assetId": "0x0b2d808a898cdae8b8661d398a98f8ff45e1e0f536ba2e498f6c7e53a71932cd",
@@ -12,7 +12,7 @@
       "precision": 9
     },
     {
-      "name": "KMLA",
+      "name": "Kamala",
       "symbol": "KMLA",
       "decimals": 9,
       "assetId": "0x368f9275e7d072794527b57d5b54688300008a400f41d926a013195e7074029c",

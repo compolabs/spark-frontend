@@ -9,6 +9,8 @@ export default function getConfig(branch: string) {
 
       console.log(`\nCurrent env: ${isMain ? "😱😱 MAINNET 😱😱" : "🟠🟠 DEVELOPMENT 🟠🟠"}\n`);
 
+      console.log(config, branch);
+
       const url = `https://raw.githubusercontent.com/compolabs/spark-frontend-config/refs/heads/main/${config}.json`;
       const res = await fetch(url);
       const json = await res.json();

@@ -18,11 +18,11 @@ import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 
 import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, ROUTES, TWITTER_LINK } from "@constants";
+import { CONFIG } from "@utils/getConfig.ts";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
-import { CONFIG } from "@utils/getConfig.ts";
 
 type MenuChildItem = {
   title: string;
