@@ -177,7 +177,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
                 <SmartFlexOrder flexDirection="column-reverse">
                   {renderOrders(spotOrderBookStore.sellOrders, "sell")}
                 </SmartFlexOrder>
-                <SmartFlex>{renderSpread()}</SmartFlex>
+                {renderSpread()}
                 <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
               </OrderBookColumn>
             )}
@@ -391,6 +391,7 @@ const SpreadContainer = styled(SmartFlex)`
   background: ${({ theme }) => theme.colors.bgPrimary};
   align-items: center;
   gap: 12px;
+  width: 100%;
 `;
 
 const ProgressBar = styled.span<{ type: "buy" | "sell"; fulfillPercent?: number }>`
