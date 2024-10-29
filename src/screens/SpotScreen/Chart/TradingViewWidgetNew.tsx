@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { createChart, IChartApi, UTCTimestamp } from "lightweight-charts";
 import dataMock from "./mock.json";
-import { chartConfig, histogramConfig, candlestickSeriesConfig } from "@screens/SpotScreen/Chart/configChart.ts";
+import { chartConfig, histogramConfig, candlestickSeriesConfig } from "@screens/SpotScreen/Chart/configChart";
 import styled from "@emotion/styled";
 
 interface TradeOrderEvent {
