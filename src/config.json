@@ -55,42 +55,12 @@
       "priceDecimals": 9,
       "version": 1539,
       "contractId": "0x12a5f8666279f841e5900500297ce3c8bcf40103dd191c56dd3ec86f92b9217b"
-    },
-    {
-      "marketName": "tETHtUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0xf169e13e98ae8908199148380684894458b7916f074b85ebad2aaad489ce0d54",
-      "baseAssetDecimals": 9,
-      "quoteAssetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1539,
-      "contractId": "0xbbe3a8eeea77082864c5553e06df3bce440688f89ce538efa67d38b1a470f334"
-    },
-    {
-      "marketName": "tBTCtUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
-      "baseAssetDecimals": 8,
-      "quoteAssetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1539,
-      "contractId": "0x9f7c554b235320a1001621010069b0323661068dd6d02f0f766838e3001c3b31"
     }
   ],
   "indexers": {
     "0x12a5f8666279f841e5900500297ce3c8bcf40103dd191c56dd3ec86f92b9217b": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql"
-    },
-    "0xbbe3a8eeea77082864c5553e06df3bce440688f89ce538efa67d38b1a470f334": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql"
-    },
-    "0x9f7c554b235320a1001621010069b0323661068dd6d02f0f766838e3001c3b31": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql"
+      "httpUrl": "https://indexer.bigdevenergy.link/55b0363/v1/graphql",
+      "wsUrl": "https://indexer.bigdevenergy.link/55b0363/v1/graphql"
     }
   },
   "contracts": {
