@@ -111,7 +111,7 @@ class SpotOrderBookStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     const params: Omit<GetActiveOrdersParams, "orderType"> = {
-      limit: 100,
+      limit: 150,
       market: [market.contractAddress],
       asset: market.baseToken.assetId,
     };
