@@ -10,6 +10,7 @@ import outlineStarIcon from "@assets/icons/star.svg";
 import filledStarIcon from "@assets/icons/yellowStar.svg";
 
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { ROUTES } from "@constants";
 
@@ -22,7 +23,7 @@ interface IProps {
 }
 
 const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
-  const { tradeStore } = useStores();
+  const { tradeStore, mixPanelStore, accountStore } = useStores();
   const navigate = useNavigate();
 
   const isFavorite = tradeStore.favMarkets.includes(market.symbol);
@@ -42,6 +43,11 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
     <Root
       isActive={isActive}
       onClick={() => {
+        mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_CURRENCY_PAIR, {
+          user_address: accountStore.address,
+          token1: market.baseToken.symbol,
+          token2: market.quoteToken.symbol,
+        });
         tradeStore.setMarketSelectionOpened(false);
         navigate(`${ROUTES.SPOT}/${market.symbol}`);
       }}

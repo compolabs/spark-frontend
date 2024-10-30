@@ -16,6 +16,7 @@ import Spinner from "@assets/icons/spinner.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 import BN from "@utils/BN";
@@ -37,7 +38,15 @@ export const SwapScreen: React.FC = observer(() => {
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
-  const { swapStore, balanceStore, tradeStore, spotOrderBookStore } = useStores();
+  const { swapStore, balanceStore, tradeStore, spotOrderBookStore, mixPanelStore, accountStore } = useStores();
+
+  useEffect(() => {
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.PAGE_VIEW, {
+      page_name: "swap",
+      user_address: accountStore.address,
+    });
+  }, []);
+
   const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [isLoading, setIsloading] = useState(false);

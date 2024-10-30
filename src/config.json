@@ -1,8 +1,24 @@
 {
-  "version": "1.6.0",
-  "isMainnet": false,
+  "version": "1.6.1",
+  "isMainnet": true,
   "contractVer": 1539,
   "tokens": [
+    {
+      "name": "Trump",
+      "symbol": "TRMP",
+      "decimals": 9,
+      "assetId": "0x0b2d808a898cdae8b8661d398a98f8ff45e1e0f536ba2e498f6c7e53a71932cd",
+      "priceFeed": "",
+      "precision": 9
+    },
+    {
+      "name": "Kamala",
+      "symbol": "KMLA",
+      "decimals": 9,
+      "assetId": "0x368f9275e7d072794527b57d5b54688300008a400f41d926a013195e7074029c",
+      "priceFeed": "",
+      "precision": 9
+    },
     {
       "name": "Ethereum",
       "symbol": "ETH",
@@ -10,62 +26,31 @@
       "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
       "precision": 9
-    },
-    {
-      "name": "Bitcoin",
-      "symbol": "BTC",
-      "decimals": 8,
-      "assetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-      "priceFeed": "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
-      "precision": 8
-    },
-    {
-      "name": "USDC",
-      "symbol": "USDC",
-      "decimals": 6,
-      "assetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
-      "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
-      "precision": 2
     }
   ],
   "markets": [
     {
-      "marketName": "ETHUSDC",
-      "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
-      "baseAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+      "marketName": "TRMPKMLA",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0x0b2d808a898cdae8b8661d398a98f8ff45e1e0f536ba2e498f6c7e53a71932cd",
       "baseAssetDecimals": 9,
-      "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
-      "quoteAssetDecimals": 6,
+      "quoteAssetId": "0x368f9275e7d072794527b57d5b54688300008a400f41d926a013195e7074029c",
+      "quoteAssetDecimals": 9,
       "priceDecimals": 9,
       "version": 1539,
-      "contractId": "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998"
-    },
-    {
-      "marketName": "BTCUSDC",
-      "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
-      "baseAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-      "baseAssetDecimals": 8,
-      "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1539,
-      "contractId": "0xc5ed0d9b17beedd1c6c10a84bb496f12a5082aa3ce2ad55630bbcac22c64fcf4"
+      "contractId": "0x12a5f8666279f841e5900500297ce3c8bcf40103dd191c56dd3ec86f92b9217b"
     }
   ],
   "indexers": {
-    "0xc5ed0d9b17beedd1c6c10a84bb496f12a5082aa3ce2ad55630bbcac22c64fcf4": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
-    },
-    "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998": {
-      "httpUrl": "https://indexer.bigdevenergy.link/67b693c/v1/graphql",
-      "wsUrl": "wss://indexer.bigdevenergy.link/67b693c/v1/graphql"
+    "0x12a5f8666279f841e5900500297ce3c8bcf40103dd191c56dd3ec86f92b9217b": {
+      "httpUrl": "https://indexer.bigdevenergy.link/55b0363/v1/graphql",
+      "wsUrl": "https://indexer.bigdevenergy.link/55b0363/v1/graphql"
     }
   },
   "contracts": {
-    "registry": "0x0c26b7134516773469cd02030a783e43776d1fd26e0698b51af3cef4938e2925",
-    "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
+    "registry": "0xbb91b7f9d31ee562b24e35d756ce20913f9752600582f51008c63b2d3792926b",
+    "multiAsset": ""
   },
-  "networkUrl": "https://testnet.fuel.network/v1/graphql",
-  "explorerUrl": "https://app-testnet.fuel.network"
+  "networkUrl": "https://mainnet.fuel.network/v1/graphql",
+  "explorerUrl": "https://app.fuel.network"
 }

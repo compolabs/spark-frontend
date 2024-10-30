@@ -28,6 +28,7 @@ type MenuChildItem = {
   icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   link: string;
   desc?: string;
+  trackEvent?: string;
 };
 
 type MenuItem = {
@@ -36,14 +37,16 @@ type MenuItem = {
   link?: string;
   dataOnboardingKey?: string;
   children?: MenuChildItem[];
+  trackEvent?: string;
 };
 
 const MENU_ITEMS: Array<MenuItem> = [
-  { title: "DASHBOARD" },
+  { title: "DASHBOARD", trackEvent: "click_dashboard" },
   {
     title: "TRADE",
     isGradient: true,
     link: ROUTES.SPOT,
+    trackEvent: "click_spot",
     // children: [],
     // {
     //   title: "SPOT",
@@ -59,24 +62,28 @@ const MENU_ITEMS: Array<MenuItem> = [
     // },
     // ],
   },
-  { title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" },
+  { title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: "click_faucet" },
   {
     title: "MORE",
+    trackEvent: "click_more",
     children: [
       {
         title: "DOCS",
         link: DOCS_LINK,
         icon: DocsIcon,
+        trackEvent: "click_docs",
       },
       {
         title: "GITHUB",
         link: GITHUB_LINK,
         icon: GithubIcon,
+        trackEvent: "click_github",
       },
       {
         title: "X / TWITTER",
         link: TWITTER_LINK,
         icon: XIcon,
+        trackEvent: "click_twitter",
       },
     ],
   },
@@ -103,7 +110,7 @@ interface Props {
 }
 
 export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => {
-  const { mixPanelStore } = useStores();
+  const { mixPanelStore, accountStore } = useStores();
   const media = useMedia();
   const location = useLocation();
   const [openDropdown, setOpenDropdown] = useState<Nullable<string>>(null);
@@ -123,11 +130,25 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
   useOnClickOutside(dropdownRef, handleClickOutside);
 
-  const renderChildMenuItem = ({ title, link, icon: Icon, desc }: MenuChildItem, isGradient?: boolean) => {
+  const trackMenuEvent = (eventName: string) => {
+    mixPanelStore.trackEvent(eventName, {
+      page_name: location.pathname,
+      address: accountStore.address,
+    });
+  };
+
+  const renderChildMenuItem = ({ title, link, icon: Icon, desc, trackEvent }: MenuChildItem, isGradient?: boolean) => {
     const isActive = location.pathname.includes(link);
 
+    const handleChildClick = () => {
+      handleMenuItemClick();
+      if (trackEvent) {
+        trackMenuEvent(trackEvent);
+      }
+    };
+
     return (
-      <NavLink key={title} to={link} onClick={handleMenuItemClick}>
+      <NavLink key={title} to={link} onClick={handleChildClick}>
         <DropdownMenu isActive={isActive} isGradient={isGradient}>
           <IconContainer>
             <Icon height={24} width={24} />
@@ -141,12 +162,22 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     );
   };
 
-  const renderMenuItem = ({ title, isGradient, link, dataOnboardingKey, children }: MenuItem) => {
+  const renderMenuItem = ({ title, isGradient, link, dataOnboardingKey, children, trackEvent }: MenuItem) => {
     const dataOnboardingDeviceKey = `${dataOnboardingKey}-${isMobile ? "mobile" : "desktop"}`;
     const isActive = Boolean(link && location.pathname.includes(link));
 
     const handleDropdownToggle = () => {
+      if (trackEvent) {
+        trackMenuEvent(trackEvent);
+      }
       setOpenDropdown(openDropdown === title ? null : title);
+    };
+
+    const handleItemClick = () => {
+      handleMenuItemClick();
+      if (trackEvent) {
+        trackMenuEvent(trackEvent);
+      }
     };
 
     const titleComponent = isGradient ? <BaseGradientText>{title}</BaseGradientText> : title;
@@ -171,17 +202,18 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
           </Element>
           <AnimatePresence mode="wait">
             {isDropdownOpen && (
-              <Dropdown
+              <motion.div
                 key="dropdown"
-                ref={dropdownRef}
                 animate="open"
                 exit="closed"
                 initial="closed"
                 variants={DROPDOWN_VARIANTS}
                 onClick={handleDropdownToggle}
               >
-                {children.map((item) => renderChildMenuItem(item, isGradient))}
-              </Dropdown>
+                <DropdownWrapper ref={dropdownRef}>
+                  {children.map((item) => renderChildMenuItem(item, isGradient))}
+                </DropdownWrapper>
+              </motion.div>
             )}
           </AnimatePresence>
         </DropdownContainer>
@@ -198,7 +230,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
           href={link}
           rel="noopener noreferrer"
           target="_blank"
-          onClick={() => mixPanelStore.trackEvent("desktopHeaderClick", { route: title })}
+          onClick={handleItemClick}
         >
           <Element>{titleComponent}</Element>
         </a>
@@ -206,7 +238,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     }
 
     return (
-      <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleMenuItemClick}>
+      <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleItemClick}>
         <Element isActive={isActive}>{titleComponent}</Element>
       </NavLink>
     );
@@ -268,7 +300,7 @@ const DropdownContainer = styled.div`
   position: relative;
 `;
 
-const Dropdown = styled(motion(SmartFlex))`
+const DropdownWrapper = styled(SmartFlex)`
   position: absolute;
   top: 120%;
   left: 0;

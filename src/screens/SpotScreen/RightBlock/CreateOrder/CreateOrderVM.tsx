@@ -14,6 +14,7 @@ import {
 
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
@@ -203,7 +204,10 @@ class CreateOrderVM {
       return;
     }
 
-    mixPanelStore.trackEvent("onMaxBtnClick", { type: this.isSell ? "SELL" : "BUY", value: balance.toString() });
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_MAX_SPOT, {
+      type: this.isSell ? "SELL" : "BUY",
+      value: balance.toString(),
+    });
 
     this.setInputTotal(balance);
   };
@@ -338,6 +342,13 @@ class CreateOrderVM {
       const token = isBuy ? market.baseToken : market.quoteToken;
       const amount = isBuy ? this.inputAmount : this.inputTotal;
       this.setInputTotal(BN.ZERO);
+      mixPanelStore.trackEvent(MIXPANEL_EVENTS.CONFIRM_ORDER, {
+        order_type: isBuy ? "buy" : "sell",
+        token_1: market.baseToken.symbol,
+        token_2: market.quoteToken.symbol,
+        transaction_sum: BN.formatUnits(amount, token.decimals).toSignificant(2),
+        address: bcNetwork.getAddress(),
+      });
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           BN.formatUnits(amount, token.decimals).toSignificant(2),
