@@ -18,7 +18,7 @@ import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED, ROUTES } from "@constants";
 import BN from "@utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
 
@@ -42,7 +42,7 @@ export const SwapScreen: React.FC = observer(() => {
 
   useEffect(() => {
     mixPanelStore.trackEvent(MIXPANEL_EVENTS.PAGE_VIEW, {
-      page_name: "swap",
+      page_name: ROUTES.SWAP,
       user_address: accountStore.address,
     });
   }, []);

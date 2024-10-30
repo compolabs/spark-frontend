@@ -348,7 +348,7 @@ class CreateOrderVM {
       const amount = isBuy ? this.inputAmount : this.inputTotal;
       this.setInputTotal(BN.ZERO);
       mixPanelStore.trackEvent(MIXPANEL_EVENTS.CONFIRM_ORDER, {
-        order_type: isBuy ? "buy" : "sell",
+        order_type: isBuy ? "BUY" : "SELL",
         token_1: market.baseToken.symbol,
         token_2: market.quoteToken.symbol,
         transaction_sum: BN.formatUnits(amount, token.decimals).toSignificant(2),

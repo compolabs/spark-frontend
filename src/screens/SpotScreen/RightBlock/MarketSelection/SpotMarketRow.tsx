@@ -39,19 +39,18 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
 
   const isActive = tradeStore.market?.symbol === market.symbol;
 
+  const handleMarketClick = () => {
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_CURRENCY_PAIR, {
+      user_address: accountStore.address,
+      token1: market.baseToken.symbol,
+      token2: market.quoteToken.symbol,
+    });
+    tradeStore.setMarketSelectionOpened(false);
+    navigate(`${ROUTES.SPOT}/${market.symbol}`);
+  };
+
   return (
-    <Root
-      isActive={isActive}
-      onClick={() => {
-        mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_CURRENCY_PAIR, {
-          user_address: accountStore.address,
-          token1: market.baseToken.symbol,
-          token2: market.quoteToken.symbol,
-        });
-        tradeStore.setMarketSelectionOpened(false);
-        navigate(`${ROUTES.SPOT}/${market.symbol}`);
-      }}
-    >
+    <Root isActive={isActive} onClick={handleMarketClick}>
       <SmartFlex gap="4px" width="100%" column>
         <Icon alt="Add to Favorite" src={isFavorite ? filledStarIcon : outlineStarIcon} onClick={handleFavoriteClick} />
         <MarketTitle market={market} />

@@ -13,6 +13,8 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import TokensFaucetTable from "@screens/Faucet/TokensFaucetTable";
 
+import { ROUTES } from "@constants";
+
 interface IProps {}
 
 const Faucet: React.FC<IProps> = observer(() => {
@@ -24,7 +26,7 @@ const Faucet: React.FC<IProps> = observer(() => {
 
   useEffect(() => {
     mixPanelStore.trackEvent(MIXPANEL_EVENTS.PAGE_VIEW, {
-      page_name: "faucet",
+      page_name: ROUTES.FAUCET,
       user_address: accountStore.address,
     });
   }, []);

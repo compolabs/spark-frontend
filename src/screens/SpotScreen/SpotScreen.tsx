@@ -8,6 +8,8 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { CreateOrderVMProvider } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 
+import { ROUTES } from "@constants";
+
 import SpotScreenDesktop from "./SpotScreenDesktop";
 import SpotScreenMobile from "./SpotScreenMobile";
 
@@ -32,7 +34,7 @@ const SpotScreen: React.FC = observer(() => {
 
   useEffect(() => {
     mixPanelStore.trackEvent(MIXPANEL_EVENTS.PAGE_VIEW, {
-      page_name: "spot",
+      page_name: ROUTES.SPOT,
       user_address: accountStore.address,
     });
   }, []);

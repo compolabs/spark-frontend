@@ -208,18 +208,17 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
           </Element>
           <AnimatePresence mode="wait">
             {isDropdownOpen && (
-              <motion.div
+              <Dropdown
                 key="dropdown"
+                ref={dropdownRef}
                 animate="open"
                 exit="closed"
                 initial="closed"
                 variants={DROPDOWN_VARIANTS}
                 onClick={handleDropdownToggle}
               >
-                <DropdownWrapper ref={dropdownRef}>
-                  {children.map((item) => renderChildMenuItem(item, isGradient))}
-                </DropdownWrapper>
-              </motion.div>
+                {children.map((item) => renderChildMenuItem(item, isGradient))}
+              </Dropdown>
             )}
           </AnimatePresence>
         </DropdownContainer>
@@ -306,7 +305,7 @@ const DropdownContainer = styled.div`
   position: relative;
 `;
 
-const DropdownWrapper = styled(SmartFlex)`
+const Dropdown = styled(motion(SmartFlex))`
   position: absolute;
   top: 120%;
   left: 0;

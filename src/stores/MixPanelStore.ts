@@ -4,6 +4,11 @@ import { Nullable } from "tsdef";
 
 import RootStore from "@stores/RootStore";
 
+import { CONFIG } from "@utils/getConfig";
+
+const MAINNET_KEY = "1753ab2fe514a08e22df236ff4095905";
+const TESTNET_KEY = "126ffbcd33aa8abbf4f91bea25e70cc4";
+
 class MixPanelStore {
   private readonly rootStore: RootStore;
 
@@ -13,11 +18,12 @@ class MixPanelStore {
     makeAutoObservable(this);
     this.rootStore = rootStore;
 
-    // TODO: change to env variable
     if (import.meta.env.PROD) {
-      this.initializeMixpanel("1753ab2fe514a08e22df236ff4095905");
-    } else if (import.meta.env.DEV) {
-      this.initializeMixpanel("126ffbcd33aa8abbf4f91bea25e70cc4");
+      if (CONFIG.APP.isMainnet) {
+        this.initializeMixpanel(MAINNET_KEY);
+      } else {
+        this.initializeMixpanel(TESTNET_KEY);
+      }
     }
   }
 
