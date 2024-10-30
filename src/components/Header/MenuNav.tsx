@@ -17,7 +17,8 @@ import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 
-import { DOCS_LINK, GITHUB_LINK, ROUTES, TWITTER_LINK } from "@constants";
+import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, TWITTER_LINK } from "@constants";
+import { CONFIG } from "@utils/getConfig.ts";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
@@ -62,7 +63,12 @@ const MENU_ITEMS: Array<MenuItem> = [
     // },
     // ],
   },
-  { title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: "click_faucet" },
+  ...(CONFIG.APP.isMainnet
+    ? [
+        { title: "BRIDGE", link: BRIDGE_LINK, trackEvent: "click_bridge" },
+        { title: "Points", link: POINTS_LINK, trackEvent: "click_points" },
+      ]
+    : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: "click_faucet" }]),
   {
     title: "MORE",
     trackEvent: "click_more",
@@ -80,7 +86,7 @@ const MENU_ITEMS: Array<MenuItem> = [
         trackEvent: "click_github",
       },
       {
-        title: "X / TWITTER",
+        title: "X",
         link: TWITTER_LINK,
         icon: XIcon,
         trackEvent: "click_twitter",

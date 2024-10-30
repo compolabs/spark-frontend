@@ -12,6 +12,7 @@ import getConfig from "./script/getConfig";
 const OUT_DIR = "build";
 
 const COMMIT_HASH = execSync("git rev-parse --short HEAD").toString().trim();
+const GIT_BRANCH = execSync("git rev-parse --abbrev-ref HEAD").toString().trim();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,7 +23,7 @@ export default defineConfig({
     "process.env.__COMMIT_HASH__": JSON.stringify(COMMIT_HASH),
   },
   plugins: [
-    getConfig(),
+    getConfig(GIT_BRANCH),
     nodePolyfills({
       globals: {
         Buffer: true,

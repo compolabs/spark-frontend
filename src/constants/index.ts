@@ -1,7 +1,4 @@
 import { defaultConnectors } from "@fuels/connectors";
-import { coinbaseWallet, walletConnect } from "@wagmi/connectors";
-import { createConfig, http, injected } from "@wagmi/core";
-import { sepolia } from "@wagmi/core/chains";
 
 export const ROUTES = {
   ROOT: "/",
@@ -10,6 +7,8 @@ export const ROUTES = {
   SWAP: "/swap",
 };
 
+export const BRIDGE_LINK = "https://app.fuel.network/bridge";
+export const POINTS_LINK = "https://app.fuel.network/earn-points";
 export const isProduction = window.location.host === "app.sprk.fi";
 
 export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/sepolia";
@@ -35,38 +34,16 @@ export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
 const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 
-const METADATA = {
-  name: "Spark",
-  description: "Spark is the fastest onchain order book based on Fuel Network",
-  url: location.href,
-  icons: ["https://app.sprk.fi/pwa-192x192.png"],
-};
-
-const wagmiConfig = createConfig({
-  chains: [sepolia],
-  transports: {
-    [sepolia.id]: http(),
-  },
-  connectors: [
-    injected({ shimDisconnect: false }),
-    walletConnect({
-      projectId: WC_PROJECT_ID,
-      metadata: METADATA,
-      showQrModal: false,
-    }),
-    coinbaseWallet({
-      appName: METADATA.name,
-      appLogoUrl: METADATA.icons[0],
-      darkMode: true,
-      reloadOnDisconnect: true,
-    }),
-  ],
-});
+// const METADATA = {
+//   name: "Spark",
+//   description: "Spark is the fastest onchain order book based on Fuel Network",
+//   url: location.href,
+//   icons: ["https://app.sprk.fi/pwa-192x192.png"],
+// };
 
 export const FUEL_CONFIG = {
   connectors: defaultConnectors({
     devMode: import.meta.env.DEV,
     wcProjectId: WC_PROJECT_ID,
-    ethWagmiConfig: wagmiConfig,
   }),
 };

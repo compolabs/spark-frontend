@@ -77,6 +77,7 @@ class CreateOrderVM {
   activeInput = ACTIVE_INPUT.Amount;
 
   inputPrice = BN.ZERO;
+  slippage = new BN(10);
   inputAmount = BN.ZERO;
   inputPercent = BN.ZERO;
   inputTotal = BN.ZERO;
@@ -217,6 +218,10 @@ class CreateOrderVM {
     this.inputPrice = price;
     if (settingsStore.orderType !== ORDER_TYPE.Market) this.setActiveInput(ACTIVE_INPUT.Price);
     this.calculateInputs();
+  };
+
+  setInputSlippage = (slippage: BN) => {
+    this.slippage = slippage;
   };
 
   setInputAmount = (amount: BN) => {
@@ -433,6 +438,9 @@ class CreateOrderVM {
     const baseDecimals = tradeStore.market.baseToken.decimals;
     const quoteDecimals = tradeStore.market.quoteToken.decimals;
     const newInputTotal = this.inputTotal.minus(deposit.amountFee);
+    const fullPrecent = "10000";
+    const slippage =
+      settingsStore.orderType === ORDER_TYPE.Market ? this.slippage.multipliedBy(100).toString() : fullPrecent;
     const newInputAmount = Math.divideWithDifferentDecimals(
       newInputTotal,
       quoteDecimals,
@@ -449,7 +457,7 @@ class CreateOrderVM {
       limitType: settingsStore.timeInForce,
       price,
       orders: orderList.map((el) => el.id),
-      slippage: "10000",
+      slippage: slippage,
     };
     const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
     return data.transactionId;

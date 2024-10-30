@@ -11,7 +11,7 @@ import { useStores } from "@stores";
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 
-import { Token } from "@entity";
+import { AssetBlockData } from "./SelectAssetsInput";
 
 export interface IAssetBlock {
   options: {
@@ -19,13 +19,7 @@ export interface IAssetBlock {
     showNullBalance?: boolean;
     isShowBalance?: boolean;
   };
-  token: {
-    asset: Token;
-    walletBalance: string;
-    contractBalance: string;
-    balance: string;
-    assetId: string;
-  };
+  token: AssetBlockData;
   styleToken?: CSSProperties;
   type?: "rounded" | "square";
 }
@@ -37,11 +31,12 @@ const AssetBlock: React.FC<IAssetBlock> = observer(
     token,
     type = "square",
   }) => {
-    if (!token?.asset?.priceFeed) return <></>;
     const { oracleStore } = useStores();
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.asset.priceFeed), DEFAULT_DECIMALS);
     const theme = useTheme();
-    if (!showNullBalance && new BN(token[showBalance]).isLessThanOrEqualTo(BN.ZERO)) return <></>;
+
+    if (!showNullBalance && new BN(token[showBalance]).isLessThanOrEqualTo(BN.ZERO)) return null;
+
     return (
       <TokenContainer center="y" gap="4px" style={styleToken}>
         <SmartFlex alignItems="center" gap="10px">

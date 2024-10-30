@@ -69,6 +69,10 @@ export class FuelNetwork {
     return CONFIG.TOKENS;
   };
 
+  getIsMainet = (): boolean => {
+    return CONFIG.APP.isMainnet;
+  };
+
   getTokenBySymbol = (symbol: string): Token => {
     return CONFIG.TOKENS_BY_SYMBOL[symbol];
   };
@@ -167,7 +171,7 @@ export class FuelNetwork {
     const formatOrder = (order: Order) =>
       new SpotMarketOrder({
         ...order,
-        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.USDC.assetId,
+        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId,
       });
 
     if ("ActiveSellOrder" in data) {
