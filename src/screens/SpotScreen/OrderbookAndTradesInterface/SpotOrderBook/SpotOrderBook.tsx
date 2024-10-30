@@ -74,7 +74,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
 
   const renderSpread = () => {
     let price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
-    price = numeral(price).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`);
+    price = price === "-" ? price : numeral(price).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`);
     const percent = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPercent : "-";
     if (media.mobile) {
       return (
