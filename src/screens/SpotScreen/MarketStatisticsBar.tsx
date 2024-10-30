@@ -22,6 +22,8 @@ interface IProps {
   onSwitchClick?: () => void;
 }
 
+export const MARKET_SELECTOR_ID = "market-selector";
+
 const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchClick }) => {
   const { tradeStore } = useStores();
   const media = useMedia();
@@ -32,6 +34,10 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
     onSwitchClick?.();
   };
 
+  const handleOpenMarketSidebar = () => {
+    tradeStore.setMarketSelectionOpened(!tradeStore.marketSelectionOpened);
+  };
+
   const handleSwitchClick = () => {
     if (isChartOpen || tradeStore.marketSelectionOpened) return;
 
@@ -40,13 +46,17 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
 
   const renderLeftIcons = () => {
     if (isChartOpen) {
-      return <Icon alt="token0" src={arrowLeft} onClick={handleBack} />;
+      return <Icon alt={tradeStore.market?.baseToken.symbol} src={arrowLeft} onClick={handleBack} />;
     }
 
     return (
       <>
-        <Icon alt="token0" src={tradeStore.market?.baseToken.logo} />
-        <Icon alt="token1" src={tradeStore.market?.quoteToken.logo} style={{ marginLeft: -16 }} />
+        <Icon alt={tradeStore.market?.baseToken.symbol} src={tradeStore.market?.baseToken.logo} />
+        <Icon
+          alt={tradeStore.market?.quoteToken.symbol}
+          src={tradeStore.market?.quoteToken.logo}
+          style={{ marginLeft: -16 }}
+        />
       </>
     );
   };
@@ -57,7 +67,8 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
     return (
       <MarketSelect
         focused={tradeStore.marketSelectionOpened}
-        onClick={() => tradeStore.setMarketSelectionOpened(!tradeStore.marketSelectionOpened)}
+        id={MARKET_SELECTOR_ID}
+        onClick={handleOpenMarketSidebar}
       >
         <SmartFlex gap="8px" center>
           {renderLeftIcons()}

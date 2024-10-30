@@ -14,11 +14,10 @@ import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 
+import { MARKET_SELECTOR_ID } from "@screens/SpotScreen/MarketStatisticsBar";
 import SpotMarketRow from "@screens/SpotScreen/RightBlock/MarketSelection/SpotMarketRow";
 
 import { PerpMarket, SpotMarket } from "@entity";
-
-import { MarketTitle } from "./MarketTitle";
 
 interface IProps {}
 
@@ -32,7 +31,11 @@ const MarketSelection: React.FC<IProps> = observer(() => {
   const [searchValue, setSearchValue] = useState("");
   const rootRef = useRef<HTMLDivElement>(null);
 
-  useOnClickOutside(rootRef, () => {
+  useOnClickOutside(rootRef, (event) => {
+    // TODO: Used to prevent a click on the selector from reopening the sidebar
+    const marketSelectorEl = document.querySelector(`#${MARKET_SELECTOR_ID}`);
+    if (marketSelectorEl?.contains(event.target as any)) return;
+
     if (media.desktop) {
       tradeStore.setMarketSelectionOpened(false);
     }
@@ -57,12 +60,6 @@ const MarketSelection: React.FC<IProps> = observer(() => {
 
   return (
     <Container ref={rootRef}>
-      {media.desktop ? <CloseIcon onClick={() => tradeStore.setMarketSelectionOpened(false)} /> : null}
-      {tradeStore.market && media.desktop ? (
-        <TitleContainer>
-          <MarketTitle iconSize={24} market={tradeStore.market} />
-        </TitleContainer>
-      ) : null}
       <Root>
         <SearchContainer>
           <SearchInput value={searchValue} onChange={setSearchValue} />
@@ -83,52 +80,14 @@ export default MarketSelection;
 
 const Container = styled.div`
   position: absolute;
-  z-index: 2;
+  z-index: 10;
   border-radius: 10px;
   bottom: 26px;
-  top: 0;
+  top: 52px;
   ${media.mobile} {
     right: 0;
     left: 0;
-  }
-`;
-
-const TitleContainer = styled.div`
-  margin-bottom: 4px;
-  padding: 12px;
-  background: ${({ theme }) => theme.colors.bgSecondary};
-  border-radius: 12px;
-`;
-
-const CloseIcon = styled.div`
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  width: 14px;
-  height: 14px;
-  cursor: pointer;
-
-  &:hover::before,
-  &:hover::after {
-    background-color: ${({ theme }) => theme.colors.textPrimary};
-  }
-
-  &:before,
-  &:after {
-    position: absolute;
-    left: 15px;
-    content: " ";
-    height: 14px;
-    width: 1px;
-    background-color: ${({ theme }) => theme.colors.textSecondary};
-    transition: all 0.2s;
-  }
-
-  &:before {
-    transform: rotate(45deg);
-  }
-  &:after {
-    transform: rotate(-45deg);
+    top: 0;
   }
 `;
 
@@ -136,7 +95,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   width: 280px;
-  height: calc(100% - 57px);
+  height: 100%;
   z-index: 2;
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;

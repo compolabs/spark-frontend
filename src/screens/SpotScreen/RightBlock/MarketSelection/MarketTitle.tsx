@@ -39,9 +39,9 @@ const Icon = styled.img<{ size?: number }>`
 `;
 
 const StyleIcon = styled(Icon)<{ size: number }>`
+  position: relative;
   height: ${({ size }) => size}px;
   width: ${({ size }) => size}px;
-  position: relative;
   left: ${({ size }) => (size === 24 ? -8 : -6)}px;
 `;
 
