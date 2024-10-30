@@ -136,7 +136,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       </Root>
     );
   }
-
+  console.log("spotOrderBookStore.orderFilter", spotOrderBookStore.orderFilter, SPOT_ORDER_FILTER);
   return (
     <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root>
@@ -167,14 +167,13 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY && (
               <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
             )}
-
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
               <SmartFlexOrder>{renderOrders(spotOrderBookStore.sellOrders, "sell")}</SmartFlexOrder>
             )}
-
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
               <OrderBookColumn>
                 <SmartFlexOrder flexDirection="column-reverse">
+                  123456
                   {renderOrders(spotOrderBookStore.sellOrders, "sell")}
                 </SmartFlexOrder>
                 {renderSpread()}
@@ -228,6 +227,10 @@ const TextOverflow = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  ${media.mobile} {
+    text-align: right !important;
+  }
 `;
 
 const PlugContainer = styled(SmartFlex)`
@@ -365,10 +368,6 @@ const OrderbookContainer = styled.div`
   height: 100%;
 
   gap: 2px;
-
-  ${media.mobile} {
-    height: fit-content;
-  }
 `;
 
 const Container = styled(OrderbookContainer)<{
