@@ -73,9 +73,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   };
 
   const renderSpread = () => {
-    const price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
+    let price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
+    price = numeral(price).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`);
     const percent = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPercent : "-";
-
     if (media.mobile) {
       return (
         <SpreadContainer>
@@ -136,7 +136,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       </Root>
     );
   }
-  console.log("spotOrderBookStore.orderFilter", spotOrderBookStore.orderFilter, SPOT_ORDER_FILTER);
   return (
     <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root>
@@ -173,7 +172,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
               <OrderBookColumn>
                 <SmartFlexOrder flexDirection="column-reverse">
-                  123456
                   {renderOrders(spotOrderBookStore.sellOrders, "sell")}
                 </SmartFlexOrder>
                 {renderSpread()}
