@@ -24,7 +24,7 @@ const SKELETON_LAYOUTS = {
 const ChartSkeletonWrapper = styled(clone(SkeletonWrapper, { skeletonLayouts: SKELETON_LAYOUTS }))`
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
-
+  height: 100%;
   min-height: 416px;
 `;
 
