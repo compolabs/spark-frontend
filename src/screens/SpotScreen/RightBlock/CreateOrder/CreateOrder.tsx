@@ -22,6 +22,7 @@ import { media } from "@themes/breakpoints";
 import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 
@@ -40,7 +41,7 @@ const ORDER_OPTIONS = [
 const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore, spotOrderBookStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore, spotOrderBookStore, mixPanelStore } = useStores();
   const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
@@ -205,6 +206,11 @@ const CreateOrder: React.FC = observer(() => {
           }
           defaultChecked
           initialEntered
+          onTransitionEnd={(e) => {
+            if (e.target instanceof HTMLElement && e.propertyName === "height") {
+              mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_FEE_ACCORDION);
+            }
+          }}
         >
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Max {vm.isSell ? "sell" : "buy"}</Text>
@@ -355,7 +361,9 @@ const CreateOrder: React.FC = observer(() => {
           {renderInstruction()}
           {renderOrderDetails()}
         </ParamsContainer>
-        <ConnectWalletButton connectText="Connect wallet to trade">{renderButton()}</ConnectWalletButton>
+        <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
+          {renderButton()}
+        </ConnectWalletButton>
 
         <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
       </Root>

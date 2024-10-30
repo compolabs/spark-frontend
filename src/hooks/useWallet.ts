@@ -39,7 +39,7 @@ export const useWallet = () => {
     } else {
       accountStore.connect(wallet);
     }
-  }, [isConnected, wallet, accountStore]);
+  }, [isConnected, wallet]);
 
   return {
     isConnected,
