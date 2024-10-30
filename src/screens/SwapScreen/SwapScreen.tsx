@@ -258,7 +258,7 @@ export const SwapScreen: React.FC = observer(() => {
       </SwapSkeletonWrapper>
       <SwapButtonSkeletonWrapper isReady={true}>
         <SmartFlexStyled>
-          <ConnectWalletButtonStyled connectText="Connect wallet to start trading">
+          <ConnectWalletButtonStyled connectText="Connect wallet to start trading" targetKey="swap_connect_btn">
             <SwapButton
               data-onboarding={dataOnboardingSwapKey}
               disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}

@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import arrowIcon from "@assets/icons/arrowUp.svg";
 
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { getShortString } from "@utils/getShortString";
 
@@ -18,10 +19,19 @@ interface Props {
 }
 
 const WalletAddressButton: React.FC<Props> = observer(({ isFocused, className, onClick }) => {
-  const { accountStore } = useStores();
+  const { accountStore, mixPanelStore } = useStores();
+
+  const handleWalletClick = () => {
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.WALLET_CONNECTED, {
+      page_name: location.pathname,
+      user_id: accountStore.address,
+    });
+
+    onClick?.();
+  };
 
   return (
-    <Root className={className} gap="8px" isFocused={isFocused} center onClick={onClick}>
+    <Root className={className} gap="8px" isFocused={isFocused} center onClick={handleWalletClick}>
       {getShortString(accountStore.address ?? "", 10)}
       <ArrowIconStyled alt="Arrow Icon" src={arrowIcon} />
     </Root>

@@ -23,7 +23,6 @@ class AccountStore {
       if (initState.privateKey) {
         this.connectWalletByPrivateKey(initState.privateKey);
       }
-      // TODO: set wallet ?
     }
 
     this.init();

@@ -16,6 +16,7 @@ import XIcon from "@assets/social/x.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, TWITTER_LINK } from "@constants";
 import { CONFIG } from "@utils/getConfig.ts";
@@ -29,7 +30,7 @@ type MenuChildItem = {
   icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   link: string;
   desc?: string;
-  trackEvent?: string;
+  trackEvent?: MIXPANEL_EVENTS;
 };
 
 type MenuItem = {
@@ -38,16 +39,16 @@ type MenuItem = {
   link?: string;
   dataOnboardingKey?: string;
   children?: MenuChildItem[];
-  trackEvent?: string;
+  trackEvent?: MIXPANEL_EVENTS;
 };
 
 const MENU_ITEMS: Array<MenuItem> = [
-  { title: "DASHBOARD", trackEvent: "click_dashboard" },
+  { title: "DASHBOARD", trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
   {
     title: "TRADE",
     isGradient: true,
     link: ROUTES.SPOT,
-    trackEvent: "click_spot",
+    trackEvent: MIXPANEL_EVENTS.CLICK_SPOT,
     // children: [],
     // {
     //   title: "SPOT",
@@ -65,31 +66,31 @@ const MENU_ITEMS: Array<MenuItem> = [
   },
   ...(CONFIG.APP.isMainnet
     ? [
-        { title: "BRIDGE", link: BRIDGE_LINK, trackEvent: "click_bridge" },
-        { title: "Points", link: POINTS_LINK, trackEvent: "click_points" },
+        { title: "BRIDGE", link: BRIDGE_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_BRIDGE },
+        { title: "POINTS", link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
       ]
-    : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: "click_faucet" }]),
+    : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: MIXPANEL_EVENTS.CLICK_FAUCET }]),
   {
     title: "MORE",
-    trackEvent: "click_more",
+    trackEvent: MIXPANEL_EVENTS.CLICK_MORE,
     children: [
       {
         title: "DOCS",
         link: DOCS_LINK,
         icon: DocsIcon,
-        trackEvent: "click_docs",
+        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_DOCS,
       },
       {
         title: "GITHUB",
         link: GITHUB_LINK,
         icon: GithubIcon,
-        trackEvent: "click_github",
+        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_GITHUB,
       },
       {
         title: "X",
         link: TWITTER_LINK,
         icon: XIcon,
-        trackEvent: "click_twitter",
+        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_X,
       },
     ],
   },
@@ -136,8 +137,8 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
   useOnClickOutside(dropdownRef, handleClickOutside);
 
-  const trackMenuEvent = (eventName: string) => {
-    mixPanelStore.trackEvent(eventName, {
+  const trackMenuEvent = (event: MIXPANEL_EVENTS) => {
+    mixPanelStore.trackEvent(event, {
       page_name: location.pathname,
       address: accountStore.address,
     });

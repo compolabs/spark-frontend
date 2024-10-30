@@ -361,7 +361,9 @@ const CreateOrder: React.FC = observer(() => {
           {renderInstruction()}
           {renderOrderDetails()}
         </ParamsContainer>
-        <ConnectWalletButton connectText="Connect wallet to trade">{renderButton()}</ConnectWalletButton>
+        <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
+          {renderButton()}
+        </ConnectWalletButton>
 
         <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
       </Root>

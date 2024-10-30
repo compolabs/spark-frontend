@@ -363,7 +363,6 @@ class CreateOrderVM {
         ),
         hash,
       });
-      mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
       const action =
         settingsStore.orderType === ORDER_TYPE.Market

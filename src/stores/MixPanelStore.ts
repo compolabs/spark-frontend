@@ -1,5 +1,5 @@
 import mixpanel, { Mixpanel } from "mixpanel-browser";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import RootStore from "@stores/RootStore";
@@ -14,6 +14,8 @@ class MixPanelStore {
 
   mixpanel: Nullable<Mixpanel> = null;
 
+  connectButtonUsed = "auto";
+
   constructor(rootStore: RootStore) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
@@ -25,6 +27,17 @@ class MixPanelStore {
         this.initializeMixpanel(TESTNET_KEY);
       }
     }
+
+    reaction(
+      () => this.rootStore.accountStore.isConnected,
+      () => {
+        this.trackEvent(MIXPANEL_EVENTS.WALLET_CONNECTED, {
+          page_name: window.location.href,
+          user_id: this.rootStore.accountStore.address,
+          btn_wallet_connect_id: this.connectButtonUsed,
+        });
+      },
+    );
   }
 
   initializeMixpanel(key: string) {
@@ -32,9 +45,9 @@ class MixPanelStore {
     this.mixpanel = mixpanel;
   }
 
-  trackEvent(event: string, properties = {}) {
+  trackEvent(event: MIXPANEL_EVENTS, properties = {}) {
     if (!this.mixpanel) {
-      console.error("Mixpanel is not initialized");
+      console.warn("Mixpanel is not initialized");
       return;
     }
 
@@ -43,22 +56,31 @@ class MixPanelStore {
 }
 
 export default MixPanelStore;
-// Event names as constants to avoid typos
-export const MIXPANEL_EVENTS = {
-  WALLET_CONNECTED: "wallet_connected",
-  CLICK_WALLET: "click_wallet",
-  PAGE_VIEW: "page_view",
-  CLICK_ASSETS: "click_assets",
-  CLICK_DASHBOARD: "click_dashboard",
-  CLICK_SPOT: "click_spot",
-  CLICK_MORE: "click_more",
-  CLICK_MORE_DOCS: "click_more_docs",
-  CLICK_MORE_GITHUB: "click_more_github",
-  CLICK_MORE_X: "click_more_x",
-  CLICK_MAX_SPOT: "click_max_spot",
-  CLICK_FEE_ACCORDION: "click_fee_accordion",
-  CLICK_FAUCET: "click_faucet",
-  CLICK_CURRENCY_PAIR: "click_currency_pair",
-  CONFIRM_ORDER: "confirm_order",
-  AGREE_WITH_TERMS: "agree_with_terms",
-} as const;
+
+export enum MIXPANEL_EVENTS {
+  CLICK_DASHBOARD = "click_dashboard",
+  CLICK_SPOT = "click_spot",
+  CLICK_MAX_SPOT = "click_max_spot",
+  AGREE_WITH_TERMS = "agree_with_terms",
+
+  WALLET_CONNECTED = "wallet_connected",
+  PAGE_VIEW = "page_view",
+  CLICK_WALLET = "click_wallet",
+  CLICK_ASSETS = "click_assets",
+  CLICK_MORE = "click_more",
+  CLICK_MORE_DOCS = "click_more_docs",
+  CLICK_MORE_GITHUB = "click_more_github",
+  CLICK_MORE_X = "click_more_x",
+  CLICK_MAX = "click_max",
+  CLICK_FEE_ACCORDION = "click_fee_accordion",
+  CLICK_FAUCET = "click_faucet",
+  CLICK_CURRENCY_PAIR = "click_currency_pair",
+  CONFIRM_ORDER = "confirm_order",
+  CLICK_CURRENCY_SELL = "click_currency_sell",
+  CLICK_SLIPPAGE = "click_slippage",
+  CLICK_CURRENCY_BUY = "click_currency_buy",
+  CONFIRM_SWAP = "confirm_swap",
+
+  CLICK_BRIDGE = "click_bridge",
+  CLICK_POINTS = "click_points",
+}
