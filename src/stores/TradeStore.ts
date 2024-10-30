@@ -195,7 +195,7 @@ class TradeStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     try {
-      const markets = CONFIG.APP.markets.map(
+      const markets = CONFIG.MARKETS.map(
         (market) => new SpotMarket(market.baseAssetId, market.quoteAssetId, market.contractId),
       );
 

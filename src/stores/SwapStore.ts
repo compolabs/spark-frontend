@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { autorun, makeAutoObservable, reaction } from "mobx";
 
-import { AssetType, GetActiveOrdersParams, LimitType, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { AssetType, GetActiveOrdersParams, LimitType, Order, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
@@ -11,7 +11,7 @@ import { handleWalletErrors } from "@utils/handleWalletErrors";
 import { parseNumberWithCommas } from "@utils/swapUtils";
 
 import { FuelNetwork } from "@blockchain";
-import { Token } from "@entity";
+import { SpotMarketOrder, Token } from "@entity";
 
 import RootStore from "./RootStore";
 
@@ -146,7 +146,21 @@ class SwapStore {
       orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     };
 
-    const orders = await bcNetwork!.fetchSpotActiveOrders(params);
+    const activeOrders = await bcNetwork!.fetchSpotActiveOrders(params);
+
+    let orders: SpotMarketOrder[] = [];
+
+    const formatOrder = (order: Order) =>
+      new SpotMarketOrder({
+        ...order,
+        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId,
+      });
+
+    if ("ActiveSellOrder" in activeOrders.data) {
+      orders = activeOrders.data.ActiveSellOrder.map(formatOrder);
+    } else {
+      orders = activeOrders.data.ActiveBuyOrder.map(formatOrder);
+    }
 
     // TODO: check if there is enough price sum to fulfill the order
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
@@ -196,7 +210,7 @@ class SwapStore {
     ).toSignificant(2);
 
     try {
-      const marketContracts = CONFIG.APP.markets.map((el) => el.contractId);
+      const marketContracts = CONFIG.MARKETS.map((el) => el.contractId);
       const tx = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_SWAP)(

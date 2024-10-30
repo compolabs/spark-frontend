@@ -9,6 +9,7 @@ import {
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
   LimitType,
+  Order,
   OrderType,
 } from "@compolabs/spark-orderbook-ts-sdk";
 
@@ -153,8 +154,10 @@ class CreateOrderVM {
     const { market } = tradeStore;
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const activeToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === token);
+    const activeToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === token);
+
     if (!activeToken) return false;
+
     const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
     return balance ? amount.gt(balance) : false;
   }
@@ -191,9 +194,10 @@ class CreateOrderVM {
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const tokenList = balanceStore.getFormattedContractBalance();
-    const findToken = tokenList.find((el) => el.assetId === assetId);
+    const findToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === assetId);
+
     if (!findToken) return;
+
     let balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
     if (assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
       balance = balance.minus(HALF_GWEI);
@@ -274,8 +278,10 @@ class CreateOrderVM {
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const activeToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === assetId);
+    const activeToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === assetId);
+
     if (!activeToken) return;
+
     const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
 
     if (balance.isZero()) {
@@ -319,13 +325,11 @@ class CreateOrderVM {
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
     };
 
-    const marketContracts = CONFIG.APP.markets
-      .filter(
-        (m) =>
-          m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
-          m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
-      )
-      .map((m) => m.contractId);
+    const marketContracts = CONFIG.MARKETS.filter(
+      (m) =>
+        m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
+        m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
+    ).map((m) => m.contractId);
 
     if (bcNetwork.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
@@ -402,7 +406,21 @@ class CreateOrderVM {
       orderType: isBuy ? OrderType.Sell : OrderType.Buy,
     };
 
-    const orders = await bcNetwork.fetchSpotActiveOrders(params);
+    const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
+
+    let orders: SpotMarketOrder[] = [];
+
+    const formatOrder = (order: Order) =>
+      new SpotMarketOrder({
+        ...order,
+        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId,
+      });
+
+    if ("ActiveSellOrder" in activeOrders.data) {
+      orders = activeOrders.data.ActiveSellOrder.map(formatOrder);
+    } else {
+      orders = activeOrders.data.ActiveBuyOrder.map(formatOrder);
+    }
 
     let total = this.inputTotal;
     let spend = BN.ZERO;

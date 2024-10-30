@@ -21,7 +21,6 @@ import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 import BN from "@utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
 
-import { FuelNetwork } from "@blockchain";
 import { Token } from "@entity";
 
 import SwapButtonSkeletonWrapper from "../../components/Skeletons/SwapButtonSkeletonWrapper";
@@ -38,7 +37,6 @@ export const SwapScreen: React.FC = observer(() => {
   const theme = useTheme();
   const media = useMedia();
   const { swapStore, balanceStore, tradeStore, spotOrderBookStore } = useStores();
-  const bcNetwork = FuelNetwork.getInstance();
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [isLoading, setIsloading] = useState(false);
   const [onPress, setOnPress] = useState(false);
@@ -64,8 +62,9 @@ export const SwapScreen: React.FC = observer(() => {
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
-  const nativeBalanceContract = balanceStore.getFormatContractBalanceInfo(bcNetwork.getTokenBySymbol("ETH").assetId);
-  const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(nativeBalanceContract);
+  const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(
+    balanceStore.getNativeBalance(),
+  );
 
   const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
 
@@ -78,7 +77,7 @@ export const SwapScreen: React.FC = observer(() => {
   }, []);
 
   const generateBalanceData = (assets: Token[]) => {
-    const d = balanceStore.getFormattedContractBalance();
+    const d = balanceStore.formattedBalanceInfoList;
     return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
   };
 

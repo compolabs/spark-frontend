@@ -9,11 +9,10 @@ import { RootStore, useStores } from "@stores";
 
 import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
-import { CONFIG } from "@utils/getConfig";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarketOrder } from "@entity";
+import { SpotMarket, SpotMarketOrder } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
@@ -27,7 +26,7 @@ export const SpotTableVMProvider: React.FC<PropsWithChildren> = ({ children }) =
 
 export const useSpotTableVMProvider = () => useVM(ctx);
 
-type OrderSortingFunction = (a: SpotMarketOrder, b: SpotMarketOrder) => number;
+const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
 
 class SpotTableVM {
   private readonly rootStore: RootStore;
@@ -76,15 +75,15 @@ class SpotTableVM {
     this.rootStore = rootStore;
     const { accountStore, tradeStore } = this.rootStore;
     reaction(
-      () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected, this.tableFilters],
-      ([market, initialized, isConnected]) => {
+      () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected, this.tableFilters] as const,
+      ([market, initialized, isConnected, _]) => {
         if (!initialized || !market || !isConnected) {
           this.setMyOrders([]);
           this.setMyOrdersHistory([]);
           return;
         }
 
-        this.subscribeToOrders();
+        this.subscribeToOrders(market);
       },
       { fireImmediately: true },
     );
@@ -139,17 +138,19 @@ class SpotTableVM {
   };
 
   withdrawBalance = async (assetId: string) => {
+    const { balanceStore } = this.rootStore;
+
     this.isWithdrawing = true;
     this.withdrawingAssetId = assetId;
 
-    const { amount } = this.rootStore.balanceStore.getContractBalanceInfo(assetId);
-    await this.rootStore.balanceStore.withdrawBalance(assetId, amount.toString());
+    const amount = balanceStore.getContractBalance(assetId);
+    await balanceStore.withdrawBalance(assetId, amount.toString());
 
     this.isWithdrawing = false;
     this.withdrawingAssetId = null;
   };
 
-  private subscribeToOpenOrders = (sortDesc: OrderSortingFunction) => {
+  private subscribeToOpenOrders = (market: SpotMarket) => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -167,7 +168,7 @@ class SpotTableVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId).sort(sortDesc);
+          const sortedOrder = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
           this.setMyOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -177,7 +178,7 @@ class SpotTableVM {
       });
   };
 
-  private subscribeToHistoryOrders = (sortDesc: OrderSortingFunction) => {
+  private subscribeToHistoryOrders = (market: SpotMarket) => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -193,10 +194,8 @@ class SpotTableVM {
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
-          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId).sort(
-            sortDesc,
-          );
 
+          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
           this.setMyOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {
@@ -206,11 +205,9 @@ class SpotTableVM {
       });
   };
 
-  private subscribeToOrders = () => {
-    const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
-
-    this.subscribeToOpenOrders(sortDesc);
-    this.subscribeToHistoryOrders(sortDesc);
+  private subscribeToOrders = (market: SpotMarket) => {
+    this.subscribeToOpenOrders(market);
+    this.subscribeToHistoryOrders(market);
   };
 
   private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);

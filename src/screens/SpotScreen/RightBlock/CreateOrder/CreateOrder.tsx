@@ -61,9 +61,13 @@ const CreateOrder: React.FC = observer(() => {
 
   const handlePercentChange = (v: number) => {
     const assetId = vm.isSell ? baseToken.assetId : quoteToken.assetId;
-    const findToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === assetId);
+
+    const findToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === assetId);
+
     if (!findToken) return;
+
     const balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
+
     if (balance.isZero()) return;
 
     const value = BN.percentOf(balance, v);
@@ -240,7 +244,9 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const getAvailableAmount = () => {
-    return balanceStore.getFormatContractBalanceInfo(vm.isSell ? baseToken.assetId : quoteToken.assetId);
+    const assetId = vm.isSell ? baseToken.assetId : quoteToken.assetId;
+    const decimals = vm.isSell ? baseToken.decimals : quoteToken.decimals;
+    return balanceStore.getFormatContractBalance(assetId, decimals);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {
