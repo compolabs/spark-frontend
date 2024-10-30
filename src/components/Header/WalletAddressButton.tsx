@@ -24,7 +24,7 @@ const WalletAddressButton: React.FC<Props> = observer(({ isFocused, className, o
   const handleWalletClick = () => {
     mixPanelStore.trackEvent(MIXPANEL_EVENTS.WALLET_CONNECTED, {
       page_name: location.pathname,
-      user_id: accountStore.address,
+      user_address: accountStore.address,
     });
 
     onClick?.();

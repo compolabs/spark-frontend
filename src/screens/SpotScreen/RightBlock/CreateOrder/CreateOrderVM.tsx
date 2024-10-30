@@ -299,7 +299,7 @@ class CreateOrderVM {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore, accountStore } = this.rootStore;
 
     const { market } = tradeStore;
     const { timeInForce } = settingsStore;
@@ -352,7 +352,7 @@ class CreateOrderVM {
         token_1: market.baseToken.symbol,
         token_2: market.quoteToken.symbol,
         transaction_sum: BN.formatUnits(amount, token.decimals).toSignificant(2),
-        address: bcNetwork.getAddress(),
+        user_address: accountStore.address,
       });
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(

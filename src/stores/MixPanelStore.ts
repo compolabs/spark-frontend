@@ -33,7 +33,7 @@ class MixPanelStore {
       () => {
         this.trackEvent(MIXPANEL_EVENTS.WALLET_CONNECTED, {
           page_name: window.location.href,
-          user_id: this.rootStore.accountStore.address,
+          user_address: this.rootStore.accountStore.address,
           btn_wallet_connect_id: this.connectButtonUsed,
         });
       },

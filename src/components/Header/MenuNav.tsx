@@ -140,7 +140,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
   const trackMenuEvent = (event: MIXPANEL_EVENTS) => {
     mixPanelStore.trackEvent(event, {
       page_name: location.pathname,
-      address: accountStore.address,
+      user_address: accountStore.address,
     });
   };
 
