@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
 
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
@@ -33,9 +33,11 @@ class SpotTableVM {
   private readonly rootStore: RootStore;
   private subscriptionToOpenOrders: Nullable<Subscription> = null;
   private subscriptionToHistoryOrders: Nullable<Subscription> = null;
+  private subscriptionToOrdersStats: Nullable<Subscription> = null;
 
   myOrders: SpotMarketOrder[] = [];
   myOrdersHistory: SpotMarketOrder[] = [];
+  myOrdersStats: UserInfo | null = null;
 
   isOrderCancelling = false;
   cancelingOrderId: Nullable<string> = null;
@@ -166,7 +168,6 @@ class SpotTableVM {
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
-
           const sortedOrder = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId).sort(sortDesc);
           this.setMyOrders(sortedOrder);
 
@@ -196,7 +197,6 @@ class SpotTableVM {
           const sortedOrdersHistory = formatSpotMarketOrders(data.Order, CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId).sort(
             sortDesc,
           );
-
           this.setMyOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {
@@ -206,17 +206,35 @@ class SpotTableVM {
       });
   };
 
+  private subscribeUserInfo = () => {
+    const bcNetwork = FuelNetwork.getInstance();
+    const { accountStore } = this.rootStore;
+    this.subscriptionToOrdersStats = bcNetwork
+      .subscribeUserInfo({
+        id: accountStore.address!,
+      })
+      .subscribe({
+        next: ({ data }: any) => {
+          if (!data.User.length) {
+            return;
+          }
+          this.setMyOrdersStats(data.User[0]);
+        },
+      });
+  };
   private subscribeToOrders = () => {
     const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
 
     this.subscribeToOpenOrders(sortDesc);
     this.subscribeToHistoryOrders(sortDesc);
+    this.subscribeUserInfo();
   };
 
   private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.myOrders = myOrders);
 
   private setMyOrdersHistory = (myOrdersHistory: SpotMarketOrder[]) => (this.myOrdersHistory = myOrdersHistory);
 
+  private setMyOrdersStats = (myOrdersStats: UserInfo) => (this.myOrdersStats = myOrdersStats);
   setOffset = (currentPage: number) => {
     if (currentPage === 0) {
       this.offset = 0;

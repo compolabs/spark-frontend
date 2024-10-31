@@ -22,6 +22,7 @@ import BottomTablesSkeletonWrapper from "../../../../components/Skeletons/Bottom
 import { BaseTable } from "../BaseTable";
 
 import { useSpotTableVMProvider } from "./SpotTableVM";
+import { FuelNetwork } from "@blockchain";
 
 const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();
@@ -130,9 +131,10 @@ const SpotTableImpl: React.FC = observer(() => {
   const [tabIndex, setTabIndex] = useState(0);
   const columns = [ORDER_COLUMNS(vm, theme), HISTORY_COLUMNS(theme)];
   const [page, setPage] = useState(startPage);
+  const historyOrders = (vm.myOrdersStats?.closed ?? 0) + (vm.myOrdersStats?.canceled ?? 0);
   const TABS = [
-    { title: "ORDERS", disabled: false, rowCount: vm.myOrders.length },
-    { title: "HISTORY", disabled: false, rowCount: vm.myOrdersHistory.length },
+    { title: "ORDERS", disabled: false, rowCount: vm.myOrdersStats?.active ?? 0 },
+    { title: "HISTORY", disabled: false, rowCount: historyOrders },
   ];
 
   const handleTab = (e: number) => {
@@ -237,7 +239,6 @@ const SpotTableImpl: React.FC = observer(() => {
 
   const tabToData = [vm.myOrders, vm.myOrdersHistory];
   const data = tabToData[tabIndex];
-
   const handleChangePagination = (e: number) => {
     vm.setOffset(e);
     setPage(e);
