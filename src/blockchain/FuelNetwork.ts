@@ -6,6 +6,7 @@ import SparkOrderBookSdk, {
   GetActiveOrdersParams,
   Order,
   OrderType,
+  UserInfo,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
 
@@ -221,5 +222,9 @@ export class FuelNetwork {
 
   chain = async (...params: Parameters<typeof this.orderbookSdk.chain>) => {
     return this.orderbookSdk.chain(...params);
+  };
+
+  subscribeUserInfo = (...params: Parameters<typeof this.orderbookSdk.subscribeUserInfo>) => {
+    return this.orderbookSdk.subscribeUserInfo(...params);
   };
 }
