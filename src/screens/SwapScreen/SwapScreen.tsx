@@ -16,8 +16,9 @@ import Spinner from "@assets/icons/spinner.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED, ROUTES } from "@constants";
 import BN from "@utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
 
@@ -33,10 +34,18 @@ import { TokenSelect } from "./TokenSelect";
 const INITIAL_SLIPPAGE = 1;
 
 export const SwapScreen: React.FC = observer(() => {
+  const { swapStore, balanceStore, tradeStore, spotOrderBookStore, mixPanelStore, accountStore } = useStores();
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
-  const { swapStore, balanceStore, tradeStore, spotOrderBookStore } = useStores();
+
+  useEffect(() => {
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.PAGE_VIEW, {
+      page_name: ROUTES.SWAP,
+      user_address: accountStore.address,
+    });
+  }, []);
+
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [isLoading, setIsloading] = useState(false);
   const [onPress, setOnPress] = useState(false);
@@ -248,7 +257,7 @@ export const SwapScreen: React.FC = observer(() => {
       </SwapSkeletonWrapper>
       <SwapButtonSkeletonWrapper isReady={true}>
         <SmartFlexStyled>
-          <ConnectWalletButtonStyled connectText="Connect wallet to start trading">
+          <ConnectWalletButtonStyled connectText="Connect wallet to start trading" targetKey="swap_connect_btn">
             <SwapButton
               data-onboarding={dataOnboardingSwapKey}
               disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}

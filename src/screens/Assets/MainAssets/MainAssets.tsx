@@ -18,6 +18,7 @@ import Spinner from "@assets/icons/spinner.svg?react";
 import useFlag from "@hooks/useFlag";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import ConnectWalletDialog from "@screens/ConnectWallet";
 
@@ -29,8 +30,7 @@ interface MainAssetsProps {
 }
 
 const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
-  const { balanceStore, quickAssetsStore } = useStores();
-
+  const { balanceStore, quickAssetsStore, mixPanelStore } = useStores();
   const { isConnected } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isLoading, setIsLoading] = useState(false);
@@ -79,7 +79,11 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
       <SmartFlex alignItems="center" justifyContent="space-between" column>
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
-          <TextTitle type={TEXT_TYPES.TEXT_BIG} primary>
+          <TextTitle
+            type={TEXT_TYPES.TEXT_BIG}
+            primary
+            onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
+          >
             Assets
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />

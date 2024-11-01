@@ -11,7 +11,7 @@ interface IProps {
 }
 
 const MintButtons: React.FC<IProps> = observer(({ assetId, disabled }) => {
-  const { faucetStore, mixPanelStore } = useStores();
+  const { faucetStore } = useStores();
 
   if (!faucetStore.initialized) {
     return (
@@ -26,7 +26,6 @@ const MintButtons: React.FC<IProps> = observer(({ assetId, disabled }) => {
       disabled={disabled || faucetStore.isDisabled(assetId)}
       style={{ width: 120 }}
       onClick={() => {
-        mixPanelStore.trackEvent("mintTokenInFaucet", { assetId });
         faucetStore.mintByAssetId(assetId);
       }}
     >

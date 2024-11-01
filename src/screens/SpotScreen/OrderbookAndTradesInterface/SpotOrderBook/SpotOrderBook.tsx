@@ -73,9 +73,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   };
 
   const renderSpread = () => {
-    const price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
+    let price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
+    price = price === "-" ? price : numeral(price).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`);
     const percent = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPercent : "-";
-
     if (media.mobile) {
       return (
         <SpreadContainer>
@@ -136,7 +136,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       </Root>
     );
   }
-
   return (
     <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root>
@@ -167,11 +166,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY && (
               <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
             )}
-
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
               <SmartFlexOrder>{renderOrders(spotOrderBookStore.sellOrders, "sell")}</SmartFlexOrder>
             )}
-
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
               <OrderBookColumn>
                 <SmartFlexOrder flexDirection="column-reverse">
@@ -228,6 +225,10 @@ const TextOverflow = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  ${media.mobile} {
+    text-align: right !important;
+  }
 `;
 
 const PlugContainer = styled(SmartFlex)`
@@ -365,10 +366,6 @@ const OrderbookContainer = styled.div`
   height: 100%;
 
   gap: 2px;
-
-  ${media.mobile} {
-    height: fit-content;
-  }
 `;
 
 const Container = styled(OrderbookContainer)<{

@@ -15,6 +15,7 @@ import {
 
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
@@ -208,7 +209,10 @@ class CreateOrderVM {
       return;
     }
 
-    mixPanelStore.trackEvent("onMaxBtnClick", { type: this.isSell ? "SELL" : "BUY", value: balance.toString() });
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_MAX_SPOT, {
+      type: this.isSell ? "SELL" : "BUY",
+      value: balance.toString(),
+    });
 
     this.setInputTotal(balance);
   };
@@ -301,7 +305,7 @@ class CreateOrderVM {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore, accountStore } = this.rootStore;
 
     const { market } = tradeStore;
     const { timeInForce } = settingsStore;
@@ -347,6 +351,13 @@ class CreateOrderVM {
       const token = isBuy ? market.baseToken : market.quoteToken;
       const amount = isBuy ? this.inputAmount : this.inputTotal;
       this.setInputTotal(BN.ZERO);
+      mixPanelStore.trackEvent(MIXPANEL_EVENTS.CONFIRM_ORDER, {
+        order_type: isBuy ? "BUY" : "SELL",
+        token_1: market.baseToken.symbol,
+        token_2: market.quoteToken.symbol,
+        transaction_sum: BN.formatUnits(amount, token.decimals).toSignificant(2),
+        user_address: accountStore.address,
+      });
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           BN.formatUnits(amount, token.decimals).toSignificant(2),
@@ -356,7 +367,6 @@ class CreateOrderVM {
         ),
         hash,
       });
-      mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
       const action =
         settingsStore.orderType === ORDER_TYPE.Market
