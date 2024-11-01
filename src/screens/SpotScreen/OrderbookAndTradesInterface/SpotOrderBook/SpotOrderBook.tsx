@@ -117,11 +117,11 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         {newOrder.map((o, index) => (
           <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
             <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
-            <Text primary>{o.currentAmountUnits.toFormat(4)}</Text>
             <TextOverflow color={color}>{o.priceUnits.toFormat(spotOrderBookStore.decimalGroup)}</TextOverflow>
-            <Text primary>
+            <TextRightAlign primary>{numeral(o.currentAmountUnits).format(`0.${"0".repeat(4)}a`)}</TextRightAlign>
+            <TextRightAlign primary>
               {numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`)}
-            </Text>
+            </TextRightAlign>
           </OrderRow>
         ))}
         <Plug length={70 - orders.length} />
@@ -152,9 +152,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         </SettingsContainer>
         <OrderbookContainer>
           <OrderBookHeader>
-            <Text type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</Text>
-            <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
-            <Text type={TEXT_TYPES.SUPPORTING}>{`Total ${market?.quoteToken.symbol}`}</Text>
+            <Text type={TEXT_TYPES.SUPPORTING}>{`Price  ${market?.quoteToken.symbol}`}</Text>
+            <TextRightAlign type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</TextRightAlign>
+            <TextRightAlign type={TEXT_TYPES.SUPPORTING}>Total</TextRightAlign>
           </OrderBookHeader>
           <Container
             fitContent={
@@ -209,6 +209,7 @@ const Plug: React.FC<{
     ))}
   </>
 );
+
 const SmartFlexOrder = styled(SmartFlex)<{ flexDirection?: string }>`
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
   flex-grow: 1;
@@ -216,6 +217,7 @@ const SmartFlexOrder = styled(SmartFlex)<{ flexDirection?: string }>`
   height: 0;
   overflow: hidden;
 `;
+
 const OrderBookColumn = styled(Column)`
   height: 100%;
   width: 100%;
@@ -330,8 +332,8 @@ const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
   cursor: pointer;
   height: 16px;
   width: 100%;
-  justify-content: space-between;
-  align-items: center;
+  //justify-content: space-between;
+  //align-items: center;
   padding: 0 12px;
   background: transparent;
   transition: 0.4s;
@@ -405,4 +407,8 @@ const ProgressBar = styled.span<{ type: "buy" | "sell"; fulfillPercent?: number 
 
 const VolumeBar = styled(ProgressBar)<{ volumePercent?: number }>`
   width: ${({ volumePercent }) => (volumePercent ? `${volumePercent}%` : `0%`)};
+`;
+
+const TextRightAlign = styled(Text)`
+  text-align: right !important;
 `;

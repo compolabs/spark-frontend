@@ -45,10 +45,11 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  padding: 12px 0;
+  padding-top: 12px;
   flex: 2;
   max-width: 273px;
-  height: 100%;
   border-radius: 10px;
   background: ${({ theme }) => theme.colors.bgSecondary};
+  max-height: 100%;
+  overflow: hidden;
 `;

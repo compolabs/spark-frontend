@@ -31,23 +31,23 @@ export const SpotTrades: React.FC = observer(() => {
   return (
     <Root>
       <Header>
-        <Text type={TEXT_TYPES.SUPPORTING}>Qty</Text>
         <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
-        <Text type={TEXT_TYPES.SUPPORTING}>Time</Text>
+        <TextRightAlign type={TEXT_TYPES.SUPPORTING}>Qty</TextRightAlign>
+        <TextRightAlign type={TEXT_TYPES.SUPPORTING}>Time</TextRightAlign>
       </Header>
 
       <Container className="better-scroll">
         {spotOrderBookStore.trades.map((trade) => (
           <Row key={"trade" + trade.id}>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
-              {trade.formatTradeAmount}
-            </Text>
             <Text color={trade.sellerIsMaker ? theme.colors.redLight : theme.colors.greenLight} type={TEXT_TYPES.BODY}>
               {trade.formatPrice}
             </Text>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+            <TextRightAlign color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+              {trade.formatTradeAmount}
+            </TextRightAlign>
+            <TextRightAlign color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
               {trade.timestamp.format("HH:mm:ss")}
-            </Text>
+            </TextRightAlign>
           </Row>
         ))}
       </Container>
@@ -86,13 +86,14 @@ const Header = styled.div`
   }
 `;
 const Container = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   box-sizing: border-box;
   padding: 5px 12px 0;
-  overflow-y: auto;
-  max-height: calc(100vh - 260px);
-  gap: 2px;
+  //overflow-y: auto;
+  //max-height: calc(100% - px);
+  height: 100%;
 `;
 
 const Row = styled(SmartFlex)`
@@ -105,4 +106,8 @@ const Row = styled(SmartFlex)`
 
   align-items: center;
   justify-content: space-between;
+`;
+
+const TextRightAlign = styled(Text)`
+  text-align: right !important;
 `;

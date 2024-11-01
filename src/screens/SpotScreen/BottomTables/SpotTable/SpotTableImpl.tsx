@@ -22,7 +22,6 @@ import BottomTablesSkeletonWrapper from "../../../../components/Skeletons/Bottom
 import { BaseTable } from "../BaseTable";
 
 import { useSpotTableVMProvider } from "./SpotTableVM";
-import { FuelNetwork } from "@blockchain";
 
 const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();

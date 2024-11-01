@@ -6,7 +6,6 @@ import SparkOrderBookSdk, {
   GetActiveOrdersParams,
   Order,
   OrderType,
-  UserInfo,
   WriteTransactionResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
 
