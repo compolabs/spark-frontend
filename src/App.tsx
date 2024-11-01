@@ -22,7 +22,7 @@ import { SwapScreen } from "@screens/SwapScreen";
 
 import { ROUTES } from "@constants";
 
-const isUnderConstruction = false;
+const isUnderConstruction = true;
 
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore } = useStores();
