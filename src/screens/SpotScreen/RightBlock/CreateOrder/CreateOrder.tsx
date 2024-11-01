@@ -247,9 +247,8 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const getAvailableAmount = () => {
-    const assetId = vm.isSell ? baseToken.assetId : quoteToken.assetId;
-    const decimals = vm.isSell ? baseToken.decimals : quoteToken.decimals;
-    return balanceStore.getFormatContractBalance(assetId, decimals);
+    const token = vm.isSell ? baseToken : quoteToken;
+    return balanceStore.getFormatTotalBalance(token.assetId, token.decimals);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {

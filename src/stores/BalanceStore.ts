@@ -53,13 +53,6 @@ export class BalanceStore {
     });
   };
 
-  getTotalBalance = (assetId: string) => {
-    const walletBalance = this.balances.get(assetId) ?? BN.ZERO;
-    const contractBalance = this.contractBalances.get(assetId) ?? BN.ZERO;
-
-    return walletBalance.plus(contractBalance);
-  };
-
   get formattedBalanceInfoList() {
     const { oracleStore } = this.rootStore;
 
@@ -132,6 +125,17 @@ export class BalanceStore {
 
   getFormatContractBalance = (assetId: string, decimals: number) => {
     return BN.formatUnits(this.getContractBalance(assetId), decimals).toSignificant(2) ?? "-";
+  };
+
+  getTotalBalance = (assetId: string) => {
+    const walletBalance = this.balances.get(assetId) ?? BN.ZERO;
+    const contractBalance = this.contractBalances.get(assetId) ?? BN.ZERO;
+
+    return walletBalance.plus(contractBalance);
+  };
+
+  getFormatTotalBalance = (assetId: string, decimals: number) => {
+    return BN.formatUnits(this.getTotalBalance(assetId), decimals).toSignificant(2) ?? "-";
   };
 
   depositBalance = async (assetId: string, amount: string) => {
