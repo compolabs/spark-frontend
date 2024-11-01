@@ -90,9 +90,8 @@ const Container = styled.div`
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
-  padding: 5px 12px 0;
-  //overflow-y: auto;
-  //max-height: calc(100% - px);
+  padding: 5px 12px 8px;
+  overflow-y: auto;
   height: 100%;
 `;
 

@@ -59,6 +59,7 @@ const ContentContainer = styled.div`
   display: grid;
   position: relative;
   grid-template-columns: minmax(300px, 1fr) minmax(min-content, 273px) minmax(100px, 273px);
+  grid-template-rows: minmax(600px, calc(100vh - 140px));
   width: 100%;
   height: 100%;
   gap: 4px;
