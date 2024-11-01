@@ -1,6 +1,8 @@
 import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
+import { UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
@@ -36,6 +38,7 @@ export class BalanceStore {
       ([isConnected]) => {
         if (!isConnected) {
           this.balances = new Map();
+          this.contractBalances = new Map();
           this.initialized = false;
           return;
         }
@@ -89,7 +92,12 @@ export class BalanceStore {
 
     if (!accountStore.address || !wallet) return;
 
-    const [balances] = await Promise.all([this.fetchBalances(), this.fetchUserMarketBalanceByContracts()]);
+    const address = Address.fromB256(accountStore.address);
+
+    const [balances, contractBalances] = await Promise.all([
+      this.fetchUserBalances(),
+      this.fetchUserContractBalances(address),
+    ]);
 
     try {
       for (const [tokenAddress, balance] of Object.entries(balances)) {
@@ -101,8 +109,20 @@ export class BalanceStore {
           this.balances.set(tokenAddress, new BN(balance));
         });
       }
+
+      CONFIG.MARKETS.forEach((market, index) => {
+        const marketBalance = contractBalances[index];
+
+        const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
+        const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
+
+        runInAction(() => {
+          this.contractBalances.set(market.baseAssetId, baseAmount);
+          this.contractBalances.set(market.quoteAssetId, quoteAmount);
+        });
+      });
     } catch (error) {
-      console.error("Error updating token balances:", error);
+      console.error("Error updating user balances:", error);
     }
   };
 
@@ -238,38 +258,18 @@ export class BalanceStore {
     }
   };
 
-  private fetchBalances = async (): Promise<Balances> => {
+  private fetchUserBalances = async (): Promise<Balances> => {
     const bcNetwork = FuelNetwork.getInstance();
 
     return bcNetwork.getBalances();
   };
 
-  private fetchUserMarketBalanceByContracts = async () => {
-    const { accountStore } = this.rootStore;
+  private fetchUserContractBalances = async (address: Address): Promise<UserMarketBalance[]> => {
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!accountStore.address) return;
-
-    try {
-      const address = Address.fromB256(accountStore.address);
-      const marketBalanceList = await bcNetwork.fetchUserMarketBalanceByContracts(
-        address.bech32Address,
-        CONFIG.MARKETS.map((m) => m.contractId),
-      );
-
-      CONFIG.MARKETS.forEach((market, index) => {
-        const marketBalance = marketBalanceList[index];
-
-        const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
-        const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
-
-        runInAction(() => {
-          this.contractBalances.set(market.baseAssetId, baseAmount);
-          this.contractBalances.set(market.quoteAssetId, quoteAmount);
-        });
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    return bcNetwork.fetchUserMarketBalanceByContracts(
+      address.bech32Address,
+      CONFIG.MARKETS.map((m) => m.contractId),
+    );
   };
 }

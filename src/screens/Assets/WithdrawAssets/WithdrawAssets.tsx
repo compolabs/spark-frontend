@@ -105,7 +105,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
               />
               <BalanceBlock
                 icon={<WalletIcon />}
-                nameWallet="Wallet balnce"
+                nameWallet="Wallet balance"
                 showBalance="walletBalance"
                 token={selectAsset}
               />
