@@ -130,9 +130,9 @@ const SpotTableImpl: React.FC = observer(() => {
   const [tabIndex, setTabIndex] = useState(0);
   const columns = [ORDER_COLUMNS(vm, theme), HISTORY_COLUMNS(theme)];
   const [page, setPage] = useState(startPage);
-  const historyOrders = (vm.myOrdersStats?.closed ?? 0) + (vm.myOrdersStats?.canceled ?? 0);
+  const historyOrders = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
   const TABS = [
-    { title: "ORDERS", disabled: false, rowCount: vm.myOrdersStats?.active ?? 0 },
+    { title: "ORDERS", disabled: false, rowCount: vm.userOrdersStats?.active ?? 0 },
     { title: "HISTORY", disabled: false, rowCount: historyOrders },
   ];
 
@@ -143,7 +143,7 @@ const SpotTableImpl: React.FC = observer(() => {
   };
 
   const renderMobileRows = () => {
-    const orderData = vm.myOrders.map((ord, i) => (
+    const orderData = vm.userOrders.map((ord, i) => (
       <MobileTableOrderRow key={i + "mobile-row"}>
         <MobileTableRowColumn>
           <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
@@ -182,7 +182,7 @@ const SpotTableImpl: React.FC = observer(() => {
       </MobileTableOrderRow>
     ));
 
-    const orderHistoryData = vm.myOrdersHistory.map((ord, i) => (
+    const orderHistoryData = vm.userOrdersHistory.map((ord, i) => (
       <MobileTableOrderRow key={i + "mobile-history-row"}>
         <MobileTableRowColumn>
           <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
@@ -236,7 +236,7 @@ const SpotTableImpl: React.FC = observer(() => {
     );
   };
 
-  const tabToData = [vm.myOrders, vm.myOrdersHistory];
+  const tabToData = [vm.userOrders, vm.userOrdersHistory];
   const data = tabToData[tabIndex];
   const handleChangePagination = (e: number) => {
     vm.setOffset(e);
@@ -274,7 +274,7 @@ const SpotTableImpl: React.FC = observer(() => {
           <Pagination currentPage={page} lengthData={data.length} onChange={handleChangePagination} />
         </PaginationContainer>
       ) : null}
-      {!!vm.myOrders.length && tabIndex === 0 && (
+      {!!vm.userOrders.length && tabIndex === 0 && (
         //todo здесь была кнопка cancel all orders
         <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
       )}

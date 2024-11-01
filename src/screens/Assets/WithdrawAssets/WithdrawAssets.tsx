@@ -59,7 +59,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     }
   };
 
-  const balanceList = balanceStore.getFormattedContractBalance();
+  const balanceList = balanceStore.formattedBalanceInfoList;
 
   useEffect(() => {
     setAssets(balanceList[0]);
@@ -105,7 +105,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
               />
               <BalanceBlock
                 icon={<WalletIcon />}
-                nameWallet="Wallet balnce"
+                nameWallet="Wallet balance"
                 showBalance="walletBalance"
                 token={selectAsset}
               />

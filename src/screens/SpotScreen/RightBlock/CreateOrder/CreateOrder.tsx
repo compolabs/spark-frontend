@@ -61,13 +61,14 @@ const CreateOrder: React.FC = observer(() => {
   const { baseToken, quoteToken } = market;
 
   const handlePercentChange = (v: number) => {
-    const assetId = vm.isSell ? baseToken.assetId : quoteToken.assetId;
-    const findToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === assetId);
-    if (!findToken) return;
-    const balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
-    if (balance.isZero()) return;
+    const token = vm.isSell ? baseToken : quoteToken;
 
-    const value = BN.percentOf(balance, v);
+    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+
+    if (totalBalance.isZero()) return;
+
+    const value = BN.percentOf(totalBalance, v);
+
     if (vm.isSell) {
       vm.setInputAmount(value);
       return;
@@ -98,7 +99,7 @@ const CreateOrder: React.FC = observer(() => {
   const isInputPriceDisabled = !disabledOrderTypes.includes(settingsStore.orderType);
 
   const renderButton = () => {
-    const isEnoughGas = balanceStore.getNativeBalance().gt(MINIMAL_ETH_REQUIRED);
+    const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
 
     if (!isButtonDisabled && !isEnoughGas) {
       return (
@@ -246,7 +247,8 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const getAvailableAmount = () => {
-    return balanceStore.getFormatContractBalanceInfo(vm.isSell ? baseToken.assetId : quoteToken.assetId);
+    const token = vm.isSell ? baseToken : quoteToken;
+    return balanceStore.getFormatTotalBalance(token.assetId, token.decimals);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {

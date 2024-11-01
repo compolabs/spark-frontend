@@ -17,7 +17,6 @@ export const TV_DATAFEED = "https://spark-tv-datafeed.spark-defi.com/api/v1";
 export const CHARTS_STORAGE = "https://tv-backend-v4.herokuapp.com/";
 
 export const DEFAULT_DECIMALS = 9;
-export const USDC_DECIMALS = 6;
 
 export const TWITTER_LINK = "https://twitter.com/Sprkfi";
 export const GITHUB_LINK = "https://github.com/compolabs";
