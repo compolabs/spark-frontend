@@ -6,7 +6,7 @@ import { Token } from "@entity";
 
 import configJSON from "@src/config.json";
 
-const CURRENT_CONFIG_VER = "1.6.1";
+const CURRENT_CONFIG_VER = "1.6.2";
 
 export interface Market {
   marketName: string;
