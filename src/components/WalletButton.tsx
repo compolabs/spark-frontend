@@ -31,7 +31,7 @@ const WalletButton: React.FC = observer(() => {
   const bcNetwork = FuelNetwork.getInstance();
 
   const ethBalance = BN.formatUnits(
-    balanceStore.getWalletBalance(bcNetwork!.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
+    balanceStore.getWalletNativeBalance(),
     bcNetwork!.getTokenBySymbol("ETH").decimals,
   )?.toFormat(4);
 

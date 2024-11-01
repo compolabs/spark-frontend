@@ -45,11 +45,6 @@ function createConfig() {
     (acc, t) => {
       acc[t.symbol] = t;
 
-      if (t.symbol.startsWith("t")) {
-        const aliasSymbol = t.symbol.slice(1);
-        acc[aliasSymbol] = { ...t, symbol: aliasSymbol };
-      }
-
       return acc;
     },
     {} as Record<string, Token>,
