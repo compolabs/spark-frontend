@@ -59,13 +59,28 @@ const TradingViewWidgetNew: React.FC = observer(() => {
     }
   }, [spotOrderBookStore.ohlcvData, spotOrderBookStore.historgramData]);
 
-  return <StyledChart ref={chartContainerRef} />;
+  return (
+    <Root className="tradingview-widget-container">
+      <div ref={chartContainerRef} />
+    </Root>
+  );
 });
 
 export default TradingViewWidgetNew;
 
-const StyledChart = styled.div`
-  width: "100%";
-  height: "100%";
-  position: "relative";
+const Root = styled.div`
+  & > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  .tv-lightweight-charts {
+    margin: -2px -2px -2px;
+    height: calc(100% - 2px) !important;
+    width: calc(100% - 2px) !important;
+    border-radius: 8px;
+  }
 `;
