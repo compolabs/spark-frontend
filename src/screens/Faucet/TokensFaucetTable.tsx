@@ -23,7 +23,7 @@ const TokensFaucetTable: React.FC = observer(() => {
 
   const bcNetwork = FuelNetwork.getInstance();
 
-  const isEnoughGas = balanceStore.getNativeBalance().gt(MINIMAL_ETH_REQUIRED);
+  const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
   const ETH = bcNetwork.getTokenBySymbol("ETH");
 
   const shouldButtonBeDisabled = (tokenAddress: string) => {

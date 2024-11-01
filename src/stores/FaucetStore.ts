@@ -35,7 +35,7 @@ class FaucetStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     return bcNetwork!.getTokenList().map((v) => {
-      const balance = balanceStore.getBalance(v.assetId);
+      const balance = balanceStore.getWalletBalance(v.assetId);
       const mintAmount = new BN(FAUCET_AMOUNTS[v.symbol] ?? 0);
       const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
       return {

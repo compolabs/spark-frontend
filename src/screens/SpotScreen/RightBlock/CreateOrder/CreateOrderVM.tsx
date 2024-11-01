@@ -151,16 +151,17 @@ class CreateOrderVM {
   }
 
   get isSpotInputError(): boolean {
-    const { tradeStore, balanceStore } = this.rootStore;
-    const { market } = tradeStore;
+    const {
+      tradeStore: { market },
+      balanceStore,
+    } = this.rootStore;
+
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
-    const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const activeToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === token);
+    const token = this.isSell ? market!.baseToken : market!.quoteToken;
 
-    if (!activeToken) return false;
+    const totalBalance = balanceStore.getTotalBalance(token.assetId);
 
-    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
-    return balance ? amount.gt(balance) : false;
+    return totalBalance ? amount.gt(totalBalance) : false;
   }
 
   get isSell(): boolean {
@@ -194,27 +195,25 @@ class CreateOrderVM {
 
     if (!tradeStore.market) return;
 
-    const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const activeToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === assetId);
+    const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
 
-    if (!activeToken) return;
+    let totalBalance = balanceStore.getTotalBalance(token.assetId);
 
-    let balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
-    if (assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
-      balance = balance.minus(HALF_GWEI);
+    if (token.assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
+      totalBalance = totalBalance.minus(HALF_GWEI);
     }
 
     if (this.isSell) {
-      this.setInputAmount(balance);
+      this.setInputAmount(totalBalance);
       return;
     }
 
     mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_MAX_SPOT, {
       type: this.isSell ? "SELL" : "BUY",
-      value: balance.toString(),
+      value: totalBalance.toString(),
     });
 
-    this.setInputTotal(balance);
+    this.setInputTotal(totalBalance);
   };
 
   setInputPrice = (price: BN) => {
@@ -281,21 +280,18 @@ class CreateOrderVM {
 
     if (!tradeStore.market) return;
 
-    const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const activeToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === assetId);
+    const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
 
-    if (!activeToken) return;
+    const totalBalance = balanceStore.getTotalBalance(token.assetId);
 
-    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
-
-    if (balance.isZero()) {
+    if (totalBalance.isZero()) {
       this.inputPercent = BN.ZERO;
       return;
     }
 
     const percentageOfTotal = this.isSell
-      ? BN.ratioOf(this.inputAmount, balance)
-      : BN.ratioOf(this.inputTotal, balance);
+      ? BN.ratioOf(this.inputAmount, totalBalance)
+      : BN.ratioOf(this.inputTotal, totalBalance);
 
     this.inputPercent = percentageOfTotal.gt(100) ? new BN(100) : percentageOfTotal.toDecimalPlaces(0);
   }

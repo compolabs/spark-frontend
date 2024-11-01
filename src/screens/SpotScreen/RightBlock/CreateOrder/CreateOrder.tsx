@@ -61,17 +61,14 @@ const CreateOrder: React.FC = observer(() => {
   const { baseToken, quoteToken } = market;
 
   const handlePercentChange = (v: number) => {
-    const assetId = vm.isSell ? baseToken.assetId : quoteToken.assetId;
+    const token = vm.isSell ? baseToken : quoteToken;
 
-    const activeToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === assetId);
+    const totalBalance = balanceStore.getTotalBalance(token.assetId);
 
-    if (!activeToken) return;
+    if (totalBalance.isZero()) return;
 
-    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
+    const value = BN.percentOf(totalBalance, v);
 
-    if (balance.isZero()) return;
-
-    const value = BN.percentOf(balance, v);
     if (vm.isSell) {
       vm.setInputAmount(value);
       return;
@@ -102,7 +99,7 @@ const CreateOrder: React.FC = observer(() => {
   const isInputPriceDisabled = !disabledOrderTypes.includes(settingsStore.orderType);
 
   const renderButton = () => {
-    const isEnoughGas = balanceStore.getNativeBalance().gt(MINIMAL_ETH_REQUIRED);
+    const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
 
     if (!isButtonDisabled && !isEnoughGas) {
       return (
