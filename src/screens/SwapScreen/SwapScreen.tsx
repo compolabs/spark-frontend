@@ -86,8 +86,7 @@ export const SwapScreen: React.FC = observer(() => {
   }, []);
 
   const generateBalanceData = (assets: Token[]) => {
-    const d = balanceStore.formattedBalanceInfoList;
-    return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
+    return balanceStore.formattedBalanceInfoList.filter((el) => assets.some((item) => item.assetId === el.assetId));
   };
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {

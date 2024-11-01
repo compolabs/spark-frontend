@@ -195,11 +195,11 @@ class CreateOrderVM {
     if (!tradeStore.market) return;
 
     const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const findToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === assetId);
+    const activeToken = balanceStore.formattedBalanceInfoList.find((el) => el.assetId === assetId);
 
-    if (!findToken) return;
+    if (!activeToken) return;
 
-    let balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
+    let balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
     if (assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
       balance = balance.minus(HALF_GWEI);
     }

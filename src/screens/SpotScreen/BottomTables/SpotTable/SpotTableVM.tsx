@@ -80,8 +80,8 @@ class SpotTableVM {
       () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected, this.tableFilters] as const,
       ([market, initialized, isConnected, _]) => {
         if (!initialized || !market || !isConnected) {
-          this.setMyOrders([]);
-          this.setMyOrdersHistory([]);
+          this.setUserOrders([]);
+          this.setUserOrdersHistory([]);
           return;
         }
 
@@ -171,7 +171,7 @@ class SpotTableVM {
           if (!data) return;
 
           const sortedOrder = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
-          this.setMyOrders(sortedOrder);
+          this.setUserOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
             this.isOpenOrdersLoaded = true;
@@ -198,7 +198,7 @@ class SpotTableVM {
           if (!data) return;
 
           const sortedOrdersHistory = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
-          this.setMyOrdersHistory(sortedOrdersHistory);
+          this.setUserOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {
             this.isHistoryOrdersLoaded = true;
@@ -230,16 +230,17 @@ class SpotTableVM {
           if (!data.User.length) {
             return;
           }
-          this.setMyOrdersStats(data.User[0]);
+          this.setUserOrdersStats(data.User[0]);
         },
       });
   };
 
-  private setMyOrders = (myOrders: SpotMarketOrder[]) => (this.userOrders = myOrders);
+  private setUserOrders = (orders: SpotMarketOrder[]) => (this.userOrders = orders);
 
-  private setMyOrdersHistory = (myOrdersHistory: SpotMarketOrder[]) => (this.userOrdersHistory = myOrdersHistory);
+  private setUserOrdersHistory = (orders: SpotMarketOrder[]) => (this.userOrdersHistory = orders);
 
-  private setMyOrdersStats = (myOrdersStats: UserInfo) => (this.userOrdersStats = myOrdersStats);
+  private setUserOrdersStats = (stats: UserInfo) => (this.userOrdersStats = stats);
+
   setOffset = (currentPage: number) => {
     if (currentPage === 0) {
       this.offset = 0;

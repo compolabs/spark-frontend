@@ -69,16 +69,6 @@ export class BalanceStore {
     });
   };
 
-  get nonZeroBalancesAssetIds() {
-    const nonZeroBalances: string[] = [];
-    this.balances.forEach((balance, assetId) => {
-      if (balance && balance.gt(BN.ZERO)) {
-        nonZeroBalances.push(assetId);
-      }
-    });
-    return nonZeroBalances;
-  }
-
   get formattedBalanceInfoList() {
     const { oracleStore } = this.rootStore;
 
