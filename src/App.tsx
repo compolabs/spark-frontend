@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
+import Intercom from "@intercom/messenger-js-sdk";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
@@ -21,16 +22,15 @@ import SpotScreen from "@screens/SpotScreen";
 import { SwapScreen } from "@screens/SwapScreen";
 
 import { ROUTES } from "@constants";
-import Intercom from "@intercom/messenger-js-sdk";
 
 const isUnderConstruction = false;
 
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore, accountStore } = useStores();
-    Intercom({
-        app_id: 'cqini4oz',
-        wallet: accountStore.address,
-    });
+  Intercom({
+    app_id: "cqini4oz",
+    wallet: accountStore.address,
+  });
 
   // This hooks is used to clear unnecessary URL parameters,
   // specifically "tx_id", after returning from the faucet
