@@ -406,4 +406,3 @@ const ProgressBar = styled.span<{ type: "buy" | "sell"; fulfillPercent?: number 
 const VolumeBar = styled(ProgressBar)<{ volumePercent?: number }>`
   width: ${({ volumePercent }) => (volumePercent ? `${volumePercent}%` : `0%`)};
 `;
-
