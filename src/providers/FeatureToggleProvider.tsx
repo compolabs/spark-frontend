@@ -1,7 +1,5 @@
 import React, {ReactNode} from "react";
-import { createRoot } from 'react-dom/client';
 import { FlagProvider } from '@unleash/proxy-client-react';
-import * as process from "node:process";
 
 const config = {
     url: 'https://unleash.spark-defi.com/unleash/api/frontend/',

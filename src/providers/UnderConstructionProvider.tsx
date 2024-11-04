@@ -1,6 +1,6 @@
 import React, {ReactNode} from "react";
 import { useFlag } from '@unleash/proxy-client-react';
-import UnderConstruction from "@screens/Errors/UnderConstruction.tsx";
+import UnderConstruction from "@screens/Errors/UnderConstruction";
 
 interface UnderConstructionProviderProps {
     children: ReactNode;
