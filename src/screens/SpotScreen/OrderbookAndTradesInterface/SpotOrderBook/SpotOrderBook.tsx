@@ -227,10 +227,6 @@ const TextOverflow = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  ${media.mobile} {
-    text-align: right !important;
-  }
 `;
 
 const PlugContainer = styled(SmartFlex)`
@@ -297,6 +293,10 @@ const SettingIcon = styled.img<{ selected?: boolean }>`
   }
 `;
 
+const TextRightAlign = styled(Text)`
+  text-align: right !important;
+`;
+
 const StyledSelect = styled(Select<string>)`
   min-width: 84px;
   height: 40px;
@@ -322,11 +322,12 @@ const OrderBookHeader = styled.div`
     ${Text}:nth-of-type(2) {
       text-align: end;
     }
-    ${Text}:nth-of-type(3) {
+    ${TextRightAlign}:nth-of-type(2) {
       display: none;
     }
   }
 `;
+
 const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
   position: relative;
   cursor: pointer;
@@ -346,10 +347,7 @@ const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
 
   ${media.mobile} {
     gap: 3px;
-    & > ${Text}:nth-of-type(2) {
-      text-align: right;
-    }
-    & > ${Text}:nth-of-type(3) {
+    & > ${TextRightAlign}:nth-of-type(2) {
       display: none;
     }
   }
@@ -409,6 +407,3 @@ const VolumeBar = styled(ProgressBar)<{ volumePercent?: number }>`
   width: ${({ volumePercent }) => (volumePercent ? `${volumePercent}%` : `0%`)};
 `;
 
-const TextRightAlign = styled(Text)`
-  text-align: right !important;
-`;
