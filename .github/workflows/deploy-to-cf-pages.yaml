@@ -36,6 +36,10 @@ jobs:
       - name: Install Dependencies
         run: |
           pnpm install
+      - name: create env file
+        run: |
+          touch .env
+          echo VITE_FEATURE_TOGGLE_CLIENT_KEY=${{ vars.VITE_FEATURE_TOGGLE_CLIENT_KEY }} >> .env
       - name: Build Project
         run: |
           npm run build
