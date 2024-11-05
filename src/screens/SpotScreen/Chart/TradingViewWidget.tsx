@@ -37,7 +37,6 @@ const TradingViewWidget: React.FC = observer(() => {
     if (!market || !tradingViewContainer || !isTradingViewAvailable) {
       return;
     }
-
     const symbol = `OKX:${market.baseToken.symbol}${market.quoteToken.symbol}`;
     const widgetConfig = {
       autosize: true,
