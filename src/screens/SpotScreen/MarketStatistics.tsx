@@ -21,10 +21,7 @@ const MarketStatistics: React.FC = observer(() => {
   const theme = useTheme();
   const media = useMedia();
 
-  const indexPriceBn =
-    spotOrderBookStore?.trades.length > 0
-      ? BN.formatUnits(spotOrderBookStore.trades[0]?.tradePrice, DEFAULT_DECIMALS).toFormat(2)
-      : BN.ZERO.toString();
+  const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS).toFormat(2);
 
   const indexPrice = toCurrency(indexPriceBn);
   const volume24h = toCurrency(tradeStore.spotMarketInfo.volume.toSignificant(2));

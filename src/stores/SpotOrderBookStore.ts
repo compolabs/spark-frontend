@@ -96,6 +96,14 @@ class SpotOrderBookStore {
     return this.sellOrders.reduce((acc, order) => acc.plus(order.initialAmount), BN.ZERO);
   }
 
+  get lastTradePrice(): BN {
+    if (!this.trades.length) {
+      return BN.ZERO;
+    }
+
+    return new BN(this.trades[0].tradePrice);
+  }
+
   setDecimalGroup = (value: number) => {
     this.decimalGroup = value;
   };

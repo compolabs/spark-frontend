@@ -102,7 +102,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             )
           ) : (
             <>
-              {balancesInfoList.map((el) => (
+              {balancesInfoList.slice(0, 3).map((el) => (
                 <AssetItem key={el.assetId}>
                   <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
                 </AssetItem>
