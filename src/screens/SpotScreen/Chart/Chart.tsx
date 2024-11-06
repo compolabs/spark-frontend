@@ -3,13 +3,12 @@ import styled from "@emotion/styled";
 
 import { media } from "@themes/breakpoints";
 
-import TradingViewWidgetNew from "@screens/SpotScreen/Chart/TradingViewWidgetNew.tsx";
+import TradingViewWidget from "./TradingViewWidget";
 
 const Chart: React.FC = () => {
   return (
     <Root>
-      <TradingViewWidgetNew />
-      {/*<TradingViewWidget />*/}
+      <TradingViewWidget />
     </Root>
   );
 };
