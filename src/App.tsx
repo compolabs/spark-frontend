@@ -1,7 +1,6 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
-import Intercom from "@intercom/messenger-js-sdk";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
@@ -16,22 +15,16 @@ import { MODAL_TYPE } from "@stores/ModalStore";
 
 import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets";
 import ConnectWalletDialog from "@screens/ConnectWallet";
-import UnderConstruction from "@screens/Errors/UnderConstruction";
 import Faucet from "@screens/Faucet";
 import SpotScreen from "@screens/SpotScreen";
 import { SwapScreen } from "@screens/SwapScreen";
 
 import { ROUTES } from "@constants";
 
-const isUnderConstruction = false;
-//
+import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
 
 const App: React.FC = observer(() => {
-  const { modalStore, tradeStore, accountStore } = useStores();
-  Intercom({
-    app_id: "cqini4oz",
-    wallet: accountStore.address,
-  });
+  const { modalStore, tradeStore } = useStores();
 
   // This hooks is used to clear unnecessary URL parameters,
   // specifically "tx_id", after returning from the faucet
@@ -39,25 +32,27 @@ const App: React.FC = observer(() => {
 
   usePrivateKeyAsAuth();
 
-  if (isUnderConstruction) {
-    return <UnderConstruction />;
-  }
-
   return (
-    <Root>
-      <Header />
-      <Routes>
-        <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
-        <Route element={<SwapScreen />} path={ROUTES.SWAP} />
-        <Route element={<Faucet />} path={ROUTES.FAUCET} />
-        <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
-        <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
-      </Routes>
-      <SideManageAssets />
-      <PWAModal />
-      <SplashScreen />
-      <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
-    </Root>
+    <FeatureToggleProvider>
+      <UnderConstructionProvider>
+        <IntercomProvider>
+          <Root>
+            <Header />
+            <Routes>
+              <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
+              <Route element={<SwapScreen />} path={ROUTES.SWAP} />
+              <Route element={<Faucet />} path={ROUTES.FAUCET} />
+              <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
+              <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
+            </Routes>
+            <SideManageAssets />
+            <PWAModal />
+            <SplashScreen />
+            <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
+          </Root>
+        </IntercomProvider>
+      </UnderConstructionProvider>
+    </FeatureToggleProvider>
   );
 });
 
