@@ -18,7 +18,7 @@ import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, TWITTER_LINK } from "@constants";
+import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, SWAP_LINK, TWITTER_LINK } from "@constants";
 import { CONFIG } from "@utils/getConfig.ts";
 import { isExternalLink } from "@utils/isExternalLink";
 
@@ -27,7 +27,7 @@ import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
 
 type MenuChildItem = {
   title: string;
-  icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+  icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | null;
   link: string;
   desc?: string;
   trackEvent?: MIXPANEL_EVENTS;
@@ -66,8 +66,25 @@ const MENU_ITEMS: Array<MenuItem> = [
   },
   ...(CONFIG.APP.isMainnet
     ? [
-        { title: "BRIDGE", link: BRIDGE_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_BRIDGE },
         { title: "POINTS", link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
+        {
+          title: "BRIDGE",
+          trackEvent: MIXPANEL_EVENTS.CLICK_MORE_FUEL,
+          children: [
+            {
+              title: "FUEL BRIDGE",
+              link: BRIDGE_LINK,
+              icon: null,
+              trackEvent: MIXPANEL_EVENTS.CLICK_BRIDGE,
+            },
+            {
+              title: "LAYERSWAP",
+              link: SWAP_LINK,
+              icon: null,
+              trackEvent: MIXPANEL_EVENTS.CLICK_LAYER_SWAP,
+            },
+          ],
+        },
       ]
     : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: MIXPANEL_EVENTS.CLICK_FAUCET }]),
   {
@@ -157,9 +174,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     return (
       <NavLink key={title} to={link} onClick={handleChildClick}>
         <DropdownMenu isActive={isActive} isGradient={isGradient}>
-          <IconContainer>
-            <Icon height={24} width={24} />
-          </IconContainer>
+          <IconContainer>{Icon && <Icon height={24} width={24} />}</IconContainer>
           <DropdownMenuContent>
             <DropdownMenuTitle type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</DropdownMenuTitle>
             {desc && <Text type={TEXT_TYPES.BODY}>{desc}</Text>}
