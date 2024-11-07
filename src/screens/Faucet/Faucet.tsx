@@ -9,16 +9,26 @@ import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import TokensFaucetTable from "@screens/Faucet/TokensFaucetTable";
+
+import { ROUTES } from "@constants";
 
 interface IProps {}
 
 const Faucet: React.FC<IProps> = observer(() => {
-  const { faucetStore } = useStores();
+  const { faucetStore, mixPanelStore, accountStore } = useStores();
 
   useEffect(() => {
     document.title = `Spark | Faucet`;
+  }, []);
+
+  useEffect(() => {
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.PAGE_VIEW, {
+      page_name: ROUTES.FAUCET,
+      user_address: accountStore.address,
+    });
   }, []);
 
   return (

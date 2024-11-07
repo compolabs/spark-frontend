@@ -73,9 +73,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   };
 
   const renderSpread = () => {
-    const price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
+    let price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
+    price = price === "-" ? price : numeral(price).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`);
     const percent = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPercent : "-";
-
     if (media.mobile) {
       return (
         <SpreadContainer>
@@ -117,11 +117,11 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         {newOrder.map((o, index) => (
           <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
             <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
-            <Text primary>{o.currentAmountUnits.toFormat(4)}</Text>
             <TextOverflow color={color}>{o.priceUnits.toFormat(spotOrderBookStore.decimalGroup)}</TextOverflow>
-            <Text primary>
+            <TextRightAlign primary>{numeral(o.currentAmountUnits).format(`0.${"0".repeat(4)}a`)}</TextRightAlign>
+            <TextRightAlign primary>
               {numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`)}
-            </Text>
+            </TextRightAlign>
           </OrderRow>
         ))}
         <Plug length={70 - orders.length} />
@@ -136,7 +136,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       </Root>
     );
   }
-
   return (
     <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root>
@@ -153,9 +152,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         </SettingsContainer>
         <OrderbookContainer>
           <OrderBookHeader>
-            <Text type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</Text>
-            <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
-            <Text type={TEXT_TYPES.SUPPORTING}>{`Total ${market?.quoteToken.symbol}`}</Text>
+            <Text type={TEXT_TYPES.SUPPORTING}>{`Price  ${market?.quoteToken.symbol}`}</Text>
+            <TextRightAlign type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</TextRightAlign>
+            <TextRightAlign type={TEXT_TYPES.SUPPORTING}>Total</TextRightAlign>
           </OrderBookHeader>
           <Container
             fitContent={
@@ -167,17 +166,15 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY && (
               <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
             )}
-
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL && (
               <SmartFlexOrder>{renderOrders(spotOrderBookStore.sellOrders, "sell")}</SmartFlexOrder>
             )}
-
             {spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL_AND_BUY && (
               <OrderBookColumn>
                 <SmartFlexOrder flexDirection="column-reverse">
                   {renderOrders(spotOrderBookStore.sellOrders, "sell")}
                 </SmartFlexOrder>
-                <SmartFlex>{renderSpread()}</SmartFlex>
+                {renderSpread()}
                 <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
               </OrderBookColumn>
             )}
@@ -212,6 +209,7 @@ const Plug: React.FC<{
     ))}
   </>
 );
+
 const SmartFlexOrder = styled(SmartFlex)<{ flexDirection?: string }>`
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
   flex-grow: 1;
@@ -219,6 +217,7 @@ const SmartFlexOrder = styled(SmartFlex)<{ flexDirection?: string }>`
   height: 0;
   overflow: hidden;
 `;
+
 const OrderBookColumn = styled(Column)`
   height: 100%;
   width: 100%;
@@ -294,6 +293,10 @@ const SettingIcon = styled.img<{ selected?: boolean }>`
   }
 `;
 
+const TextRightAlign = styled(Text)`
+  text-align: right !important;
+`;
+
 const StyledSelect = styled(Select<string>)`
   min-width: 84px;
   height: 40px;
@@ -319,18 +322,19 @@ const OrderBookHeader = styled.div`
     ${Text}:nth-of-type(2) {
       text-align: end;
     }
-    ${Text}:nth-of-type(3) {
+    ${TextRightAlign}:nth-of-type(2) {
       display: none;
     }
   }
 `;
+
 const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
   position: relative;
   cursor: pointer;
   height: 16px;
   width: 100%;
-  justify-content: space-between;
-  align-items: center;
+  //justify-content: space-between;
+  //align-items: center;
   padding: 0 12px;
   background: transparent;
   transition: 0.4s;
@@ -343,10 +347,7 @@ const OrderRow = styled(Row)<{ type: "buy" | "sell" }>`
 
   ${media.mobile} {
     gap: 3px;
-    & > ${Text}:nth-of-type(2) {
-      text-align: right;
-    }
-    & > ${Text}:nth-of-type(3) {
+    & > ${TextRightAlign}:nth-of-type(2) {
       display: none;
     }
   }
@@ -365,10 +366,6 @@ const OrderbookContainer = styled.div`
   height: 100%;
 
   gap: 2px;
-
-  ${media.mobile} {
-    height: fit-content;
-  }
 `;
 
 const Container = styled(OrderbookContainer)<{
@@ -391,6 +388,7 @@ const SpreadContainer = styled(SmartFlex)`
   background: ${({ theme }) => theme.colors.bgPrimary};
   align-items: center;
   gap: 12px;
+  width: 100%;
 `;
 
 const ProgressBar = styled.span<{ type: "buy" | "sell"; fulfillPercent?: number }>`

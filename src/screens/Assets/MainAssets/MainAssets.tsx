@@ -18,34 +18,31 @@ import Spinner from "@assets/icons/spinner.svg?react";
 import useFlag from "@hooks/useFlag";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { assetsMock } from "@screens/Assets/MainAssets/const";
 import ConnectWalletDialog from "@screens/ConnectWallet";
 
-import { DEFAULT_DECIMALS, ROUTES } from "@constants";
+import { ROUTES } from "@constants";
 import BN from "@utils/BN";
 
-import { FuelNetwork } from "@blockchain";
-
-interface MainAssets {
+interface MainAssetsProps {
   setStep: (value: number) => void;
 }
 
-const MainAssets = observer(({ setStep }: MainAssets) => {
-  const { balanceStore } = useStores();
-  const { oracleStore, quickAssetsStore } = useStores();
+const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
+  const { balanceStore, quickAssetsStore, mixPanelStore } = useStores();
   const { isConnected } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
-  const bcNetwork = FuelNetwork.getInstance();
-  const balanceList = balanceStore.getFormattedContractBalance();
-  const hasPositiveBalance = balanceList.some((item) => !new BN(item.balance).isZero());
-  const accumulateBalance = balanceList.reduce(
+
+  const balancesInfoList = balanceStore.formattedBalanceInfoList;
+
+  const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.balance).isZero());
+  const accumulateBalance = balancesInfoList.reduce(
     (acc, account) => {
-      const price = BN.formatUnits(oracleStore.getTokenIndexPrice(account.asset.priceFeed), DEFAULT_DECIMALS);
-      const balanceValue = new BN(account.balance).multipliedBy(price);
-      const contractBalanceValue = new BN(account.contractBalance).multipliedBy(price);
+      const balanceValue = new BN(account.balance).multipliedBy(account.price);
+      const contractBalanceValue = new BN(account.contractBalance).multipliedBy(account.price);
 
       return {
         balance: acc.balance.plus(balanceValue),
@@ -60,65 +57,57 @@ const MainAssets = observer(({ setStep }: MainAssets) => {
     await balanceStore.withdrawBalanceAll();
     setIsLoading(false);
   };
+
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
   };
 
-  const assetsMockData = assetsMock.map((el) => {
-    const token = bcNetwork!.getTokenByAssetId(el.assetId);
-    return {
-      asset: token,
-      ...el,
-    };
-  });
+  const renderOverallContent = ({ isConnected, balance }: { isConnected: boolean; balance: BN }) => {
+    return (
+      <OverallBlock justifyContent="space-between">
+        <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+          Overall
+        </Text>
+        <Text color={theme.colors.greenLight}>${new BN(isConnected ? balance : BN.ZERO).toSignificant(2)}</Text>
+      </OverallBlock>
+    );
+  };
 
   return (
     <AssetsContainer justifyContent="space-between" column>
       {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
       <SmartFlex alignItems="center" justifyContent="space-between" column>
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
-          <TextTitle type={TEXT_TYPES.TEXT_BIG} primary>
+          <TextTitle
+            type={TEXT_TYPES.TEXT_BIG}
+            primary
+            onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
+          >
             Assets
           </TextTitle>
-          <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
+          <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
         <WalletBlock gap="8px" column>
           {isConnected ? (
-            <>
-              {accumulateBalance.balance.isPositive() && (
-                <>
-                  {balanceList.map((el) => (
-                    <AssetItem key={el.assetId}>
-                      <AssetBlock options={{ showBalance: "balance" }} token={el} />
-                    </AssetItem>
-                  ))}
-                  <OverallBlock justifyContent="space-between">
-                    <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
-                      Overall
-                    </Text>
-                    <Text color={theme.colors.greenLight}>
-                      ${new BN(isConnected ? accumulateBalance.balance : BN.ZERO).toSignificant(2)}
-                    </Text>
-                  </OverallBlock>
-                </>
-              )}
-            </>
+            accumulateBalance.balance.isPositive() && (
+              <>
+                {balancesInfoList.map((el) => (
+                  <AssetItem key={el.assetId}>
+                    <AssetBlock options={{ showBalance: "balance" }} token={el} />
+                  </AssetItem>
+                ))}
+                {renderOverallContent({ isConnected, balance: accumulateBalance.balance })}
+              </>
+            )
           ) : (
             <>
-              {assetsMockData.map((el) => (
+              {balancesInfoList.slice(0, 3).map((el) => (
                 <AssetItem key={el.assetId}>
                   <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
                 </AssetItem>
               ))}
-              <OverallBlock justifyContent="space-between">
-                <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
-                  Overall
-                </Text>
-                <Text color={theme.colors.greenLight}>
-                  ${new BN(isConnected ? accumulateBalance.balance : BN.ZERO).toSignificant(2)}
-                </Text>
-              </OverallBlock>
+              {renderOverallContent({ isConnected, balance: accumulateBalance.balance })}
               <BoxShadow />
             </>
           )}

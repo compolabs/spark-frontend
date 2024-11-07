@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react-lite";
@@ -22,6 +22,7 @@ import { media } from "@themes/breakpoints";
 import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 
@@ -40,7 +41,7 @@ const ORDER_OPTIONS = [
 const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore, spotOrderBookStore } = useStores();
+  const { balanceStore, tradeStore, settingsStore, spotOrderBookStore, mixPanelStore } = useStores();
   const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
@@ -55,18 +56,21 @@ const CreateOrder: React.FC = observer(() => {
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
 
+  const [isAgreeWithBetaButtonVisible, setIsAgreeWithBetaButtonVisible] = useState(false);
+
   if (!market) return null;
 
   const { baseToken, quoteToken } = market;
 
   const handlePercentChange = (v: number) => {
-    const assetId = vm.isSell ? baseToken.assetId : quoteToken.assetId;
-    const findToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === assetId);
-    if (!findToken) return;
-    const balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
-    if (balance.isZero()) return;
+    const token = vm.isSell ? baseToken : quoteToken;
 
-    const value = BN.percentOf(balance, v);
+    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+
+    if (totalBalance.isZero()) return;
+
+    const value = BN.percentOf(totalBalance, v);
+
     if (vm.isSell) {
       vm.setInputAmount(value);
       return;
@@ -93,16 +97,38 @@ const CreateOrder: React.FC = observer(() => {
     vm.setInputSlippage(slippage);
   };
 
+  const createOrderOrAgreeWithBeta = () => {
+    if (settingsStore.isUserAgreedWithBeta) {
+      vm.createOrder();
+    } else {
+      setIsAgreeWithBetaButtonVisible(true);
+    }
+  };
+
+  const handleAgreeWithBeta = () => {
+    settingsStore.setIsUserAgreedWithBeta(true);
+    setIsAgreeWithBetaButtonVisible(false);
+    vm.createOrder();
+  };
+
   const disabledOrderTypes = [ORDER_TYPE.Limit, ORDER_TYPE.LimitFOK, ORDER_TYPE.LimitIOC];
   const isInputPriceDisabled = !disabledOrderTypes.includes(settingsStore.orderType);
 
   const renderButton = () => {
-    const isEnoughGas = balanceStore.getNativeBalance().gt(MINIMAL_ETH_REQUIRED);
+    const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
 
     if (!isButtonDisabled && !isEnoughGas) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient ETH for gas</Text>
+        </CreateOrderButton>
+      );
+    }
+
+    if (isAgreeWithBetaButtonVisible) {
+      return (
+        <CreateOrderButton green onClick={handleAgreeWithBeta}>
+          <BetaButtonText primary>Confirm – I understand and accept the risks</BetaButtonText>
         </CreateOrderButton>
       );
     }
@@ -113,7 +139,7 @@ const CreateOrder: React.FC = observer(() => {
         disabled={isButtonDisabled}
         green={!vm.isSell}
         red={vm.isSell}
-        onClick={vm.createOrder}
+        onClick={createOrderOrAgreeWithBeta}
       >
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
           {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
@@ -205,6 +231,11 @@ const CreateOrder: React.FC = observer(() => {
           }
           defaultChecked
           initialEntered
+          onTransitionEnd={(e) => {
+            if (e.target instanceof HTMLElement && e.propertyName === "height") {
+              mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_FEE_ACCORDION);
+            }
+          }}
         >
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Max {vm.isSell ? "sell" : "buy"}</Text>
@@ -240,7 +271,8 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const getAvailableAmount = () => {
-    return balanceStore.getFormatContractBalanceInfo(vm.isSell ? baseToken.assetId : quoteToken.assetId);
+    const token = vm.isSell ? baseToken : quoteToken;
+    return balanceStore.getFormatTotalBalance(token.assetId, token.decimals);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {
@@ -355,7 +387,12 @@ const CreateOrder: React.FC = observer(() => {
           {renderInstruction()}
           {renderOrderDetails()}
         </ParamsContainer>
-        <ConnectWalletButton connectText="Connect wallet to trade">{renderButton()}</ConnectWalletButton>
+        <SmartFlex gap="4px" column>
+          <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
+            {renderButton()}
+          </ConnectWalletButton>
+          <BetaText>This is a beta version. Trade carefully and at your own risk!</BetaText>
+        </SmartFlex>
 
         <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
       </Root>
@@ -428,4 +465,16 @@ const SliderContainer = styled.div`
   ${media.mobile} {
     padding: 8px 0;
   }
+`;
+
+const BetaButtonText = styled(Text)`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 10px;
+`;
+
+const BetaText = styled(Text)`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 10px;
 `;

@@ -2,17 +2,12 @@ import { Account, B256Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import SparkOrderBookSdk, {
-  GetActiveOrdersParams,
-  Order,
-  OrderType,
-  WriteTransactionResponse,
-} from "@compolabs/spark-orderbook-ts-sdk";
+import SparkOrderBookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
 import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 
-import { SpotMarketOrder, Token } from "@entity";
+import { Token } from "@entity";
 
 import { Balances, SpotMarketVolume } from "./types";
 import { WalletManager } from "./WalletManager";
@@ -161,24 +156,16 @@ export class FuelNetwork {
     return this.orderbookSdk.subscribeActiveOrders(...params);
   };
 
-  subscribeSpotTradeOrderEvents = (...params: Parameters<typeof this.orderbookSdk.subscribeTradeOrderEvents>) => {
+  subscribeSpotTradeOrderEvents = (
+    ...params: Parameters<typeof this.orderbookSdk.subscribeTradeOrderEvents>
+  ): ReturnType<typeof this.orderbookSdk.subscribeTradeOrderEvents> => {
     return this.orderbookSdk.subscribeTradeOrderEvents(...params);
   };
 
-  fetchSpotActiveOrders = async (params: GetActiveOrdersParams): Promise<SpotMarketOrder[]> => {
-    const { data } = await this.orderbookSdk.fetchActiveOrders(params);
-
-    const formatOrder = (order: Order) =>
-      new SpotMarketOrder({
-        ...order,
-        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.USDC.assetId,
-      });
-
-    if ("ActiveSellOrder" in data) {
-      return data.ActiveSellOrder.map(formatOrder);
-    } else {
-      return data.ActiveBuyOrder.map(formatOrder);
-    }
+  fetchSpotActiveOrders = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchActiveOrders>
+  ): ReturnType<typeof this.orderbookSdk.fetchActiveOrders> => {
+    return this.orderbookSdk.fetchActiveOrders(...params);
   };
 
   fetchSpotVolume = async (...params: Parameters<typeof this.orderbookSdk.fetchVolume>): Promise<SpotMarketVolume> => {
@@ -221,5 +208,9 @@ export class FuelNetwork {
 
   chain = async (...params: Parameters<typeof this.orderbookSdk.chain>) => {
     return this.orderbookSdk.chain(...params);
+  };
+
+  subscribeUserInfo = (...params: Parameters<typeof this.orderbookSdk.subscribeUserInfo>) => {
+    return this.orderbookSdk.subscribeUserInfo(...params);
   };
 }

@@ -121,7 +121,7 @@ class TradeStore {
   setMarketSelectionOpened = (s: boolean) => (this.marketSelectionOpened = s);
 
   updateMarketInfo = async () => {
-    const { oracleStore } = this.rootStore;
+    const { spotOrderBookStore } = this.rootStore;
 
     if (!this.market) return;
 
@@ -130,7 +130,7 @@ class TradeStore {
       market: [this.market.contractAddress],
     });
     const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
-    const price = BN.formatUnits(oracleStore.getTokenIndexPrice(this.market.baseToken.priceFeed), DEFAULT_DECIMALS);
+    const price = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
     const volume = baseTokenAmount.multipliedBy(price);
     const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
     const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
@@ -195,14 +195,13 @@ class TradeStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     try {
-      const markets = CONFIG.APP.markets.map(
+      const markets = CONFIG.MARKETS.map(
         (market) => new SpotMarket(market.baseAssetId, market.quoteAssetId, market.contractId),
       );
 
       const market = markets[0];
       const indexerInfo = CONFIG.APP.indexers[market.contractAddress as keyof typeof CONFIG.APP.indexers];
       bcNetwork.setActiveMarket(market.contractAddress, indexerInfo);
-      console.log(market.symbol);
       this.setMarketSymbol(market.symbol);
 
       this.setSpotMarkets(markets);

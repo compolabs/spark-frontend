@@ -16,8 +16,10 @@ import XIcon from "@assets/social/x.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { DOCS_LINK, GITHUB_LINK, ROUTES, TWITTER_LINK } from "@constants";
+import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, SWAP_LINK, TWITTER_LINK } from "@constants";
+import { CONFIG } from "@utils/getConfig.ts";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
@@ -25,9 +27,10 @@ import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
 
 type MenuChildItem = {
   title: string;
-  icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+  icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | null;
   link: string;
   desc?: string;
+  trackEvent?: MIXPANEL_EVENTS;
 };
 
 type MenuItem = {
@@ -36,14 +39,16 @@ type MenuItem = {
   link?: string;
   dataOnboardingKey?: string;
   children?: MenuChildItem[];
+  trackEvent?: MIXPANEL_EVENTS;
 };
 
 const MENU_ITEMS: Array<MenuItem> = [
-  { title: "DASHBOARD" },
+  { title: "DASHBOARD", trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
   {
     title: "TRADE",
     isGradient: true,
     link: ROUTES.SPOT,
+    trackEvent: MIXPANEL_EVENTS.CLICK_SPOT,
     // children: [],
     // {
     //   title: "SPOT",
@@ -59,24 +64,50 @@ const MENU_ITEMS: Array<MenuItem> = [
     // },
     // ],
   },
-  { title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint" },
+  ...(CONFIG.APP.isMainnet
+    ? [
+        { title: "POINTS", link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
+        {
+          title: "BRIDGE",
+          trackEvent: MIXPANEL_EVENTS.CLICK_MORE_FUEL,
+          children: [
+            {
+              title: "FUEL BRIDGE",
+              link: BRIDGE_LINK,
+              icon: null,
+              trackEvent: MIXPANEL_EVENTS.CLICK_BRIDGE,
+            },
+            {
+              title: "LAYERSWAP",
+              link: SWAP_LINK,
+              icon: null,
+              trackEvent: MIXPANEL_EVENTS.CLICK_LAYER_SWAP,
+            },
+          ],
+        },
+      ]
+    : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: MIXPANEL_EVENTS.CLICK_FAUCET }]),
   {
     title: "MORE",
+    trackEvent: MIXPANEL_EVENTS.CLICK_MORE,
     children: [
       {
         title: "DOCS",
         link: DOCS_LINK,
         icon: DocsIcon,
+        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_DOCS,
       },
       {
         title: "GITHUB",
         link: GITHUB_LINK,
         icon: GithubIcon,
+        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_GITHUB,
       },
       {
-        title: "X / TWITTER",
+        title: "X",
         link: TWITTER_LINK,
         icon: XIcon,
+        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_X,
       },
     ],
   },
@@ -103,7 +134,7 @@ interface Props {
 }
 
 export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => {
-  const { mixPanelStore } = useStores();
+  const { mixPanelStore, accountStore } = useStores();
   const media = useMedia();
   const location = useLocation();
   const [openDropdown, setOpenDropdown] = useState<Nullable<string>>(null);
@@ -123,15 +154,27 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
   useOnClickOutside(dropdownRef, handleClickOutside);
 
-  const renderChildMenuItem = ({ title, link, icon: Icon, desc }: MenuChildItem, isGradient?: boolean) => {
+  const trackMenuEvent = (event: MIXPANEL_EVENTS) => {
+    mixPanelStore.trackEvent(event, {
+      page_name: location.pathname,
+      user_address: accountStore.address,
+    });
+  };
+
+  const renderChildMenuItem = ({ title, link, icon: Icon, desc, trackEvent }: MenuChildItem, isGradient?: boolean) => {
     const isActive = location.pathname.includes(link);
 
+    const handleChildClick = () => {
+      handleMenuItemClick();
+      if (trackEvent) {
+        trackMenuEvent(trackEvent);
+      }
+    };
+
     return (
-      <NavLink key={title} to={link} onClick={handleMenuItemClick}>
+      <NavLink key={title} to={link} onClick={handleChildClick}>
         <DropdownMenu isActive={isActive} isGradient={isGradient}>
-          <IconContainer>
-            <Icon height={24} width={24} />
-          </IconContainer>
+          <IconContainer>{Icon && <Icon height={24} width={24} />}</IconContainer>
           <DropdownMenuContent>
             <DropdownMenuTitle type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</DropdownMenuTitle>
             {desc && <Text type={TEXT_TYPES.BODY}>{desc}</Text>}
@@ -141,12 +184,22 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     );
   };
 
-  const renderMenuItem = ({ title, isGradient, link, dataOnboardingKey, children }: MenuItem) => {
+  const renderMenuItem = ({ title, isGradient, link, dataOnboardingKey, children, trackEvent }: MenuItem) => {
     const dataOnboardingDeviceKey = `${dataOnboardingKey}-${isMobile ? "mobile" : "desktop"}`;
     const isActive = Boolean(link && location.pathname.includes(link));
 
     const handleDropdownToggle = () => {
+      if (trackEvent) {
+        trackMenuEvent(trackEvent);
+      }
       setOpenDropdown(openDropdown === title ? null : title);
+    };
+
+    const handleItemClick = () => {
+      handleMenuItemClick();
+      if (trackEvent) {
+        trackMenuEvent(trackEvent);
+      }
     };
 
     const titleComponent = isGradient ? <BaseGradientText>{title}</BaseGradientText> : title;
@@ -198,7 +251,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
           href={link}
           rel="noopener noreferrer"
           target="_blank"
-          onClick={() => mixPanelStore.trackEvent("desktopHeaderClick", { route: title })}
+          onClick={handleItemClick}
         >
           <Element>{titleComponent}</Element>
         </a>
@@ -206,7 +259,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     }
 
     return (
-      <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleMenuItemClick}>
+      <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleItemClick}>
         <Element isActive={isActive}>{titleComponent}</Element>
       </NavLink>
     );

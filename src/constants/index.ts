@@ -7,6 +7,9 @@ export const ROUTES = {
   SWAP: "/swap",
 };
 
+export const BRIDGE_LINK = "https://app.fuel.network/bridge";
+export const SWAP_LINK = "https://layerswap.io/app";
+export const POINTS_LINK = "https://app.fuel.network/earn-points";
 export const isProduction = window.location.host === "app.sprk.fi";
 
 export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/sepolia";
@@ -15,7 +18,6 @@ export const TV_DATAFEED = "https://spark-tv-datafeed.spark-defi.com/api/v1";
 export const CHARTS_STORAGE = "https://tv-backend-v4.herokuapp.com/";
 
 export const DEFAULT_DECIMALS = 9;
-export const USDC_DECIMALS = 6;
 
 export const TWITTER_LINK = "https://twitter.com/Sprkfi";
 export const GITHUB_LINK = "https://github.com/compolabs";

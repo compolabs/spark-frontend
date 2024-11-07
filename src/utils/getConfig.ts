@@ -6,7 +6,19 @@ import { Token } from "@entity";
 
 import configJSON from "@src/config.json";
 
-const CURRENT_CONFIG_VER = "1.6.0";
+const CURRENT_CONFIG_VER = "1.7.0";
+
+export interface Market {
+  marketName: string;
+  owner: string;
+  baseAssetId: string;
+  baseAssetDecimals: number;
+  quoteAssetId: string;
+  quoteAssetDecimals: number;
+  priceDecimals: number;
+  version: number;
+  contractId: string;
+}
 
 function createConfig() {
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
@@ -26,7 +38,17 @@ function createConfig() {
     });
   });
 
-  const tokensBySymbol = tokens.reduce((acc, t) => ({ ...acc, [t.symbol]: t }), {} as Record<string, Token>);
+  const markets = configJSON.markets as Market[];
+
+  // TODO: Refactor this workaround that adds duplicate tokens without the 't' prefix.
+  const tokensBySymbol = tokens.reduce(
+    (acc, t) => {
+      acc[t.symbol] = t;
+
+      return acc;
+    },
+    {} as Record<string, Token>,
+  );
   const tokensByAssetId = tokens.reduce(
     (acc, t) => ({ ...acc, [t.assetId.toLowerCase()]: t }),
     {} as Record<string, Token>,
@@ -34,6 +56,7 @@ function createConfig() {
 
   return {
     APP: configJSON,
+    MARKETS: markets,
     TOKENS: tokens,
     TOKENS_BY_SYMBOL: tokensBySymbol,
     TOKENS_BY_ASSET_ID: tokensByAssetId,

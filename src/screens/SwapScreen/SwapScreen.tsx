@@ -16,12 +16,12 @@ import Spinner from "@assets/icons/spinner.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED, ROUTES } from "@constants";
 import BN from "@utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
 
-import { FuelNetwork } from "@blockchain";
 import { Token } from "@entity";
 
 import SwapButtonSkeletonWrapper from "../../components/Skeletons/SwapButtonSkeletonWrapper";
@@ -34,11 +34,18 @@ import { TokenSelect } from "./TokenSelect";
 const INITIAL_SLIPPAGE = 1;
 
 export const SwapScreen: React.FC = observer(() => {
+  const { swapStore, balanceStore, tradeStore, spotOrderBookStore, mixPanelStore, accountStore } = useStores();
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
-  const { swapStore, balanceStore, tradeStore, spotOrderBookStore } = useStores();
-  const bcNetwork = FuelNetwork.getInstance();
+
+  useEffect(() => {
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.PAGE_VIEW, {
+      page_name: ROUTES.SWAP,
+      user_address: accountStore.address,
+    });
+  }, []);
+
   const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
   const [isLoading, setIsloading] = useState(false);
   const [onPress, setOnPress] = useState(false);
@@ -64,8 +71,9 @@ export const SwapScreen: React.FC = observer(() => {
 
   const payAmountUSD = Number(parseNumberWithCommas(sellTokenPrice)) * Number(swapStore.payAmount);
   const receiveAmountUSD = Number(parseNumberWithCommas(buyTokenPrice)) * Number(swapStore.receiveAmount);
-  const nativeBalanceContract = balanceStore.getFormatContractBalanceInfo(bcNetwork.getTokenBySymbol("ETH").assetId);
-  const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(nativeBalanceContract);
+  const isHaveExchangeFee = BN.formatUnits(MINIMAL_ETH_REQUIRED, DEFAULT_DECIMALS).isGreaterThan(
+    balanceStore.getWalletNativeBalance(),
+  );
 
   const dataOnboardingSwapKey = `swap-${media.mobile ? "mobile" : "desktop"}`;
 
@@ -78,8 +86,7 @@ export const SwapScreen: React.FC = observer(() => {
   }, []);
 
   const generateBalanceData = (assets: Token[]) => {
-    const d = balanceStore.getFormattedContractBalance();
-    return d.length > 0 ? d.filter((el) => assets.some((item) => item.assetId === el.assetId)) : [];
+    return balanceStore.formattedBalanceInfoList.filter((el) => assets.some((item) => item.assetId === el.assetId));
   };
 
   const onPayAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -249,7 +256,7 @@ export const SwapScreen: React.FC = observer(() => {
       </SwapSkeletonWrapper>
       <SwapButtonSkeletonWrapper isReady={true}>
         <SmartFlexStyled>
-          <ConnectWalletButtonStyled connectText="Connect wallet to start trading">
+          <ConnectWalletButtonStyled connectText="Connect wallet to start trading" targetKey="swap_connect_btn">
             <SwapButton
               data-onboarding={dataOnboardingSwapKey}
               disabled={!isConnected || !Number(swapStore.payAmount) || !balanceStore.initialized || isBalanceZero}

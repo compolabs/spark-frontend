@@ -15,15 +15,14 @@ import { MODAL_TYPE } from "@stores/ModalStore";
 
 import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets";
 import ConnectWalletDialog from "@screens/ConnectWallet";
-import UnderConstruction from "@screens/Errors/UnderConstruction";
 import Faucet from "@screens/Faucet";
 import SpotScreen from "@screens/SpotScreen";
 import { SwapScreen } from "@screens/SwapScreen";
 
 import { ROUTES } from "@constants";
 
-const isUnderConstruction = false;
-
+import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
+import { DiscordProvider } from "@src/providers/DiscordProvider.tsx";
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore } = useStores();
 
@@ -33,25 +32,29 @@ const App: React.FC = observer(() => {
 
   usePrivateKeyAsAuth();
 
-  if (isUnderConstruction) {
-    return <UnderConstruction />;
-  }
-
   return (
-    <Root>
-      <Header />
-      <Routes>
-        <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
-        <Route element={<SwapScreen />} path={ROUTES.SWAP} />
-        <Route element={<Faucet />} path={ROUTES.FAUCET} />
-        <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
-        <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
-      </Routes>
-      <SideManageAssets />
-      <PWAModal />
-      <SplashScreen />
-      <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
-    </Root>
+    <IntercomProvider>
+      <DiscordProvider>
+        <FeatureToggleProvider>
+          <UnderConstructionProvider>
+            <Root>
+              <Header />
+              <Routes>
+                <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
+                <Route element={<SwapScreen />} path={ROUTES.SWAP} />
+                <Route element={<Faucet />} path={ROUTES.FAUCET} />
+                <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
+                <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
+              </Routes>
+              <SideManageAssets />
+              <PWAModal />
+              <SplashScreen />
+              <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
+            </Root>
+          </UnderConstructionProvider>
+        </FeatureToggleProvider>
+      </DiscordProvider>
+    </IntercomProvider>
   );
 });
 

@@ -11,6 +11,7 @@ import Text, { TEXT_TYPES } from "@components/Text";
 
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 type IProps = Omit<IDialogPropTypes, "onClose"> & {
   onClose: () => void;
@@ -30,7 +31,8 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
 
   const saveUserAgreement = () => {
     settingsStore.setIsUserAgreedWithTerms(!settingsStore.isUserAgreedWithTerms);
-    mixPanelStore.trackEvent("agreeWithTerms", { agreed: "ok" });
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.AGREE_WITH_TERMS, { agreed: "ok" });
+
     openWalletConnectUI();
   };
 

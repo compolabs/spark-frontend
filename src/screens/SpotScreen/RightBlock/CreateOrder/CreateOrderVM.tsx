@@ -9,11 +9,13 @@ import {
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
   LimitType,
+  Order,
   OrderType,
 } from "@compolabs/spark-orderbook-ts-sdk";
 
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
@@ -149,14 +151,17 @@ class CreateOrderVM {
   }
 
   get isSpotInputError(): boolean {
-    const { tradeStore, balanceStore } = this.rootStore;
-    const { market } = tradeStore;
+    const {
+      tradeStore: { market },
+      balanceStore,
+    } = this.rootStore;
+
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
-    const token = this.isSell ? market!.baseToken.assetId : market!.quoteToken.assetId;
-    const activeToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === token);
-    if (!activeToken) return false;
-    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
-    return balance ? amount.gt(balance) : false;
+    const token = this.isSell ? market!.baseToken : market!.quoteToken;
+
+    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+
+    return totalBalance ? amount.gt(totalBalance) : false;
   }
 
   get isSell(): boolean {
@@ -190,23 +195,25 @@ class CreateOrderVM {
 
     if (!tradeStore.market) return;
 
-    const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const tokenList = balanceStore.getFormattedContractBalance();
-    const findToken = tokenList.find((el) => el.assetId === assetId);
-    if (!findToken) return;
-    let balance = BN.parseUnits(findToken.balance, findToken.asset.decimals);
-    if (assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
-      balance = balance.minus(HALF_GWEI);
+    const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
+
+    let totalBalance = balanceStore.getTotalBalance(token.assetId);
+
+    if (token.assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
+      totalBalance = totalBalance.minus(HALF_GWEI);
     }
 
     if (this.isSell) {
-      this.setInputAmount(balance);
+      this.setInputAmount(totalBalance);
       return;
     }
 
-    mixPanelStore.trackEvent("onMaxBtnClick", { type: this.isSell ? "SELL" : "BUY", value: balance.toString() });
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_MAX_SPOT, {
+      type: this.isSell ? "SELL" : "BUY",
+      value: totalBalance.toString(),
+    });
 
-    this.setInputTotal(balance);
+    this.setInputTotal(totalBalance);
   };
 
   setInputPrice = (price: BN) => {
@@ -273,19 +280,18 @@ class CreateOrderVM {
 
     if (!tradeStore.market) return;
 
-    const { assetId } = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-    const activeToken = balanceStore.getFormattedContractBalance().find((el) => el.assetId === assetId);
-    if (!activeToken) return;
-    const balance = BN.parseUnits(activeToken.balance, activeToken.asset.decimals);
+    const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
 
-    if (balance.isZero()) {
+    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+
+    if (totalBalance.isZero()) {
       this.inputPercent = BN.ZERO;
       return;
     }
 
     const percentageOfTotal = this.isSell
-      ? BN.ratioOf(this.inputAmount, balance)
-      : BN.ratioOf(this.inputTotal, balance);
+      ? BN.ratioOf(this.inputAmount, totalBalance)
+      : BN.ratioOf(this.inputTotal, totalBalance);
 
     this.inputPercent = percentageOfTotal.gt(100) ? new BN(100) : percentageOfTotal.toDecimalPlaces(0);
   }
@@ -295,7 +301,7 @@ class CreateOrderVM {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore } = this.rootStore;
+    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore, accountStore } = this.rootStore;
 
     const { market } = tradeStore;
     const { timeInForce } = settingsStore;
@@ -319,13 +325,11 @@ class CreateOrderVM {
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
     };
 
-    const marketContracts = CONFIG.APP.markets
-      .filter(
-        (m) =>
-          m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
-          m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
-      )
-      .map((m) => m.contractId);
+    const marketContracts = CONFIG.MARKETS.filter(
+      (m) =>
+        m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
+        m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
+    ).map((m) => m.contractId);
 
     if (bcNetwork.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
@@ -343,6 +347,13 @@ class CreateOrderVM {
       const token = isBuy ? market.baseToken : market.quoteToken;
       const amount = isBuy ? this.inputAmount : this.inputTotal;
       this.setInputTotal(BN.ZERO);
+      mixPanelStore.trackEvent(MIXPANEL_EVENTS.CONFIRM_ORDER, {
+        order_type: isBuy ? "BUY" : "SELL",
+        token_1: market.baseToken.symbol,
+        token_2: market.quoteToken.symbol,
+        transaction_sum: BN.formatUnits(amount, token.decimals).toSignificant(2),
+        user_address: accountStore.address,
+      });
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           BN.formatUnits(amount, token.decimals).toSignificant(2),
@@ -352,7 +363,6 @@ class CreateOrderVM {
         ),
         hash,
       });
-      mixPanelStore.trackEvent("createOrder", { type: "" });
     } catch (error: any) {
       const action =
         settingsStore.orderType === ORDER_TYPE.Market
@@ -402,7 +412,21 @@ class CreateOrderVM {
       orderType: isBuy ? OrderType.Sell : OrderType.Buy,
     };
 
-    const orders = await bcNetwork.fetchSpotActiveOrders(params);
+    const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
+
+    let orders: SpotMarketOrder[] = [];
+
+    const formatOrder = (order: Order) =>
+      new SpotMarketOrder({
+        ...order,
+        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId,
+      });
+
+    if ("ActiveSellOrder" in activeOrders.data) {
+      orders = activeOrders.data.ActiveSellOrder.map(formatOrder);
+    } else {
+      orders = activeOrders.data.ActiveBuyOrder.map(formatOrder);
+    }
 
     let total = this.inputTotal;
     let spend = BN.ZERO;

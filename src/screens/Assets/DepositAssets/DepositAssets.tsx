@@ -22,33 +22,39 @@ import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 
-import { FuelNetwork } from "@blockchain";
-
-interface DepositAssets {
+interface DepositAssetsProps {
   setStep: (value: number) => void;
 }
 
-const DepositAssets = observer(({ setStep }: DepositAssets) => {
-  const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
+const DepositAssets: React.FC<DepositAssetsProps> = observer(({ setStep }) => {
+  const { quickAssetsStore, balanceStore } = useStores();
+
+  const [currentAsset, setCurrentAssets] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
-  const [isLoading, setIsloading] = useState(false);
-  const { quickAssetsStore, balanceStore, oracleStore } = useStores();
-  const bcNetwork = FuelNetwork.getInstance();
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  const balancesInfoList = balanceStore.formattedBalanceInfoList;
+
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
   };
 
   const handleClick = async () => {
-    if (!selectAsset || !amount) return;
-    setIsloading(true);
+    if (!currentAsset || !amount) return;
+
+    setIsLoading(true);
+
     try {
       const response = await balanceStore.depositBalance(
-        selectAsset.asset.assetId,
-        BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
+        currentAsset.asset.assetId,
+        BN.parseUnits(BN.formatUnits(amount, currentAsset.asset.decimals), currentAsset.asset.decimals).toString(),
       );
-      setIsloading(false);
+
+      setIsLoading(false);
+
       if (response) {
         setStep(0);
         setAmount(BN.ZERO);
@@ -58,31 +64,17 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
     }
   };
 
-  const balanceData = Array.from(balanceStore.balances)
-    .filter(([, balance]) => balance && balance.gt(BN.ZERO))
-    .map(([assetId, balance]) => {
-      const token = bcNetwork!.getTokenByAssetId(assetId);
-      const contractBalance =
-        token.symbol === "USDC" ? balanceStore.myMarketBalance.liquid.quote : balanceStore.myMarketBalance.liquid.base;
-      const totalBalance = token.symbol === "ETH" ? balance : contractBalance.plus(balance);
-      const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed ?? ""), DEFAULT_DECIMALS);
-      return {
-        price: price.toString(),
-        asset: token,
-        walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-        contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
-        balance: BN.formatUnits(totalBalance, token.decimals).toString(),
-        assetId,
-      };
-    });
-
   useEffect(() => {
-    setAssets(balanceData[0]);
-  }, []);
+    if (!balancesInfoList.length) {
+      return;
+    }
 
-  const hasPositiveBalance = balanceData.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
+    setCurrentAssets(balancesInfoList[0]);
+  }, [balancesInfoList]);
 
-  const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(selectAsset?.walletBalance ?? 0);
+  const hasPositiveBalance = balancesInfoList.some((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
+
+  const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(currentAsset?.walletBalance ?? 0);
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">
@@ -99,23 +91,23 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
           <SmartFlex gap="20px" column>
             <SelectAssetsInput
               amount={amount}
-              dataAssets={balanceData}
-              decimals={selectAsset?.asset.decimals}
-              selected={selectAsset?.assetId}
+              dataAssets={balancesInfoList}
+              decimals={currentAsset?.asset.decimals}
+              selected={currentAsset?.assetId}
               showBalance="walletBalance"
               onChangeValue={(el) => {
                 setAmount(el);
               }}
               onSelect={(el) => {
-                setAssets(el);
+                setCurrentAssets(el);
               }}
             />
-            {selectAsset && (
+            {currentAsset && (
               <BalanceBlock
                 icon={<WalletIcon />}
                 nameWallet="Wallet balance"
                 showBalance="walletBalance"
-                token={selectAsset}
+                token={currentAsset}
               />
             )}
           </SmartFlex>
@@ -137,7 +129,7 @@ const DepositAssets = observer(({ setStep }: DepositAssets) => {
           </DepositedAssets>
         )}
         <ButtonConfirm
-          disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()}
+          disabled={isInputError || isLoading || !currentAsset || !amount.toNumber()}
           fitContent
           onClick={handleClick}
         >
