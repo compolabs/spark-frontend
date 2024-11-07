@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import DataBase from "@assets/icons/dataBase.svg?react";
@@ -69,6 +70,7 @@ const Header: React.FC = observer(() => {
           <a href="/" rel="noreferrer noopener">
             <Logo />
           </a>
+          <StyledText>BETA</StyledText>
         </SmartFlex>
         <SmartFlex center="y" gap="8px">
           {renderWallet()}
@@ -96,6 +98,7 @@ const Header: React.FC = observer(() => {
           <a href="/" rel="noreferrer noopener">
             <Logo />
           </a>
+          <StyledText>BETA</StyledText>
           <Divider />
           <SmartFlex gap="28px">
             <MenuNav />
@@ -143,6 +146,17 @@ const Root = styled(SmartFlex)`
     padding: 0 8px;
     margin: 4px 0;
   }
+`;
+
+const StyledText = styled(Text)`
+  color: #f2d336;
+  background: #1a1501;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  margin-left: 10px;
+  font-size: 10px;
+  font-weight: 500;
 `;
 
 const ButtonStyled = styled(Button)`
