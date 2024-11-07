@@ -21,15 +21,18 @@ const StatusBar: React.FC = observer(() => {
 
   const media = useMedia();
   const { isIOS } = getDeviceInfo();
+  const { isMobile } = getDeviceInfo();
 
   return (
     <StatusBarContainer isIOS={isIOS}>
-      <LinkStyled href={tweet} rel="noreferrer noopener" target="_blank">
-        <YellowText>Beta Version.</YellowText>
-        <LinkText>
-          things may change drastically during the development and your save could break. Play at your own risk!
-        </LinkText>
-      </LinkStyled>
+      {!isMobile && (
+        <LinkStyled href={tweet} rel="noreferrer noopener" target="_blank">
+          <YellowText>Beta Version.</YellowText>
+          <LinkText>
+            things may change drastically during the development and your save could break. Play at your own risk!
+          </LinkText>
+        </LinkStyled>
+      )}
       {media.mobile && (
         <LinkStyled href={TWITTER_LINK} rel="noreferrer noopener" target="_blank">
           <XIconStyled />
@@ -78,6 +81,7 @@ const FooterText = styled(Text)`
 const YellowText = styled(Text)`
   color: #f2d336;
 `;
+
 const LinkText = styled(FooterText)`
   transition: 250ms;
   cursor: pointer;
