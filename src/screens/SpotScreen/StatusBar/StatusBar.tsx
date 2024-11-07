@@ -12,24 +12,26 @@ import { useMedia } from "@hooks/useMedia";
 import { FUEL_LINK, TWITTER_LINK } from "@constants";
 import { getDeviceInfo } from "@utils/getDeviceInfo";
 
-import tweets from "./tweets";
-
 const StatusBar: React.FC = observer(() => {
-  const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-    tweets[Math.floor(Math.random() * tweets.length)],
-  )}`;
+  // const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+  //   tweets[Math.floor(Math.random() * tweets.length)],
+  // )}`;
 
   const media = useMedia();
   const { isIOS } = getDeviceInfo();
 
   return (
     <StatusBarContainer isIOS={isIOS}>
-      <LinkStyled href={tweet} rel="noreferrer noopener" target="_blank">
+      {/* <LinkStyled href={tweet} rel="noreferrer noopener" target="_blank">
+      </LinkStyled> */}
+      <SmartFlex center="y" gap="4px">
         <YellowText>Beta Version.</YellowText>
-        <LinkText>
-          things may change drastically during the development and your save could break. Play at your own risk!
-        </LinkText>
-      </LinkStyled>
+        {!media.mobile && (
+          <WarningText>
+            things may change drastically during the development and your save could break. Play at your own risk!
+          </WarningText>
+        )}
+      </SmartFlex>
       {media.mobile && (
         <LinkStyled href={TWITTER_LINK} rel="noreferrer noopener" target="_blank">
           <XIconStyled />
@@ -78,12 +80,7 @@ const FooterText = styled(Text)`
 const YellowText = styled(Text)`
   color: #f2d336;
 `;
-const LinkText = styled(FooterText)`
-  transition: 250ms;
-  cursor: pointer;
-  text-transform: uppercase;
 
-  &:hover {
-    color: ${({ theme }) => theme.colors.greenLight};
-  }
+const WarningText = styled(FooterText)`
+  text-transform: uppercase;
 `;
