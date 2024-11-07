@@ -1,6 +1,7 @@
-import { ReactNode, useEffect } from "react";
-import { MIXPANEL_EVENTS } from "@stores/MixPanelStore.ts";
+import React, { ReactNode, useEffect } from "react";
+
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore.ts";
 
 interface DiscordProviderProps {
   children: ReactNode;
