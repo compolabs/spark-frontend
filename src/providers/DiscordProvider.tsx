@@ -31,18 +31,6 @@ export const DiscordProvider: React.FC<DiscordProviderProps> = ({ children }) =>
       crate.on("message", () => {
         trackMenuEvent(MIXPANEL_EVENTS.CLICK_DISCORD_SEND_MESSAGE);
       });
-
-      const updatePosition = () => {
-        const width = window.innerWidth - 140;
-        crate.setOptions({
-          location: ["bottom", width],
-        });
-      };
-
-      updatePosition();
-      window.addEventListener("resize", updatePosition);
-
-      return () => window.removeEventListener("resize", updatePosition);
     };
 
     const script = document.createElement("script");
