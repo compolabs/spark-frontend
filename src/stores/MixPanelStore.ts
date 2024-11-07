@@ -83,4 +83,10 @@ export enum MIXPANEL_EVENTS {
 
   CLICK_BRIDGE = "click_bridge",
   CLICK_POINTS = "click_points",
+  CLICK_MORE_FUEL = "click_more_fuel",
+  CLICK_LAYER_SWAP = "click_layer",
+
+  CLICK_INTERCOM = "click_intercom",
+  CLICK_DISCORD_SIGNIN = "click_discord_signin",
+  CLICK_DISCORD_SEND_MESSAGE = "click_discord_send_message",
 }
