@@ -28,7 +28,7 @@ const StatusBar: React.FC = observer(() => {
         <YellowText>Beta Version.</YellowText>
         {!media.mobile && (
           <WarningText>
-            things may change drastically during the development and your save could break. Play at your own risk!
+            Spark is currently in beta. Please trade with caution, as there may still be some bugs.
           </WarningText>
         )}
       </SmartFlex>
