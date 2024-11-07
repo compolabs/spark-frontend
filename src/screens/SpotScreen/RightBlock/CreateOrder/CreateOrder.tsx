@@ -128,9 +128,7 @@ const CreateOrder: React.FC = observer(() => {
     if (isAgreeWithBetaButtonVisible) {
       return (
         <CreateOrderButton green onClick={handleAgreeWithBeta}>
-          <Text type={TEXT_TYPES.SUPPORTING} primary>
-            Confirm – I understand and accept the risks
-          </Text>
+          <BetaButtonText primary>Confirm – I understand and accept the risks</BetaButtonText>
         </CreateOrderButton>
       );
     }
@@ -389,9 +387,12 @@ const CreateOrder: React.FC = observer(() => {
           {renderInstruction()}
           {renderOrderDetails()}
         </ParamsContainer>
-        <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
-          {renderButton()}
-        </ConnectWalletButton>
+        <SmartFlex gap="4px" column>
+          <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
+            {renderButton()}
+          </ConnectWalletButton>
+          <BetaText>This is a beta version. Trade carefully and at your own risk!</BetaText>
+        </SmartFlex>
 
         <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
       </Root>
@@ -464,4 +465,16 @@ const SliderContainer = styled.div`
   ${media.mobile} {
     padding: 8px 0;
   }
+`;
+
+const BetaButtonText = styled(Text)`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 10px;
+`;
+
+const BetaText = styled(Text)`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 10px;
 `;
