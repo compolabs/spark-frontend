@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react-lite";
@@ -56,6 +56,8 @@ const CreateOrder: React.FC = observer(() => {
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
 
+  const [isAgreeWithBetaButtonVisible, setIsAgreeWithBetaButtonVisible] = useState(false);
+
   if (!market) return null;
 
   const { baseToken, quoteToken } = market;
@@ -95,6 +97,20 @@ const CreateOrder: React.FC = observer(() => {
     vm.setInputSlippage(slippage);
   };
 
+  const createOrderOrAgreeWithBeta = () => {
+    if (settingsStore.isUserAgreedWithBeta) {
+      vm.createOrder();
+    } else {
+      setIsAgreeWithBetaButtonVisible(true);
+    }
+  };
+
+  const handleAgreeWithBeta = () => {
+    settingsStore.setIsUserAgreedWithBeta(true);
+    setIsAgreeWithBetaButtonVisible(false);
+    vm.createOrder();
+  };
+
   const disabledOrderTypes = [ORDER_TYPE.Limit, ORDER_TYPE.LimitFOK, ORDER_TYPE.LimitIOC];
   const isInputPriceDisabled = !disabledOrderTypes.includes(settingsStore.orderType);
 
@@ -109,13 +125,23 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
+    if (isAgreeWithBetaButtonVisible) {
+      return (
+        <CreateOrderButton green onClick={handleAgreeWithBeta}>
+          <Text type={TEXT_TYPES.SUPPORTING} primary>
+            Confirm – I understand and accept the risks
+          </Text>
+        </CreateOrderButton>
+      );
+    }
+
     return (
       <CreateOrderButton
         data-onboarding={dataOnboardingTradingKey}
         disabled={isButtonDisabled}
         green={!vm.isSell}
         red={vm.isSell}
-        onClick={vm.createOrder}
+        onClick={createOrderOrAgreeWithBeta}
       >
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
           {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
