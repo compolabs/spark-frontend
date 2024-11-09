@@ -125,10 +125,19 @@ class CreateOrderVM {
     );
 
     reaction(
+      () => [this.inputAmount, this.inputLeverage, this.inputLeveragePercent, this.inputPrice, this.inputTotal],
+      (data) => {
+        console.log({
+          ...data.map((d) => d.toString()),
+        });
+      },
+    );
+
+    reaction(
       () => this.inputTotal,
       (total) => {
-        const { swapStore } = this.rootStore;
-        swapStore.fetchExchangeFeeDebounce(total.toString());
+        const { tradeStore } = this.rootStore;
+        tradeStore.fetchTradeFeeDebounce(total.toString());
       },
     );
   }
@@ -141,13 +150,6 @@ class CreateOrderVM {
 
   get isInputError(): boolean {
     return this.isSpotInputError;
-  }
-
-  get exchangeFee(): BN {
-    const { tradeStore } = this.rootStore;
-    const { makerFee, takerFee } = tradeStore.tradeFee;
-
-    return BN.max(makerFee, takerFee);
   }
 
   get isSpotInputError(): boolean {
@@ -314,9 +316,7 @@ class CreateOrderVM {
     const type = isBuy ? OrderType.Buy : OrderType.Sell;
 
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
-    const depositAmountWithFee = BN.parseUnits(this.exchangeFee, market.quoteToken.decimals).plus(
-      BN.parseUnits(tradeStore.matcherFee, market.quoteToken.decimals),
-    );
+    const depositAmountWithFee = tradeStore.exchangeFee.plus(tradeStore.matcherFee);
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
       amountFee: depositAmountWithFee.toString(),

@@ -1,4 +1,5 @@
 import { toBech32 } from "fuels";
+import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
@@ -39,6 +40,9 @@ class TradeStore {
     makerFee: BN.ZERO,
     takerFee: BN.ZERO,
   };
+
+  isTradeFeeLoading = false;
+  isMatcherFeeLoading = false;
 
   private marketInfoUpdater: IntervalUpdater;
   private marketPricesUpdater: IntervalUpdater;
@@ -85,6 +89,41 @@ class TradeStore {
     // );
     // return Boolean(this.spotMarkets.length && isMarketInfoReady);
     return true;
+  }
+
+  get isFeeLoading(): boolean {
+    return this.isTradeFeeLoading || this.isMatcherFeeLoading;
+  }
+
+  get exchangeFee(): BN {
+    const { tradeStore } = this.rootStore;
+    const { makerFee, takerFee } = tradeStore.tradeFee;
+
+    return BN.max(makerFee, takerFee);
+  }
+
+  get exchangeFeeFormat(): BN {
+    if (!this.market) return BN.ZERO;
+
+    const decimals = this.market.quoteToken.decimals;
+    return BN.formatUnits(this.exchangeFee, decimals);
+  }
+
+  get matcherFeeFormat(): BN {
+    if (!this.market) return BN.ZERO;
+
+    const decimals = this.market.quoteToken.decimals;
+    return BN.formatUnits(this.matcherFee, decimals);
+  }
+
+  get isEnoughtMoneyForFee() {
+    if (!this.market) return true;
+    const { balanceStore } = this.rootStore;
+
+    const { quoteToken } = this.market;
+    const walletAmount = balanceStore.getWalletBalance(quoteToken.assetId);
+
+    return this.exchangeFee.plus(this.matcherFee).lte(walletAmount);
   }
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
@@ -159,10 +198,11 @@ class TradeStore {
 
     if (!this.market) return;
 
+    this.isMatcherFeeLoading = true;
     const matcherFee = await bcNetwork.fetchSpotMatcherFee();
-    const decimals = this.market.quoteToken.decimals;
 
-    this.matcherFee = BN.formatUnits(matcherFee, decimals);
+    this.matcherFee = new BN(matcherFee);
+    this.isMatcherFeeLoading = false;
   };
 
   fetchTradeFee = async (quoteAmount: string) => {
@@ -171,17 +211,16 @@ class TradeStore {
 
     if (!accountStore.address || !this.market) return;
 
+    this.isTradeFeeLoading = true;
     const address = toBech32(accountStore.address!);
 
-    const tradeFee = await bcNetwork.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
+    const { makerFee, takerFee } = await bcNetwork.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
 
-    const decimals = this.market.quoteToken.decimals;
-
-    this.tradeFee = {
-      makerFee: BN.formatUnits(tradeFee.makerFee, decimals),
-      takerFee: BN.formatUnits(tradeFee.takerFee, decimals),
-    };
+    this.tradeFee = { makerFee: new BN(makerFee), takerFee: new BN(takerFee) };
+    this.isTradeFeeLoading = false;
   };
+
+  fetchTradeFeeDebounce = _.debounce(this.fetchTradeFee, 250);
 
   serialize = (): ISerializedTradeStore => ({
     favMarkets: this.favMarkets.join(","),

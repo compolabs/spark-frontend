@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { autorun, makeAutoObservable, reaction } from "mobx";
 
 import { AssetType, GetActiveOrdersParams, LimitType, Order, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
@@ -44,7 +43,9 @@ class SwapStore {
     reaction(
       () => [this.payAmount, this.receiveAmount],
       () => {
-        this.fetchExchangeFeeDebounce(
+        const { tradeStore } = this.rootStore;
+
+        tradeStore.fetchTradeFeeDebounce(
           BN.parseUnits(
             this.isBuy() ? this.payAmount : this.receiveAmount,
             this.isBuy() ? this.sellToken.decimals : this.buyToken.decimals,
@@ -52,13 +53,6 @@ class SwapStore {
         );
       },
     );
-  }
-
-  get exchangeFee(): BN {
-    const { tradeStore } = this.rootStore;
-    const { makerFee, takerFee } = tradeStore.tradeFee;
-
-    return BN.max(makerFee, takerFee);
   }
 
   async initialize() {
@@ -127,13 +121,6 @@ class SwapStore {
     });
   }
 
-  fetchExchangeFee = (total: string) => {
-    const { tradeStore } = this.rootStore;
-    tradeStore.fetchTradeFee(total);
-  };
-
-  fetchExchangeFeeDebounce = _.debounce(this.fetchExchangeFee, 250);
-
   swapTokens = async ({ slippage }: { slippage: number }): Promise<boolean> => {
     const { notificationStore, tradeStore } = this.rootStore;
     const baseToken = tradeStore.market?.baseToken;
@@ -165,10 +152,7 @@ class SwapStore {
     // TODO: check if there is enough price sum to fulfill the order
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
     const formattedVolume = BN.parseUnits(this.receiveAmount, this.buyToken.decimals).toString();
-    const decimalToken = isBuy ? this.buyToken.decimals : this.sellToken.decimals;
-    const depositAmountWithFee = BN.parseUnits(this.exchangeFee, decimalToken).plus(
-      BN.parseUnits(this.rootStore.tradeStore.matcherFee, decimalToken),
-    );
+    const depositAmountWithFee = tradeStore.exchangeFee.plus(this.rootStore.tradeStore.matcherFee);
 
     const pair = this.getMarketPair(this.buyToken, this.sellToken);
     if (!pair) return true;
