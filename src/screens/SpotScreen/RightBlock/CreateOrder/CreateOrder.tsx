@@ -117,6 +117,22 @@ const CreateOrder: React.FC = observer(() => {
   const renderButton = () => {
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
 
+    if (tradeStore.isFeeLoading) {
+      return (
+        <CreateOrderButton disabled>
+          <Text type={TEXT_TYPES.BUTTON}>Loading...</Text>
+        </CreateOrderButton>
+      );
+    }
+
+    if (!tradeStore.isEnoughtMoneyForFee) {
+      return (
+        <CreateOrderButton disabled>
+          <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
+        </CreateOrderButton>
+      );
+    }
+
     if (!isButtonDisabled && !isEnoughGas) {
       return (
         <CreateOrderButton disabled>
@@ -247,14 +263,14 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{tradeStore.matcherFee.toSignificant(2)}</Text>
+              <Text primary>{tradeStore.matcherFeeFormat.toSignificant(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Exchange Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{vm.exchangeFee.toSignificant(2)}</Text>
+              <Text primary>{tradeStore.exchangeFeeFormat.toSignificant(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>

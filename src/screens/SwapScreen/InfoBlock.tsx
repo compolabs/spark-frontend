@@ -31,8 +31,8 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
     .dividedBy(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed))
     .toNumber();
 
-  const exchangeFee = swapStore?.exchangeFee ?? 0;
-  const matcherFee = tradeStore.matcherFee;
+  const exchangeFee = tradeStore.exchangeFeeFormat;
+  const matcherFee = tradeStore.matcherFeeFormat;
   const totalFee = exchangeFee.plus(matcherFee);
   return (
     <Root>
