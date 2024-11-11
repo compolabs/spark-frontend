@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { show } from "@intercom/messenger-js-sdk";
 import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { Nullable } from "tsdef";
@@ -31,6 +32,7 @@ type MenuChildItem = {
   link: string;
   desc?: string;
   trackEvent?: MIXPANEL_EVENTS;
+  onClick?: () => void;
 };
 
 type MenuItem = {
@@ -111,6 +113,21 @@ const MENU_ITEMS: Array<MenuItem> = [
       },
     ],
   },
+  ...(media.mobile
+    ? [
+        {
+          title: "SUPPORT",
+          children: [
+            {
+              title: "INTERCOM",
+              link: "#",
+              onClick: () => show(),
+              icon: null,
+            },
+          ],
+        },
+      ]
+    : []),
 ];
 
 const DROPDOWN_VARIANTS = {
@@ -161,7 +178,10 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     });
   };
 
-  const renderChildMenuItem = ({ title, link, icon: Icon, desc, trackEvent }: MenuChildItem, isGradient?: boolean) => {
+  const renderChildMenuItem = (
+    { title, link, icon: Icon, desc, trackEvent, onClick }: MenuChildItem,
+    isGradient?: boolean,
+  ) => {
     const isActive = location.pathname.includes(link);
 
     const handleChildClick = () => {
@@ -173,7 +193,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
     return (
       <NavLink key={title} to={link} onClick={handleChildClick}>
-        <DropdownMenu isActive={isActive} isGradient={isGradient}>
+        <DropdownMenu isActive={isActive} isGradient={isGradient} onClick={onClick}>
           <IconContainer>{Icon && <Icon height={24} width={24} />}</IconContainer>
           <DropdownMenuContent>
             <DropdownMenuTitle type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</DropdownMenuTitle>
