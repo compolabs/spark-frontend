@@ -419,7 +419,7 @@ class CreateOrderVM {
     const formatOrder = (order: Order) =>
       new SpotMarketOrder({
         ...order,
-        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId,
+        quoteAssetId: market.quoteToken.assetId,
       });
 
     if ("ActiveSellOrder" in activeOrders.data) {
