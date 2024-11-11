@@ -21,49 +21,49 @@ export const range = (start: number, end: number) => {
 };
 
 export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProps) => {
+  const totalPages = Math.ceil(lengthData / 10);
+  const sibling = 1;
   const pagination = useMemo(() => {
-    return [currentPage]; // TODO: Заглушка пока нет выдачи paginationInfo с
-    // const totalPageCount = Math.ceil(totalPages);
-    // const totalPageNumbers = 6;
-    //
-    // if (totalPageNumbers >= totalPageCount) {
-    //   return range(1, totalPageCount);
-    // }
-    //
-    // const leftSiblingIndex = Math.max(currentPage - 1, 1);
-    // const rightSiblingIndex = Math.min(currentPage + 1, totalPageCount);
-    // const shouldShowLeftDots = leftSiblingIndex - 1 > sibling;
-    // const shouldShowRightDots = rightSiblingIndex < totalPageCount - sibling;
-    // const firstPageIndex = 1;
-    // const lastPageIndex = totalPageCount;
-    //
-    // if (!shouldShowLeftDots && shouldShowRightDots) {
-    //   const leftItemCount = 3 + sibling;
-    //   const leftRange = range(1, leftItemCount);
-    //   return [...leftRange, "...", totalPageCount];
-    // }
-    //
-    // if (shouldShowLeftDots && !shouldShowRightDots) {
-    //   const rightItemCount = 3 + sibling;
-    //   const rightRange = range(totalPageCount - rightItemCount + 1, totalPageCount);
-    //   return [firstPageIndex, "...", ...rightRange];
-    // }
-    //
-    // if (shouldShowLeftDots && shouldShowRightDots) {
-    //   const middleRange = range(leftSiblingIndex, rightSiblingIndex);
-    //   return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
-    // }
-    //
-    // return range(firstPageIndex, lastPageIndex);
+    const totalPageCount = Math.ceil(totalPages);
+    const totalPageNumbers = 6;
+
+    if (totalPageNumbers >= totalPageCount) {
+      return range(1, totalPageCount);
+    }
+
+    const leftSiblingIndex = Math.max(currentPage - 1, 1);
+    const rightSiblingIndex = Math.min(currentPage + 1, totalPageCount);
+    const shouldShowLeftDots = leftSiblingIndex - 1 > sibling;
+    const shouldShowRightDots = rightSiblingIndex < totalPageCount - sibling;
+    const firstPageIndex = 1;
+    const lastPageIndex = totalPageCount;
+
+    if (!shouldShowLeftDots && shouldShowRightDots) {
+      const leftItemCount = 3 + sibling;
+      const leftRange = range(1, leftItemCount);
+      return [...leftRange, "...", totalPageCount];
+    }
+
+    if (shouldShowLeftDots && !shouldShowRightDots) {
+      const rightItemCount = 3 + sibling;
+      const rightRange = range(totalPageCount - rightItemCount + 1, totalPageCount);
+      return [firstPageIndex, "...", ...rightRange];
+    }
+
+    if (shouldShowLeftDots && shouldShowRightDots) {
+      const middleRange = range(leftSiblingIndex, rightSiblingIndex);
+      return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
+    }
+    return range(firstPageIndex, lastPageIndex);
   }, [currentPage]);
 
   const handleClick = (page: number) => {
     onChange?.(page);
   };
 
-  // if (!totalPages) {
-  //   return null;
-  // }
+  if (!totalPages) {
+    return null;
+  }
 
   return (
     <SmartFlex alignItems="center" gap="16px" justifyContent="space-between">
@@ -74,7 +74,7 @@ export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProp
         if (value.toString() === "...") {
           return (
             <PaginationEntity key={`dot-${index}`} disabled>
-              <PaginationText>...</PaginationText>
+              <PaginationText current={false}>...</PaginationText>
             </PaginationEntity>
           );
         }
@@ -86,7 +86,7 @@ export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProp
             selected={currentPage === (value as number)}
             onClick={() => handleClick(value as number)}
           >
-            <PaginationText>{value}</PaginationText>
+            <PaginationText current={currentPage === (value as number)}>{value}</PaginationText>
           </PaginationEntity>
         );
       })}
@@ -105,7 +105,10 @@ const ArrowIconStyledRight = styled(ArrowIcon)`
   transform: rotate(-90deg);
 `;
 
-const PaginationText = styled.span`
+const PaginationText = styled.span<{ current: boolean }>`
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: ${({ theme, current }) => (current ? theme.colors.textPrimary : theme.colors.textSecondary)};
+  &:hover {
+    cursor: pointer;
+  }
 `;

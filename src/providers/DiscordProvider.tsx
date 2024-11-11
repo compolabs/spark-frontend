@@ -32,6 +32,7 @@ export const DiscordProvider: React.FC<DiscordProviderProps> = ({ children }) =>
       crate.on("message", () => {
         trackMenuEvent(MIXPANEL_EVENTS.CLICK_DISCORD_SEND_MESSAGE);
       });
+      crate.open();
     };
 
     const script = document.createElement("script");
