@@ -123,12 +123,15 @@ class SwapStore {
 
   swapTokens = async ({ slippage }: { slippage: number }): Promise<boolean> => {
     const { notificationStore, tradeStore } = this.rootStore;
-    const baseToken = tradeStore.market?.baseToken;
+
+    if (!tradeStore.market) return false;
+
+    const { baseToken, quoteToken } = tradeStore.market;
     const isBuy = baseToken?.assetId === this.buyToken.assetId;
     const bcNetwork = FuelNetwork.getInstance();
     const params: GetActiveOrdersParams = {
       limit: 50, // or more if needed
-      market: [tradeStore.market!.contractAddress],
+      market: [tradeStore.market.contractAddress],
       asset: baseToken?.assetId,
       orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     };
@@ -140,7 +143,7 @@ class SwapStore {
     const formatOrder = (order: Order) =>
       new SpotMarketOrder({
         ...order,
-        quoteAssetId: CONFIG.TOKENS_BY_SYMBOL.KMLA.assetId,
+        quoteAssetId: quoteToken.assetId,
       });
 
     if ("ActiveSellOrder" in activeOrders.data) {
