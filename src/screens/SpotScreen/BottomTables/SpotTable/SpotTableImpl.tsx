@@ -131,8 +131,9 @@ const SpotTableImpl: React.FC = observer(() => {
   const columns = [ORDER_COLUMNS(vm, theme), HISTORY_COLUMNS(theme)];
   const [page, setPage] = useState(startPage);
   const historyOrders = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
+  const openOrders = vm.userOrdersStats?.active ?? 0;
   const TABS = [
-    { title: "ORDERS", disabled: false, rowCount: vm.userOrdersStats?.active ?? 0 },
+    { title: "ORDERS", disabled: false, rowCount: openOrders },
     { title: "HISTORY", disabled: false, rowCount: historyOrders },
   ];
 
@@ -271,7 +272,7 @@ const SpotTableImpl: React.FC = observer(() => {
       </BaseTable>
       {data.length >= minNeedLengthPagination || page > startPage - 1 ? (
         <PaginationContainer>
-          <Pagination currentPage={page} lengthData={data.length} onChange={handleChangePagination} />
+          <Pagination currentPage={page} lengthData={openOrders} onChange={handleChangePagination} />
         </PaginationContainer>
       ) : null}
       {!!vm.userOrders.length && tabIndex === 0 && (
