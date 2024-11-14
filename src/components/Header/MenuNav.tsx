@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { Nullable } from "tsdef";
 
-import { media } from "@themes/breakpoints";
+import { breakpoints, breakpointsHeight, media } from "@themes/breakpoints";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
 import DocsIcon from "@assets/icons/docs.svg?react";
@@ -43,6 +43,8 @@ type MenuItem = {
   children?: MenuChildItem[];
   trackEvent?: MIXPANEL_EVENTS;
 };
+
+const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
 
 const MENU_ITEMS: Array<MenuItem> = [
   { title: "DASHBOARD", trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
@@ -113,7 +115,7 @@ const MENU_ITEMS: Array<MenuItem> = [
       },
     ],
   },
-  ...(media.mobile
+  ...(isShowSupport
     ? [
         {
           title: "SUPPORT",
