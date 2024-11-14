@@ -8,7 +8,7 @@ image:
 
 service:
   type: ClusterIP
-  port: 8000
+  port: 5173
 
 autoscaling:
   enabled: true

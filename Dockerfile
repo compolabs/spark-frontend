@@ -12,7 +12,6 @@ WORKDIR /app
 
 RUN npm i -g pnpm@9
 
-# Expose application port (adjust if different)
-#EXPOSE 3000
+EXPOSE 5173
 
 CMD ["pnpm", "run", "start"]
