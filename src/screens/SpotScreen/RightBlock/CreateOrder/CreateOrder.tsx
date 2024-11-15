@@ -117,7 +117,7 @@ const CreateOrder: React.FC = observer(() => {
   const renderButton = () => {
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
 
-    if (tradeStore.isFeeLoading) {
+    if (!isButtonDisabled && tradeStore.isFeeLoading) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Loading...</Text>
@@ -125,7 +125,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (!tradeStore.isEnoughtMoneyForFee) {
+    if (!isButtonDisabled && !tradeStore.isEnoughtMoneyForFee) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
