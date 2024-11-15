@@ -97,7 +97,7 @@ body.noscroll {
   --highlight-color: #4b4b4b;
 }
 
-@media (max-width: 880px) {
+@media (max-width: 880px), (max-height: 700px) {
   .intercom-lightweight-app, widgetbot-crate {
     display: none;
   }
