@@ -150,7 +150,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (vm.inputAmount.toString() < minimalOrder.minOrder.toString()) {
+    if (vm.inputAmount.lt(minimalOrder.minOrder)) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Minimum amount {formatMinimalAmount}</Text>
@@ -158,7 +158,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (vm.inputPrice.toString() < minimalOrder.minPrice.toString()) {
+    if (vm.inputPrice.lt(minimalOrder.minPrice)) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
