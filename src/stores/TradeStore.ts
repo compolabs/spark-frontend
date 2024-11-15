@@ -41,6 +41,11 @@ class TradeStore {
     takerFee: BN.ZERO,
   };
 
+  minimalOrder = {
+    minPrice: BN.ZERO,
+    minOrder: BN.ZERO,
+  };
+
   isTradeFeeLoading = false;
   isMatcherFeeLoading = false;
 
@@ -69,6 +74,7 @@ class TradeStore {
         this.updateMarketInfo();
         this.updateMarketPrices();
         this.fetchMatcherFee();
+        this.getMinimalOrder();
       },
       { fireImmediately: true },
     );
@@ -88,6 +94,7 @@ class TradeStore {
     //   this.spotMarketInfo.volume.isZero()
     // );
     // return Boolean(this.spotMarkets.length && isMarketInfoReady);
+    this.getMinimalOrder();
     return true;
   }
 
@@ -125,6 +132,16 @@ class TradeStore {
 
     return this.exchangeFee.plus(this.matcherFee).lte(walletAmount);
   }
+
+  getMinimalOrder = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+    const order = await bcNetwork.fetchMinOrderSize();
+    const price = await bcNetwork.fetchMinOrderPrice();
+    this.minimalOrder = {
+      minPrice: new BN(price),
+      minOrder: new BN(order),
+    };
+  };
 
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
 
@@ -169,7 +186,7 @@ class TradeStore {
       market: [this.market.contractAddress],
     });
     const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
-    const price = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
+    const price = BN.formatUnits(spotOrderBookStore?.lastTradePrice, DEFAULT_DECIMALS);
     const volume = baseTokenAmount.multipliedBy(price);
     const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
     const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);

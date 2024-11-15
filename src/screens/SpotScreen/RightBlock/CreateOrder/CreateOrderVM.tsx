@@ -37,7 +37,6 @@ export const CreateOrderVMProvider: React.FC<PropsWithChildren> = ({ children })
 
 export const useCreateOrderVM = () => useVM(ctx);
 
-const HALF_GWEI = new BN(5 * 1e9); // 0.5
 const PRICE_UPDATE_THROTTLE_INTERVAL = 1000; // 1s
 
 export enum ORDER_MODE {
@@ -193,18 +192,12 @@ class CreateOrderVM {
 
   private onSpotMaxClick = () => {
     const { tradeStore, mixPanelStore, balanceStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
 
     if (!tradeStore.market) return;
 
     const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
 
-    let totalBalance = balanceStore.getTotalBalance(token.assetId);
-
-    if (token.assetId === bcNetwork!.getTokenBySymbol("ETH").assetId) {
-      totalBalance = totalBalance.minus(HALF_GWEI);
-    }
-
+    const totalBalance = balanceStore.getTotalBalance(token.assetId);
     if (this.isSell) {
       this.setInputAmount(totalBalance);
       return;

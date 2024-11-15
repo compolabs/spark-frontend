@@ -45,7 +45,6 @@ const CreateOrder: React.FC = observer(() => {
   const timeInForce = settingsStore.timeInForce;
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
-
   const media = useMedia();
 
   const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
@@ -116,7 +115,9 @@ const CreateOrder: React.FC = observer(() => {
 
   const renderButton = () => {
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
-
+    const minimalOrder = tradeStore.minimalOrder;
+    const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
+    const formatMinimalPrice = BN.formatUnits(minimalOrder.minPrice.toString(), DEFAULT_DECIMALS).toString();
     if (tradeStore.isFeeLoading) {
       return (
         <CreateOrderButton disabled>
@@ -145,6 +146,22 @@ const CreateOrder: React.FC = observer(() => {
       return (
         <CreateOrderButton green onClick={handleAgreeWithBeta}>
           <BetaButtonText primary>Confirm – I understand and accept the risks</BetaButtonText>
+        </CreateOrderButton>
+      );
+    }
+
+    if (vm.inputAmount.toString() < minimalOrder.minOrder.toString()) {
+      return (
+        <CreateOrderButton disabled>
+          <Text type={TEXT_TYPES.BUTTON}>Minimum amount {formatMinimalAmount}</Text>
+        </CreateOrderButton>
+      );
+    }
+
+    if (vm.inputPrice.toString() < minimalOrder.minPrice.toString()) {
+      return (
+        <CreateOrderButton disabled>
+          <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
         </CreateOrderButton>
       );
     }

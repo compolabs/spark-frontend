@@ -213,4 +213,12 @@ export class FuelNetwork {
   subscribeUserInfo = (...params: Parameters<typeof this.orderbookSdk.subscribeUserInfo>) => {
     return this.orderbookSdk.subscribeUserInfo(...params);
   };
+
+  fetchMinOrderSize = async () => {
+    return this.orderbookSdk.fetchMinOrderSize();
+  };
+
+  fetchMinOrderPrice = async () => {
+    return this.orderbookSdk.fetchMinOrderPrice();
+  };
 }
