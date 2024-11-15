@@ -94,7 +94,6 @@ class TradeStore {
     //   this.spotMarketInfo.volume.isZero()
     // );
     // return Boolean(this.spotMarkets.length && isMarketInfoReady);
-    this.getMinimalOrder();
     return true;
   }
 
@@ -135,8 +134,7 @@ class TradeStore {
 
   getMinimalOrder = async () => {
     const bcNetwork = FuelNetwork.getInstance();
-    const order = await bcNetwork.fetchMinOrderSize();
-    const price = await bcNetwork.fetchMinOrderPrice();
+    const [order, price] = await Promise.all([bcNetwork.fetchMinOrderSize(), bcNetwork.fetchMinOrderPrice()]);
     this.minimalOrder = {
       minPrice: new BN(price),
       minOrder: new BN(order),
@@ -245,6 +243,7 @@ class TradeStore {
 
   private initMarket = async () => {
     await this.initSpotMarket().catch(console.error);
+    await this.getMinimalOrder();
   };
 
   private initSpotMarket = async () => {
