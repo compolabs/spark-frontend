@@ -1,29 +1,49 @@
 import fs from "fs/promises";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function getConfig(branch: string) {
+const CONFIG_FILES = ["config", "config-dev"];
+
+export default function getConfig() {
   return {
     name: "download-config",
     async buildStart() {
-      // const isMain = branch === "main" || branch === "mainnet";
-      const isMain = false;
-      const config = isMain ? "config" : "config-dev";
-
-      console.log(`\nCurrent env: ${isMain ? "😱😱 MAINNET 😱😱" : "🟠🟠 DEVELOPMENT 🟠🟠"}\n`);
-
       try {
-        await fs.access("src/config.json");
-        console.log("Config file already exists. Skipping download.");
-        return;
-        // eslint-disable-next-line no-empty
-      } catch (error) {}
+        const existingFiles = await Promise.all(
+          CONFIG_FILES.map((file) =>
+            fs
+              .access(`src/${file}.json`)
+              .then(() => true)
+              .catch(() => false),
+          ),
+        );
 
-      const url = `https://raw.githubusercontent.com/compolabs/spark-frontend-config/refs/heads/main/${config}.json`;
-      const res = await fetch(url);
-      const json = await res.json();
+        if (existingFiles.every(Boolean)) {
+          console.log("All config files already exist. Skipping download.");
+          return;
+        }
 
-      await fs.writeFile("src/config.json", JSON.stringify(json, null, 2));
-      console.log("Config file downloaded successfully.");
+        await Promise.all(
+          CONFIG_FILES.map(async (config) => {
+            const url = `https://raw.githubusercontent.com/compolabs/spark-frontend-config/refs/heads/main/${config}.json`;
+
+            console.log(`Downloading config: ${config}`);
+            const res = await fetch(url);
+
+            if (!res.ok) {
+              throw new Error(`Failed to fetch ${url}: ${res.statusText}`);
+            }
+
+            const json = await res.json();
+
+            const filePath = `src/${config}.json`;
+            await fs.writeFile(filePath, JSON.stringify(json, null, 2));
+            console.log(`Config file ${filePath} downloaded successfully.`);
+          }),
+        );
+
+        console.log("All config files downloaded successfully.");
+      } catch (error) {
+        console.error("Error downloading config files:", error);
+      }
     },
   };
 }
