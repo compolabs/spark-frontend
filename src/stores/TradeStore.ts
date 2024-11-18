@@ -41,6 +41,11 @@ class TradeStore {
     takerFee: BN.ZERO,
   };
 
+  minimalOrder = {
+    minPrice: BN.ZERO,
+    minOrder: BN.ZERO,
+  };
+
   isTradeFeeLoading = false;
   isMatcherFeeLoading = false;
 
@@ -69,6 +74,7 @@ class TradeStore {
         this.updateMarketInfo();
         this.updateMarketPrices();
         this.fetchMatcherFee();
+        this.getMinimalOrder();
       },
       { fireImmediately: true },
     );
@@ -126,6 +132,15 @@ class TradeStore {
     return this.exchangeFee.plus(this.matcherFee).lte(walletAmount);
   }
 
+  getMinimalOrder = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+    const [order, price] = await Promise.all([bcNetwork.fetchMinOrderSize(), bcNetwork.fetchMinOrderPrice()]);
+    this.minimalOrder = {
+      minPrice: new BN(price),
+      minOrder: new BN(order),
+    };
+  };
+
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
 
   selectActiveMarket = (marketId?: string) => {
@@ -169,7 +184,7 @@ class TradeStore {
       market: [this.market.contractAddress],
     });
     const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
-    const price = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
+    const price = BN.formatUnits(spotOrderBookStore?.lastTradePrice, DEFAULT_DECIMALS);
     const volume = baseTokenAmount.multipliedBy(price);
     const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
     const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
@@ -205,7 +220,12 @@ class TradeStore {
     this.isMatcherFeeLoading = false;
   };
 
-  fetchTradeFee = async (quoteAmount: string) => {
+  private fetchTradeFee = async (quoteAmount: string) => {
+    if (new BN(quoteAmount).isZero()) {
+      this.tradeFee = { makerFee: BN.ZERO, takerFee: BN.ZERO };
+      return;
+    }
+
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -228,6 +248,7 @@ class TradeStore {
 
   private initMarket = async () => {
     await this.initSpotMarket().catch(console.error);
+    await this.getMinimalOrder();
   };
 
   private initSpotMarket = async () => {

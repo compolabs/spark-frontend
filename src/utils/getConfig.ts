@@ -4,7 +4,8 @@ import TOKEN_LOGOS from "@constants/tokenLogos";
 
 import { Token } from "@entity";
 
-import configJSON from "@src/config.json";
+import configProdJSON from "@src/config.json";
+import configDevJSON from "@src/config-dev.json";
 
 const CURRENT_CONFIG_VER = "1.7.0";
 
@@ -21,6 +22,7 @@ export interface Market {
 }
 
 function createConfig() {
+  const configJSON = import.meta.env.DEV ? configDevJSON : configProdJSON;
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
   console.warn("SPARK CONFIG", configJSON);
