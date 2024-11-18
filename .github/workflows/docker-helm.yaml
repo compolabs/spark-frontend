@@ -3,7 +3,6 @@ name: Build and Push Docker Image with Buildx and Push Helm Chart
 on:
   push:
     branches:
-      - main
       - docker
     tags:
       - '*'
