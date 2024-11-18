@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: harbor.infra.sprk.fi/sprk/spark-frontend:main
+    argocd-image-updater.argoproj.io/update-strategy: digest
+  name: staging-spark-frontend
+spec:
+  project: sprk
+  source:
+    repoURL: https://github.com/compolabs/spark-frontend.git
+    targetRevision: main
+    path: deploy/chart
+    helm:
+      valueFiles:
+        - values.staging.yaml
+  destination:
+    name: staging
+    namespace: sprk
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

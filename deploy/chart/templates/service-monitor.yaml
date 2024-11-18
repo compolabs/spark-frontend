@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "helm-chart.fullname" . }}-metrics
+spec:
+  selector:
+    matchLabels:
+      {{- include "helm-chart.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
