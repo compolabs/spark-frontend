@@ -18,6 +18,8 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({ children }) 
   };
 
   useEffect(() => {
+    if (import.meta.env.DEV) return;
+
     Intercom({
       app_id: "cqini4oz",
       wallet: accountStore.address,

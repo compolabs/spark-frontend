@@ -89,55 +89,46 @@ class CreateOrderVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
-    const { tradeStore, oracleStore, settingsStore } = this.rootStore;
+    const { tradeStore, spotOrderBookStore, settingsStore } = this.rootStore;
 
     reaction(
-      () => oracleStore.prices,
-      () => {
-        const { orderType } = settingsStore;
-        const { spotOrderBookStore } = this.rootStore;
-        const order = this.isSell
-          ? spotOrderBookStore.buyOrders[0]
-          : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1];
+      () => [spotOrderBookStore.buyOrders, spotOrderBookStore.sellOrders],
+      ([buyOrders, sellOrders]) => {
+        const orders = this.isSell ? buyOrders : sellOrders;
+        const order = orders[orders.length - 1];
 
         if (!order) return;
 
-        if (orderType === ORDER_TYPE.Market) {
-          this.setInputPriceThrottle(order.price);
-        } else if (
-          orderType === ORDER_TYPE.Limit &&
+        const shouldSetMarketPrice = settingsStore.orderType === ORDER_TYPE.Market;
+        const shouldSetDefaultLimitPrice =
+          settingsStore.orderType === ORDER_TYPE.Limit &&
           this.inputPrice.isZero() &&
-          this.activeInput !== ACTIVE_INPUT.Price
-        ) {
+          this.activeInput !== ACTIVE_INPUT.Price;
+
+        if (shouldSetMarketPrice || shouldSetDefaultLimitPrice) {
           this.setInputPriceThrottle(order.price);
         }
       },
     );
 
-    // reset input values when switch from perp to spot
+    reaction(
+      () => [this.isSell, settingsStore.orderType],
+      ([isSell]) => {
+        const orders = isSell ? spotOrderBookStore.buyOrders : spotOrderBookStore.sellOrders;
+        const order = orders[orders.length - 1];
+
+        if (!order) return;
+
+        this.setInputPriceThrottle(order.price);
+      },
+    );
+
     reaction(
       () => tradeStore.market,
       () => {
         this.setInputAmount(BN.ZERO);
         this.setInputTotal(BN.ZERO);
         this.setInputPercent(0);
-      },
-    );
-
-    reaction(
-      () => [this.inputAmount, this.inputLeverage, this.inputLeveragePercent, this.inputPrice, this.inputTotal],
-      (data) => {
-        console.log({
-          ...data.map((d) => d.toString()),
-        });
-      },
-    );
-
-    reaction(
-      () => this.inputTotal,
-      (total) => {
-        const { tradeStore } = this.rootStore;
-        tradeStore.fetchTradeFeeDebounce(total.toString());
       },
     );
   }
@@ -183,13 +174,6 @@ class CreateOrderVM {
   onMaxClick = () => {
     this.onSpotMaxClick();
   };
-
-  fetchExchangeFee = (total: string) => {
-    const { tradeStore } = this.rootStore;
-    tradeStore.fetchTradeFee(total);
-  };
-
-  fetchExchangeFeeDebounce = _.debounce(this.fetchExchangeFee, 250);
 
   private onSpotMaxClick = () => {
     const { tradeStore, mixPanelStore, balanceStore } = this.rootStore;
@@ -275,6 +259,8 @@ class CreateOrderVM {
     }
 
     this.updatePercent();
+
+    tradeStore.fetchTradeFeeDebounce(this.inputTotal.toString());
   }
 
   private updatePercent(): void {

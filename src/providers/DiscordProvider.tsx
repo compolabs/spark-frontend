@@ -9,6 +9,7 @@ interface DiscordProviderProps {
 
 export const DiscordProvider: React.FC<DiscordProviderProps> = ({ children }) => {
   const { accountStore, mixPanelStore } = useStores();
+
   const trackMenuEvent = (event: MIXPANEL_EVENTS) => {
     mixPanelStore.trackEvent(event, {
       page_name: location.pathname,
@@ -17,6 +18,8 @@ export const DiscordProvider: React.FC<DiscordProviderProps> = ({ children }) =>
   };
 
   useEffect(() => {
+    if (import.meta.env.DEV) return;
+
     const loadCrate = () => {
       // @ts-ignore
       const crate = new Crate({
@@ -46,5 +49,5 @@ export const DiscordProvider: React.FC<DiscordProviderProps> = ({ children }) =>
     };
   }, []);
 
-  return <>{children}</>;
+  return children;
 };
