@@ -220,7 +220,12 @@ class TradeStore {
     this.isMatcherFeeLoading = false;
   };
 
-  fetchTradeFee = async (quoteAmount: string) => {
+  private fetchTradeFee = async (quoteAmount: string) => {
+    if (new BN(quoteAmount).isZero()) {
+      this.tradeFee = { makerFee: BN.ZERO, takerFee: BN.ZERO };
+      return;
+    }
+
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 

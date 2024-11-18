@@ -32,7 +32,7 @@ import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "./Create
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [
-  // { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
+  { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
   { title: "Limit", key: ORDER_TYPE.Limit, timeInForce: LimitType.GTC },
   // { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
@@ -118,7 +118,8 @@ const CreateOrder: React.FC = observer(() => {
     const minimalOrder = tradeStore.minimalOrder;
     const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
     const formatMinimalPrice = BN.formatUnits(minimalOrder.minPrice.toString(), DEFAULT_DECIMALS).toString();
-    if (tradeStore.isFeeLoading) {
+
+    if (!isButtonDisabled && tradeStore.isFeeLoading) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Loading...</Text>
@@ -126,7 +127,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (!tradeStore.isEnoughtMoneyForFee) {
+    if (!isButtonDisabled && !tradeStore.isEnoughtMoneyForFee) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
