@@ -21,6 +21,8 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      BRANCH_NAME: ${{ github.head_ref }}
     steps:
       - name: "Checkout Github Action"
         uses: actions/checkout@v4
@@ -40,6 +42,7 @@ jobs:
         run: |
           touch .env
           echo VITE_FEATURE_TOGGLE_CLIENT_KEY=${{ vars.VITE_FEATURE_TOGGLE_CLIENT_KEY }} >> .env
+          echo VITE_BRANCH_NAME=${{ env.BRANCH_NAME }} >> .env
       - name: Build Project
         run: |
           npm run build
