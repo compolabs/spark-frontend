@@ -1,5 +1,7 @@
 import assert from "assert";
 
+import { Undefinable } from "tsdef";
+
 import TOKEN_LOGOS from "@constants/tokenLogos";
 
 import { Token } from "@entity";
@@ -21,8 +23,21 @@ export interface Market {
   contractId: string;
 }
 
+function getConfigByBranch(branchName: Undefinable<string>) {
+  if (branchName === "main") {
+    return configProdJSON;
+  }
+
+  if (branchName?.includes("stage/")) {
+    return configDevJSON;
+  }
+
+  return configDevJSON;
+}
+
 function createConfig() {
-  const configJSON = import.meta.env.DEV ? configDevJSON : configProdJSON;
+  const configJSON = getConfigByBranch(import.meta.env.VITE_BRANCH_NAME);
+
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
   console.warn("SPARK CONFIG", configJSON);
