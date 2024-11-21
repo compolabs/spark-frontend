@@ -39,9 +39,7 @@ export const MarketDataSection: React.FC = observer(() => {
 
   useEffect(() => {
     const sumStatsUser = dashboardStore.getCumulativeStats();
-    console.log("dashboardStore", dashboardStore.scoreboardData);
     if (dashboardStore.scoreboardData.length < 1) return;
-    console.log("123");
     setUserStats((prev) => {
       prev[0].value = `$${sumStatsUser.total_value_locked_score.toFixed(4)}`;
       prev[1].value = `$${sumStatsUser.tradeVolume.toFixed(4)}`;
