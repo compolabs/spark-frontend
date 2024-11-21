@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@compolabs/spark-orderbook-ts-sdk':
-        specifier: ^1.13.0
-        version: 1.13.0(@types/react@18.3.4)(fuels@0.94.8)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.14.1
+        version: 1.14.1(@types/react@18.3.4)(fuels@0.94.8)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@emotion/react':
         specifier: ^11.11.3
         version: 11.13.3(@types/react@18.3.4)(react@18.3.1)
@@ -116,6 +116,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
+      react-google-charts:
+        specifier: ^5.2.1
+        version: 5.2.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-loading-skeleton:
         specifier: ^3.3.1
         version: 3.4.0(react@18.3.1)
@@ -1000,8 +1003,8 @@ packages:
   '@coinbase/wallet-sdk@4.0.4':
     resolution: {integrity: sha512-74c040CRnGhfRjr3ArnkAgud86erIqdkPHNt5HR1k9u97uTIZCJww9eGYT67Qf7gHPpGS/xW8Be1D4dvRm63FA==}
 
-  '@compolabs/spark-orderbook-ts-sdk@1.13.0':
-    resolution: {integrity: sha512-j32uoK7wyJ58RsAPdbeJxGJCZALAgPwc7RHy47hR6fltFiig23KD6bl/NzxOuzZhsrXUBICxzYBmGrSufrOVeQ==}
+  '@compolabs/spark-orderbook-ts-sdk@1.14.1':
+    resolution: {integrity: sha512-hb5LpaVwLc6hJ1EubhTpGo0osKta0NGTz74L1AF7cbDhekgRpDE2YoiYTqNKVkQwgJWFh5z26kYo5z9dADOuxg==}
     engines: {node: '>=18'}
     peerDependencies:
       fuels: '>=0.96.1'
@@ -3234,8 +3237,8 @@ packages:
   axios-retry@3.9.1:
     resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
 
-  axios@1.7.5:
-    resolution: {integrity: sha512-fZu86yCo+svH3uqJ/yTdQ0QHpQu5oL+/QE+QPSv6BZSkDAoky9vytxp7u5qk83OJFS3kEBcesWni9WTZAv3tSw==}
+  axios@1.7.7:
+    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
   axobject-query@3.1.1:
     resolution: {integrity: sha512-goKlv8DZrK9hUh975fnHzhNIO4jUnFCfv/dszV5VwUGDFjI6vQ2VwoyjYjYNEbBE8AH87TduWP5uyDR1D+Iteg==}
@@ -5972,6 +5975,12 @@ packages:
   react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
 
+  react-google-charts@5.2.1:
+    resolution: {integrity: sha512-mCbPiObP8yWM5A9ogej7Qp3/HX4EzOwuEzUYvcfHtL98Xt4V/brD14KgfDzSNNtyD48MNXCpq5oVaYKt0ykQUQ==}
+    peerDependencies:
+      react: '>=16.3.0'
+      react-dom: '>=16.3.0'
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -8269,9 +8278,10 @@ snapshots:
       preact: 10.23.2
       sha.js: 2.4.11
 
-  '@compolabs/spark-orderbook-ts-sdk@1.13.0(@types/react@18.3.4)(fuels@0.94.8)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@compolabs/spark-orderbook-ts-sdk@1.14.1(@types/react@18.3.4)(fuels@0.94.8)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@apollo/client': 3.11.8(@types/react@18.3.4)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      axios: 1.7.7
       bignumber.js: 9.1.2
       fuels: 0.94.8
       graphql-ws: 5.16.0(graphql@16.9.0)
@@ -8280,6 +8290,7 @@ snapshots:
       '@rollup/rollup-linux-x64-gnu': 4.18.0
     transitivePeerDependencies:
       - '@types/react'
+      - debug
       - graphql
       - react
       - react-dom
@@ -9241,7 +9252,7 @@ snapshots:
     dependencies:
       '@pythnetwork/price-service-sdk': 1.7.1
       '@types/ws': 8.5.12
-      axios: 1.7.5
+      axios: 1.7.7
       axios-retry: 3.9.1
       isomorphic-ws: 4.0.1(ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       ts-log: 2.2.5
@@ -11721,7 +11732,7 @@ snapshots:
       '@babel/runtime': 7.25.4
       is-retry-allowed: 2.2.0
 
-  axios@1.7.5:
+  axios@1.7.7:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
@@ -15019,6 +15030,11 @@ snapshots:
       scheduler: 0.23.2
 
   react-fast-compare@3.2.2: {}
+
+  react-google-charts@5.2.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   react-is@16.13.1: {}
 

@@ -18,7 +18,6 @@ class AccountStore {
     initState?: ISerializedAccountStore,
   ) {
     makeAutoObservable(this);
-
     if (initState) {
       if (initState.privateKey) {
         this.connectWalletByPrivateKey(initState.privateKey);
@@ -85,7 +84,6 @@ class AccountStore {
 
   serialize = (): ISerializedAccountStore => {
     const bcNetwork = FuelNetwork.getInstance();
-
     return {
       privateKey: bcNetwork.getPrivateKey() ?? null,
       // address: bcNetwork.getAddress() ?? null,

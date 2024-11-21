@@ -41,6 +41,10 @@ export class FuelNetwork {
     this.orderbookSdk.setActiveMarket(...params);
   };
 
+  setSentioConfig = (...params: Parameters<typeof this.orderbookSdk.setSentioConfig>) => {
+    this.orderbookSdk.setSentioConfig(...params);
+  };
+
   getAddress = (): Nullable<B256Address> => {
     return this.walletManager.address;
   };
@@ -220,5 +224,9 @@ export class FuelNetwork {
 
   fetchMinOrderPrice = async () => {
     return this.orderbookSdk.fetchMinOrderPrice();
+  };
+
+  getUserScoreSnapshot = async (...params: Parameters<typeof this.orderbookSdk.getUserScoreSnapshot>) => {
+    return await this.orderbookSdk.getUserScoreSnapshot(...params);
   };
 }

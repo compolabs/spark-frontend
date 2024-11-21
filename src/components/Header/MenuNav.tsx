@@ -47,7 +47,7 @@ type MenuItem = {
 const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
 
 const MENU_ITEMS: Array<MenuItem> = [
-  { title: "DASHBOARD", trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
+  { title: "DASHBOARD", link: ROUTES.DASHBOARD, trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
   {
     title: "TRADE",
     isGradient: true,
