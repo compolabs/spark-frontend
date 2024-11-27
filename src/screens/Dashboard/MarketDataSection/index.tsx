@@ -51,12 +51,11 @@ export const MarketDataSection: React.FC = observer(() => {
 
     updatedStats[0].value = `$${sumStatsUser.total_value_locked_score.toFixed(4)}`;
     updatedStats[1].value = `$${sumStatsUser.tradeVolume.toFixed(4)}`;
-
     const calculateChange = (initialIndex: number, finalIndex: number, property: keyof generateStatsProps) => {
       const initialData = dashboardStore.scoreboardData[initialIndex];
       const finalData = dashboardStore.scoreboardData[finalIndex];
       const difference = finalData[property] - initialData[property];
-      const percentageChange = (difference / initialData[property]) * 100;
+      const percentageChange = (difference / finalData[property]) * 100;
       const direction = difference < 0 ? "down" : "up";
       return {
         value: `${difference < 0 ? "-" : "+"}${Math.abs(difference).toFixed(4)}`,
