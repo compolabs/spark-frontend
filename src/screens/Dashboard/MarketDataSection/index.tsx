@@ -38,7 +38,7 @@ export const MarketDataSection: React.FC = observer(() => {
   const { dashboardStore } = useStores();
 
   useEffect(() => {
-    const sumStatsUser = dashboardStore.getCumulativeStats();
+    const sumStatsUser = dashboardStore.scoreboardData[dashboardStore.scoreboardData.length - 1];
     setUserStats((prev) => {
       prev[0].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
       prev[1].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
