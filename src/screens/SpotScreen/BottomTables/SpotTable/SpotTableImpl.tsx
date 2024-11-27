@@ -248,7 +248,7 @@ const SpotTableImpl: React.FC = observer(() => {
       return (
         <SmartFlex gap="10px" height="100%" padding={media.mobile ? "16px" : "32px"} width="100%" center column>
           <Text type={TEXT_TYPES.H} primary>
-            You &apos;t made any trades so far
+            You haven&apos;t made any trades so far
           </Text>
           <Text type={TEXT_TYPES.BODY} secondary>
             Begin trading to view updates on your portfolio
