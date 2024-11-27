@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
@@ -11,6 +12,7 @@ import { useStores } from "@stores";
 import TradingViewScoreboardWidget from "@screens/Dashboard/TradingViewScoreboardWidget";
 
 const NoDataTrading = () => {
+  const navigate = useNavigate();
   return (
     <NoDataTradingContainer>
       <TextContainer>
@@ -20,7 +22,7 @@ const NoDataTrading = () => {
         <Text type={TEXT_TYPES.BODY} secondary>
           Begin trading to view updates on your portfolio
         </Text>
-        <TradeNowButton>TRADE NOW</TradeNowButton>
+        <TradeNowButton onClick={() => navigate("/spot")}>TRADE NOW</TradeNowButton>
       </TextContainer>
     </NoDataTradingContainer>
   );

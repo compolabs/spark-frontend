@@ -103,7 +103,9 @@ class DashboardStore {
       apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
     };
     bcNetwork.setSentioConfig(config);
+    console.log("params", params);
     const data = await bcNetwork.getUserScoreSnapshot(params);
+    console.log("data", data);
     this.scoreboardData = data?.result?.rows ?? [];
   };
 }

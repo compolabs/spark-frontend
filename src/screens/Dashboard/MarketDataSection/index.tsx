@@ -34,35 +34,42 @@ interface generateStatsProps {
 }
 
 export const MarketDataSection: React.FC = observer(() => {
-  const [userStats, setUserStats] = useState(marketData);
+  const [userStats, setUserStats] = useState(() => structuredClone(marketData));
   const { dashboardStore } = useStores();
 
   useEffect(() => {
+    if (dashboardStore.scoreboardData.length === 0) {
+      setUserStats(structuredClone(marketData));
+      return;
+    }
+
     const sumStatsUser = dashboardStore.scoreboardData[dashboardStore.scoreboardData.length - 1];
-    setUserStats((prev) => {
-      prev[0].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
-      prev[1].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
-      if (dashboardStore.scoreboardData.length > 0) {
-        prev[0].value = `$${sumStatsUser.total_value_locked_score.toFixed(4)}`;
-        prev[1].value = `$${sumStatsUser.tradeVolume.toFixed(4)}`;
-        const calculateChange = (initialIndex: number, finalIndex: number, property: keyof generateStatsProps) => {
-          const initialData = dashboardStore.scoreboardData[initialIndex];
-          const finalData = dashboardStore.scoreboardData[finalIndex];
-          const difference = finalData[property] - initialData[property];
-          const percentageChange = (difference / initialData[property]) * 100;
-          const direction = difference < 0 ? "down" : "up";
-          return {
-            value: `${difference < 0 ? "-" : "+"}${Math.abs(difference).toFixed(4)}`,
-            percentage: `${percentageChange.toFixed(2)}%`,
-            direction: direction as string,
-          };
-        };
-        prev[0].change = calculateChange(0, dashboardStore.scoreboardData.length - 1, "total_value_locked_score");
-        prev[1].change = calculateChange(1, dashboardStore.scoreboardData.length - 1, "tradeVolume");
-      }
-      return [...userStats];
-    });
-  }, [dashboardStore.scoreboardData]);
+    const updatedStats = structuredClone(marketData); // Глубокое клонирование начальных данных
+
+    updatedStats[0].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
+    updatedStats[1].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
+
+    updatedStats[0].value = `$${sumStatsUser.total_value_locked_score.toFixed(4)}`;
+    updatedStats[1].value = `$${sumStatsUser.tradeVolume.toFixed(4)}`;
+
+    const calculateChange = (initialIndex: number, finalIndex: number, property: keyof generateStatsProps) => {
+      const initialData = dashboardStore.scoreboardData[initialIndex];
+      const finalData = dashboardStore.scoreboardData[finalIndex];
+      const difference = finalData[property] - initialData[property];
+      const percentageChange = (difference / initialData[property]) * 100;
+      const direction = difference < 0 ? "down" : "up";
+      return {
+        value: `${difference < 0 ? "-" : "+"}${Math.abs(difference).toFixed(4)}`,
+        percentage: `${percentageChange.toFixed(2)}%`,
+        direction,
+      };
+    };
+
+    updatedStats[0].change = calculateChange(0, dashboardStore.scoreboardData.length - 1, "total_value_locked_score");
+    updatedStats[1].change = calculateChange(0, dashboardStore.scoreboardData.length - 1, "tradeVolume");
+
+    setUserStats(updatedStats);
+  }, [dashboardStore.scoreboardData, dashboardStore.activeFilter]);
 
   return <MarketDataCard attributes={userStats} />;
 });

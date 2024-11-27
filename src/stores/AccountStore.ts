@@ -67,7 +67,7 @@ class AccountStore {
   disconnect = async () => {
     const { dashboardStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
-    await dashboardStore.disconnect();
+    dashboardStore.disconnect();
     await bcNetwork?.disconnectWallet();
   };
 
