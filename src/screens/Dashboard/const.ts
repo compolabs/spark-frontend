@@ -13,6 +13,7 @@ export const filters = [
   },
   {
     title: "All Time",
+    description: "A/T",
     value: 24 * 360,
   },
 ];

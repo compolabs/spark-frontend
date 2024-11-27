@@ -50,6 +50,14 @@ class DashboardStore {
     await this.fetchUserScoreSnapshot();
   };
 
+  disconnect = () => {
+    this.initialized = false;
+    this.scoreboardData = [];
+    this.activeUserStat = 0;
+    this.activeTime = 0;
+    this.activeFilter = filters[0];
+  };
+
   getCumulativeStats = () => {
     return this.scoreboardData.reduce(
       (acc, cur) => {

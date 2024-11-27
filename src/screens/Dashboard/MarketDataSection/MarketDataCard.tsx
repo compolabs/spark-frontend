@@ -34,6 +34,7 @@ const CardWrapper = styled.article`
   background: ${({ theme }) => theme.colors.bgSecondary};
   ${media.mobile} {
     flex-direction: row;
+    padding: 4px;
   }
   display: flex;
   flex-direction: column;

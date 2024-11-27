@@ -9,7 +9,6 @@ import { Pagination } from "@components/Pagination/Pagination.tsx";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { media } from "@themes/breakpoints";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
@@ -247,9 +246,12 @@ const SpotTableImpl: React.FC = observer(() => {
   const renderTable = () => {
     if (!data.length) {
       return (
-        <SmartFlex height="100%" padding={media.mobile ? "16px" : "32px"} width="100%" center>
-          <Text type={TEXT_TYPES.BUTTON_SECONDARY} secondary>
-            No Data
+        <SmartFlex gap="10px" height="100%" padding={media.mobile ? "16px" : "32px"} width="100%" center column>
+          <Text type={TEXT_TYPES.H} primary>
+            You &apos;t made any trades so far
+          </Text>
+          <Text type={TEXT_TYPES.BODY} secondary>
+            Begin trading to view updates on your portfolio
           </Text>
         </SmartFlex>
       );
@@ -275,10 +277,9 @@ const SpotTableImpl: React.FC = observer(() => {
           <Pagination currentPage={page} lengthData={openOrders} onChange={handleChangePagination} />
         </PaginationContainer>
       ) : null}
-      {!!vm.userOrders.length && tabIndex === 0 && (
-        //todo здесь была кнопка cancel all orders
-        <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
-      )}
+      {/*{!!vm.userOrders.length && tabIndex === 0 && (*/}
+      {/*  //todo здесь была кнопка cancel all orders*/}
+      {/*)}*/}
     </BottomTablesSkeletonWrapper>
   );
 });
@@ -340,13 +341,5 @@ const TokenBadge = styled(SmartFlex)`
 
   ${Text} {
     line-height: 10px;
-  }
-`;
-
-const TextGraph = styled(Text)`
-  text-transform: uppercase;
-
-  ${media.desktop} {
-    display: none;
   }
 `;

@@ -81,7 +81,6 @@ export default Table;
 
 const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
   width: 100vw;
-  background: ${({ theme }) => `${theme.colors.bgPrimary}`};
   height: fit-content;
 
   table {
@@ -92,7 +91,6 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
     thead {
       position: sticky;
       top: 0;
-      background: ${({ theme }) => theme.colors.bgPrimary};
     }
 
     tr {

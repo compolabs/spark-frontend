@@ -2,18 +2,20 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { SmartFlex } from "@components/SmartFlex.tsx";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
 
 import ArrowLongIcon from "@assets/icons/arrowLong.svg?react";
 import ArrowRightIcon from "@assets/icons/arrowRight.svg?react";
 
-import { getDeviceInfo } from "@utils/getDeviceInfo.ts";
+import { getDeviceInfo } from "@utils/getDeviceInfo";
 
-import { MarketAttributeProps } from "./types.ts";
+import { MarketAttributeProps } from "./types";
 
 export const MarketAttribute: React.FC<MarketAttributeProps> = observer(
   ({ title, value, period, change, isSelect, onClick }) => {
+    const inNull = parseFloat(change.value) !== 0;
     const { isMobile } = getDeviceInfo();
     return (
       <AttributeWrapper isSelect={isSelect} onClick={onClick}>
@@ -32,7 +34,7 @@ export const MarketAttribute: React.FC<MarketAttributeProps> = observer(
             {value}
           </Text>
           <ChangeContainer>
-            {isSelect && (
+            {inNull && (
               <>
                 <Text primary>{change.value}</Text>
                 <MetricsPercentage>
@@ -62,6 +64,9 @@ const AttributeWrapper = styled.section<{ isSelect: boolean }>`
   border-radius: ${({ isSelect }) => (isSelect ? "4px" : "0px")};
   background: ${({ isSelect, theme }) => (isSelect ? theme.colors.accentPrimary : "transparent")};
   border-bottom: 1px solid ${({ isSelect, theme }) => (isSelect ? theme.colors.borderPrimary : "transparent")};
+  ${media.mobile} {
+    border: 1px solid ${({ isSelect, theme }) => (isSelect ? theme.colors.borderPrimary : "transparent")};
+  }
   display: flex;
   height: 88px;
   align-items: center;

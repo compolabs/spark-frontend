@@ -65,14 +65,14 @@ class AccountStore {
   };
 
   disconnect = async () => {
+    const { dashboardStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
-
+    await dashboardStore.disconnect();
     await bcNetwork?.disconnectWallet();
   };
 
   get address(): Nullable<B256Address> {
     const bcNetwork = FuelNetwork.getInstance();
-
     return bcNetwork.getAddress();
   }
 
