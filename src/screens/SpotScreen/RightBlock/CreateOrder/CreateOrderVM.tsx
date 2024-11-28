@@ -308,7 +308,7 @@ class CreateOrderVM {
     const marketContracts = CONFIG.MARKETS.filter(
       (m) =>
         m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
-        m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
+        m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase(),
     ).map((m) => m.contractId);
 
     if (bcNetwork.getIsExternalWallet()) {
