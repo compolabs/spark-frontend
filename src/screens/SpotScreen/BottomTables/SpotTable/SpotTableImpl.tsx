@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -9,6 +9,7 @@ import { Pagination } from "@components/Pagination/Pagination.tsx";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints.ts";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
@@ -136,6 +137,10 @@ const SpotTableImpl: React.FC = observer(() => {
     { title: "HISTORY", disabled: false, rowCount: historyOrders },
   ];
 
+  useEffect(() => {
+    vm.resetCounter();
+  }, [accountStore.isConnected]);
+
   const handleTab = (e: number) => {
     setTabIndex(e);
     setPage(1);
@@ -246,14 +251,14 @@ const SpotTableImpl: React.FC = observer(() => {
   const renderTable = () => {
     if (!data.length) {
       return (
-        <SmartFlex gap="10px" height="100%" padding={media.mobile ? "16px" : "32px"} width="100%" center column>
+        <TableContainer center column>
           <Text type={TEXT_TYPES.H} primary>
             You haven&apos;t made any trades so far
           </Text>
           <Text type={TEXT_TYPES.BODY} secondary>
             Begin trading to view updates on your portfolio
           </Text>
-        </SmartFlex>
+        </TableContainer>
       );
     }
 
@@ -289,6 +294,17 @@ export default SpotTableImpl;
 export const TableText = styled(Text)`
   display: flex;
   align-items: center;
+`;
+
+const TableContainer = styled(SmartFlex)`
+  text-align: center;
+  gap: 10px;
+  height: 100%;
+  width: 100%;
+  padding: 32px;
+  ${media.mobile} {
+    padding: 16px;
+  }
 `;
 
 const PaginationContainer = styled.div`

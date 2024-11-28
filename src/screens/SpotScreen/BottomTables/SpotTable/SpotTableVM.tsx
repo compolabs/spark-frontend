@@ -110,6 +110,10 @@ class SpotTableVM {
     };
   }
 
+  resetCounter = () => {
+    this.userOrdersStats = null;
+  };
+
   cancelOrder = async (order: SpotMarketOrder) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();

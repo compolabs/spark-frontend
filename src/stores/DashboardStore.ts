@@ -23,6 +23,11 @@ export interface FiltersProps {
   value: number;
 }
 
+export interface DataPoint {
+  time: number;
+  value: number;
+}
+
 class DashboardStore {
   initialized = false;
   scoreboardData: Row[] = [];
@@ -69,12 +74,20 @@ class DashboardStore {
     );
   };
 
-  getChartData = () => {
-    return this.scoreboardData.map((el) => {
+  getChartData = (indexStat: number) => {
+    const groupedData = this.scoreboardData.reduce((acc: Record<number, DataPoint>, el) => {
       const date = Math.floor(new Date(el.block_date).getTime() / 1000);
-      const value = this.activeUserStat === 0 ? el.total_value_locked_score : el.tradeVolume;
-      return { value, time: date };
-    });
+      const value = indexStat === 0 ? el.total_value_locked_score : el.tradeVolume;
+
+      if (!acc[date]) {
+        acc[date] = { time: date, value: 0 };
+      }
+      acc[date].value += value;
+
+      return acc;
+    }, {});
+
+    return Object.values(groupedData);
   };
 
   setActiveUserStat = (index: number) => {
@@ -103,9 +116,7 @@ class DashboardStore {
       apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
     };
     bcNetwork.setSentioConfig(config);
-    console.log("params", params);
     const data = await bcNetwork.getUserScoreSnapshot(params);
-    console.log("data", data);
     this.scoreboardData = data?.result?.rows ?? [];
   };
 }

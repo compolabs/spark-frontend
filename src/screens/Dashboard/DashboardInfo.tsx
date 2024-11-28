@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import { media } from "@themes/breakpoints.ts";
 
 import CloseIcon from "@assets/icons/close.svg?react";
 import InfoFillIcon from "@assets/icons/infoFill.svg?react";
@@ -13,16 +14,28 @@ export const DashboardInfo = observer(() => {
   const { settingsStore } = useStores();
   return (
     <DashboardInfoContainer>
-      <SmartFlex alignItems="center" gap="8px">
+      <TextContainer>
         <InfoFillIcon />
-        <Text type={TEXT_TYPES.SUPPORTING_NUMBERS} primary>
+        <TextStyled type={TEXT_TYPES.SUPPORTING_NUMBERS} primary>
           Updating information about your funds in the portfolio may take up to one hour
-        </Text>
-      </SmartFlex>
+        </TextStyled>
+      </TextContainer>
       <CloseIconStyled onClick={() => settingsStore.setIsInfoDashboardPerHours(true)} />
     </DashboardInfoContainer>
   );
 });
+
+const TextContainer = styled(SmartFlex)`
+  align-items: center;
+  gap: 8px;
+  ${media.mobile} {
+    align-items: flex-start;
+  }
+`;
+
+const TextStyled = styled(Text)`
+  line-height: 12px;
+`;
 
 const DashboardInfoContainer = styled(SmartFlex)`
   background: #332263;

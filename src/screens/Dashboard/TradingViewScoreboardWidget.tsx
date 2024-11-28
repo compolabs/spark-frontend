@@ -78,7 +78,6 @@ const TradingViewScoreboardWidget: React.FC<TradingViewScoreboardWidgetProps> = 
         lineColor: "#04E78C", // Цвет линии
         lineWidth: 2,
       });
-
       areaSeries.setData(data);
     }
 

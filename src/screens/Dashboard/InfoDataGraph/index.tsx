@@ -4,15 +4,19 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import Button from "@components/Button.tsx";
+import { ConnectWalletButton } from "@components/ConnectWalletButton.tsx";
 import { SmartFlex } from "@components/SmartFlex.tsx";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints.ts";
 
 import { useStores } from "@stores";
 
 import TradingViewScoreboardWidget from "@screens/Dashboard/TradingViewScoreboardWidget";
 
-const NoDataTrading = () => {
+const NoDataTrading = observer(() => {
   const navigate = useNavigate();
+  const { accountStore } = useStores();
+  const wallet = accountStore.address;
   return (
     <NoDataTradingContainer>
       <TextContainer>
@@ -22,15 +26,22 @@ const NoDataTrading = () => {
         <Text type={TEXT_TYPES.BODY} secondary>
           Begin trading to view updates on your portfolio
         </Text>
-        <TradeNowButton onClick={() => navigate("/spot")}>TRADE NOW</TradeNowButton>
+        {wallet ? (
+          <TradeNowButton onClick={() => navigate("/spot")}>TRADE NOW</TradeNowButton>
+        ) : (
+          <ConnectWalletButton targetKey="header_connect_btn" fitContent>
+            {" "}
+          </ConnectWalletButton>
+        )}
       </TextContainer>
     </NoDataTradingContainer>
   );
-};
+});
+
 const InfoDataGraph: React.FC = observer(() => {
   const { dashboardStore } = useStores();
-  const data = dashboardStore.getChartData();
-  return data.length > 0 ? <TradingViewScoreboardWidget data={dashboardStore.getChartData()} /> : <NoDataTrading />;
+  const data = dashboardStore.getChartData(dashboardStore.activeUserStat);
+  return data.length > 0 ? <TradingViewScoreboardWidget data={data} /> : <NoDataTrading />;
 });
 
 export default InfoDataGraph;
@@ -42,6 +53,9 @@ const NoDataTradingContainer = styled(SmartFlex)`
   align-items: center;
   border: 1px solid rgba(46, 46, 46, 1);
   width: 100%;
+  ${media.mobile} {
+    min-height: 359px;
+  }
 `;
 
 const TextContainer = styled(SmartFlex)`
