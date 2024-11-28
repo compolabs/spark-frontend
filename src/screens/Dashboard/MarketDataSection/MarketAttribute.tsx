@@ -9,12 +9,14 @@ import { media } from "@themes/breakpoints";
 import ArrowLongIcon from "@assets/icons/arrowLong.svg?react";
 import ArrowRightIcon from "@assets/icons/arrowRight.svg?react";
 
+import TooltipInfoMarket from "@screens/Dashboard/MarketDataSection/TooltipInfoMarket.tsx";
+
 import { getDeviceInfo } from "@utils/getDeviceInfo";
 
 import { MarketAttributeProps } from "./types";
 
 export const MarketAttribute: React.FC<MarketAttributeProps> = observer(
-  ({ title, value, period, change, isSelect, onClick }) => {
+  ({ title, value, period, change, isSelect, onClick, isShowDetails }) => {
     const inNull = parseFloat(change.value) !== 0;
     const { isMobile } = getDeviceInfo();
     return (
@@ -24,6 +26,7 @@ export const MarketAttribute: React.FC<MarketAttributeProps> = observer(
             <Text type={TEXT_TYPES.BODY} secondary>
               {title}
             </Text>
+            {isShowDetails && <TooltipInfoMarket value={value} />}
             {!isMobile && (
               <Text type={TEXT_TYPES.BODY} disabled>
                 {period}

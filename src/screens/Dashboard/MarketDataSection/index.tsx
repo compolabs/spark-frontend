@@ -16,6 +16,7 @@ const marketData = [
       percentage: "0",
       direction: "up",
     },
+    isShowDetails: true,
   },
   {
     title: "Trading Volume",
@@ -26,6 +27,7 @@ const marketData = [
       percentage: "0",
       direction: "up",
     },
+    isShowDetails: false,
   },
 ];
 

@@ -10,6 +10,7 @@ export interface MarketAttributeProps {
   icon?: string;
   isSelect: boolean;
   onClick: () => void;
+  isShowDetails: boolean;
 }
 export interface MarketDataProps {
   attributes: Omit<MarketAttributeProps, "isSelect" | "onClick">[];
