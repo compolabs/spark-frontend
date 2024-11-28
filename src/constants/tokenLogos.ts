@@ -9,6 +9,7 @@ const TOKEN_LOGOS: Record<string, string> = {
   ETH: eth,
   BTC: btc,
   USDC: usdc,
+  USDT: usdc,
   tETH: eth,
   tBTC: btc,
   tUSDC: usdc,

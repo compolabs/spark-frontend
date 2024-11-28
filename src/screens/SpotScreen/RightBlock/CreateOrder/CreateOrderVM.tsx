@@ -90,6 +90,7 @@ class CreateOrderVM {
 
     const { tradeStore, spotOrderBookStore, settingsStore } = this.rootStore;
 
+    // TODO: Fix the bug where the price doesn’t change when switching markets
     reaction(
       () => [spotOrderBookStore.buyOrders, spotOrderBookStore.sellOrders],
       ([buyOrders, sellOrders]) => {
