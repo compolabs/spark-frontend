@@ -4,12 +4,13 @@ import kemele from "@assets/tokens/kemele.svg";
 import tremp from "@assets/tokens/tremp.svg";
 import uni from "@assets/tokens/uni.svg";
 import usdc from "@assets/tokens/usdc.svg";
+import usdt from "@assets/tokens/usdt.svg";
 
 const TOKEN_LOGOS: Record<string, string> = {
   ETH: eth,
   BTC: btc,
   USDC: usdc,
-  USDT: usdc,
+  USDT: usdt,
   tETH: eth,
   tBTC: btc,
   tUSDC: usdc,
