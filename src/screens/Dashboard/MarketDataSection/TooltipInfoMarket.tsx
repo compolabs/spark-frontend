@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { Column } from "@components/Flex.tsx";
 import { SmartFlex } from "@components/SmartFlex.tsx";
 import Text from "@components/Text";
 import Tooltip from "@components/Tooltip.tsx";
@@ -15,7 +16,12 @@ const TooltipInfoMarket = ({ value }: { value: string }) => {
   const ContentData = () => {
     return (
       <ContentDataContainer>
-        <Text secondary>In Contracts:</Text> <Text primary>{value}</Text>
+        <SmartFlex gap="8px">
+          <TextTitle secondary>In Contracts:</TextTitle> <Text primary>{value}</Text>{" "}
+        </SmartFlex>
+        <TotalContainer>
+          <TextTitle secondary>Total Value:</TextTitle> <Text primary>{value}</Text>{" "}
+        </TotalContainer>
       </ContentDataContainer>
     );
   };
@@ -39,10 +45,22 @@ const TooltipInfoMarket = ({ value }: { value: string }) => {
   );
 };
 
-const ContentDataContainer = styled(SmartFlex)`
+const ContentDataContainer = styled(Column)`
   padding: 12px 16px;
   gap: 8px;
 `;
+
+const TextTitle = styled(Text)`
+  width: 102px;
+`;
+
+const TotalContainer = styled(SmartFlex)`
+  border-top: 1px solid ${({ theme }) => theme.colors.borderPrimary};
+  gap: 8px;
+  width: 100%;
+  padding-top: 4px;
+`;
+
 const InfoIconStyled = styled(InfoIcon)`
   width: 12px;
   height: 12px;
