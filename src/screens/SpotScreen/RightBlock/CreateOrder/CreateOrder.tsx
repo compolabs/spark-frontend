@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react-lite";
@@ -55,8 +55,6 @@ const CreateOrder: React.FC = observer(() => {
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
 
-  const [isAgreeWithBetaButtonVisible, setIsAgreeWithBetaButtonVisible] = useState(false);
-
   if (!market) return null;
 
   const { baseToken, quoteToken } = market;
@@ -96,17 +94,7 @@ const CreateOrder: React.FC = observer(() => {
     vm.setInputSlippage(slippage);
   };
 
-  const createOrderOrAgreeWithBeta = () => {
-    if (settingsStore.isUserAgreedWithBeta) {
-      vm.createOrder();
-    } else {
-      setIsAgreeWithBetaButtonVisible(true);
-    }
-  };
-
-  const handleAgreeWithBeta = () => {
-    settingsStore.setIsUserAgreedWithBeta(true);
-    setIsAgreeWithBetaButtonVisible(false);
+  const createOrder = () => {
     vm.createOrder();
   };
 
@@ -143,14 +131,6 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (isAgreeWithBetaButtonVisible) {
-      return (
-        <CreateOrderButton green onClick={handleAgreeWithBeta}>
-          <BetaButtonText primary>Confirm – I understand and accept the risks</BetaButtonText>
-        </CreateOrderButton>
-      );
-    }
-
     if (vm.inputAmount.lt(minimalOrder.minOrder)) {
       return (
         <CreateOrderButton disabled>
@@ -173,7 +153,7 @@ const CreateOrder: React.FC = observer(() => {
         disabled={isButtonDisabled}
         green={!vm.isSell}
         red={vm.isSell}
-        onClick={createOrderOrAgreeWithBeta}
+        onClick={createOrder}
       >
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
           {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
@@ -421,12 +401,9 @@ const CreateOrder: React.FC = observer(() => {
           {renderInstruction()}
           {renderOrderDetails()}
         </ParamsContainer>
-        <SmartFlex gap="4px" column>
-          <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
-            {renderButton()}
-          </ConnectWalletButton>
-          <BetaText>This is a beta version. Trade carefully and at your own risk!</BetaText>
-        </SmartFlex>
+        <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
+          {renderButton()}
+        </ConnectWalletButton>
 
         <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
       </Root>
@@ -499,16 +476,4 @@ const SliderContainer = styled.div`
   ${media.mobile} {
     padding: 8px 0;
   }
-`;
-
-const BetaButtonText = styled(Text)`
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 10px;
-`;
-
-const BetaText = styled(Text)`
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 10px;
 `;

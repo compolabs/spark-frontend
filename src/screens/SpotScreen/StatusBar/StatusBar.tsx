@@ -12,26 +12,19 @@ import { useMedia } from "@hooks/useMedia";
 import { FUEL_LINK, TWITTER_LINK } from "@constants";
 import { getDeviceInfo } from "@utils/getDeviceInfo";
 
+import tweets from "./tweets";
+
 const StatusBar: React.FC = observer(() => {
-  // const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-  //   tweets[Math.floor(Math.random() * tweets.length)],
-  // )}`;
+  const tweet = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    tweets[Math.floor(Math.random() * tweets.length)],
+  )}`;
 
   const media = useMedia();
   const { isIOS } = getDeviceInfo();
 
   return (
     <StatusBarContainer isIOS={isIOS}>
-      {/* <LinkStyled href={tweet} rel="noreferrer noopener" target="_blank">
-      </LinkStyled> */}
-      <SmartFlex center="y" gap="4px">
-        <YellowText>Beta Version.</YellowText>
-        {!media.mobile && (
-          <WarningText>
-            Spark is currently in beta. Please trade with caution, as there may still be some bugs.
-          </WarningText>
-        )}
-      </SmartFlex>
+      <LinkStyled href={tweet} rel="noreferrer noopener" target="_blank"></LinkStyled>
       {media.mobile && (
         <LinkStyled href={TWITTER_LINK} rel="noreferrer noopener" target="_blank">
           <XIconStyled />
@@ -75,12 +68,4 @@ const FooterText = styled(Text)`
   ${LinkStyled} {
     color: ${({ theme }) => theme.colors.greenLight};
   }
-`;
-
-const YellowText = styled(Text)`
-  color: #f2d336;
-`;
-
-const WarningText = styled(FooterText)`
-  text-transform: uppercase;
 `;

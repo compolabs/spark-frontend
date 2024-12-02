@@ -9,7 +9,6 @@ import RootStore from "@stores/RootStore";
 import { ORDER_TYPE } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 
 export interface ISerializedSettingStore {
-  isUserAgreedWithBeta?: boolean;
   isUserAgreedWithTerms?: boolean;
   isShowDepositInfo?: string[];
   isCompleteOnboardingProcess?: boolean;
@@ -34,7 +33,6 @@ class SettingsStore {
     if (initState) {
       this.setIsUserAgreedWithTerms(initState.isUserAgreedWithTerms ?? false);
       this.setIsCompletedOnboardingProcess(initState.isCompleteOnboardingProcess ?? false);
-      this.setIsUserAgreedWithBeta(initState?.isUserAgreedWithBeta ?? false);
       this.setTradeTableSize(initState.tradeTableSize ?? TRADE_TABLE_SIZE.S);
       this.setOrderType(initState.orderType ?? ORDER_TYPE.Limit);
       this.setIsShowDepositInfo(initState.isShowDepositInfo ?? []);
@@ -43,9 +41,6 @@ class SettingsStore {
 
   isUserAgreedWithTerms = false;
   setIsUserAgreedWithTerms = (value: boolean) => (this.isUserAgreedWithTerms = value);
-
-  isUserAgreedWithBeta = false;
-  setIsUserAgreedWithBeta = (value: boolean) => (this.isUserAgreedWithBeta = value);
 
   isShowDepositInfo = [""];
   setIsShowDepositInfo = (value: string[]) => (this.isShowDepositInfo = value);
@@ -66,7 +61,6 @@ class SettingsStore {
   setTimeInForce = (v: LimitType) => (this.timeInForce = v);
 
   serialize = (): ISerializedSettingStore => ({
-    isUserAgreedWithBeta: this.isUserAgreedWithBeta,
     isUserAgreedWithTerms: this.isUserAgreedWithTerms,
     isCompleteOnboardingProcess: this.isCompleteOnboardingProcess,
     isShowDepositInfo: this.isShowDepositInfo,
