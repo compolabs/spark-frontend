@@ -7,8 +7,6 @@ import { Token } from "@entity";
 import configProdJSON from "@src/config.json";
 import configDevJSON from "@src/config-dev.json";
 
-const CURRENT_CONFIG_VER = "1.7.0";
-
 export interface Market {
   marketName: string;
   owner: string;
@@ -22,6 +20,7 @@ export interface Market {
 }
 
 function createConfig() {
+  const CURRENT_CONFIG_VER = import.meta.env.DEV ? "1.7.0" : "1.7.1";
   const configJSON = import.meta.env.DEV ? configDevJSON : configProdJSON;
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
