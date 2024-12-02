@@ -406,7 +406,7 @@ const CreateOrder: React.FC = observer(() => {
             </Row>
             {settingsStore.orderType === ORDER_TYPE.Market && (
               <Row alignItems="center" justifyContent="space-between" style={{ marginTop: 10 }}>
-                <Text type={TEXT_TYPES.SUPPORTING}>Slipage</Text>
+                <Text type={TEXT_TYPES.SUPPORTING}>Slippage</Text>
                 <TokenInput
                   amount={vm.slippage}
                   decimals={0}
