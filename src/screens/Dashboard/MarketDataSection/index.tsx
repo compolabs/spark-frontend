@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 
 import { useStores } from "@stores";
-import { DataPoint } from "@stores/DashboardStore.ts";
+import { DataPoint } from "@stores/DashboardStore";
 
 import { MarketDataCard } from "./MarketDataCard";
 

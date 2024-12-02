@@ -5,11 +5,11 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
-import { Pagination } from "@components/Pagination/Pagination.tsx";
+import { Pagination } from "@components/Pagination/Pagination";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { media } from "@themes/breakpoints.ts";
+import { media } from "@themes/breakpoints";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";

@@ -15,7 +15,7 @@ import { MarketAttributeProps } from "./types";
 
 export const MarketAttribute: React.FC<MarketAttributeProps> = observer(
   ({ title, value, period, change, isSelect, onClick }) => {
-    const inNull = parseFloat(change.value) !== 0;
+    const isHaveRange = parseFloat(change.value) !== 0;
     const { isMobile } = getDeviceInfo();
     return (
       <AttributeWrapper isSelect={isSelect} onClick={onClick}>
@@ -35,7 +35,7 @@ export const MarketAttribute: React.FC<MarketAttributeProps> = observer(
             {value}
           </Text>
           <ChangeContainer>
-            {inNull && (
+            {isHaveRange && (
               <>
                 <Text primary>{change.value}</Text>
                 <MetricsPercentage>

@@ -3,8 +3,8 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
-import { media } from "@themes/breakpoints.ts";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
 
 import CloseIcon from "@assets/icons/close.svg?react";
 import InfoFillIcon from "@assets/icons/infoFill.svg?react";

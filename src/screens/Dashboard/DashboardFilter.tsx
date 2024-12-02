@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Button from "@components/Button.tsx";
-import { Column } from "@components/Flex.tsx";
+import Button from "@components/Button";
+import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 
 import { useStores } from "@stores";
-import { FiltersProps } from "@stores/DashboardStore.ts";
+import { FiltersProps } from "@stores/DashboardStore";
 
-import { filters } from "@screens/Dashboard/const.ts";
-import { DashboardInfo } from "@screens/Dashboard/DashboardInfo.tsx";
+import { filters } from "@screens/Dashboard/const";
+import { DashboardInfo } from "@screens/Dashboard/DashboardInfo";
 export const DashboardFilter = observer(() => {
   const [active, setActive] = useState(0);
   const { dashboardStore, settingsStore } = useStores();

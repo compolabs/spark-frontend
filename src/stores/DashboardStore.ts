@@ -1,6 +1,6 @@
 import { makeAutoObservable, reaction } from "mobx";
 
-import { filters } from "@screens/Dashboard/const.ts";
+import { filters } from "@screens/Dashboard/const";
 
 import { CONFIG } from "@utils/getConfig";
 
@@ -44,6 +44,13 @@ class DashboardStore {
       () => [this.activeTime, accountStore.address],
       () => {
         this.fetchUserScoreSnapshot();
+      },
+    );
+
+    reaction(
+      () => [accountStore.isConnected],
+      () => {
+        if (!accountStore.isConnected) this.disconnect();
       },
     );
   }

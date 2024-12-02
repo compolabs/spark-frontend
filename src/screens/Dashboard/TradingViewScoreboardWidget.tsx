@@ -54,11 +54,11 @@ const TradingViewScoreboardWidget: React.FC<TradingViewScoreboardWidgetProps> = 
           background: {
             color: "#141414",
           },
-          textColor: "white", // Цвет текста для улучшенной читаемости
+          textColor: "white",
         },
         grid: {
           vertLines: {
-            color: "rgba(255, 255, 255, 0.2)", // Настройки сетки
+            color: "rgba(255, 255, 255, 0.2)",
           },
           horzLines: {
             color: "rgba(255, 255, 255, 0.2)",
@@ -73,9 +73,9 @@ const TradingViewScoreboardWidget: React.FC<TradingViewScoreboardWidgetProps> = 
       chartRef.current = chart;
 
       const areaSeries = chart.addAreaSeries({
-        topColor: "rgba(4, 231, 140, 0.4)", // Цвет верхней области (под линией)
-        bottomColor: "rgba(4, 231, 140, 0.1)", // Цвет нижней области
-        lineColor: "#04E78C", // Цвет линии
+        topColor: "rgba(4, 231, 140, 0.4)",
+        bottomColor: "rgba(4, 231, 140, 0.1)",
+        lineColor: "#04E78C",
         lineWidth: 2,
       });
       areaSeries.setData(data);

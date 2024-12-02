@@ -1,7 +1,7 @@
 import { autorun, makeAutoObservable } from "mobx";
 
 import AccountStore, { ISerializedAccountStore } from "@stores/AccountStore";
-import DashboardStore from "@stores/DashboardStore.ts";
+import DashboardStore from "@stores/DashboardStore";
 import FaucetStore from "@stores/FaucetStore";
 import MixPanelStore from "@stores/MixPanelStore";
 import NotificationStore from "@stores/NotificationStore";

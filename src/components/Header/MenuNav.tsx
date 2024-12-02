@@ -20,7 +20,7 @@ import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, SWAP_LINK, TWITTER_LINK } from "@constants";
-import { CONFIG } from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";

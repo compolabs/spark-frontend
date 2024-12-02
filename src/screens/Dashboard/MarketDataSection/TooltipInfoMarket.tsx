@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { Column } from "@components/Flex.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
+import { Column } from "@components/Flex";
+import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
-import Tooltip from "@components/Tooltip.tsx";
+import Tooltip from "@components/Tooltip";
 
 import InfoIcon from "@assets/icons/info.svg?react";
 

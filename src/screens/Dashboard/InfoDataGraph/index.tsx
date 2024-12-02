@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import Button from "@components/Button.tsx";
-import { ConnectWalletButton } from "@components/ConnectWalletButton.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
+import Button from "@components/Button";
+import { ConnectWalletButton } from "@components/ConnectWalletButton";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { media } from "@themes/breakpoints.ts";
+import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
@@ -15,8 +15,6 @@ import TradingViewScoreboardWidget from "@screens/Dashboard/TradingViewScoreboar
 
 const NoDataTrading = observer(() => {
   const navigate = useNavigate();
-  const { accountStore } = useStores();
-  const wallet = accountStore.address;
   return (
     <NoDataTradingContainer>
       <TextContainer>
@@ -26,13 +24,9 @@ const NoDataTrading = observer(() => {
         <Text type={TEXT_TYPES.BODY} secondary>
           Begin trading to view updates on your portfolio
         </Text>
-        {wallet ? (
+        <ConnectWalletButton targetKey="header_connect_btn" fitContent>
           <TradeNowButton onClick={() => navigate("/spot")}>TRADE NOW</TradeNowButton>
-        ) : (
-          <ConnectWalletButton targetKey="header_connect_btn" fitContent>
-            {" "}
-          </ConnectWalletButton>
-        )}
+        </ConnectWalletButton>
       </TextContainer>
     </NoDataTradingContainer>
   );

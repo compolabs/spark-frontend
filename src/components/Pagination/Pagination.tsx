@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import styled from "@emotion/styled";
 
-import { PaginationButton } from "@components/Pagination/Pagination-button.tsx";
-import { PaginationEntity } from "@components/Pagination/Pagination-entity.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
+import { PaginationButton } from "@components/Pagination/Pagination-button";
+import { PaginationEntity } from "@components/Pagination/Pagination-entity";
+import { SmartFlex } from "@components/SmartFlex";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
 

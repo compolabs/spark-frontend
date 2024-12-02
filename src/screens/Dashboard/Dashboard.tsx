@@ -18,7 +18,7 @@ const Dashboard = observer(() => {
     <DashboardContainer>
       <DashboardColumn>
         <DashboardFilter />
-        <UserInfoData gap="4px" style={{ width: "100%" }}>
+        <UserInfoData>
           <MarketDataSection />
           <InfoDataGraph />
         </UserInfoData>
@@ -32,6 +32,9 @@ const Dashboard = observer(() => {
 export default Dashboard;
 
 const UserInfoData = styled(SmartFlex)`
+  width: 100%;
+  height: 100%;
+  gap: 4px;
   ${media.mobile} {
     flex-direction: column;
   }
@@ -45,6 +48,7 @@ const DashboardContainer = styled(Column)`
 `;
 
 const DashboardColumn = styled(Column)`
+  height: 100%;
   width: 100%;
   gap: 4px;
 `;

@@ -6,8 +6,8 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import { MarketAttribute } from "./MarketAttribute.tsx";
-import { MarketDataProps } from "./types.ts";
+import { MarketAttribute } from "./MarketAttribute";
+import { MarketDataProps } from "./types";
 
 export const MarketDataCard: React.FC<MarketDataProps> = observer(({ attributes }) => {
   const { dashboardStore } = useStores();
