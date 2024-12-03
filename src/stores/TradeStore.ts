@@ -175,17 +175,14 @@ class TradeStore {
   setMarketSelectionOpened = (s: boolean) => (this.marketSelectionOpened = s);
 
   updateMarketInfo = async () => {
-    const { spotOrderBookStore } = this.rootStore;
-
     if (!this.market) return;
 
     const info = await FuelNetwork.getInstance().fetchSpotVolume({
       limit: 1000,
       market: [this.market.contractAddress],
     });
-    const baseTokenAmount = BN.formatUnits(info.volume, this.market.baseToken.decimals);
-    const price = BN.formatUnits(spotOrderBookStore?.lastTradePrice, DEFAULT_DECIMALS);
-    const volume = baseTokenAmount.multipliedBy(price);
+
+    const volume = BN.formatUnits(info.volume, this.market.baseToken.decimals);
     const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
     const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
 

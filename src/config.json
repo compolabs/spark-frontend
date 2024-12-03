@@ -18,6 +18,14 @@
       "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
       "precision": 9
+    },
+    {
+      "name": "USDT",
+      "symbol": "USDT",
+      "decimals": 6,
+      "assetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
+      "priceFeed": "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b",
+      "precision": 2
     }
   ],
   "markets": [
@@ -31,10 +39,25 @@
       "priceDecimals": 9,
       "version": 1541,
       "contractId": "0xfe2c524ad8e088f33d232a45dbea43e792861640b71aa1814b30506bf8430ee5"
+    },
+    {
+      "marketName": "USDCUSDT",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+      "baseAssetDecimals": 6,
+      "quoteAssetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
+      "quoteAssetDecimals": 6,
+      "priceDecimals": 9,
+      "version": 1542,
+      "contractId": "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352"
     }
   ],
   "indexers": {
     "0xfe2c524ad8e088f33d232a45dbea43e792861640b71aa1814b30506bf8430ee5": {
+      "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
+    "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352": {
       "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
       "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
     }
