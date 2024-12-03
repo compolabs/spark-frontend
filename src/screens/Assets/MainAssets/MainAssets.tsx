@@ -214,7 +214,7 @@ const BoxShadow = styled(SmartFlex)`
   width: calc(100% + 40px);
   position: absolute;
   left: -20px;
-  top: 30px;
+  top: 50px;
   background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
 `;
 

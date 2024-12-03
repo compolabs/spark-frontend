@@ -10,7 +10,6 @@ import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput.tsx";
 import { SmartFlex } from "@components/SmartFlex.tsx";
 import Table from "@components/Table.tsx";
 import Text, { TEXT_TYPES } from "@components/Text.tsx";
-import { media } from "@themes/breakpoints.ts";
 
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
@@ -24,14 +23,13 @@ const AssetsDashboard = observer(() => {
   const { balanceStore } = useStores();
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
   const data = balancesInfoList.map((el) => ({
-    name: el.asset,
+    asset: el.asset,
     amount: el,
     value: new BN(el.balance).multipliedBy(el.price).toSignificant(el.asset.decimals),
     currentPrice: new BN(el.price).toSignificant(2),
-    asset: el,
   }));
   const columns = [
-    orderColumnHelper.accessor("name", {
+    orderColumnHelper.accessor("asset", {
       header: "Name",
       cell: (props) => {
         return (
@@ -99,19 +97,8 @@ const AssetsDashboard = observer(() => {
       },
     }),
   ];
+
   const renderTable = () => {
-    // if (!data.length) {
-    //   return (
-    //     <TableContainer center column>
-    //       <Text type={TEXT_TYPES.H} primary>
-    //         You haven&apos;t made any trades so far
-    //       </Text>
-    //       <Text type={TEXT_TYPES.BODY} secondary>
-    //         Begin trading to view updates on your portfolio
-    //       </Text>
-    //     </TableContainer>
-    //   );
-    // }
     return <Table columns={columns} data={data} />;
   };
 
@@ -179,10 +166,6 @@ const StyledTables = styled.div`
   width: 100%;
   border: 1px solid rgba(46, 46, 46, 1);
   border-radius: 8px;
-
-  ${media.mobile} {
-    flex-grow: 1;
-  }
 `;
 
 const WithdrawalButton = styled(Chip)`

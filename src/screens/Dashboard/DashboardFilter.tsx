@@ -38,7 +38,7 @@ export const DashboardFilter = observer(() => {
         </SmartFlex>
       </DashboardFilterContainer>
       <TitleTextBalance type={TEXT_TYPES.H} primary>
-        {`$${sumStatsUser?.value.toFixed(4)}`}
+        {`$${sumStatsUser?.value.toFixed(4) ?? 0}`}
       </TitleTextBalance>
       {!isInfoDashboardPerHours && <DashboardInfo />}
     </DashboardTitleContainer>
