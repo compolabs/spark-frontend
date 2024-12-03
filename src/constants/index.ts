@@ -24,6 +24,7 @@ export const TWITTER_LINK = "https://twitter.com/Sprkfi";
 export const GITHUB_LINK = "https://github.com/compolabs";
 export const DOCS_LINK = "https://docs.sprk.fi";
 export const FUEL_LINK = "https://fuel.network";
+export const DISCORD_LINK = "https://t.co/EfXHTEhXHc";
 
 export const EVENTS = {
   OpenSideAssets: "openSideAssets",

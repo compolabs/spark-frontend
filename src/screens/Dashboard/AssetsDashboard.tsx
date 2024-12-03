@@ -43,7 +43,7 @@ const AssetsDashboard = observer(() => {
       header: "Name",
       cell: (props) => {
         return (
-          <TokenContainer>
+          <TokenContainer gap="4px">
             <TokenIcon src={props.getValue().logo} />
             <Text primary>{props.getValue().name}</Text>
           </TokenContainer>
@@ -122,7 +122,7 @@ const AssetsDashboard = observer(() => {
     const orderData = data.map((ord, i) => (
       <MobileTableOrderRow key={i}>
         <MobileTableRowColumn>
-          <TokenContainer>
+          <TokenContainer gap="8px">
             <TokenIcon src={ord.asset.logo} />
             <Column>
               <Text primary>{ord.asset.name}</Text>
@@ -206,7 +206,6 @@ const TokenIcon = styled.img`
 
 const TokenContainer = styled(SmartFlex)`
   align-items: center;
-  gap: 4px;
 `;
 
 const ValueContainer = styled(SmartFlex)`
@@ -240,7 +239,7 @@ const MobileTableOrderRow = styled(SmartFlex)`
   width: 100%;
   padding: 11px 7px 14px 7px;
   border: 1px solid rgba(46, 46, 46, 1);
-
+  border-radius: 4px;
   position: relative;
 
   &:not(:last-of-type)::after {

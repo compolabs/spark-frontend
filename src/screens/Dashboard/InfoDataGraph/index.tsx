@@ -86,6 +86,7 @@ const TextContainer = styled(SmartFlex)`
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  text-align: center;
 `;
 
 const TradeNowButton = styled(Button)`

@@ -35,6 +35,7 @@ const CardWrapper = styled.article`
   ${media.mobile} {
     flex-direction: row;
     padding: 4px;
+    min-height: auto;
   }
   display: flex;
   flex-direction: column;
