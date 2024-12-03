@@ -15,6 +15,7 @@ import { MODAL_TYPE } from "@stores/ModalStore";
 
 import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets";
 import ConnectWalletDialog from "@screens/ConnectWallet";
+import Dashboard from "@screens/Dashboard";
 import Faucet from "@screens/Faucet";
 import SpotScreen from "@screens/SpotScreen";
 import { SwapScreen } from "@screens/SwapScreen";
@@ -22,7 +23,7 @@ import { SwapScreen } from "@screens/SwapScreen";
 import { ROUTES } from "@constants";
 
 import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
-import { DiscordProvider } from "@src/providers/DiscordProvider.tsx";
+import { DiscordProvider } from "@src/providers/DiscordProvider";
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore } = useStores();
 
@@ -45,6 +46,7 @@ const App: React.FC = observer(() => {
                 <Route element={<Faucet />} path={ROUTES.FAUCET} />
                 <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
                 <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
+                <Route element={<Dashboard />} path={ROUTES.DASHBOARD} />
               </Routes>
               <SideManageAssets />
               <PWAModal />

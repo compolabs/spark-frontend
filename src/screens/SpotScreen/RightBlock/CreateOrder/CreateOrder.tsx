@@ -10,7 +10,7 @@ import Button, { ButtonGroup } from "@components/Button";
 import { ConnectWalletButton } from "@components/ConnectWalletButton";
 import { Row } from "@components/Flex";
 import MaxButton from "@components/MaxButton";
-import { RadioButton } from "@components/RadioButton.tsx";
+import { RadioButton } from "@components/RadioButton";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
 import Slider from "@components/Slider";
@@ -386,7 +386,7 @@ const CreateOrder: React.FC = observer(() => {
             </Row>
             {settingsStore.orderType === ORDER_TYPE.Market && (
               <Row alignItems="center" justifyContent="space-between" style={{ marginTop: 10 }}>
-                <Text type={TEXT_TYPES.SUPPORTING}>Slipage</Text>
+                <Text type={TEXT_TYPES.SUPPORTING}>Slippage</Text>
                 <TokenInput
                   amount={vm.slippage}
                   decimals={0}

@@ -8,7 +8,6 @@ export const useWallet = () => {
   const { fuel } = useFuel();
   const { accountStore, balanceStore } = useStores();
   const { connect, isConnecting } = useConnectUI();
-
   const [isConnected, setIsConnected] = useState(false);
   const [wallet, setWallet] = useState<Account | null>(null);
 
@@ -29,7 +28,6 @@ export const useWallet = () => {
         setWallet(wallet);
       }
     };
-
     checkConnection();
   }, [fuel, isConnecting]);
 
