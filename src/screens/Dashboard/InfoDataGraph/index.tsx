@@ -13,6 +13,34 @@ import { useStores } from "@stores";
 
 import TradingViewScoreboardWidget from "@screens/Dashboard/TradingViewScoreboardWidget";
 
+interface TradeEvent {
+  time: number;
+  value: number;
+}
+
+const generateTradingData = (data: TradeEvent[]) => {
+  if (data.length < 1) return [];
+  const firstDate = data[0].time * 1000;
+
+  const currentDate = Date.now();
+
+  const oneHour = 60 * 60 * 1000;
+  let currentTimestamp = firstDate;
+  const additionalData = [];
+
+  while (currentTimestamp <= currentDate) {
+    if (!data.some((item) => item.time === Math.floor(currentTimestamp / 1000))) {
+      additionalData.push({
+        time: Math.floor(currentTimestamp / 1000),
+        value: 0,
+      });
+    }
+    currentTimestamp += oneHour;
+  }
+
+  return [...data, ...additionalData].sort((a, b) => a.time - b.time);
+};
+
 const NoDataTrading = observer(() => {
   const navigate = useNavigate();
   return (
@@ -34,7 +62,9 @@ const NoDataTrading = observer(() => {
 
 const InfoDataGraph: React.FC = observer(() => {
   const { dashboardStore } = useStores();
-  const data = dashboardStore.getChartData(dashboardStore.activeUserStat);
+  const data = dashboardStore.activeUserStat
+    ? generateTradingData(dashboardStore.getChartDataTrading())
+    : dashboardStore.getChartDataPortfolio();
   return data.length > 0 ? <TradingViewScoreboardWidget data={data} /> : <NoDataTrading />;
 });
 

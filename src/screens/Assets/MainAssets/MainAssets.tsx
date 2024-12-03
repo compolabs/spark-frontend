@@ -88,6 +88,12 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
+        <TextTitle type={TEXT_TYPES.BUTTON} primary>
+          Assets in my wallet: ${accumulateBalance?.balance.toSignificant(2)}
+        </TextTitle>
+        <TextTitle type={TEXT_TYPES.BUTTON} primary>
+          *These are assets in your wallet, not in Spark
+        </TextTitle>
         <WalletBlock gap="8px" column>
           {isConnected ? (
             accumulateBalance.balance.isPositive() && (
@@ -171,6 +177,7 @@ const SizedBoxStyled = styled(SizedBox)`
 `;
 const HeaderBlock = styled(SmartFlex)`
   width: 100%;
+  margin-bottom: 10px;
 `;
 const OverallBlock = styled(SmartFlex)`
   margin: 16px 15px;
@@ -183,14 +190,14 @@ const AssetItem = styled(SmartFlex)`
 
 const WalletBlock = styled(SmartFlex)`
   width: 100%;
-  margin-top: 40px;
+  margin-top: 20px;
 `;
 const BottomColumn = styled(Column)`
   gap: 15px;
   width: 100%;
 `;
 const TextTitle = styled(Text)`
-  width: 182px;
+  width: 100%;
   text-align: left;
 `;
 

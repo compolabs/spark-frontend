@@ -103,4 +103,5 @@ const DirectionIcon = styled(ArrowLongIcon)`
   width: 8px;
   height: 8px;
   color: ${({ direction }) => (direction === "up" ? "#04E78C" : "#E80247")};
+  transform: ${({ direction }) => (direction === "down" ? "rotate(-180deg)" : "rotate(0deg)")};
 `;

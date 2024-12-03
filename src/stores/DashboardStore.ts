@@ -1,5 +1,7 @@
 import { makeAutoObservable, reaction } from "mobx";
 
+import { RowSnapshot, RowTradeEvent } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { filters } from "@screens/Dashboard/const";
 
 import { CONFIG } from "@utils/getConfig";
@@ -10,12 +12,6 @@ import RootStore from "./RootStore";
 
 export interface ISerializedDashboardStore {
   data: string;
-}
-
-interface Row {
-  block_date: string;
-  total_value_locked_score: number;
-  tradeVolume: number;
 }
 
 export interface FiltersProps {
@@ -30,7 +26,8 @@ export interface DataPoint {
 
 class DashboardStore {
   initialized = false;
-  scoreboardData: Row[] = [];
+  rowSnapshots: RowSnapshot[] = [];
+  tradeEvents: RowTradeEvent[] = [];
   activeUserStat = 0;
   activeTime = 0;
   activeFilter = filters[0];
@@ -44,6 +41,7 @@ class DashboardStore {
       () => [this.activeTime, accountStore.address],
       () => {
         this.fetchUserScoreSnapshot();
+        this.fetchTradeEvent();
       },
     );
 
@@ -58,20 +56,21 @@ class DashboardStore {
   init = async () => {
     this.initialized = true;
     const date = new Date();
-    this.calculateTime(date, 24);
+    this.activeTime = this.calculateTime(date, 24);
     await this.fetchUserScoreSnapshot();
+    await this.fetchTradeEvent();
   };
 
   disconnect = () => {
     this.initialized = false;
-    this.scoreboardData = [];
+    this.rowSnapshots = [];
     this.activeUserStat = 0;
     this.activeTime = 0;
     this.activeFilter = filters[0];
   };
 
   getCumulativeStats = () => {
-    return this.scoreboardData.reduce(
+    return this.rowSnapshots.reduce(
       (acc, cur) => {
         acc.total_value_locked_score += cur.total_value_locked_score;
         acc.tradeVolume += cur.tradeVolume;
@@ -81,11 +80,26 @@ class DashboardStore {
     );
   };
 
-  getChartData = (indexStat: number) => {
-    const groupedData = this.scoreboardData.reduce((acc: Record<number, DataPoint>, el) => {
+  getChartDataPortfolio = () => {
+    const groupedData = this.rowSnapshots.reduce((acc: Record<number, DataPoint>, el) => {
       const date = Math.floor(new Date(el.block_date).getTime() / 1000);
-      const value = indexStat === 0 ? el.total_value_locked_score : el.tradeVolume;
+      const value = el.total_value_locked_score;
 
+      if (!acc[date]) {
+        acc[date] = { time: date, value: 0 };
+      }
+      acc[date].value += value;
+
+      return acc;
+    }, {});
+
+    return Object.values(groupedData);
+  };
+
+  getChartDataTrading = () => {
+    const groupedData = this.tradeEvents.reduce((acc: Record<number, DataPoint>, el) => {
+      const date = Math.floor(new Date(el.timestamp).getTime());
+      const value = el.volume;
       if (!acc[date]) {
         acc[date] = { time: date, value: 0 };
       }
@@ -104,12 +118,13 @@ class DashboardStore {
   setActiveTime = (activeFilter: FiltersProps) => {
     const date = new Date();
     this.activeFilter = activeFilter;
-    this.calculateTime(date, activeFilter.value);
+    this.activeTime = this.calculateTime(date, activeFilter.value);
   };
 
-  private calculateTime = (date: Date, range: number) => {
-    this.activeTime = Math.floor(date.setHours(date.getHours() - range) / 1000);
+  calculateTime = (date: Date, range: number) => {
+    return Math.floor(date.setHours(date.getHours() - range) / 1000);
   };
+
   private fetchUserScoreSnapshot = async () => {
     const bcNetwork = FuelNetwork.getInstance();
     const { accountStore } = this.rootStore;
@@ -124,7 +139,25 @@ class DashboardStore {
     };
     bcNetwork.setSentioConfig(config);
     const data = await bcNetwork.getUserScoreSnapshot(params);
-    this.scoreboardData = data?.result?.rows ?? [];
+    this.rowSnapshots = data?.result?.rows ?? [];
+  };
+
+  private fetchTradeEvent = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+    const { accountStore } = this.rootStore;
+    if (!accountStore?.address) return;
+    const params = {
+      userAddress: accountStore.address,
+      fromTimestamp: this.activeTime,
+      toTimestamp: this.calculateTime(new Date(), 0),
+    };
+    const config = {
+      url: CONFIG.APP.sentioUrl,
+      apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
+    };
+    bcNetwork.setSentioConfig(config);
+    const data = await bcNetwork.getTradeEvent(params);
+    this.tradeEvents = data?.result?.rows ?? [];
   };
 }
 

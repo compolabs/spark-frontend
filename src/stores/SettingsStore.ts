@@ -23,6 +23,7 @@ export enum TRADE_TABLE_SIZE {
   S,
   M,
   L,
+  AUTO,
 }
 
 class SettingsStore {

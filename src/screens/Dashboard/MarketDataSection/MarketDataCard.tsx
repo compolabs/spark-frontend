@@ -41,4 +41,5 @@ const CardWrapper = styled.article`
   padding: 16px 16px 40px;
   border: 1px solid rgba(46, 46, 46, 1);
   min-width: 240px;
+  min-height: 320px;
 `;

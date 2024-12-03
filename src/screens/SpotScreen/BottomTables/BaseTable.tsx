@@ -15,38 +15,40 @@ import { MAX_TABLE_HEIGHT } from "./constants";
 import { TableActionButtons } from "./TableActionButtons";
 
 interface Props {
-  tabs: { title: string; disabled: boolean; rowCount: number }[];
+  tabs?: { title: string; disabled: boolean; rowCount: number }[];
   children: React.ReactNode;
   activeTab: number;
   onTabClick: (index: number) => void;
+  size?: TRADE_TABLE_SIZE;
 }
 
-export const BaseTable: React.FC<Props> = observer(({ tabs, activeTab, onTabClick, children }) => {
+export const BaseTable: React.FC<Props> = observer(({ tabs, activeTab, onTabClick, children, size }) => {
   const { settingsStore } = useStores();
 
   return (
-    <Root gap="16px" size={settingsStore.tradeTableSize} column>
+    <Root gap="16px" size={size ? size : settingsStore.tradeTableSize} column>
       <TableRoot>
         <TabContainer>
-          {tabs.map(({ title, disabled, rowCount }, index) => (
-            <Tab
-              key={title + index}
-              active={activeTab === index}
-              disabled={disabled}
-              type={TEXT_TYPES.BUTTON_SECONDARY}
-              onClick={() => !disabled && onTabClick(index)}
-            >
-              {title}
-              {rowCount > 0 && (
-                <Badge>
-                  <Text type={TEXT_TYPES.SUPPORTING} primary>
-                    {rowCount}
-                  </Text>
-                </Badge>
-              )}
-            </Tab>
-          ))}
-          <TableActionButtons />
+          {tabs &&
+            tabs.map(({ title, disabled, rowCount }, index) => (
+              <Tab
+                key={title + index}
+                active={activeTab === index}
+                disabled={disabled}
+                type={TEXT_TYPES.BUTTON_SECONDARY}
+                onClick={() => !disabled && onTabClick(index)}
+              >
+                {title}
+                {rowCount > 0 && (
+                  <Badge>
+                    <Text type={TEXT_TYPES.SUPPORTING} primary>
+                      {rowCount}
+                    </Text>
+                  </Badge>
+                )}
+              </Tab>
+            ))}
+          {tabs && <TableActionButtons />}
         </TabContainer>
         <TableContainer className="better-scroll">{children}</TableContainer>
       </TableRoot>

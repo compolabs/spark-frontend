@@ -62,7 +62,7 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
     const tokens = bcNetwork.getTokenList();
 
-    const formattedBalance = tokens.map((token) => {
+    return tokens.map((token) => {
       const balance = this.balances.get(token.assetId) ?? BN.ZERO;
       const contractBalance = this.contractBalances.get(token.assetId) ?? BN.ZERO;
       const totalBalance = balance.plus(contractBalance);
@@ -76,8 +76,6 @@ export class BalanceStore {
         price: BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed), DEFAULT_DECIMALS).toString(),
       };
     });
-
-    return formattedBalance;
   }
 
   clearBalance = () => {

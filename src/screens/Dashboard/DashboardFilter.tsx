@@ -21,11 +21,13 @@ export const DashboardFilter = observer(() => {
     dashboardStore.setActiveTime(filter);
   };
   const isInfoDashboardPerHours = settingsStore.isInfoDashboardPerHours;
+  const portfolioVolume = dashboardStore.getChartDataPortfolio();
+  const sumStatsUser = portfolioVolume[portfolioVolume.length - 1];
   return (
     <DashboardTitleContainer>
       <DashboardFilterContainer>
         <TitleText type={TEXT_TYPES.H} primary>
-          Portfolio
+          Balance
         </TitleText>
         <SmartFlex gap="5px">
           {filters.map((filter, index) => (
@@ -35,6 +37,9 @@ export const DashboardFilter = observer(() => {
           ))}
         </SmartFlex>
       </DashboardFilterContainer>
+      <TitleTextBalance type={TEXT_TYPES.H} primary>
+        {`$${sumStatsUser?.value.toFixed(4)}`}
+      </TitleTextBalance>
       {!isInfoDashboardPerHours && <DashboardInfo />}
     </DashboardTitleContainer>
   );
@@ -60,4 +65,8 @@ const FilterButton = styled(Button)`
 const TitleText = styled(Text)`
   display: flex;
   align-items: center;
+`;
+
+const TitleTextBalance = styled(TitleText)`
+  margin-bottom: 10px;
 `;

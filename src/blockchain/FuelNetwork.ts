@@ -229,4 +229,8 @@ export class FuelNetwork {
   getUserScoreSnapshot = async (...params: Parameters<typeof this.orderbookSdk.getUserScoreSnapshot>) => {
     return await this.orderbookSdk.getUserScoreSnapshot(...params);
   };
+
+  getTradeEvent = async (...params: Parameters<typeof this.orderbookSdk.getTradeEvent>) => {
+    return await this.orderbookSdk.getTradeEvent(...params);
+  };
 }

@@ -265,7 +265,6 @@ const SpotTableImpl: React.FC = observer(() => {
     if (media.mobile) {
       return renderMobileRows();
     }
-
     return <Table columns={columns[tabIndex] as any} data={data} />;
   };
 

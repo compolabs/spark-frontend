@@ -6,6 +6,7 @@ import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import { media } from "@themes/breakpoints";
 
+import AssetsDashboard from "@screens/Dashboard/AssetsDashboard.tsx";
 import InfoDataGraph from "@screens/Dashboard/InfoDataGraph";
 import BottomTables from "@screens/SpotScreen/BottomTables";
 import StatusBar from "@screens/SpotScreen/StatusBar";
@@ -24,6 +25,7 @@ const Dashboard = observer(() => {
         </UserInfoData>
         <BottomTables />
       </DashboardColumn>
+      <AssetsDashboard />
       <StatusBar />
     </DashboardContainer>
   );
@@ -43,12 +45,10 @@ const UserInfoData = styled(SmartFlex)`
 const DashboardContainer = styled(Column)`
   width: 90%;
   margin: 0px auto;
-  height: 100%;
   justify-content: space-between;
 `;
 
 const DashboardColumn = styled(Column)`
-  height: 100%;
   width: 100%;
   gap: 4px;
 `;
