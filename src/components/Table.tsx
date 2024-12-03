@@ -94,6 +94,9 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       top: 0;
     }
 
+    tbody {
+      overflow: scroll;
+    }
     tr {
       color: ${({ theme }) => `${theme.colors.textPrimary}`};
 

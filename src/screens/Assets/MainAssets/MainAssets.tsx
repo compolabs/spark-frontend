@@ -84,13 +84,10 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             primary
             onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
           >
-            Assets
+            Assets in my wallet: ${accumulateBalance?.balance.toSignificant(2)}
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
-        <TextTitle type={TEXT_TYPES.BUTTON} primary>
-          Assets in my wallet: ${accumulateBalance?.balance.toSignificant(2)}
-        </TextTitle>
         <TextTitle type={TEXT_TYPES.BUTTON} primary>
           *These are assets in your wallet, not in Spark
         </TextTitle>

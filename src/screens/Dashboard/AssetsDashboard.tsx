@@ -5,12 +5,17 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
+import Button from "@components/Button.tsx";
 import Chip from "@components/Chip.tsx";
+import { Column } from "@components/Flex.tsx";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput.tsx";
 import { SmartFlex } from "@components/SmartFlex.tsx";
 import Table from "@components/Table.tsx";
 import Text, { TEXT_TYPES } from "@components/Text.tsx";
 
+import Spinner from "@assets/icons/spinner.svg?react";
+
+import { useMedia } from "@hooks/useMedia.ts";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
 
@@ -20,6 +25,7 @@ const orderColumnHelper = createColumnHelper<any>();
 
 const AssetsDashboard = observer(() => {
   const [isLoading, setLoading] = useState(false);
+  const media = useMedia();
   const { balanceStore } = useStores();
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
   const data = balancesInfoList.map((el) => ({
@@ -28,6 +34,10 @@ const AssetsDashboard = observer(() => {
     value: new BN(el.balance).multipliedBy(el.price).toSignificant(el.asset.decimals),
     currentPrice: new BN(el.price).toSignificant(2),
   }));
+  const allContractBalance = balancesInfoList.reduce((acc, el) => {
+    acc.contractBalance = new BN(acc.contractBalance).plus(el.contractBalance).toString();
+    return acc;
+  });
   const columns = [
     orderColumnHelper.accessor("asset", {
       header: "Name",
@@ -73,7 +83,13 @@ const AssetsDashboard = observer(() => {
       },
     }),
     orderColumnHelper.accessor("asset", {
-      header: "",
+      header: () => {
+        new BN(allContractBalance.contractBalance).isLessThan(0) && (
+          <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdrawAll}>
+            {isLoading ? <Spinner height={14} /> : "Withdraw All"}
+          </ButtonConfirm>
+        );
+      },
       id: "action",
       cell: (props) => {
         const value = props.getValue();
@@ -89,7 +105,7 @@ const AssetsDashboard = observer(() => {
                   withdrawalBalance(value);
                 }}
               >
-                {isLoading ? "Loading..." : "Withdraw"}
+                {isLoading ? <Spinner height={14} /> : "Withdraw"}
               </WithdrawalButton>
             )}
           </SmartFlex>
@@ -100,6 +116,40 @@ const AssetsDashboard = observer(() => {
 
   const renderTable = () => {
     return <Table columns={columns} data={data} />;
+  };
+
+  const renderMobileRows = () => {
+    const orderData = data.map((ord, i) => (
+      <MobileTableOrderRow key={i}>
+        <MobileTableRowColumn>
+          <TokenContainer>
+            <TokenIcon src={ord.asset.logo} />
+            <Column>
+              <Text primary>{ord.asset.name}</Text>
+              <Text>${ord.currentPrice}</Text>
+            </Column>
+          </TokenContainer>
+        </MobileTableRowColumn>
+        <MobileTableRowColumn>
+          <Column>
+            <RightText primary>
+              {ord.amount.balance} {ord.asset.symbol}
+            </RightText>
+            <RightText>${new BN(ord.amount.balance).multipliedBy(ord.amount.price).toSignificant(2)}</RightText>
+          </Column>
+        </MobileTableRowColumn>
+      </MobileTableOrderRow>
+    ));
+    return (
+      <SmartFlex gap="4px" padding="8px" width="100%" column>
+        {orderData}
+        {new BN(allContractBalance.contractBalance).isLessThan(0) && (
+          <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdrawAll}>
+            {isLoading ? <Spinner height={14} /> : "Withdraw All"}
+          </ButtonConfirm>
+        )}
+      </SmartFlex>
+    );
   };
 
   const withdrawalBalance = async (selectAsset: AssetBlockData) => {
@@ -114,15 +164,25 @@ const AssetsDashboard = observer(() => {
     setLoading(false);
   };
 
+  const handleWithdrawAll = async () => {
+    setLoading(true);
+    await balanceStore.withdrawBalanceAll();
+    setLoading(false);
+  };
+
   return (
     <>
       <TitleText type={TEXT_TYPES.H} primary>
         Assets
       </TitleText>
       <StyledTables>
-        <BaseTable activeTab={0} size={TRADE_TABLE_SIZE.AUTO} onTabClick={() => {}}>
-          {renderTable()}
-        </BaseTable>
+        {media.desktop ? (
+          <BaseTable activeTab={0} size={TRADE_TABLE_SIZE.AUTO} onTabClick={() => {}}>
+            {renderTable()}
+          </BaseTable>
+        ) : (
+          renderMobileRows()
+        )}
       </StyledTables>
     </>
   );
@@ -165,10 +225,51 @@ const SymbolContainer = styled(SmartFlex)`
 const StyledTables = styled.div`
   width: 100%;
   border: 1px solid rgba(46, 46, 46, 1);
+  background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 8px;
 `;
 
 const WithdrawalButton = styled(Chip)`
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;
+`;
+
+const MobileTableOrderRow = styled(SmartFlex)`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 100%;
+  padding: 11px 7px 14px 7px;
+  border: 1px solid rgba(46, 46, 46, 1);
+
+  position: relative;
+
+  &:not(:last-of-type)::after {
+    content: "";
+
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+
+    height: 1px;
+    box-shadow: inset 0 1px 0 0 ${({ theme }) => theme.colors.bgSecondary};
+  }
+`;
+
+const MobileTableRowColumn = styled(SmartFlex)`
+  flex-direction: column;
+  gap: 7px;
+
+  &:last-of-type {
+    align-items: flex-end;
+  }
+`;
+
+const RightText = styled(Text)`
+  width: 100%;
+  text-align: right;
+`;
+
+const ButtonConfirm = styled(Button)`
+  width: 100%;
+  min-width: 90px;
 `;

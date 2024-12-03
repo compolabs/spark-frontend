@@ -26,6 +26,7 @@ const Dashboard = observer(() => {
         <BottomTables />
       </DashboardColumn>
       <AssetsDashboard />
+      <StatusBarStyled />
       <StatusBar />
     </DashboardContainer>
   );
@@ -51,4 +52,8 @@ const DashboardContainer = styled(Column)`
 const DashboardColumn = styled(Column)`
   width: 100%;
   gap: 4px;
+`;
+
+const StatusBarStyled = styled(SmartFlex)`
+  margin-top: 80px;
 `;
