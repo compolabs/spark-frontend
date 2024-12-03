@@ -4,6 +4,8 @@ import { observer } from "mobx-react";
 
 import Divider from "@components/Divider";
 import { Row } from "@components/Flex";
+import SpotMarketRow from "@components/MarketSelection/SpotMarketRow";
+import { MARKET_SELECTOR_ID } from "@components/MarketStatisticsBar";
 import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
@@ -14,19 +16,8 @@ import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 
-import { MARKET_SELECTOR_ID } from "@screens/SpotScreen/MarketStatisticsBar";
-import SpotMarketRow from "@screens/SpotScreen/RightBlock/MarketSelection/SpotMarketRow";
-
-import { PerpMarket, SpotMarket } from "@entity";
-
-interface IProps {}
-
-const useFilteredMarkets = <T extends SpotMarket | PerpMarket>(markets: T[], searchValue: string) => {
-  return markets.filter((market) => market.symbol.includes(searchValue));
-};
-
-const MarketSelection: React.FC<IProps> = observer(() => {
-  const { tradeStore } = useStores();
+const MarketSelection: React.FC = observer(() => {
+  const { marketStore } = useStores();
   const media = useMedia();
   const [searchValue, setSearchValue] = useState("");
   const rootRef = useRef<HTMLDivElement>(null);
@@ -37,14 +28,14 @@ const MarketSelection: React.FC<IProps> = observer(() => {
     if (marketSelectorEl?.contains(event.target as any)) return;
 
     if (media.desktop) {
-      tradeStore.setMarketSelectionOpened(false);
+      marketStore.setMarketSelectionOpened(false);
     }
   });
 
-  const spotMarketsFiltered = useFilteredMarkets(tradeStore.spotMarkets, searchValue);
+  const marketsFiltered = marketStore.markets.filter((market) => market.symbol.includes(searchValue)); // TODO: add memo
 
   const renderSpotMarketList = () => {
-    if (!spotMarketsFiltered.length) {
+    if (!marketsFiltered.length) {
       return (
         <>
           <SizedBox height={16} />
@@ -55,7 +46,7 @@ const MarketSelection: React.FC<IProps> = observer(() => {
       );
     }
 
-    return spotMarketsFiltered.map((market) => <SpotMarketRow key={market.symbol} market={market} />);
+    return marketsFiltered.map((market) => <SpotMarketRow key={market.symbol} market={market as any} />); // TODO: fix types
   };
 
   return (

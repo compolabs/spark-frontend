@@ -1,11 +1,9 @@
-import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import { OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
 
-import useVM from "@hooks/useVM";
-import { RootStore, useStores } from "@stores";
+import { RootStore } from "@stores";
 
 import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
@@ -16,27 +14,24 @@ import { SpotMarket, SpotMarketOrder } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
-const ctx = React.createContext<SpotTableVM | null>(null);
-
-export const SpotTableVMProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const rootStore = useStores();
-  const store = useMemo(() => new SpotTableVM(rootStore), [rootStore]);
-  return <ctx.Provider value={store}>{children}</ctx.Provider>;
-};
-
-export const useSpotTableVMProvider = () => useVM(ctx);
-
 const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
 
-class SpotTableVM {
+export const PAGINATION_LIMIT = 10;
+
+export class SpotTableStore {
   private readonly rootStore: RootStore;
   private subscriptionToOpenOrders: Nullable<Subscription> = null;
   private subscriptionToHistoryOrders: Nullable<Subscription> = null;
   private subscriptionToOrdersStats: Nullable<Subscription> = null;
 
   userOrders: SpotMarketOrder[] = [];
+  private setUserOrders = (orders: SpotMarketOrder[]) => (this.userOrders = orders);
+
   userOrdersHistory: SpotMarketOrder[] = [];
+  private setUserOrdersHistory = (orders: SpotMarketOrder[]) => (this.userOrdersHistory = orders);
+
   userOrdersStats: Nullable<UserInfo> = null;
+  private setUserOrdersStats = (stats: UserInfo) => (this.userOrdersStats = stats);
 
   isOrderCancelling = false;
   cancelingOrderId: Nullable<string> = null;
@@ -46,9 +41,15 @@ class SpotTableVM {
   isOpenOrdersLoaded = false;
   isHistoryOrdersLoaded = false;
 
-  // filters
   offset = 0;
-  limit = 10;
+  setOffset = (currentPage: number) => {
+    if (currentPage === 0) {
+      this.offset = 0;
+      return;
+    }
+
+    this.offset = (currentPage - 1) * PAGINATION_LIMIT;
+  };
 
   filterIsSellOrderTypeEnabled = true;
   filterIsBuyOrderTypeEnabled = true;
@@ -75,11 +76,13 @@ class SpotTableVM {
   constructor(rootStore: RootStore) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
-    const { accountStore, tradeStore } = this.rootStore;
+    const { accountStore, marketStore } = this.rootStore;
     reaction(
-      () => [tradeStore.market, this.rootStore.initialized, accountStore.isConnected, this.tableFilters] as const,
+      () => [marketStore.market, this.rootStore.initialized, accountStore.isConnected, this.tableFilters] as const,
       ([market, initialized, isConnected, _]) => {
-        if (!initialized || !market || !isConnected) {
+        const isSpotMarket = market && SpotMarket.isInstance(market);
+
+        if (!isSpotMarket || !initialized || !isConnected) {
           this.setUserOrders([]);
           this.setUserOrdersHistory([]);
           return;
@@ -104,17 +107,17 @@ class SpotTableVM {
           : OrderType.Buy;
 
     return {
-      limit: this.limit,
+      limit: PAGINATION_LIMIT,
       offset: this.offset,
       orderType,
     };
   }
 
   cancelOrder = async (order: SpotMarketOrder) => {
-    const { notificationStore } = this.rootStore;
+    const { notificationStore, marketStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!this.rootStore.tradeStore.market) return;
+    if (!marketStore.market) return;
 
     this.isOrderCancelling = true;
     this.cancelingOrderId = order.id;
@@ -125,7 +128,7 @@ class SpotTableVM {
     }
 
     try {
-      const bcNetworkCopy = await bcNetwork.chain();
+      const bcNetworkCopy = await bcNetwork.spotChain();
       const tx = await bcNetworkCopy.writeWithMarket(order.market).cancelOrder(order.id);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
@@ -161,7 +164,7 @@ class SpotTableVM {
     }
 
     this.subscriptionToOpenOrders = bcNetwork
-      .subscribeSpotOrders({
+      .spotSubscribeOrders({
         ...this.tableFilters,
         user: accountStore.address!,
         status: ["Active"],
@@ -188,7 +191,7 @@ class SpotTableVM {
       this.subscriptionToHistoryOrders.unsubscribe();
     }
     this.subscriptionToHistoryOrders = bcNetwork
-      .subscribeSpotOrders({
+      .spotSubscribeOrders({
         ...this.tableFilters,
         user: accountStore.address!,
         status: ["Closed", "Canceled"],
@@ -222,7 +225,7 @@ class SpotTableVM {
     }
 
     this.subscriptionToOrdersStats = bcNetwork
-      .subscribeUserInfo({
+      .spotSubscribeUserInfo({
         id: accountStore.address!,
       })
       .subscribe({
@@ -233,20 +236,5 @@ class SpotTableVM {
           this.setUserOrdersStats(data.User[0]);
         },
       });
-  };
-
-  private setUserOrders = (orders: SpotMarketOrder[]) => (this.userOrders = orders);
-
-  private setUserOrdersHistory = (orders: SpotMarketOrder[]) => (this.userOrdersHistory = orders);
-
-  private setUserOrdersStats = (stats: UserInfo) => (this.userOrdersStats = stats);
-
-  setOffset = (currentPage: number) => {
-    if (currentPage === 0) {
-      this.offset = 0;
-      return;
-    }
-
-    this.offset = (currentPage - 1) * this.limit;
   };
 }

@@ -19,7 +19,7 @@ import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
-class SpotOrderBookStore {
+export class SpotOrderBookStore {
   private readonly rootStore: RootStore;
   private subscriptionToTradeOrderEvents: Nullable<Subscription> = null;
 
@@ -44,21 +44,14 @@ class SpotOrderBookStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
-    reaction(
-      () => [rootStore.initialized, rootStore.tradeStore.market],
-      ([initialized]) => {
-        if (!initialized) return;
-
-        this.updateOrderBook();
-      },
-      { fireImmediately: true },
-    );
+    const { initialized, marketStore } = this.rootStore;
 
     reaction(
-      () => [this.rootStore.tradeStore.market, this.rootStore.initialized],
+      () => [initialized, marketStore.spotMarket],
       ([market, initialized]) => {
         if (!initialized || !market) return;
 
+        this.updateOrderBook();
         this.subscribeTrades();
       },
       { fireImmediately: true },
@@ -111,8 +104,8 @@ class SpotOrderBookStore {
   setOrderFilter = (value: SPOT_ORDER_FILTER) => (this.orderFilter = value);
 
   updateOrderBook = () => {
-    const { tradeStore } = this.rootStore;
-    const market = tradeStore.market;
+    const { marketStore } = this.rootStore;
+    const market = marketStore.spotMarket;
 
     if (!this.rootStore.initialized || !market) return;
 
@@ -139,10 +132,10 @@ class SpotOrderBookStore {
       subscription.unsubscribe();
     }
 
-    const { tradeStore } = this.rootStore;
-    const market = tradeStore.market;
+    const { marketStore } = this.rootStore;
+    const market = marketStore.spotMarket;
 
-    const newSubscription = bcNetwork.subscribeSpotActiveOrders({ ...params, orderType }).subscribe({
+    const newSubscription = bcNetwork.spotSubscribeActiveOrders({ ...params, orderType }).subscribe({
       next: ({ data }) => {
         this.isOrderBookLoading = false;
         if (!data) return;
@@ -219,8 +212,8 @@ class SpotOrderBookStore {
   }
 
   subscribeTrades = () => {
-    const { tradeStore } = this.rootStore;
-    const market = tradeStore.market;
+    const { marketStore } = this.rootStore;
+    const market = marketStore.spotMarket;
 
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -229,7 +222,7 @@ class SpotOrderBookStore {
     }
 
     this.subscriptionToTradeOrderEvents = bcNetwork
-      .subscribeSpotTradeOrderEvents({
+      .spotSubscribeTradeOrderEvents({
         limit: 500,
         market: [market!.contractAddress],
       })

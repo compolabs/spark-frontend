@@ -23,21 +23,19 @@ interface IProps {
 }
 
 const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
-  const { tradeStore, mixPanelStore, accountStore } = useStores();
+  const { marketStore, mixPanelStore, accountStore } = useStores();
   const navigate = useNavigate();
 
-  const isFavorite = tradeStore.favMarkets.includes(market.symbol);
+  const isFavorite = marketStore.favMarkets.includes(market.symbol);
 
   const handleFavoriteClick = (e: MouseEvent<HTMLImageElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const action = isFavorite ? tradeStore.removeFromFav : tradeStore.addToFav;
-
-    action(market.symbol);
+    marketStore.toggleFavMarket(market.symbol);
   };
 
-  const isActive = tradeStore.market?.symbol === market.symbol;
+  const isActive = marketStore.market?.symbol === market.symbol;
 
   const handleMarketClick = () => {
     mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_CURRENCY_PAIR, {
@@ -45,7 +43,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
       token1: market.baseToken.symbol,
       token2: market.quoteToken.symbol,
     });
-    tradeStore.setMarketSelectionOpened(false);
+    marketStore.setMarketSelectionOpened(false);
     navigate(`${ROUTES.SPOT}/${market.symbol}`);
   };
 

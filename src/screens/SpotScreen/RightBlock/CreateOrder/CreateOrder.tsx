@@ -13,6 +13,7 @@ import MaxButton from "@components/MaxButton";
 import { RadioButton } from "@components/RadioButton.tsx";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
+import CreateOrderSkeletonWrapper from "@components/Skeletons/CreateOrderSkeletonWrapper";
 import Slider from "@components/Slider";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -23,12 +24,10 @@ import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
+import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE } from "@stores/SpotCreateOrderStore";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 
-import CreateOrderSkeletonWrapper from "../../../../components/Skeletons/CreateOrderSkeletonWrapper";
-
-import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "./CreateOrderVM";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 const ORDER_OPTIONS = [
@@ -41,15 +40,23 @@ const ORDER_OPTIONS = [
 const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, tradeStore, settingsStore, spotOrderBookStore, mixPanelStore } = useStores();
-  const timeInForce = settingsStore.timeInForce;
-  const vm = useCreateOrderVM();
-  const market = tradeStore.market;
+  const {
+    balanceStore,
+    marketStore,
+    settingsStore,
+    spotOrderBookStore,
+    mixPanelStore,
+    spotCreateOrderStore,
+    spotMarketInfoStore,
+  } = useStores();
   const media = useMedia();
+
+  const timeInForce = settingsStore.timeInForce;
+  const market = marketStore.market;
 
   const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
 
-  const isButtonDisabled = vm.isLoading || !vm.canProceed;
+  const isButtonDisabled = spotCreateOrderStore.isLoading || !spotCreateOrderStore.canProceed;
   const isMarketOrderType = settingsStore.orderType === ORDER_TYPE.Market;
   const priceDisplayDecimals = isMarketOrderType ? VISIBLE_MARKET_DECIMALS : DEFAULT_DECIMALS;
 
@@ -60,7 +67,7 @@ const CreateOrder: React.FC = observer(() => {
   const { baseToken, quoteToken } = market;
 
   const handlePercentChange = (v: number) => {
-    const token = vm.isSell ? baseToken : quoteToken;
+    const token = spotCreateOrderStore.isSell ? baseToken : quoteToken;
 
     const totalBalance = balanceStore.getTotalBalance(token.assetId);
 
@@ -68,12 +75,12 @@ const CreateOrder: React.FC = observer(() => {
 
     const value = BN.percentOf(totalBalance, v);
 
-    if (vm.isSell) {
-      vm.setInputAmount(value);
+    if (spotCreateOrderStore.isSell) {
+      spotCreateOrderStore.setInputAmount(value);
       return;
     }
 
-    vm.setInputTotal(value);
+    spotCreateOrderStore.setInputTotal(value);
   };
 
   const handleSetOrderType = (type: ORDER_TYPE) => {
@@ -87,15 +94,15 @@ const CreateOrder: React.FC = observer(() => {
   const handleSetPrice = (amount: BN) => {
     if (settingsStore.orderType === ORDER_TYPE.Market) return;
 
-    vm.setInputPrice(amount);
+    spotCreateOrderStore.setInputPrice(amount);
   };
 
   const handleSetSlippage = (slippage: BN) => {
-    vm.setInputSlippage(slippage);
+    spotCreateOrderStore.setInputSlippage(slippage);
   };
 
   const createOrder = () => {
-    vm.createOrder();
+    spotCreateOrderStore.createOrder();
   };
 
   const disabledOrderTypes = [ORDER_TYPE.Limit, ORDER_TYPE.LimitFOK, ORDER_TYPE.LimitIOC];
@@ -103,11 +110,11 @@ const CreateOrder: React.FC = observer(() => {
 
   const renderButton = () => {
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
-    const minimalOrder = tradeStore.minimalOrder;
+    const minimalOrder = spotMarketInfoStore.minimalOrder;
     const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
     const formatMinimalPrice = BN.formatUnits(minimalOrder.minPrice.toString(), DEFAULT_DECIMALS).toString();
 
-    if (!isButtonDisabled && tradeStore.isFeeLoading) {
+    if (!isButtonDisabled && spotMarketInfoStore.isFeeLoading) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Loading...</Text>
@@ -115,7 +122,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (!isButtonDisabled && !tradeStore.isEnoughtMoneyForFee) {
+    if (!isButtonDisabled && !spotMarketInfoStore.isEnoughtMoneyForFee) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
@@ -131,7 +138,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (vm.inputAmount.lt(minimalOrder.minOrder)) {
+    if (spotCreateOrderStore.inputAmount.lt(minimalOrder.minOrder)) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Minimum amount {formatMinimalAmount}</Text>
@@ -139,7 +146,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (vm.inputPrice.lt(minimalOrder.minPrice)) {
+    if (spotCreateOrderStore.inputPrice.lt(minimalOrder.minPrice)) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
@@ -151,12 +158,16 @@ const CreateOrder: React.FC = observer(() => {
       <CreateOrderButton
         data-onboarding={dataOnboardingTradingKey}
         disabled={isButtonDisabled}
-        green={!vm.isSell}
-        red={vm.isSell}
+        green={!spotCreateOrderStore.isSell}
+        red={spotCreateOrderStore.isSell}
         onClick={createOrder}
       >
         <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
-          {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
+          {spotCreateOrderStore.isLoading
+            ? "Loading..."
+            : spotCreateOrderStore.isSell
+              ? `Sell ${baseToken.symbol}`
+              : `Buy ${baseToken.symbol}`}
         </Text>
       </CreateOrderButton>
     );
@@ -238,7 +249,9 @@ const CreateOrder: React.FC = observer(() => {
                 Order Details
               </Text>
               <Row alignItems="center" justifyContent="flex-end">
-                <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toSignificant(4)}</Text>
+                <Text primary>
+                  {BN.formatUnits(spotCreateOrderStore.inputAmount, baseToken.decimals).toSignificant(4)}
+                </Text>
                 <Text>&nbsp;{baseToken.symbol}</Text>
               </Row>
             </Row>
@@ -252,30 +265,32 @@ const CreateOrder: React.FC = observer(() => {
           }}
         >
           <Row alignItems="center" justifyContent="space-between">
-            <Text nowrap>Max {vm.isSell ? "sell" : "buy"}</Text>
+            <Text nowrap>Max {spotCreateOrderStore.isSell ? "sell" : "buy"}</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{BN.formatUnits(vm.inputTotal, quoteToken.decimals).toFormat(2)}</Text>
+              <Text primary>{BN.formatUnits(spotCreateOrderStore.inputTotal, quoteToken.decimals).toFormat(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{tradeStore.matcherFeeFormat.toSignificant(2)}</Text>
+              <Text primary>{spotMarketInfoStore.matcherFeeFormat.toSignificant(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Exchange Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{tradeStore.exchangeFeeFormat.toSignificant(2)}</Text>
+              <Text primary>{spotMarketInfoStore.exchangeFeeFormat.toSignificant(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Total amount</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{BN.formatUnits(vm.inputAmount, baseToken.decimals).toSignificant(4)}</Text>
+              <Text primary>
+                {BN.formatUnits(spotCreateOrderStore.inputAmount, baseToken.decimals).toSignificant(4)}
+              </Text>
               <Text>&nbsp;{baseToken.symbol}</Text>
             </Row>
           </Row>
@@ -285,7 +300,7 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const getAvailableAmount = () => {
-    const token = vm.isSell ? baseToken : quoteToken;
+    const token = spotCreateOrderStore.isSell ? baseToken : quoteToken;
     return balanceStore.getFormatTotalBalance(token.assetId, token.decimals);
   };
 
@@ -298,13 +313,19 @@ const CreateOrder: React.FC = observer(() => {
     <CreateOrderSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root column>
         <ButtonGroup>
-          <Button active={!vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.BUY)}>
-            <Text primary={!vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
+          <Button
+            active={!spotCreateOrderStore.isSell}
+            onClick={() => spotCreateOrderStore.setOrderMode(ORDER_MODE.BUY)}
+          >
+            <Text primary={!spotCreateOrderStore.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
               buy
             </Text>
           </Button>
-          <Button active={vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.SELL)}>
-            <Text primary={vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
+          <Button
+            active={spotCreateOrderStore.isSell}
+            onClick={() => spotCreateOrderStore.setOrderMode(ORDER_MODE.SELL)}
+          >
+            <Text primary={spotCreateOrderStore.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
               sell
             </Text>
           </Button>
@@ -322,44 +343,48 @@ const CreateOrder: React.FC = observer(() => {
             </SelectOrderTypeContainer>
             {settingsStore.orderType === ORDER_TYPE.Limit && (
               <TokenInput
-                amount={vm.inputPrice}
+                amount={spotCreateOrderStore.inputPrice}
                 decimals={DEFAULT_DECIMALS}
                 disabled={isInputPriceDisabled}
                 displayDecimals={priceDisplayDecimals}
                 label="Price"
                 setAmount={handleSetPrice}
-                onBlur={vm.setActiveInput}
-                onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Price)}
+                onBlur={spotCreateOrderStore.setActiveInput}
+                onFocus={() => spotCreateOrderStore.setActiveInput(ACTIVE_INPUT.Price)}
               />
             )}
           </StyledRow>
           <InputContainerWithError>
             <TokenInput
-              amount={vm.inputAmount}
+              amount={spotCreateOrderStore.inputAmount}
               assetId={baseToken.assetId}
               decimals={baseToken.decimals}
-              error={vm.isSell || settingsStore.orderType === ORDER_TYPE.Market ? vm.isInputError : undefined}
+              error={
+                spotCreateOrderStore.isSell || settingsStore.orderType === ORDER_TYPE.Market
+                  ? spotCreateOrderStore.isInputError
+                  : undefined
+              }
               errorMessage={`Not enough ${baseToken.symbol}`}
               label="Order size"
-              setAmount={vm.setInputAmount}
-              onBlur={vm.setActiveInput}
-              onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
+              setAmount={spotCreateOrderStore.setInputAmount}
+              onBlur={spotCreateOrderStore.setActiveInput}
+              onFocus={() => spotCreateOrderStore.setActiveInput(ACTIVE_INPUT.Amount)}
             />
             {settingsStore.orderType === ORDER_TYPE.Limit && (
               <InputContainerWithMaxButton>
-                <StyledMaxButton fitContent onClick={vm.onMaxClick}>
+                <StyledMaxButton fitContent onClick={spotCreateOrderStore.onMaxClick}>
                   MAX
                 </StyledMaxButton>
                 <SizedBox height={14} />
                 <TokenInput
-                  amount={vm.inputTotal}
+                  amount={spotCreateOrderStore.inputTotal}
                   assetId={quoteToken.assetId}
                   decimals={quoteToken.decimals}
-                  error={vm.isSell ? undefined : vm.isInputError}
+                  error={spotCreateOrderStore.isSell ? undefined : spotCreateOrderStore.isInputError}
                   errorMessage={`Not enough ${quoteToken.symbol}`}
-                  setAmount={vm.setInputTotal}
-                  onBlur={vm.setActiveInput}
-                  onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
+                  setAmount={spotCreateOrderStore.setInputTotal}
+                  onBlur={spotCreateOrderStore.setActiveInput}
+                  onFocus={() => spotCreateOrderStore.setActiveInput(ACTIVE_INPUT.Total)}
                 />
               </InputContainerWithMaxButton>
             )}
@@ -369,9 +394,9 @@ const CreateOrder: React.FC = observer(() => {
               <Slider
                 max={100}
                 min={0}
-                percent={vm.inputPercent.toNumber()}
+                percent={spotCreateOrderStore.inputPercent.toNumber()}
                 step={1}
-                value={vm.inputPercent.toNumber()}
+                value={spotCreateOrderStore.inputPercent.toNumber()}
                 onChange={(v) => handlePercentChange(v as number)}
               />
             </SliderContainer>
@@ -381,14 +406,16 @@ const CreateOrder: React.FC = observer(() => {
                 <Text type={TEXT_TYPES.BODY} primary>
                   {getAvailableAmount()}
                 </Text>
-                <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+                <Text type={TEXT_TYPES.SUPPORTING}>
+                  &nbsp;{spotCreateOrderStore.isSell ? baseToken.symbol : quoteToken.symbol}
+                </Text>
               </Row>
             </Row>
             {settingsStore.orderType === ORDER_TYPE.Market && (
               <Row alignItems="center" justifyContent="space-between" style={{ marginTop: 10 }}>
                 <Text type={TEXT_TYPES.SUPPORTING}>Slipage</Text>
                 <TokenInput
-                  amount={vm.slippage}
+                  amount={spotCreateOrderStore.slippage}
                   decimals={0}
                   displayDecimals={2}
                   max={new BN(100)}

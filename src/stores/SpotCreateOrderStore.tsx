@@ -1,4 +1,3 @@
-import React, { PropsWithChildren, useMemo } from "react";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
@@ -13,8 +12,7 @@ import {
   OrderType,
 } from "@compolabs/spark-orderbook-ts-sdk";
 
-import useVM from "@hooks/useVM";
-import { RootStore, useStores } from "@stores";
+import { RootStore } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS } from "@constants";
@@ -26,16 +24,6 @@ import Math from "@utils/Math";
 
 import { FuelNetwork } from "@blockchain";
 import { SpotMarket, SpotMarketOrder } from "@entity";
-
-const ctx = React.createContext<CreateOrderVM | null>(null);
-
-export const CreateOrderVMProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const rootStore = useStores();
-  const store = useMemo(() => new CreateOrderVM(rootStore), [rootStore]);
-  return <ctx.Provider value={store}>{children}</ctx.Provider>;
-};
-
-export const useCreateOrderVM = () => useVM(ctx);
 
 const PRICE_UPDATE_THROTTLE_INTERVAL = 1000; // 1s
 
@@ -69,7 +57,7 @@ interface DepositInfo {
   assetType: AssetType;
 }
 
-class CreateOrderVM {
+export class SpotCreateOrderStore {
   isLoading = false;
 
   mode = ORDER_MODE.BUY;
@@ -88,7 +76,7 @@ class CreateOrderVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
-    const { tradeStore, spotOrderBookStore, settingsStore } = this.rootStore;
+    const { spotOrderBookStore, marketStore, settingsStore } = this.rootStore;
 
     // TODO: Fix the bug where the price doesn’t change when switching markets
     reaction(
@@ -124,7 +112,7 @@ class CreateOrderVM {
     );
 
     reaction(
-      () => tradeStore.market,
+      () => marketStore.spotMarket,
       () => {
         this.setInputAmount(BN.ZERO);
         this.setInputTotal(BN.ZERO);
@@ -144,13 +132,10 @@ class CreateOrderVM {
   }
 
   get isSpotInputError(): boolean {
-    const {
-      tradeStore: { market },
-      balanceStore,
-    } = this.rootStore;
+    const { balanceStore, marketStore } = this.rootStore;
 
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
-    const token = this.isSell ? market!.baseToken : market!.quoteToken;
+    const token = this.isSell ? marketStore.spotMarket!.baseToken : marketStore.spotMarket!.quoteToken;
 
     const totalBalance = balanceStore.getTotalBalance(token.assetId);
 
@@ -176,11 +161,11 @@ class CreateOrderVM {
   };
 
   private onSpotMaxClick = () => {
-    const { tradeStore, mixPanelStore, balanceStore } = this.rootStore;
+    const { mixPanelStore, balanceStore, marketStore } = this.rootStore;
 
-    if (!tradeStore.market) return;
+    if (!marketStore.spotMarket) return;
 
-    const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
+    const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
 
     const totalBalance = balanceStore.getTotalBalance(token.assetId);
     if (this.isSell) {
@@ -220,11 +205,11 @@ class CreateOrderVM {
   };
 
   private calculateInputs(): void {
-    const { tradeStore } = this.rootStore;
-    if (!tradeStore.market) return;
+    const { marketStore, spotMarketInfoStore } = this.rootStore;
+    if (!marketStore.spotMarket) return;
 
-    const baseDecimals = tradeStore.market.baseToken.decimals;
-    const quoteDecimals = tradeStore.market.quoteToken.decimals;
+    const baseDecimals = marketStore.spotMarket.baseToken.decimals;
+    const quoteDecimals = marketStore.spotMarket.quoteToken.decimals;
 
     const newInputTotal = Math.multiplyWithDifferentDecimals(
       this.inputAmount,
@@ -254,15 +239,15 @@ class CreateOrderVM {
 
     this.updatePercent();
 
-    tradeStore.fetchTradeFeeDebounce(this.inputTotal.toString());
+    spotMarketInfoStore.fetchTradeFeeDebounce(this.inputTotal.toString());
   }
 
   private updatePercent(): void {
-    const { tradeStore, balanceStore } = this.rootStore;
+    const { balanceStore, marketStore } = this.rootStore;
 
-    if (!tradeStore.market) return;
+    if (!marketStore.spotMarket) return;
 
-    const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
+    const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
 
     const totalBalance = balanceStore.getTotalBalance(token.assetId);
 
@@ -283,29 +268,36 @@ class CreateOrderVM {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore, accountStore } = this.rootStore;
+    const {
+      marketStore,
+      notificationStore,
+      balanceStore,
+      mixPanelStore,
+      settingsStore,
+      accountStore,
+      spotMarketInfoStore,
+    } = this.rootStore;
 
-    const { market } = tradeStore;
-    const { timeInForce } = settingsStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!market) return;
+    if (!marketStore.spotMarket) return;
+
     this.isLoading = true;
 
     const isBuy = this.mode === ORDER_MODE.BUY;
     const type = isBuy ? OrderType.Buy : OrderType.Sell;
 
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
-    const depositAmountWithFee = tradeStore.exchangeFee.plus(tradeStore.matcherFee);
+    const depositAmountWithFee = spotMarketInfoStore.exchangeFee.plus(spotMarketInfoStore.matcherFee);
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
       amountFee: depositAmountWithFee.toString(),
-      depositAssetId: isBuy ? market.quoteToken.assetId : market.baseToken.assetId,
-      feeAssetId: market.quoteToken.assetId,
+      depositAssetId: isBuy ? marketStore.spotMarket.quoteToken.assetId : marketStore.spotMarket.baseToken.assetId,
+      feeAssetId: marketStore.spotMarket.quoteToken.assetId,
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
     };
 
-    const marketContracts = CONFIG.MARKETS.filter(
+    const marketContracts = CONFIG.SPOT.MARKETS.filter(
       (m) =>
         m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
         m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase(),
@@ -318,19 +310,19 @@ class CreateOrderVM {
     try {
       let hash: Undefinable<string> = "";
 
-      if (timeInForce === LimitType.GTC) {
+      if (settingsStore.timeInForce === LimitType.GTC) {
         hash = await this.createGTCOrder(type, deposit, marketContracts);
       } else {
-        hash = await this.createMarketOrLimitOrder(type, market, deposit, marketContracts);
+        hash = await this.createMarketOrLimitOrder(type, marketStore.spotMarket, deposit, marketContracts);
       }
 
-      const token = isBuy ? market.baseToken : market.quoteToken;
+      const token = isBuy ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
       const amount = isBuy ? this.inputAmount : this.inputTotal;
       this.setInputTotal(BN.ZERO);
       mixPanelStore.trackEvent(MIXPANEL_EVENTS.CONFIRM_ORDER, {
         order_type: isBuy ? "BUY" : "SELL",
-        token_1: market.baseToken.symbol,
-        token_2: market.quoteToken.symbol,
+        token_1: marketStore.spotMarket.baseToken.symbol,
+        token_2: marketStore.spotMarket.quoteToken.symbol,
         transaction_sum: BN.formatUnits(amount, token.decimals).toSignificant(2),
         user_address: accountStore.address,
       });
@@ -370,7 +362,7 @@ class CreateOrderVM {
       ...deposit,
     };
 
-    const data = await bcNetwork.createSpotOrderWithDeposit(order, marketContracts);
+    const data = await bcNetwork.spotCreateOrderWithDeposit(order, marketContracts);
     return data.transactionId;
   };
 
@@ -380,7 +372,7 @@ class CreateOrderVM {
     deposit: DepositInfo,
     marketContracts: string[],
   ): Promise<string> => {
-    const { settingsStore, tradeStore } = this.rootStore;
+    const { settingsStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
     const isBuy = type === OrderType.Buy;
@@ -392,7 +384,7 @@ class CreateOrderVM {
       orderType: isBuy ? OrderType.Sell : OrderType.Buy,
     };
 
-    const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
+    const activeOrders = await bcNetwork.spotFetchActiveOrders(params);
 
     let orders: SpotMarketOrder[] = [];
 
@@ -426,10 +418,8 @@ class CreateOrderVM {
         ? orderList[orderList.length - 1].price.toString()
         : this.inputPrice.toString();
 
-    if (!tradeStore.market) return "";
-
-    const baseDecimals = tradeStore.market.baseToken.decimals;
-    const quoteDecimals = tradeStore.market.quoteToken.decimals;
+    const baseDecimals = market.baseToken.decimals;
+    const quoteDecimals = market.quoteToken.decimals;
     const newInputTotal = this.inputTotal.minus(deposit.amountFee);
     const fullPrecent = "10000";
     const slippage =
@@ -452,7 +442,7 @@ class CreateOrderVM {
       orders: orderList.map((el) => el.id),
       slippage: slippage,
     };
-    const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
+    const data = await bcNetwork.spotFulfillOrderManyWithDeposit(order, marketContracts);
     return data.transactionId;
   };
 

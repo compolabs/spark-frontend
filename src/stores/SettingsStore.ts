@@ -4,9 +4,9 @@ import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { THEME_TYPE } from "@themes/ThemeProvider";
 
-import RootStore from "@stores/RootStore";
+import { ORDER_TYPE } from "@stores/SpotCreateOrderStore";
 
-import { ORDER_TYPE } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
+import RootStore from "./RootStore";
 
 export interface ISerializedSettingStore {
   isUserAgreedWithTerms?: boolean;
@@ -23,7 +23,7 @@ export enum TRADE_TABLE_SIZE {
   L,
 }
 
-class SettingsStore {
+export class SettingsStore {
   private readonly rootStore: RootStore;
   selectedTheme: THEME_TYPE = THEME_TYPE.DARK_THEME;
 
@@ -68,5 +68,3 @@ class SettingsStore {
     orderType: this.orderType,
   });
 }
-
-export default SettingsStore;

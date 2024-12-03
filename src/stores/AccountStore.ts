@@ -10,7 +10,7 @@ export interface ISerializedAccountStore {
   privateKey: Nullable<string>;
 }
 
-class AccountStore {
+export class AccountStore {
   initialized = false;
 
   constructor(
@@ -92,5 +92,3 @@ class AccountStore {
     };
   };
 }
-
-export default AccountStore;

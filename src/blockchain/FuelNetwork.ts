@@ -22,10 +22,10 @@ export class FuelNetwork {
     makeObservable(this.walletManager);
 
     this.orderbookSdk = new SparkOrderBookSdk({
-      networkUrl: CONFIG.APP.networkUrl,
+      networkUrl: CONFIG.APP.links.networkUrl,
       contractAddresses: {
-        registry: CONFIG.APP.contracts.registry,
-        multiAsset: CONFIG.APP.contracts.multiAsset,
+        registry: CONFIG.SPOT.CONTRACTS.registry,
+        multiAsset: CONFIG.SPOT.CONTRACTS.multiAsset,
       },
     });
   }
@@ -36,10 +36,6 @@ export class FuelNetwork {
     }
     return FuelNetwork.instance;
   }
-
-  setActiveMarket = (...params: Parameters<typeof this.orderbookSdk.setActiveMarket>) => {
-    this.orderbookSdk.setActiveMarket(...params);
-  };
 
   getAddress = (): Nullable<B256Address> => {
     return this.walletManager.address;
@@ -62,10 +58,6 @@ export class FuelNetwork {
 
   getTokenList = (): Token[] => {
     return CONFIG.TOKENS;
-  };
-
-  getIsMainet = (): boolean => {
-    return CONFIG.APP.isMainnet;
   };
 
   getTokenBySymbol = (symbol: string): Token => {
@@ -96,79 +88,85 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (
+  setSpotActiveMarket = (...params: Parameters<typeof this.orderbookSdk.setActiveMarket>) => {
+    this.orderbookSdk.setActiveMarket(...params);
+  };
+
+  spotCreateOrder = async (
     ...params: Parameters<typeof this.orderbookSdk.createOrder>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.createOrder(...params);
   };
 
-  createSpotOrderWithDeposit = async (
+  spotCreateOrderWithDeposit = async (
     ...params: Parameters<typeof this.orderbookSdk.createOrderWithDeposit>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.createOrderWithDeposit(...params);
   };
 
-  swapTokens = async (
+  spotSwapTokens = async (
     ...params: Parameters<typeof this.orderbookSdk.fulfillOrderMany>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.fulfillOrderMany(...params);
   };
 
-  fulfillOrderManyWithDeposit = async (
+  spotFulfillOrderManyWithDeposit = async (
     ...params: Parameters<typeof this.orderbookSdk.fulfillOrderManyWithDeposit>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.fulfillOrderManyWithDeposit(...params);
   };
 
-  cancelSpotOrder = async (
+  spotCancelOrder = async (
     ...params: Parameters<typeof this.orderbookSdk.cancelOrder>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.cancelOrder(...params);
   };
 
-  mintToken = async (...params: Parameters<typeof this.orderbookSdk.mintToken>): Promise<WriteTransactionResponse> => {
+  spotMintToken = async (
+    ...params: Parameters<typeof this.orderbookSdk.mintToken>
+  ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.mintToken(...params);
   };
 
-  withdrawSpotBalance = async (
+  spotWithdrawBalance = async (
     ...params: Parameters<typeof this.orderbookSdk.withdrawAssets>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.withdrawAssets(...params);
   };
 
-  withdrawSpotBalanceAll = async (...params: Parameters<typeof this.orderbookSdk.withdrawAllAssets>): Promise<void> => {
+  spotWithdrawBalanceAll = async (...params: Parameters<typeof this.orderbookSdk.withdrawAllAssets>): Promise<void> => {
     await this.orderbookSdk.withdrawAllAssets(...params);
   };
 
-  depositSpotBalance = async (
+  spotDepositBalance = async (
     ...params: Parameters<typeof this.orderbookSdk.deposit>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.deposit(...params);
   };
 
-  subscribeSpotOrders = (...params: Parameters<typeof this.orderbookSdk.subscribeOrders>) => {
+  spotSubscribeOrders = (...params: Parameters<typeof this.orderbookSdk.subscribeOrders>) => {
     return this.orderbookSdk.subscribeOrders(...params);
   };
 
-  subscribeSpotActiveOrders = <T extends OrderType>(
+  spotSubscribeActiveOrders = <T extends OrderType>(
     ...params: Parameters<typeof this.orderbookSdk.subscribeActiveOrders<T>>
   ): ReturnType<typeof this.orderbookSdk.subscribeActiveOrders<T>> => {
     return this.orderbookSdk.subscribeActiveOrders(...params);
   };
 
-  subscribeSpotTradeOrderEvents = (
+  spotSubscribeTradeOrderEvents = (
     ...params: Parameters<typeof this.orderbookSdk.subscribeTradeOrderEvents>
   ): ReturnType<typeof this.orderbookSdk.subscribeTradeOrderEvents> => {
     return this.orderbookSdk.subscribeTradeOrderEvents(...params);
   };
 
-  fetchSpotActiveOrders = async (
+  spotFetchActiveOrders = async (
     ...params: Parameters<typeof this.orderbookSdk.fetchActiveOrders>
   ): ReturnType<typeof this.orderbookSdk.fetchActiveOrders> => {
     return this.orderbookSdk.fetchActiveOrders(...params);
   };
 
-  fetchSpotVolume = async (...params: Parameters<typeof this.orderbookSdk.fetchVolume>): Promise<SpotMarketVolume> => {
+  spotFetchVolume = async (...params: Parameters<typeof this.orderbookSdk.fetchVolume>): Promise<SpotMarketVolume> => {
     const data = await this.orderbookSdk.fetchVolume(...params);
 
     return {
@@ -178,47 +176,47 @@ export class FuelNetwork {
     };
   };
 
-  fetchSpotMatcherFee = async () => {
+  spotFetchMatcherFee = async () => {
     return this.orderbookSdk.fetchMatcherFee();
   };
 
-  fetchSpotProtocolFee = async () => {
+  spotFetchProtocolFee = async () => {
     return this.orderbookSdk.fetchProtocolFee();
   };
 
-  fetchSpotProtocolFeeForUser = async (...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeForUser>) => {
+  spotFetchProtocolFeeForUser = async (...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeForUser>) => {
     return this.orderbookSdk.fetchProtocolFeeForUser(...params);
   };
 
-  fetchSpotProtocolFeeAmountForUser = async (
+  spotFetchProtocolFeeAmountForUser = async (
     ...params: Parameters<typeof this.orderbookSdk.fetchProtocolFeeAmountForUser>
   ) => {
     return this.orderbookSdk.fetchProtocolFeeAmountForUser(...params);
   };
 
-  fetchSpotUserMarketBalance = async (...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalance>) => {
+  spotFetchUserMarketBalance = async (...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalance>) => {
     return this.orderbookSdk.fetchUserMarketBalance(...params);
   };
 
-  fetchUserMarketBalanceByContracts = async (
+  spotFetchUserMarketBalanceByContracts = async (
     ...params: Parameters<typeof this.orderbookSdk.fetchUserMarketBalanceByContracts>
   ) => {
     return this.orderbookSdk.fetchUserMarketBalanceByContracts(...params);
   };
 
-  chain = async (...params: Parameters<typeof this.orderbookSdk.chain>) => {
+  spotChain = async (...params: Parameters<typeof this.orderbookSdk.chain>) => {
     return this.orderbookSdk.chain(...params);
   };
 
-  subscribeUserInfo = (...params: Parameters<typeof this.orderbookSdk.subscribeUserInfo>) => {
+  spotSubscribeUserInfo = (...params: Parameters<typeof this.orderbookSdk.subscribeUserInfo>) => {
     return this.orderbookSdk.subscribeUserInfo(...params);
   };
 
-  fetchMinOrderSize = async () => {
+  spotFetchMinOrderSize = async () => {
     return this.orderbookSdk.fetchMinOrderSize();
   };
 
-  fetchMinOrderPrice = async () => {
+  spotFetchMinOrderPrice = async () => {
     return this.orderbookSdk.fetchMinOrderPrice();
   };
 }

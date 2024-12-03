@@ -13,9 +13,9 @@ import SwitchIcon from "@assets/icons/switch.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
-import MarketStatisticsBarSkeletonWrapper from "../../components/Skeletons/MarketStatisticsBarSkeletonWrapper";
+import MarketStatistics from "../screens/SpotScreen/MarketStatistics";
 
-import MarketStatistics from "./MarketStatistics";
+import MarketStatisticsBarSkeletonWrapper from "./Skeletons/MarketStatisticsBarSkeletonWrapper";
 
 interface IProps {
   isChartOpen?: boolean;
@@ -25,7 +25,7 @@ interface IProps {
 export const MARKET_SELECTOR_ID = "market-selector";
 
 const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchClick }) => {
-  const { tradeStore } = useStores();
+  const { marketStore } = useStores();
   const media = useMedia();
 
   const handleBack = (e: React.MouseEvent<HTMLImageElement>) => {
@@ -35,26 +35,26 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
   };
 
   const handleOpenMarketSidebar = () => {
-    tradeStore.setMarketSelectionOpened(!tradeStore.marketSelectionOpened);
+    marketStore.setMarketSelectionOpened(!marketStore.marketSelectionOpened);
   };
 
   const handleSwitchClick = () => {
-    if (isChartOpen || tradeStore.marketSelectionOpened) return;
+    if (isChartOpen || marketStore.marketSelectionOpened) return;
 
     onSwitchClick?.();
   };
 
   const renderLeftIcons = () => {
     if (isChartOpen) {
-      return <Icon alt={tradeStore.market?.baseToken.symbol} src={arrowLeft} onClick={handleBack} />;
+      return <Icon alt={marketStore.market?.baseToken.symbol} src={arrowLeft} onClick={handleBack} />;
     }
 
     return (
       <>
-        <Icon alt={tradeStore.market?.baseToken.symbol} src={tradeStore.market?.baseToken.logo} />
+        <Icon alt={marketStore.market?.baseToken.symbol} src={marketStore.market?.baseToken.logo} />
         <Icon
-          alt={tradeStore.market?.quoteToken.symbol}
-          src={tradeStore.market?.quoteToken.logo}
+          alt={marketStore.market?.quoteToken.symbol}
+          src={marketStore.market?.quoteToken.logo}
           style={{ marginLeft: -16 }}
         />
       </>
@@ -62,11 +62,11 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
   };
 
   const renderMarketSelector = () => {
-    if (!tradeStore.market) return;
+    if (!marketStore.market) return;
 
     return (
       <MarketSelect
-        focused={tradeStore.marketSelectionOpened}
+        focused={marketStore.marketSelectionOpened}
         id={MARKET_SELECTOR_ID}
         onClick={handleOpenMarketSidebar}
       >
@@ -74,7 +74,7 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
           {renderLeftIcons()}
           <SmartFlex gap="4px" center>
             <StyledText type={TEXT_TYPES.H} primary>
-              {tradeStore.market?.symbol}
+              {marketStore.market?.symbol}
             </StyledText>
             <StyledArrow alt="arrow" src={arrowUp} />
           </SmartFlex>
@@ -84,11 +84,12 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
   };
 
   return (
-    <MarketStatisticsBarSkeletonWrapper isReady={tradeStore.initialized}>
+    <MarketStatisticsBarSkeletonWrapper isReady={marketStore.initialized}>
       <Root>
         {renderMarketSelector()}
+        {/* TODO: Fix logic for perp */}
         {media.desktop && <MarketStatistics />}
-        <SwitchContainer isVisible={!isChartOpen && !tradeStore.marketSelectionOpened} onClick={handleSwitchClick}>
+        <SwitchContainer isVisible={!isChartOpen && !marketStore.marketSelectionOpened} onClick={handleSwitchClick}>
           <SwitchIcon />
         </SwitchContainer>
       </Root>

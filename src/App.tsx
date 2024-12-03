@@ -9,7 +9,6 @@ import { PWAModal } from "@components/PWAModal";
 import { SplashScreen } from "@components/Splashscreen";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
-import { usePrivateKeyAsAuth } from "@hooks/usePrivateKeyAsAuth";
 import { useStores } from "@stores";
 import { MODAL_TYPE } from "@stores/ModalStore";
 
@@ -24,13 +23,13 @@ import { ROUTES } from "@constants";
 import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
 import { DiscordProvider } from "@src/providers/DiscordProvider.tsx";
 const App: React.FC = observer(() => {
-  const { modalStore, tradeStore } = useStores();
+  const { modalStore, marketStore } = useStores();
 
   // This hooks is used to clear unnecessary URL parameters,
   // specifically "tx_id", after returning from the faucet
   useClearUrlParam("tx_id");
 
-  usePrivateKeyAsAuth();
+  // usePrivateKeyAsAuth();
 
   return (
     <IntercomProvider>
@@ -44,7 +43,7 @@ const App: React.FC = observer(() => {
                 <Route element={<SwapScreen />} path={ROUTES.SWAP} />
                 <Route element={<Faucet />} path={ROUTES.FAUCET} />
                 <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
-                <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
+                <Route element={<Navigate to={`${ROUTES.SPOT}/${marketStore.marketSymbol}`} />} path={ROUTES.ROOT} />
               </Routes>
               <SideManageAssets />
               <PWAModal />

@@ -110,7 +110,7 @@ export class BalanceStore {
         });
       }
 
-      CONFIG.MARKETS.forEach((market, index) => {
+      CONFIG.SPOT.MARKETS.forEach((market, index) => {
         const marketBalance = contractBalances[index];
 
         const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
@@ -170,7 +170,7 @@ export class BalanceStore {
     const token = bcNetwork.getTokenByAssetId(assetId);
     const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
     try {
-      const tx = await bcNetwork?.depositSpotBalance(token, amount);
+      const tx = await bcNetwork?.spotDepositBalance(token, amount);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
@@ -188,7 +188,7 @@ export class BalanceStore {
 
   withdrawBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
-    const markets = CONFIG.MARKETS.filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId);
+    const markets = CONFIG.SPOT.MARKETS.filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId);
 
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -211,7 +211,7 @@ export class BalanceStore {
     }
 
     try {
-      const tx = await bcNetwork?.withdrawSpotBalance(
+      const tx = await bcNetwork?.spotWithdrawBalance(
         type,
         markets.map((m) => m.contractId),
         amount,
@@ -239,10 +239,10 @@ export class BalanceStore {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
-    const markets = CONFIG.MARKETS.map((el) => el.contractId);
+    const markets = CONFIG.SPOT.MARKETS.map((el) => el.contractId);
 
     try {
-      await bcNetwork?.withdrawSpotBalanceAll(markets);
+      await bcNetwork?.spotWithdrawBalanceAll(markets);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS)(),
         hash: "",
@@ -267,9 +267,9 @@ export class BalanceStore {
   private fetchUserContractBalances = async (address: Address): Promise<UserMarketBalance[]> => {
     const bcNetwork = FuelNetwork.getInstance();
 
-    return bcNetwork.fetchUserMarketBalanceByContracts(
+    return bcNetwork.spotFetchUserMarketBalanceByContracts(
       address.bech32Address,
-      CONFIG.MARKETS.map((m) => m.contractId),
+      CONFIG.SPOT.MARKETS.map((m) => m.contractId),
     );
   };
 }
