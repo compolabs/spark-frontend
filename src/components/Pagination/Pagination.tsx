@@ -66,34 +66,36 @@ export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProp
   }
 
   return (
-    <SmartFlex alignItems="center" gap="16px" justifyContent="space-between">
-      <PaginationButton disabled={currentPage === 1} onClick={() => handleClick(currentPage - 1)}>
-        <ArrowIconStyled />
-      </PaginationButton>
-      {pagination.map((value, index) => {
-        if (value.toString() === "...") {
+    <PaginationContainer>
+      <SmartFlex alignItems="center" gap="16px" justifyContent="space-between">
+        <PaginationButton disabled={currentPage === 1} onClick={() => handleClick(currentPage - 1)}>
+          <ArrowIconStyled />
+        </PaginationButton>
+        {pagination.map((value, index) => {
+          if (value.toString() === "...") {
+            return (
+              <PaginationEntity key={`dot-${index}`} disabled>
+                <PaginationText current={false}>...</PaginationText>
+              </PaginationEntity>
+            );
+          }
+
           return (
-            <PaginationEntity key={`dot-${index}`} disabled>
-              <PaginationText current={false}>...</PaginationText>
+            <PaginationEntity
+              key={index}
+              disabled={currentPage === (value as number)}
+              selected={currentPage === (value as number)}
+              onClick={() => handleClick(value as number)}
+            >
+              <PaginationText current={currentPage === (value as number)}>{value}</PaginationText>
             </PaginationEntity>
           );
-        }
-
-        return (
-          <PaginationEntity
-            key={index}
-            disabled={currentPage === (value as number)}
-            selected={currentPage === (value as number)}
-            onClick={() => handleClick(value as number)}
-          >
-            <PaginationText current={currentPage === (value as number)}>{value}</PaginationText>
-          </PaginationEntity>
-        );
-      })}
-      <PaginationButton disabled={lengthData < 1} onClick={() => handleClick(currentPage + 1)}>
-        <ArrowIconStyledRight />
-      </PaginationButton>
-    </SmartFlex>
+        })}
+        <PaginationButton disabled={lengthData < 1} onClick={() => handleClick(currentPage + 1)}>
+          <ArrowIconStyledRight />
+        </PaginationButton>
+      </SmartFlex>
+    </PaginationContainer>
   );
 };
 
@@ -111,4 +113,13 @@ const PaginationText = styled.span<{ current: boolean }>`
   &:hover {
     cursor: pointer;
   }
+`;
+
+const PaginationContainer = styled.div`
+  background: ${({ theme }) => theme.colors.bgSecondary};
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 0px 0px 10px 10px;
 `;

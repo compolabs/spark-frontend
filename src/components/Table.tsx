@@ -89,6 +89,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
     position: relative;
 
     thead {
+      background: ${({ theme }) => theme.colors.bgSecondary};
       position: sticky;
       top: 0;
     }

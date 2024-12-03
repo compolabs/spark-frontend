@@ -277,9 +277,7 @@ const SpotTableImpl: React.FC = observer(() => {
         {renderTable()}
       </BaseTable>
       {data.length >= minNeedLengthPagination || page > startPage - 1 ? (
-        <PaginationContainer>
-          <Pagination currentPage={page} lengthData={openOrders} onChange={handleChangePagination} />
-        </PaginationContainer>
+        <Pagination currentPage={page} lengthData={openOrders} onChange={handleChangePagination} />
       ) : null}
       {/*{!!vm.userOrders.length && tabIndex === 0 && (*/}
       {/*  //todo здесь была кнопка cancel all orders*/}
@@ -306,14 +304,6 @@ const TableContainer = styled(SmartFlex)`
   }
 `;
 
-const PaginationContainer = styled.div`
-  background: ${({ theme }) => theme.colors.bgSecondary};
-  height: 48px;
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border-radius: 0px 0px 10px 10px;
-`;
 const CancelButton = styled(Chip)`
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;
