@@ -90,6 +90,7 @@ class CreateOrderVM {
 
     const { tradeStore, spotOrderBookStore, settingsStore } = this.rootStore;
 
+    // TODO: Fix the bug where the price doesn’t change when switching markets
     reaction(
       () => [spotOrderBookStore.allBuyOrders, spotOrderBookStore.allSellOrders],
       ([buyOrders, sellOrders]) => {
@@ -307,7 +308,7 @@ class CreateOrderVM {
     const marketContracts = CONFIG.MARKETS.filter(
       (m) =>
         m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
-        m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
+        m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase(),
     ).map((m) => m.contractId);
 
     if (bcNetwork.getIsExternalWallet()) {
