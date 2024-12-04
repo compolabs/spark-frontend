@@ -108,22 +108,30 @@ export class BalanceStore {
         });
       }
 
-      CONFIG.MARKETS.forEach((market, index) => {
-        const marketBalance = contractBalances[index];
+      const aggregatedBalances = CONFIG.MARKETS.reduce(
+        (acc, market, index) => {
+          const marketBalance = contractBalances[index];
 
-        const oldBaseBalance = this.getContractBalance(market.baseAssetId);
-        const oldQuoteBalance = this.getContractBalance(market.quoteAssetId);
+          const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
+          const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
 
-        const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
-        const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
+          if (!acc[market.baseAssetId]) {
+            acc[market.baseAssetId] = BN.ZERO;
+          }
+          acc[market.baseAssetId] = acc[market.baseAssetId].plus(baseAmount);
 
-        const newBaseBalance = oldBaseBalance.plus(baseAmount);
-        const newQuoteBalance = oldQuoteBalance.plus(quoteAmount);
+          if (!acc[market.quoteAssetId]) {
+            acc[market.quoteAssetId] = BN.ZERO;
+          }
+          acc[market.quoteAssetId] = acc[market.quoteAssetId].plus(quoteAmount);
 
-        runInAction(() => {
-          this.contractBalances.set(market.baseAssetId, newBaseBalance);
-          this.contractBalances.set(market.quoteAssetId, newQuoteBalance);
-        });
+          return acc;
+        },
+        {} as Record<string, BN>,
+      );
+
+      Object.entries(aggregatedBalances).forEach(([assetId, balance]) => {
+        this.contractBalances.set(assetId, balance);
       });
     } catch (error) {
       console.error("Error updating user balances:", error);
