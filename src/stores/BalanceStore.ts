@@ -199,8 +199,6 @@ export class BalanceStore {
   };
 
   withdrawBalance = async (assetId: string, amount: string) => {
-    console.log("asset", assetId);
-    console.log("amount", amount);
     const { notificationStore } = this.rootStore;
     const markets = CONFIG.MARKETS.filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId);
 
