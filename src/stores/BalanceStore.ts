@@ -63,8 +63,8 @@ export class BalanceStore {
     const tokens = bcNetwork.getTokenList();
 
     return tokens.map((token) => {
-      const balance = this.balances.get(token.assetId) ?? BN.ZERO;
-      const contractBalance = this.contractBalances.get(token.assetId) ?? BN.ZERO;
+      const balance = this.getWalletBalance(token.assetId);
+      const contractBalance = this.getContractBalance(token.assetId);
       const totalBalance = balance.plus(contractBalance);
 
       return {
@@ -108,16 +108,30 @@ export class BalanceStore {
         });
       }
 
-      CONFIG.MARKETS.forEach((market, index) => {
-        const marketBalance = contractBalances[index];
+      const aggregatedBalances = CONFIG.MARKETS.reduce(
+        (acc, market, index) => {
+          const marketBalance = contractBalances[index];
 
-        const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
-        const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
+          const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
+          const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
 
-        runInAction(() => {
-          this.contractBalances.set(market.baseAssetId, baseAmount);
-          this.contractBalances.set(market.quoteAssetId, quoteAmount);
-        });
+          if (!acc[market.baseAssetId]) {
+            acc[market.baseAssetId] = BN.ZERO;
+          }
+          acc[market.baseAssetId] = acc[market.baseAssetId].plus(baseAmount);
+
+          if (!acc[market.quoteAssetId]) {
+            acc[market.quoteAssetId] = BN.ZERO;
+          }
+          acc[market.quoteAssetId] = acc[market.quoteAssetId].plus(quoteAmount);
+
+          return acc;
+        },
+        {} as Record<string, BN>,
+      );
+
+      Object.entries(aggregatedBalances).forEach(([assetId, balance]) => {
+        this.contractBalances.set(assetId, balance);
       });
     } catch (error) {
       console.error("Error updating user balances:", error);
@@ -185,6 +199,8 @@ export class BalanceStore {
   };
 
   withdrawBalance = async (assetId: string, amount: string) => {
+    console.log("asset", assetId);
+    console.log("amount", amount);
     const { notificationStore } = this.rootStore;
     const markets = CONFIG.MARKETS.filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId);
 

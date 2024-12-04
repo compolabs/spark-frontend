@@ -13,8 +13,6 @@ import { SmartFlex } from "@components/SmartFlex.tsx";
 import Table from "@components/Table.tsx";
 import Text, { TEXT_TYPES } from "@components/Text.tsx";
 
-import Spinner from "@assets/icons/spinner.svg?react";
-
 import { useMedia } from "@hooks/useMedia.ts";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
@@ -35,9 +33,8 @@ const AssetsDashboard = observer(() => {
     currentPrice: new BN(el.price).toSignificant(2),
   }));
   const allContractBalance = balancesInfoList.reduce((acc, el) => {
-    acc.contractBalance = new BN(acc.contractBalance).plus(el.contractBalance).toString();
-    return acc;
-  });
+    return acc.plus(el.contractBalance);
+  }, BN.ZERO);
   const columns = [
     orderColumnHelper.accessor("asset", {
       header: "Name",
@@ -85,7 +82,7 @@ const AssetsDashboard = observer(() => {
     orderColumnHelper.accessor("amount", {
       header: () => {
         return (
-          new BN(allContractBalance.contractBalance).isGreaterThan(0) && (
+          allContractBalance.isGreaterThan(BN.ZERO) && (
             <ButtonConfirm
               disabled={isLoading}
               style={{
@@ -93,7 +90,7 @@ const AssetsDashboard = observer(() => {
               }}
               onClick={handleWithdrawAll}
             >
-              {isLoading ? <Spinner height={14} /> : "Withdraw All"}
+              {isLoading ? "Loading..." : "Withdraw All"}
             </ButtonConfirm>
           )
         );
@@ -113,7 +110,7 @@ const AssetsDashboard = observer(() => {
                   withdrawalBalance(value);
                 }}
               >
-                {isLoading ? <Spinner height={14} /> : "Withdraw"}
+                {isLoading ? "Loading..." : "Withdraw"}
               </WithdrawalButton>
             )}
           </SmartFlex>
@@ -151,9 +148,9 @@ const AssetsDashboard = observer(() => {
     return (
       <SmartFlex gap="4px" padding="8px" width="100%" column>
         {orderData}
-        {new BN(allContractBalance.contractBalance).isLessThan(0) && (
+        {allContractBalance.isGreaterThan(BN.ZERO) && (
           <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdrawAll}>
-            {isLoading ? <Spinner height={14} /> : "Withdraw All"}
+            {isLoading ? "Loading..." : "Withdraw All"}
           </ButtonConfirm>
         )}
       </SmartFlex>
@@ -164,10 +161,7 @@ const AssetsDashboard = observer(() => {
     setLoading(true);
     await balanceStore.withdrawBalance(
       selectAsset.asset.assetId,
-      BN.parseUnits(
-        BN.formatUnits(selectAsset.balance, selectAsset.asset.decimals),
-        selectAsset.asset.decimals,
-      ).toString(),
+      BN.parseUnits(selectAsset.contractBalance, selectAsset.asset.decimals).toString(),
     );
     setLoading(false);
   };

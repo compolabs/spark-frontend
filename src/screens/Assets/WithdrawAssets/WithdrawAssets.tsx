@@ -68,7 +68,6 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(
     selectAsset?.contractBalance ?? 0,
   );
-
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">

@@ -74,6 +74,7 @@ const SelectAssetsInput = ({
     if (!showBalance || !selectedOption || !decimals) return;
 
     const amount = BN.parseUnits(new BN(selectedOption[showBalance] ?? 0).multipliedBy(el).div(new BN(100)), decimals);
+    console.log(amount.toString());
     onChangeValue(amount);
   };
   if (!selectedOption || !showBalance) return;
