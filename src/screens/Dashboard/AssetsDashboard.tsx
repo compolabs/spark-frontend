@@ -82,12 +82,20 @@ const AssetsDashboard = observer(() => {
         );
       },
     }),
-    orderColumnHelper.accessor("asset", {
+    orderColumnHelper.accessor("amount", {
       header: () => {
-        new BN(allContractBalance.contractBalance).isLessThan(0) && (
-          <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdrawAll}>
-            {isLoading ? <Spinner height={14} /> : "Withdraw All"}
-          </ButtonConfirm>
+        return (
+          new BN(allContractBalance.contractBalance).isGreaterThan(0) && (
+            <ButtonConfirm
+              disabled={isLoading}
+              style={{
+                minWidth: "92px",
+              }}
+              onClick={handleWithdrawAll}
+            >
+              {isLoading ? <Spinner height={14} /> : "Withdraw All"}
+            </ButtonConfirm>
+          )
         );
       },
       id: "action",
@@ -95,7 +103,7 @@ const AssetsDashboard = observer(() => {
         const value = props.getValue();
         return (
           <SmartFlex justifyContent="flex-end">
-            {value.contractBalance > 0 && (
+            {new BN(value.contractBalance).isGreaterThan(0) && (
               <WithdrawalButton
                 data-order-id={value.assetId}
                 style={{
