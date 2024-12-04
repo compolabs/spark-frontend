@@ -37,21 +37,21 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
   const theme = useTheme();
 
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
-
   const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.balance).isZero());
+
   const accumulateBalance = balancesInfoList.reduce(
     (acc, account) => {
       const balanceValue = new BN(account.balance).multipliedBy(account.price);
       const contractBalanceValue = new BN(account.contractBalance).multipliedBy(account.price);
-
+      const walletBalance = new BN(account.walletBalance).multipliedBy(account.price);
       return {
         balance: acc.balance.plus(balanceValue),
         contractBalance: acc.contractBalance.plus(contractBalanceValue),
+        walletBalance: acc.walletBalance.plus(walletBalance),
       };
     },
-    { balance: BN.ZERO, contractBalance: BN.ZERO },
+    { balance: BN.ZERO, contractBalance: BN.ZERO, walletBalance: BN.ZERO },
   );
-
   const handleWithdraw = async () => {
     setIsLoading(true);
     await balanceStore.withdrawBalanceAll();
@@ -84,7 +84,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             primary
             onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
           >
-            Assets in my wallet: ${accumulateBalance?.balance.toSignificant(2)}
+            Assets in my wallet: ${accumulateBalance?.walletBalance.toSignificant(2)}
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
