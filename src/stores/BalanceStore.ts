@@ -63,8 +63,8 @@ export class BalanceStore {
     const tokens = bcNetwork.getTokenList();
 
     return tokens.map((token) => {
-      const balance = this.balances.get(token.assetId) ?? BN.ZERO;
-      const contractBalance = this.contractBalances.get(token.assetId) ?? BN.ZERO;
+      const balance = this.getWalletBalance(token.assetId);
+      const contractBalance = this.getContractBalance(token.assetId);
       const totalBalance = balance.plus(contractBalance);
 
       return {
@@ -111,12 +111,18 @@ export class BalanceStore {
       CONFIG.MARKETS.forEach((market, index) => {
         const marketBalance = contractBalances[index];
 
+        const oldBaseBalance = this.getContractBalance(market.baseAssetId);
+        const oldQuoteBalance = this.getContractBalance(market.quoteAssetId);
+
         const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
         const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
 
+        const newBaseBalance = oldBaseBalance.plus(baseAmount);
+        const newQuoteBalance = oldQuoteBalance.plus(quoteAmount);
+
         runInAction(() => {
-          this.contractBalances.set(market.baseAssetId, baseAmount);
-          this.contractBalances.set(market.quoteAssetId, quoteAmount);
+          this.contractBalances.set(market.baseAssetId, newBaseBalance);
+          this.contractBalances.set(market.quoteAssetId, newQuoteBalance);
         });
       });
     } catch (error) {
