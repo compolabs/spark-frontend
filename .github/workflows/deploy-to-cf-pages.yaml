@@ -33,13 +33,13 @@ jobs:
         with:
           node-version: "20"
           cache: "pnpm"
-      - name: Install Dependencies
-        run: |
-          pnpm install
       - name: create env file
         run: |
           touch .env
           echo "NPM_AUTH_TOKEN=${{ vars.NPM_AUTH_TOKEN }}" >> .env
+      - name: Install Dependencies
+        run: |
+          pnpm install
       - name: Build Project
         run: |
           npm run build
