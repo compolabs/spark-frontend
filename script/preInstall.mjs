@@ -6,6 +6,7 @@ const buildStart = async () => {
       `@compolabs:registry=https://npm.pkg.github.com/
           //npm.pkg.github.com/:_authToken=` + process.env.NPM_AUTH_TOKEN;
     console.log("text", text);
+    console.log('process.env', process.env);
     const filePath = `.npmrc`;
     await fs.writeFile(filePath, text);
     console.log(`Config file ${filePath} downloaded successfully.`);
