@@ -11,6 +11,9 @@ importers:
       '@compolabs/spark-orderbook-ts-sdk':
         specifier: ^1.14.2
         version: 1.14.2(@types/react@18.3.4)(fuels@0.96.1)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@compolabs/tradingview-chart':
+        specifier: ^1.0.15
+        version: 1.0.15
       '@emotion/react':
         specifier: ^11.11.3
         version: 11.13.3(@types/react@18.3.4)(react@18.3.1)
@@ -65,6 +68,9 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.13
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
       framer-motion:
         specifier: ^11.0.3
         version: 11.3.30(@emotion/is-prop-valid@1.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1005,6 +1011,9 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       fuels: '>=0.96.1'
+
+  '@compolabs/tradingview-chart@1.0.15':
+    resolution: {integrity: sha512-jZD/nbEfusSM6h6CxGhH44AbCs4fruLJv1rnf4k+5AldYUyBM4ExOHW6sEVNsLUiIYOIyX+h2zjUaG6UdKjABQ==, tarball: https://npm.pkg.github.com/download/@compolabs/tradingview-chart/1.0.15/d861021d61109401a72bb551de4a17321dac83c1}
 
   '@emotion/babel-plugin@11.12.0':
     resolution: {integrity: sha512-y2WQb+oP8Jqvvclh8Q55gLUyb7UFvgv7eJfsj7td5TToBrIUtPay2kMrZi4xjq9qw2vD0ZR5fSho0yqoFgX7Rw==}
@@ -3853,6 +3862,10 @@ packages:
 
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
+
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
 
   duplexify@4.1.3:
     resolution: {integrity: sha512-M3BmBhwJRZsSx38lZyhE53Csddgzl5R7xGJNk7CVddZD6CcmwMCH8J+7AprIrQKH7TonKxaCjcv27Qmf+sQ+oA==}
@@ -8287,6 +8300,8 @@ snapshots:
       - react-dom
       - subscriptions-transport-ws
 
+  '@compolabs/tradingview-chart@1.0.15': {}
+
   '@emotion/babel-plugin@11.12.0':
     dependencies:
       '@babel/helper-module-imports': 7.24.7
@@ -12430,6 +12445,8 @@ snapshots:
     dependencies:
       no-case: 3.0.4
       tslib: 2.7.0
+
+  dotenv@16.4.7: {}
 
   duplexify@4.1.3:
     dependencies:

@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
 
+import { useStores } from "@stores";
+
 // @ts-ignore
 import("@compolabs/tradingview-chart/dist/bundle").then((module) => {
   window.Datafeeds = module;
@@ -32,11 +34,13 @@ const getLanguageFromURL = (): LanguageCode | null => {
 
 const TradingViewChart = () => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
+  const { tradeStore } = useStores();
 
+  console.log("tradeStore", tradeStore.market?.symbol.replace("-", ""));
   const defaultProps: Omit<ChartContainerProps, "container"> = {
-    symbol: "AAPL",
+    symbol: tradeStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
-    datafeedUrl: "https://demo_feed.tradingview.com",
+    datafeedUrl: "https://spark-candles.staging.sprk.fi",
     libraryPath: "/charting_library/",
     chartsStorageUrl: "https://saveload.tradingview.com",
     chartsStorageApiVersion: "1.1",
@@ -57,7 +61,7 @@ const TradingViewChart = () => {
       interval: defaultProps.interval as ChartingLibraryWidgetOptions["interval"],
       container: chartContainerRef.current,
       library_path: defaultProps.libraryPath as string,
-
+      theme: "dark",
       locale: getLanguageFromURL() || "en",
       disabled_features: ["use_localstorage_for_settings"],
       enabled_features: ["study_templates"],
@@ -75,7 +79,7 @@ const TradingViewChart = () => {
     return () => {
       tvWidget.remove();
     };
-  }, []);
+  }, [tradeStore?.market]);
 
   return <div ref={chartContainerRef} className="TVChartContainer" />;
 };
