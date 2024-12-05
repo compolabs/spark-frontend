@@ -1,8 +1,5 @@
 import fs from "fs/promises";
 
-import dotenv from "dotenv";
-dotenv.config();
-
 const buildStart = async () => {
   try {
     const text =
