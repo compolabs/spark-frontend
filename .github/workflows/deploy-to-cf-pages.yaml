@@ -43,6 +43,7 @@ jobs:
           echo "//npm.pkg.github.com/:authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> .npmrc
       - name: Install Dependencies
         run: |
+          cat .npmrc
           pnpm install
       - name: Build Project
         run: |
