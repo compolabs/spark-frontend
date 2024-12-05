@@ -40,7 +40,7 @@ jobs:
       - name: Configure npm authentication for GitHub Registry
         run: |
           echo "@compolabs:registry=https://npm.pkg.github.com/" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=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" >> .npmrc
       - name: Install Dependencies
         run: |
           pnpm install
