@@ -45,7 +45,7 @@ jobs:
         run: |
           ls -la
           cat .npmrc
-          sha256 .npmrc
+          md5 .npmrc
           pnpm install
       - name: Build Project
         run: |
