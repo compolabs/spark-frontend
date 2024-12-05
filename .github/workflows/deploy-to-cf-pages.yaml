@@ -39,8 +39,8 @@ jobs:
           echo VITE_FEATURE_TOGGLE_CLIENT_KEY=${{ vars.VITE_FEATURE_TOGGLE_CLIENT_KEY }} >> .env
       - name: Configure npm authentication for GitHub Registry
         run: |
-          echo "@compolabs:registry=https://npm.pkg.github.com/" >> .npmrc
-          echo "//npm.pkg.github.com/:authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> .npmrc
+          echo "@compolabs:registry=https://npm.pkg.github.com/" > ${{env.GITHUB_WORKSPACE}}/.npmrc
+          echo "//npm.pkg.github.com/:authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> ${{env.GITHUB_WORKSPACE}}/.npmrc
       - name: Install Dependencies
         run: |
           env
