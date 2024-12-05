@@ -9,15 +9,14 @@
     "lint": "eslint --ext .tsx,.ts . --fix",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "prepare": "husky",
-    "preinstall": "node script/preInstall.mjs"
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20.11.0",
     "pnpm": ">=9.7.0"
   },
   "dependencies": {
-    "@compolabs/spark-orderbook-ts-sdk": "^1.14.2",
+    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.2.tgz",
     "@compolabs/tradingview-chart": "^1.0.15",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -37,7 +36,6 @@
     "bignumber.js": "^9.1.2",
     "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.10",
-    "dotenv": "^16.4.7",
     "framer-motion": "^11.0.3",
     "fuels": "^0.96.1",
     "gh-pages": "^6.1.1",
