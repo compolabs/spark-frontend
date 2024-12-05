@@ -2,7 +2,7 @@ import { ReactNode, useEffect } from "react";
 import Intercom, { onShow } from "@intercom/messenger-js-sdk";
 
 import { useStores } from "@stores";
-import { MIXPANEL_EVENTS } from "@stores/MixPanelStore.ts";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 interface IntercomProviderProps {
   children: ReactNode;

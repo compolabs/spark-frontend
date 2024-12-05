@@ -84,10 +84,13 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             primary
             onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
           >
-            Assets
+            Assets in my wallet: ${accumulateBalance?.balance.toSignificant(2)}
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
+        <TextTitle type={TEXT_TYPES.BUTTON} primary>
+          *These are assets in your wallet, not in Spark
+        </TextTitle>
         <WalletBlock gap="8px" column>
           {isConnected ? (
             accumulateBalance.balance.isPositive() && (
@@ -171,6 +174,7 @@ const SizedBoxStyled = styled(SizedBox)`
 `;
 const HeaderBlock = styled(SmartFlex)`
   width: 100%;
+  margin-bottom: 10px;
 `;
 const OverallBlock = styled(SmartFlex)`
   margin: 16px 15px;
@@ -183,14 +187,14 @@ const AssetItem = styled(SmartFlex)`
 
 const WalletBlock = styled(SmartFlex)`
   width: 100%;
-  margin-top: 40px;
+  margin-top: 20px;
 `;
 const BottomColumn = styled(Column)`
   gap: 15px;
   width: 100%;
 `;
 const TextTitle = styled(Text)`
-  width: 182px;
+  width: 100%;
   text-align: left;
 `;
 
@@ -207,7 +211,7 @@ const BoxShadow = styled(SmartFlex)`
   width: calc(100% + 40px);
   position: absolute;
   left: -20px;
-  top: 30px;
+  top: 50px;
   background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
 `;
 

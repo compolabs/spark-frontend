@@ -1,3 +1,3 @@
-export * from "./FeatureToggleProvider.tsx";
+export * from "./FeatureToggleProvider";
 export * from "./IntercomProvider";
 export * from "./UnderConstructionProvider";
