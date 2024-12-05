@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Button, { ButtonGroup } from "@components/Button";
 import Divider from "@components/Divider";
 import { Row } from "@components/Flex";
-import { MARKET_SELECTOR_ID } from "@components/MarketStatisticsBar";
+import { MARKET_SELECTOR_ID } from "@components/MarketHeader";
 import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import MarketStatisticsBar from "@components/MarketStatisticsBar";
+import MarketStatisticsBar from "@components/MarketHeader";
 import MenuOverlay from "@components/MenuOverlay";
 import { SmartFlex } from "@components/SmartFlex";
 import { media } from "@themes/breakpoints";
@@ -17,7 +17,7 @@ import MarketSelection from "../../components/MarketSelection";
 
 import { SpotOrderBook } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 import CreateOrder from "./RightBlock/CreateOrder";
-import MarketStatistics from "./MarketStatistics";
+import MarketStatistics from "../../components/MarketStatistics";
 
 const SpotScreenMobile: React.FC = observer(() => {
   const { marketStore } = useStores();

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import MarketStatisticsBar from "@components/MarketStatisticsBar";
+import MarketStatisticsBar from "@components/MarketHeader";
 import { SmartFlex } from "@components/SmartFlex";
 import { media } from "@themes/breakpoints";
 
