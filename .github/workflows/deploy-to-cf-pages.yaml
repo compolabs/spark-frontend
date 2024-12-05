@@ -39,6 +39,7 @@ jobs:
           echo "NPM_AUTH_TOKEN=${{ vars.NPM_AUTH_TOKEN }}" >> .env
       - name: Pre install
         run: |
+          pnpm i dotenv
           pnpm run preinstall
       - name: Install Dependencies
         run: |
