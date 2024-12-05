@@ -36,6 +36,7 @@ jobs:
       - name: create env file
         run: |
           export NPM_AUTH_TOKEN=${{ vars.NPM_AUTH_TOKEN }}
+          echo $NPM_AUTH_TOKEN
           touch .env
           echo "NPM_AUTH_TOKEN=${{ vars.NPM_AUTH_TOKEN }}" >> .env
       - name: Pre install
