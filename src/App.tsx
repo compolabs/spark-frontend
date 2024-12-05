@@ -22,7 +22,8 @@ import { SwapScreen } from "@screens/SwapScreen";
 import { ROUTES } from "@constants";
 
 import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
-import { DiscordProvider } from "@src/providers/DiscordProvider.tsx";
+import { DiscordProvider } from "@src/providers/DiscordProvider";
+
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore } = useStores();
 
