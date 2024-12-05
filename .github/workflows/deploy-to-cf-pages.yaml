@@ -35,7 +35,7 @@ jobs:
           cache: "pnpm"
       - name: create env file
         run: |
-          export NPM_AUTH_TOKEN=${{ vars.NPM_AUTH_TOKEN }}
+          export NPM_AUTH_TOKEN=${{ secrets.NPM_AUTH_TOKEN }}
           echo ${{vars.NPM_AUTH_TOKEN}}
           echo ${{secrets.NPM_AUTH_TOKEN}}
           touch .env
