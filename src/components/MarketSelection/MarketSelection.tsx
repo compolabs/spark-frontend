@@ -2,8 +2,10 @@ import React, { useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Button, { ButtonGroup } from "@components/Button";
 import Divider from "@components/Divider";
 import { Row } from "@components/Flex";
+import { MARKET_SELECTOR_ID } from "@components/MarketHeader";
 import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
@@ -14,37 +16,33 @@ import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 
-import { MARKET_SELECTOR_ID } from "@screens/SpotScreen/MarketStatisticsBar";
-import SpotMarketRow from "@screens/SpotScreen/RightBlock/MarketSelection/SpotMarketRow";
-
 import { PerpMarket, SpotMarket } from "@entity";
 
-interface IProps {}
+import MarketRow from "./MarketRow";
 
-const useFilteredMarkets = <T extends SpotMarket | PerpMarket>(markets: T[], searchValue: string) => {
-  return markets.filter((market) => market.symbol.includes(searchValue));
-};
-
-const MarketSelection: React.FC<IProps> = observer(() => {
-  const { tradeStore } = useStores();
+const MarketSelection: React.FC = observer(() => {
+  const { marketStore } = useStores();
   const media = useMedia();
   const [searchValue, setSearchValue] = useState("");
+  const [isSpotMarketType, setIsSpotMarketType] = useState(true);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useOnClickOutside(rootRef, (event) => {
-    // TODO: Used to prevent a click on the selector from reopening the sidebar
+    // TIP: Used to prevent a click on the selector from reopening the sidebar
     const marketSelectorEl = document.querySelector(`#${MARKET_SELECTOR_ID}`);
     if (marketSelectorEl?.contains(event.target as any)) return;
 
     if (media.desktop) {
-      tradeStore.setMarketSelectionOpened(false);
+      marketStore.setMarketSelectionOpened(false);
     }
   });
 
-  const spotMarketsFiltered = useFilteredMarkets(tradeStore.spotMarkets, searchValue);
+  const marketsFiltered = marketStore.markets.filter((market) => market.symbol.includes(searchValue)); // TODO: add memo
 
   const renderSpotMarketList = () => {
-    if (!spotMarketsFiltered.length) {
+    if (!isSpotMarketType) return;
+
+    if (!marketsFiltered.length) {
       return (
         <>
           <SizedBox height={16} />
@@ -55,13 +53,43 @@ const MarketSelection: React.FC<IProps> = observer(() => {
       );
     }
 
-    return spotMarketsFiltered.map((market) => <SpotMarketRow key={market.symbol} market={market} />);
+    return marketsFiltered
+      .filter((m) => SpotMarket.isInstance(m))
+      .map((market) => <MarketRow key={market.symbol} market={market} />);
+  };
+
+  const renderPerpMarketList = () => {
+    if (isSpotMarketType) return;
+
+    if (!marketsFiltered.length) {
+      return (
+        <>
+          <SizedBox height={16} />
+          <Row justifyContent="center">
+            <Text>No perp markets found</Text>
+          </Row>
+        </>
+      );
+    }
+
+    return marketsFiltered
+      .filter((m) => PerpMarket.isInstance(m))
+      .map((market) => <MarketRow key={market.symbol} market={market} showLeverage showPriceChange />);
   };
 
   return (
     <Container ref={rootRef}>
       <Root>
         <SearchContainer>
+          <ButtonGroup>
+            <Button active={isSpotMarketType} onClick={() => setIsSpotMarketType(true)}>
+              SPOT
+            </Button>
+            <Button active={!isSpotMarketType} onClick={() => setIsSpotMarketType(false)}>
+              PERP
+            </Button>
+          </ButtonGroup>
+          <SizedBox height={16} />
           <SearchInput value={searchValue} onChange={setSearchValue} />
         </SearchContainer>
 
@@ -71,6 +99,7 @@ const MarketSelection: React.FC<IProps> = observer(() => {
         </SmartFlex>
         <Divider />
         {renderSpotMarketList()}
+        {renderPerpMarketList()}
       </Root>
     </Container>
   );

@@ -2,15 +2,15 @@ import { EvmPriceServiceConnection, Price, PriceFeed } from "@pythnetwork/pyth-e
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import RootStore from "@stores/RootStore";
-
 import BN from "@utils/BN";
 
 import { FuelNetwork } from "@blockchain";
 
+import RootStore from "./RootStore";
+
 const PYTH_URL = "https://hermes.pyth.network";
 
-class OracleStore {
+export class OracleStore {
   private readonly rootStore: RootStore;
 
   priceServiceConnection: EvmPriceServiceConnection;
@@ -35,8 +35,8 @@ class OracleStore {
   }
 
   get tokenIndexPrice(): BN {
-    const { market } = this.rootStore.tradeStore;
-    const token = market?.baseToken;
+    const { marketStore } = this.rootStore;
+    const token = marketStore.market?.baseToken;
 
     if (!token) return BN.ZERO;
 
@@ -88,5 +88,3 @@ class OracleStore {
 
   private setInitialized = (l: boolean) => (this.initialized = l);
 }
-
-export default OracleStore;

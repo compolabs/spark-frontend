@@ -27,8 +27,8 @@ const TradingViewWidget: React.FC = observer(() => {
   const widgetRef = useRef<any>();
 
   const theme = useTheme();
-  const { tradeStore } = useStores();
-  const { market } = tradeStore;
+  const { marketStore } = useStores();
+  const { market } = marketStore;
 
   const createWidget = () => {
     const tradingViewContainer = document.getElementById(TRADING_VIEW_ID);

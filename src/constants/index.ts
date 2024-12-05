@@ -3,6 +3,7 @@ import { defaultConnectors } from "@fuels/connectors";
 export const ROUTES = {
   ROOT: "/",
   SPOT: "/spot",
+  PERP: "/perp",
   FAUCET: "/faucet",
   SWAP: "/swap",
   DASHBOARD: "/dashboard",
