@@ -39,7 +39,6 @@ jobs:
       - name: create env file
         run: |
           touch .env
-          echo "VITE_FEATURE_TOGGLE_CLIENT_KEY=${{ vars.VITE_FEATURE_TOGGLE_CLIENT_KEY }}" >> .env
           echo "NPM_AUTH_TOKEN=${{ vars.NPM_AUTH_TOKEN }}" >> .env
       - name: Build Project
         run: |
