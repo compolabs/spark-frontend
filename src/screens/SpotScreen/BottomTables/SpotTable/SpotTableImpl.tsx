@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
-import { Pagination } from "@components/Pagination/Pagination.tsx";
+import { Pagination } from "@components/Pagination/Pagination";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -137,6 +137,10 @@ const SpotTableImpl: React.FC = observer(() => {
     { title: "HISTORY", disabled: false, rowCount: historyOrders },
   ];
 
+  useEffect(() => {
+    vm.resetCounter();
+  }, [accountStore.isConnected]);
+
   const handleTab = (e: number) => {
     setTabIndex(e);
     setPage(1);
@@ -247,18 +251,20 @@ const SpotTableImpl: React.FC = observer(() => {
   const renderTable = () => {
     if (!data.length) {
       return (
-        <SmartFlex height="100%" padding={media.mobile ? "16px" : "32px"} width="100%" center>
-          <Text type={TEXT_TYPES.BUTTON_SECONDARY} secondary>
-            No Data
+        <TableContainer center column>
+          <Text type={TEXT_TYPES.H} primary>
+            You haven&apos;t made any trades so far
           </Text>
-        </SmartFlex>
+          <Text type={TEXT_TYPES.BODY} secondary>
+            Begin trading to view updates on your portfolio
+          </Text>
+        </TableContainer>
       );
     }
 
     if (media.mobile) {
       return renderMobileRows();
     }
-
     return <Table columns={columns[tabIndex] as any} data={data} />;
   };
 
@@ -271,14 +277,11 @@ const SpotTableImpl: React.FC = observer(() => {
         {renderTable()}
       </BaseTable>
       {data.length >= minNeedLengthPagination || page > startPage - 1 ? (
-        <PaginationContainer>
-          <Pagination currentPage={page} lengthData={openOrders} onChange={handleChangePagination} />
-        </PaginationContainer>
+        <Pagination currentPage={page} lengthData={openOrders} onChange={handleChangePagination} />
       ) : null}
-      {!!vm.userOrders.length && tabIndex === 0 && (
-        //todo здесь была кнопка cancel all orders
-        <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
-      )}
+      {/*{!!vm.userOrders.length && tabIndex === 0 && (*/}
+      {/*  //todo здесь была кнопка cancel all orders*/}
+      {/*)}*/}
     </BottomTablesSkeletonWrapper>
   );
 });
@@ -290,14 +293,17 @@ export const TableText = styled(Text)`
   align-items: center;
 `;
 
-const PaginationContainer = styled.div`
-  background: ${({ theme }) => theme.colors.bgSecondary};
-  height: 48px;
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border-radius: 0px 0px 10px 10px;
+const TableContainer = styled(SmartFlex)`
+  text-align: center;
+  gap: 10px;
+  height: 100%;
+  width: 100%;
+  padding: 32px;
+  ${media.mobile} {
+    padding: 16px;
+  }
 `;
+
 const CancelButton = styled(Chip)`
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;
@@ -340,13 +346,5 @@ const TokenBadge = styled(SmartFlex)`
 
   ${Text} {
     line-height: 10px;
-  }
-`;
-
-const TextGraph = styled(Text)`
-  text-transform: uppercase;
-
-  ${media.desktop} {
-    display: none;
   }
 `;

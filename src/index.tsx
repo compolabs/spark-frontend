@@ -10,7 +10,7 @@ import ThemeWrapper from "@themes/ThemeProvider";
 
 import { RootStore, storesContext } from "@stores";
 
-import { CONFIG } from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig";
 import { loadState } from "@utils/localStorage";
 
 import GlobalStyles from "./themes/GlobalStyles";

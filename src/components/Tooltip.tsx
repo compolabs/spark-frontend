@@ -9,10 +9,11 @@ interface IProps {
   config?: Config;
   fixed?: boolean;
   containerStyles?: CSSProperties;
+  rootStyles?: CSSProperties;
   children: React.ReactNode;
 }
 
-const Tooltip: React.FC<IProps> = ({ containerStyles, children, content, config }) => {
+const Tooltip: React.FC<IProps> = ({ containerStyles, rootStyles, children, content, config }) => {
   const { getTooltipProps, setTooltipRef, setTriggerRef, triggerRef, visible } = usePopperTooltip({
     ...config,
   });
@@ -29,8 +30,11 @@ const Tooltip: React.FC<IProps> = ({ containerStyles, children, content, config 
     style: { width: `${triggerWidth}px` },
   });
 
+  const tooltipProps = getTooltipProps(modifiedTooltipProps);
+  const combinedStyles = { ...tooltipProps.style, ...rootStyles };
+
   const tooltipElement = visible ? (
-    <Root ref={setTooltipRef} {...getTooltipProps(modifiedTooltipProps)}>
+    <Root ref={setTooltipRef} style={combinedStyles}>
       {content}
     </Root>
   ) : null;
@@ -63,7 +67,6 @@ const Root = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
 `;
 
 const Children = styled.div`

@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import styled from "@emotion/styled";
 import { useFlag, useFlagsStatus } from "@unleash/proxy-client-react";
 
-import Loader from "@components/Loader.tsx";
+import Loader from "@components/Loader";
 
 import UnderConstruction from "@screens/Errors/UnderConstruction";
 

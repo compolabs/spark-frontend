@@ -1,6 +1,7 @@
 import { storesContext, useStores } from "@stores/useStores";
 
 import AccountStore from "./AccountStore";
+import DashboardStore from "./DashboardStore";
 import FaucetStore from "./FaucetStore";
 import MixPanelStore from "./MixPanelStore";
 import NotificationStore from "./NotificationStore";
@@ -14,6 +15,7 @@ import TradeStore from "./TradeStore";
 
 export {
   AccountStore,
+  DashboardStore,
   FaucetStore,
   MixPanelStore,
   NotificationStore,
