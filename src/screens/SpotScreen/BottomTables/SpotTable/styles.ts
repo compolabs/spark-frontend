@@ -10,14 +10,17 @@ export const TableText = styled(Text)`
   align-items: center;
 `;
 
-export const PaginationContainer = styled.div`
-  background: ${({ theme }) => theme.colors.bgSecondary};
-  height: 48px;
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border-radius: 0px 0px 10px 10px;
+export const TableContainer = styled(SmartFlex)`
+  text-align: center;
+  gap: 10px;
+  height: 100%;
+  width: 100%;
+  padding: 32px;
+  ${media.mobile} {
+    padding: 16px;
+  }
 `;
+
 export const CancelButton = styled(Chip)`
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;

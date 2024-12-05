@@ -20,7 +20,7 @@ import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, SWAP_LINK, TWITTER_LINK } from "@constants";
-import { CONFIG } from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
@@ -47,7 +47,7 @@ type MenuItem = {
 const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
 
 const MENU_ITEMS: Array<MenuItem> = [
-  { title: "DASHBOARD", trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
+  { title: "DASHBOARD", link: ROUTES.DASHBOARD, trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
   {
     title: "TRADE",
     isGradient: true,

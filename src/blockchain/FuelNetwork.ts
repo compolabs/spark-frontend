@@ -88,6 +88,10 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
+  setSpotSentioConfig = (...params: Parameters<typeof this.orderbookSdk.setSentioConfig>) => {
+    this.orderbookSdk.setSentioConfig(...params);
+  };
+
   setSpotActiveMarket = (...params: Parameters<typeof this.orderbookSdk.setActiveMarket>) => {
     this.orderbookSdk.setActiveMarket(...params);
   };
@@ -218,5 +222,13 @@ export class FuelNetwork {
 
   spotFetchMinOrderPrice = async () => {
     return this.orderbookSdk.fetchMinOrderPrice();
+  };
+
+  getUserScoreSnapshot = async (...params: Parameters<typeof this.orderbookSdk.getUserScoreSnapshot>) => {
+    return await this.orderbookSdk.getUserScoreSnapshot(...params);
+  };
+
+  getTradeEvent = async (...params: Parameters<typeof this.orderbookSdk.getTradeEvent>) => {
+    return await this.orderbookSdk.getTradeEvent(...params);
   };
 }

@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { observer } from "mobx-react-lite";
 
 import { Pagination } from "@components/Pagination/Pagination";
 import BottomTablesSkeletonWrapper from "@components/Skeletons/BottomTablesSkeletonWrapper";
-import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
 
@@ -15,7 +14,7 @@ import { PAGINATION_LIMIT } from "@stores/SpotTableStore";
 import { BaseTable } from "../BaseTable";
 
 import { MobileTableRows, TABLE_TYPE } from "./SpotTableMobileRow";
-import { PaginationContainer, TextGraph } from "./styles";
+import { TableContainer } from "./styles";
 import { HISTORY_COLUMNS, ORDER_COLUMNS } from "./TablesHelper";
 
 const PAGINATION_START_PAGE = 1;
@@ -50,6 +49,10 @@ const SpotTable: React.FC = observer(() => {
     rowCount: tab.count,
   }));
 
+  useEffect(() => {
+    spotTableStore.resetCounter();
+  }, [accountStore.isConnected]);
+
   const tab = tabsConfig[tabIndex];
   const data = tab.data;
   const type = tab.type;
@@ -71,11 +74,14 @@ const SpotTable: React.FC = observer(() => {
   const renderTable = () => {
     if (!data.length) {
       return (
-        <SmartFlex height="100%" padding={media.mobile ? "16px" : "32px"} width="100%" center>
-          <Text type={TEXT_TYPES.BUTTON_SECONDARY} secondary>
-            No Data
+        <TableContainer center column>
+          <Text type={TEXT_TYPES.H} primary>
+            You haven&apos;t made any trades so far
           </Text>
-        </SmartFlex>
+          <Text type={TEXT_TYPES.BODY} secondary>
+            Begin trading to view updates on your portfolio
+          </Text>
+        </TableContainer>
       );
     }
 
@@ -91,12 +97,7 @@ const SpotTable: React.FC = observer(() => {
         {renderTable()}
       </BaseTable>
       {shouldRenderPagination && (
-        <PaginationContainer>
-          <Pagination currentPage={page} lengthData={TABS[tabIndex].rowCount} onChange={handleChangePagination} />
-        </PaginationContainer>
-      )}
-      {!!spotTableStore.userOrders.length && tabIndex === 0 && (
-        <TextGraph style={{ textAlign: "center" }}>Data provided by Envio</TextGraph>
+        <Pagination currentPage={page} lengthData={TABS[tabIndex].rowCount} onChange={handleChangePagination} />
       )}
     </BottomTablesSkeletonWrapper>
   );

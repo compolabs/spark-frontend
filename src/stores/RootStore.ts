@@ -4,6 +4,7 @@ import { saveState } from "@utils/localStorage";
 
 import { AccountStore, ISerializedAccountStore } from "./AccountStore";
 import { BalanceStore } from "./BalanceStore";
+import { DashboardStore } from "./DashboardStore";
 import { FaucetStore } from "./FaucetStore";
 import { ISerializedMarketStore, MarketStore } from "./MarketStore";
 import MixPanelStore from "./MixPanelStore";
@@ -47,6 +48,8 @@ export default class RootStore {
   spotOrderBookStore: SpotOrderBookStore;
   spotTableStore: SpotTableStore;
 
+  dashboardStore: DashboardStore;
+
   private constructor(initState?: ISerializedRootStore) {
     this.accountStore = new AccountStore(this, initState?.accountStore);
     this.oracleStore = new OracleStore(this);
@@ -65,6 +68,8 @@ export default class RootStore {
     this.spotMarketInfoStore = new SpotMarketInfoStore(this);
     this.spotOrderBookStore = new SpotOrderBookStore(this);
     this.spotTableStore = new SpotTableStore(this);
+
+    this.dashboardStore = new DashboardStore(this);
 
     makeAutoObservable(this);
 

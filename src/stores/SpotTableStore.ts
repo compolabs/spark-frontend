@@ -113,6 +113,10 @@ export class SpotTableStore {
     };
   }
 
+  resetCounter = () => {
+    this.userOrdersStats = null;
+  };
+
   cancelOrder = async (order: SpotMarketOrder) => {
     const { notificationStore, marketStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();

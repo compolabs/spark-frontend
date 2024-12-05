@@ -297,11 +297,11 @@ export class SpotCreateOrderStore {
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
     };
 
-    const marketContracts = CONFIG.SPOT.MARKETS.filter(
-      (m) =>
-        m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
-        m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase(),
-    ).map((m) => m.contractId);
+    const marketContractsByType = isBuy
+      ? CONFIG.SPOT.MARKETS.filter((m) => m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase())
+      : CONFIG.SPOT.MARKETS.filter((m) => m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase());
+
+    const marketContracts = marketContractsByType.map((m) => m.contractId);
 
     if (bcNetwork.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
