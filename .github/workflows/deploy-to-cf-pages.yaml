@@ -20,7 +20,7 @@ jobs:
       deployments: write
       pull-requests: write
       packages: read
-    runs-on: ${{ vars.RUNNER_SCALE_SET }}
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
       NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
