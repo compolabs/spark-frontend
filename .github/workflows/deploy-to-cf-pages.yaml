@@ -35,7 +35,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "pnpm"
       - name: create env file
         run: |
           touch .env
@@ -48,7 +47,7 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
       - name: Install Dependencies
         run: |
-          npm install
+          pnpm install
       - name: Build Project
         run: |
           npm run build
