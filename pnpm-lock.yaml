@@ -12,8 +12,8 @@ importers:
         specifier: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.2.tgz
         version: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.2.tgz(@types/react@18.3.13)(fuels@0.96.1)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@compolabs/tradingview-chart':
-        specifier: ^1.0.19
-        version: 1.0.19
+        specifier: ^1.0.21
+        version: 1.0.21
       '@emotion/react':
         specifier: ^11.11.3
         version: 11.13.5(@types/react@18.3.13)(react@18.3.1)
@@ -1007,8 +1007,8 @@ packages:
     peerDependencies:
       fuels: '>=0.96.1'
 
-  '@compolabs/tradingview-chart@1.0.19':
-    resolution: {integrity: sha512-qGd6HYez0WyFF98aNTZ62VvArli9wyUueH0/hwb9EIoaesqCZuAJPL7fKA+3AcS26NlO07l+IEPuJSVqvrRSaQ==, tarball: https://npm.pkg.github.com/download/@compolabs/tradingview-chart/1.0.19/48d7aa255adc1bc1c20b8bb8daa41faa630f5af5}
+  '@compolabs/tradingview-chart@1.0.21':
+    resolution: {integrity: sha512-efExlG9Ki5uqEe16nRF2A6FwQ8CnzmAwad2kMZxNFtNsbJTYhVC1SMSzkcBNQ50yzmijm3HAUUfaMzsXwtEkFQ==, tarball: https://npm.pkg.github.com/download/@compolabs/tradingview-chart/1.0.21/f9b8234ef67206216f98b5919ef16173c21f7fe9}
 
   '@emotion/babel-plugin@11.13.5':
     resolution: {integrity: sha512-pxHCpT2ex+0q+HH91/zsdHkw/lXd468DIN2zvfvLtPKLLMo6gQj7oLObq8PhkrxOZb/gGCq03S3Z7PDhS8pduQ==}
@@ -8181,7 +8181,7 @@ snapshots:
       - react-dom
       - subscriptions-transport-ws
 
-  '@compolabs/tradingview-chart@1.0.19': {}
+  '@compolabs/tradingview-chart@1.0.21': {}
 
   '@emotion/babel-plugin@11.13.5':
     dependencies:
@@ -9704,7 +9704,7 @@ snapshots:
 
   '@scure/bip32@1.4.0':
     dependencies:
-      '@noble/curves': 1.4.0
+      '@noble/curves': 1.4.2
       '@noble/hashes': 1.4.0
       '@scure/base': 1.1.9
 
@@ -15967,8 +15967,8 @@ snapshots:
 
   webauthn-p256@0.0.5:
     dependencies:
-      '@noble/curves': 1.4.0
-      '@noble/hashes': 1.4.0
+      '@noble/curves': 1.7.0
+      '@noble/hashes': 1.6.1
 
   webextension-polyfill@0.10.0: {}
 
