@@ -9,7 +9,7 @@ import TradingViewChartAdvance from "@screens/SpotScreen/Chart/TradingViewAdvanc
 import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget.tsx";
 
 const Chart: React.FC = () => {
-  const [activeChart, setActiveChart] = useState(0);
+  const [activeChart, setActiveChart] = useState(1);
   const handleSelect = (active: number) => {
     setActiveChart(active);
   };
