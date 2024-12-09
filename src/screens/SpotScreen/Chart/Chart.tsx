@@ -88,12 +88,12 @@ const CenterContainer = styled(SmartFlex)`
 const HeaderTradingView = styled(SmartFlex)`
   height: auto;
   gap: 5px;
-  padding: 8px;
+  padding: 8px 8px 0px 8px;
 `;
 
 const TabContainer = styled(Row)`
   align-items: center;
-  padding: 2px 12px;
+  padding-left: 4px;
   position: relative;
 
   ${Tab} {
