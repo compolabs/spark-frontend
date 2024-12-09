@@ -19,8 +19,11 @@ jobs:
       contents: read
       deployments: write
       pull-requests: write
+      packages: read
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
       - name: "Checkout Github Action"
         uses: actions/checkout@v4
@@ -32,12 +35,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "pnpm"
       - name: create env file
         run: |
           touch .env
           echo VITE_FEATURE_TOGGLE_CLIENT_KEY=${{ vars.VITE_FEATURE_TOGGLE_CLIENT_KEY }} >> .env
       - name: Configure npm authentication for GitHub Registry
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
           echo "@compolabs:registry=https://npm.pkg.github.com/" > .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
