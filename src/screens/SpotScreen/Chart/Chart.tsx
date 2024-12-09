@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import { observer } from "mobx-react";
 
 import Button from "@components/Button.tsx";
 import { SmartFlex } from "@components/SmartFlex.tsx";
 import { media } from "@themes/breakpoints";
 
+import { useStores } from "@stores";
+
 import TradingViewChartAdvance from "@screens/SpotScreen/Chart/TradingViewAdvanceWidget.tsx";
 import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget.tsx";
 
-const Chart: React.FC = () => {
+const Chart: React.FC = observer(() => {
   const [activeChart, setActiveChart] = useState(1);
   const handleSelect = (active: number) => {
     setActiveChart(active);
   };
+
+  const { tradeStore } = useStores();
+  const market = tradeStore.market?.symbol.replace("-", "");
   return (
     <Root>
       <HeaderTradingView>
@@ -23,10 +29,18 @@ const Chart: React.FC = () => {
           ADVANCED CHART
         </Button>
       </HeaderTradingView>
-      {activeChart === 0 ? <TradingViewChartAdvance /> : <TradingViewWidget />}
+      {activeChart === 0 ? (
+        market === "USDCUSDT" ? (
+          <CenterContainer>Not data</CenterContainer>
+        ) : (
+          <TradingViewChartAdvance />
+        )
+      ) : (
+        <TradingViewWidget />
+      )}
     </Root>
   );
-};
+});
 
 export default Chart;
 
@@ -52,6 +66,10 @@ const Root = styled.div`
   }
 `;
 
+const CenterContainer = styled(SmartFlex)`
+  justify-content: center;
+  align-items: center;
+`;
 const HeaderTradingView = styled(SmartFlex)`
   height: auto;
   gap: 5px;

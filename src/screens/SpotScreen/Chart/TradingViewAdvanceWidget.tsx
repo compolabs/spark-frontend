@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
 
@@ -32,11 +33,9 @@ const getLanguageFromURL = (): LanguageCode | null => {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, " ")) as LanguageCode);
 };
 
-const TradingViewChartAdvance = () => {
+const TradingViewChartAdvance = observer(() => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
   const { tradeStore } = useStores();
-
-  console.log("tradeStore", tradeStore.market?.symbol.replace("-", ""));
   const defaultProps: Omit<ChartContainerProps, "container"> = {
     symbol: tradeStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
@@ -72,7 +71,14 @@ const TradingViewChartAdvance = () => {
       autosize: defaultProps.autosize,
       studies_overrides: defaultProps.studiesOverrides,
       custom_css_url: "css/style.css",
+      loading_screen: {
+        backgroundColor: "#141414",
+      },
       theme: "dark",
+      overrides: {
+        "paneProperties.background": "#141414",
+        "paneProperties.backgroundType": "solid",
+      },
     };
 
     const tvWidget = new widget(widgetOptions);
@@ -81,8 +87,7 @@ const TradingViewChartAdvance = () => {
       tvWidget.remove();
     };
   }, [tradeStore?.market]);
-
   return <div ref={chartContainerRef} className="TVChartContainer" />;
-};
+});
 
 export default TradingViewChartAdvance;
