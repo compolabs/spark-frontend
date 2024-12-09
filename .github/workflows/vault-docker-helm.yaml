@@ -96,7 +96,7 @@ jobs:
           name: ${{ vars.DOCKER_IMAGE }}
           repository: charts
           tag: ${{ steps.meta.outputs.tags }}
-          path: deploy/chart
+          path: helm
           registry: ${{ env.DOCKER_REGISTRY }}
           registry_username: ${{ env.DOCKER_USERNAME }}
           registry_password: ${{ env.DOCKER_PASSWORD }}
