@@ -5,12 +5,11 @@ import { AccordionItemProps } from "@szhsin/react-accordion/types/components/Acc
 
 import { media } from "@themes/breakpoints";
 
-import ArrowIcon from "@assets/icons/arrowUp.svg?react";
-
 type Props = {
   hideBottomBorder?: boolean;
 } & AccordionItemProps;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AccordionItem: React.FC<Props> = ({ header, ...rest }) => (
   <AccordionItemRoot
     {...rest}
@@ -19,19 +18,13 @@ const AccordionItem: React.FC<Props> = ({ header, ...rest }) => (
     }}
     className="item"
     contentProps={{ className: "itemContent" }}
-    header={
-      <>
-        {header}
-        <ArrowIcon className="arrow" />
-      </>
-    }
     panelProps={{ className: "itemPanel" }}
   />
 );
 
 export default AccordionItem;
 
-const AccordionItemRoot = styled(RawAccordionItem)<{ hideBottomBorder?: boolean }>`
+const AccordionItemRoot = styled(RawAccordionItem)<{ hideBottomBorder?: boolean; header?: React.JSX.Element }>`
   ${({ hideBottomBorder, theme }) =>
     hideBottomBorder ? "" : `border-bottom: 1px solid ${theme.colors.borderSecondary}`};
   padding: 12px 0;

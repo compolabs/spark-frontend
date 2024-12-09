@@ -1,21 +1,67 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
+import { observer } from "mobx-react";
 
+import { Row } from "@components/Flex.tsx";
+import { SmartFlex } from "@components/SmartFlex.tsx";
+import Tab from "@components/Tab.tsx";
+import { TEXT_TYPES } from "@components/Text.tsx";
 import { media } from "@themes/breakpoints";
 
-import TradingViewWidget from "./TradingViewWidget";
+import { useStores } from "@stores";
 
-const Chart: React.FC = () => {
+import TradingViewChartAdvance from "@screens/SpotScreen/Chart/TradingViewAdvanceWidget.tsx";
+import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget.tsx";
+
+const TABS = [
+  { title: "SIMPLE CHART", disabled: false },
+  { title: "ADVANCED CHART", disabled: false },
+];
+
+const Chart: React.FC = observer(() => {
+  const [activeChart, setActiveChart] = useState(1);
+  const handleSelect = (active: number) => {
+    setActiveChart(active);
+  };
+
+  const { tradeStore } = useStores();
+  const market = tradeStore.market?.symbol.replace("-", "");
   return (
     <Root>
-      <TradingViewWidget />
+      <HeaderTradingView>
+        <TabContainer>
+          {TABS.map(({ title, disabled }, index) => (
+            <Tab
+              key={title + index}
+              active={activeChart === index}
+              disabled={disabled}
+              type={TEXT_TYPES.BUTTON_SECONDARY}
+              onClick={() => !disabled && handleSelect(index)}
+            >
+              {title}
+            </Tab>
+          ))}
+        </TabContainer>
+      </HeaderTradingView>
+      {activeChart === 1 ? (
+        market === "USDCUSDT" ? (
+          <CenterContainer>Not data</CenterContainer>
+        ) : (
+          <TradingViewChartAdvance />
+        )
+      ) : (
+        <TradingViewWidget />
+      )}
     </Root>
   );
-};
+});
 
 export default Chart;
 
 const Root = styled.div`
+  background: #141414;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,5 +77,26 @@ const Root = styled.div`
   & > * {
     width: 100%;
     height: 100%;
+  }
+`;
+
+const CenterContainer = styled(SmartFlex)`
+  justify-content: center;
+  align-items: center;
+`;
+
+const HeaderTradingView = styled(SmartFlex)`
+  height: auto;
+  gap: 5px;
+  padding: 8px 8px 0px 8px;
+`;
+
+const TabContainer = styled(Row)`
+  align-items: center;
+  padding-left: 4px;
+  position: relative;
+
+  ${Tab} {
+    margin: 0 16px;
   }
 `;
