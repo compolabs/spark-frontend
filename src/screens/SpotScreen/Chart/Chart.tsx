@@ -2,14 +2,21 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Button from "@components/Button.tsx";
+import { Row } from "@components/Flex.tsx";
 import { SmartFlex } from "@components/SmartFlex.tsx";
+import Tab from "@components/Tab.tsx";
+import { TEXT_TYPES } from "@components/Text.tsx";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
 import TradingViewChartAdvance from "@screens/SpotScreen/Chart/TradingViewAdvanceWidget.tsx";
 import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget.tsx";
+
+const TABS = [
+  { title: "SIMPLE CHART", disabled: false },
+  { title: "ADVANCED CHART", disabled: false },
+];
 
 const Chart: React.FC = observer(() => {
   const [activeChart, setActiveChart] = useState(1);
@@ -22,14 +29,21 @@ const Chart: React.FC = observer(() => {
   return (
     <Root>
       <HeaderTradingView>
-        <Button disabled={activeChart === 1} fitContent onClick={() => handleSelect(1)}>
-          SIMPLE CHART
-        </Button>
-        <Button disabled={activeChart === 0} fitContent onClick={() => handleSelect(0)}>
-          ADVANCED CHART
-        </Button>
+        <TabContainer>
+          {TABS.map(({ title, disabled }, index) => (
+            <Tab
+              key={title + index}
+              active={activeChart === index}
+              disabled={disabled}
+              type={TEXT_TYPES.BUTTON_SECONDARY}
+              onClick={() => !disabled && handleSelect(index)}
+            >
+              {title}
+            </Tab>
+          ))}
+        </TabContainer>
       </HeaderTradingView>
-      {activeChart === 0 ? (
+      {activeChart === 1 ? (
         market === "USDCUSDT" ? (
           <CenterContainer>Not data</CenterContainer>
         ) : (
@@ -70,8 +84,19 @@ const CenterContainer = styled(SmartFlex)`
   justify-content: center;
   align-items: center;
 `;
+
 const HeaderTradingView = styled(SmartFlex)`
   height: auto;
   gap: 5px;
   padding: 8px;
+`;
+
+const TabContainer = styled(Row)`
+  align-items: center;
+  padding: 2px 12px;
+  position: relative;
+
+  ${Tab} {
+    margin: 0 16px;
+  }
 `;
