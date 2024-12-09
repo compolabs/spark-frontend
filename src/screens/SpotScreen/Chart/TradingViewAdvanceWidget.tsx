@@ -32,7 +32,7 @@ const getLanguageFromURL = (): LanguageCode | null => {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, " ")) as LanguageCode);
 };
 
-const TradingViewChart = () => {
+const TradingViewChartAdvance = () => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
   const { tradeStore } = useStores();
 
@@ -61,7 +61,6 @@ const TradingViewChart = () => {
       interval: defaultProps.interval as ChartingLibraryWidgetOptions["interval"],
       container: chartContainerRef.current,
       library_path: defaultProps.libraryPath as string,
-      theme: "dark",
       locale: getLanguageFromURL() || "en",
       disabled_features: ["use_localstorage_for_settings"],
       enabled_features: ["study_templates"],
@@ -72,6 +71,8 @@ const TradingViewChart = () => {
       fullscreen: defaultProps.fullscreen,
       autosize: defaultProps.autosize,
       studies_overrides: defaultProps.studiesOverrides,
+      custom_css_url: "css/style.css",
+      theme: "dark",
     };
 
     const tvWidget = new widget(widgetOptions);
@@ -84,4 +85,4 @@ const TradingViewChart = () => {
   return <div ref={chartContainerRef} className="TVChartContainer" />;
 };
 
-export default TradingViewChart;
+export default TradingViewChartAdvance;
