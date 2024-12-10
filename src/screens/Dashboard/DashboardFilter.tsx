@@ -27,7 +27,7 @@ export const DashboardFilter = observer(() => {
     <DashboardTitleContainer>
       <DashboardFilterContainer>
         <TitleText type={TEXT_TYPES.H} primary>
-          Balance
+          Your Assets in Spark
         </TitleText>
         <SmartFlex gap="5px">
           {filters.map((filter, index) => (

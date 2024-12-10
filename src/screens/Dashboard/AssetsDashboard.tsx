@@ -175,7 +175,7 @@ const AssetsDashboard = observer(() => {
   return (
     <>
       <TitleText type={TEXT_TYPES.H} primary>
-        Assets
+        Assets in my wallet
       </TitleText>
       <StyledTables>
         {media.desktop ? (
