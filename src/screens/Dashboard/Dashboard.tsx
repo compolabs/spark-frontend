@@ -9,7 +9,7 @@ import { media } from "@themes/breakpoints";
 import AssetsDashboard from "@screens/Dashboard/AssetsDashboard.tsx";
 import InfoDataGraph from "@screens/Dashboard/InfoDataGraph";
 import BottomTables from "@screens/SpotScreen/BottomTables";
-import StatusBar from "@screens/SpotScreen/StatusBar";
+import StatusBar from "@components/StatusBar";
 
 import { DashboardFilter } from "./DashboardFilter";
 import { MarketDataSection } from "./MarketDataSection";

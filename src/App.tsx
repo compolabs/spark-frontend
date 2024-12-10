@@ -16,6 +16,7 @@ import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets"
 import ConnectWalletDialog from "@screens/ConnectWallet";
 import Dashboard from "@screens/Dashboard";
 import Faucet from "@screens/Faucet";
+import PerpScreen from "@screens/PerpScreen/PerpScreen";
 import SpotScreen from "@screens/SpotScreen";
 import { SwapScreen } from "@screens/SwapScreen";
 
@@ -41,6 +42,7 @@ const App: React.FC = observer(() => {
               <Header />
               <Routes>
                 <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
+                <Route element={<PerpScreen />} path={`${ROUTES.PERP}/:marketId`} />
                 <Route element={<SwapScreen />} path={ROUTES.SWAP} />
                 <Route element={<Faucet />} path={ROUTES.FAUCET} />
                 <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />

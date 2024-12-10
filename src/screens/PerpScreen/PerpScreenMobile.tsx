@@ -3,6 +3,8 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import MarketStatisticsBar from "@components/MarketHeader";
+import MarketSelection from "@components/MarketSelection";
+import MarketStatistics from "@components/MarketStatistics";
 import MenuOverlay from "@components/MenuOverlay";
 import { SmartFlex } from "@components/SmartFlex";
 import StatusBar from "@components/StatusBar/StatusBar";
@@ -10,16 +12,7 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import BottomTables from "@screens/SpotScreen/BottomTables";
-import Chart from "@screens/SpotScreen/Chart";
-
-import MarketSelection from "../../components/MarketSelection";
-import MarketStatistics from "../../components/MarketStatistics";
-
-import { SpotOrderBook } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
-import CreateOrder from "./RightBlock/CreateOrder";
-
-const SpotScreenMobile: React.FC = observer(() => {
+const PerpScreenMobile: React.FC = observer(() => {
   const { marketStore } = useStores();
   const [isChartOpen, setIsChartOpen] = useState(false);
 
@@ -31,7 +24,7 @@ const SpotScreenMobile: React.FC = observer(() => {
     return (
       <>
         <MarketStatistics />
-        <Chart />
+        {/* <Chart /> */}
       </>
     );
   };
@@ -39,12 +32,8 @@ const SpotScreenMobile: React.FC = observer(() => {
   const renderOrderBook = () => {
     return (
       <MobileContent>
-        <ContentWrapper>
-          <SpotOrderBook />
-        </ContentWrapper>
-        <ContentWrapper>
-          <CreateOrder />
-        </ContentWrapper>
+        <ContentWrapper>{/* <SpotOrderBook /> */}</ContentWrapper>
+        <ContentWrapper>{/* <CreateOrder /> */}</ContentWrapper>
       </MobileContent>
     );
   };
@@ -59,7 +48,7 @@ const SpotScreenMobile: React.FC = observer(() => {
     <Root>
       <MarketStatisticsBar isChartOpen={isChartOpen} onSwitchClick={handleToggleChart} />
       {renderContent()}
-      <BottomTables />
+      {/* <BottomTables /> */}
       <MenuOverlay isOpen={marketStore.marketSelectionOpened} offsetTop={50} top={40}>
         <MarketSelection />
       </MenuOverlay>
@@ -68,7 +57,7 @@ const SpotScreenMobile: React.FC = observer(() => {
   );
 });
 
-export default SpotScreenMobile;
+export default PerpScreenMobile;
 
 const Root = styled.div`
   display: flex;

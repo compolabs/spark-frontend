@@ -17,9 +17,9 @@ import TableSizeSelectorIcon from "@assets/icons/tablesSizeSelector.svg?react";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
-import { Checkbox } from "@src/components/Checkbox";
+import { RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "@constants";
 
-import { RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "./constants";
+import { Checkbox } from "@src/components/Checkbox";
 
 const useTooltipConfig = (isVisible: boolean, setIsVisible: React.Dispatch<React.SetStateAction<boolean>>): Config => ({
   ...RESIZE_TOOLTIP_CONFIG,
