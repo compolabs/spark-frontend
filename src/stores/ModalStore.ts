@@ -4,7 +4,7 @@ import { Nullable } from "tsdef";
 import RootStore from "./RootStore";
 
 export enum MODAL_TYPE {
-  DEPOSIT_WITHDRAW_MODAL,
+  PERP_DEPOSIT_WITHDRAW_MODAL,
   CONNECT_MODAL,
 }
 
