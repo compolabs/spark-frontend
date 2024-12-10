@@ -92,7 +92,7 @@ class CreateOrderVM {
 
     // TODO: Fix the bug where the price doesn’t change when switching markets
     reaction(
-      () => [spotOrderBookStore.buyOrders, spotOrderBookStore.sellOrders],
+      () => [spotOrderBookStore.allBuyOrders, spotOrderBookStore.allSellOrders],
       ([buyOrders, sellOrders]) => {
         const orders = this.isSell ? buyOrders : sellOrders;
         const order = orders[orders.length - 1];
@@ -114,7 +114,7 @@ class CreateOrderVM {
     reaction(
       () => [this.isSell, settingsStore.orderType],
       ([isSell]) => {
-        const orders = isSell ? spotOrderBookStore.buyOrders : spotOrderBookStore.sellOrders;
+        const orders = isSell ? spotOrderBookStore.allBuyOrders : spotOrderBookStore.allSellOrders;
         const order = orders[orders.length - 1];
 
         if (!order) return;

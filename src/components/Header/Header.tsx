@@ -14,6 +14,8 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { MODAL_TYPE } from "@stores/ModalStore";
 
+import { CONFIG } from "@utils/getConfig";
+
 import { ConnectWalletButton } from "../ConnectWalletButton";
 import { AccountInfoSheet } from "../Modal";
 import { SmartFlex } from "../SmartFlex";
@@ -29,6 +31,8 @@ const Header: React.FC = observer(() => {
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
   const [isAccountInfoSheetOpen, openAccountInfo, closeAccountInfo] = useFlag();
+
+  const SparkLogo = CONFIG.APP.isMainnet ? Logo : LogoStyled;
 
   useEffect(() => {
     if (media.desktop) {
@@ -67,7 +71,7 @@ const Header: React.FC = observer(() => {
       <>
         <SmartFlex center="y">
           <a href="/" rel="noreferrer noopener">
-            <Logo />
+            <SparkLogo />
           </a>
         </SmartFlex>
         <SmartFlex center="y" gap="8px">
@@ -94,7 +98,7 @@ const Header: React.FC = observer(() => {
       <>
         <SmartFlex center="y">
           <a href="/" rel="noreferrer noopener">
-            <Logo />
+            <SparkLogo />
           </a>
           <Divider />
           <SmartFlex gap="28px">
@@ -174,5 +178,11 @@ const WalletContainer = styled(SmartFlex)<{ isVisible?: boolean }>`
     ${Button} {
       height: 32px;
     }
+  }
+`;
+
+const LogoStyled = styled(Logo)`
+  path {
+    fill: ${({ theme }) => theme.colors.greenLight};
   }
 `;
