@@ -24,7 +24,7 @@ export interface DataPoint {
   value: number;
 }
 
-class DashboardStore {
+export class DashboardStore {
   initialized = false;
   rowSnapshots: RowSnapshot[] = [];
   tradeEvents: RowTradeEvent[] = [];
@@ -134,10 +134,10 @@ class DashboardStore {
       blockDate: this.activeTime,
     };
     const config = {
-      url: CONFIG.APP.sentioUrl,
+      url: CONFIG.APP.links.sentioUrl,
       apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
     };
-    bcNetwork.setSentioConfig(config);
+    bcNetwork.setSpotSentioConfig(config);
     const data = await bcNetwork.getUserScoreSnapshot(params);
     this.rowSnapshots = data?.result?.rows ?? [];
   };
@@ -152,13 +152,11 @@ class DashboardStore {
       toTimestamp: this.calculateTime(new Date(), 0),
     };
     const config = {
-      url: CONFIG.APP.sentioUrl,
+      url: CONFIG.APP.links.sentioUrl,
       apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
     };
-    bcNetwork.setSentioConfig(config);
+    bcNetwork.setSpotSentioConfig(config);
     const data = await bcNetwork.getTradeEvent(params);
     this.tradeEvents = data?.result?.rows ?? [];
   };
 }
-
-export default DashboardStore;

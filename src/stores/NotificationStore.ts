@@ -3,15 +3,15 @@ import { makeAutoObservable } from "mobx";
 
 import { createToast, NotificationProps } from "@components/Toast";
 
-import RootStore from "@stores/RootStore";
-
 import { getDeviceInfo } from "@utils/getDeviceInfo";
+
+import RootStore from "./RootStore";
 
 type NotificationParams = Omit<NotificationProps, "type"> & {
   options?: ToastOptions;
 };
 
-class NotificationStore {
+export class NotificationStore {
   private readonly rootStore: RootStore;
 
   constructor(rootStore: RootStore) {

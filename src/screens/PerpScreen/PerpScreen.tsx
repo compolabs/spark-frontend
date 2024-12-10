@@ -8,10 +8,10 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { ROUTES } from "@constants";
 
-import SpotScreenDesktop from "./SpotScreenDesktop";
-import SpotScreenMobile from "./SpotScreenMobile";
+import PerpScreenDesktop from "./PerpScreenDesktop";
+import PerpScreenMobile from "./PerpScreenMobile";
 
-const SpotScreen: React.FC = observer(() => {
+const PerpScreen: React.FC = observer(() => {
   const { marketStore, mixPanelStore, accountStore } = useStores();
   const { marketId } = useParams<{ marketId: string }>();
   const media = useMedia();
@@ -22,7 +22,7 @@ const SpotScreen: React.FC = observer(() => {
 
   useEffect(() => {
     mixPanelStore.trackEvent(MIXPANEL_EVENTS.PAGE_VIEW, {
-      page_name: ROUTES.SPOT,
+      page_name: ROUTES.PERP,
       user_address: accountStore.address,
     });
   }, []);
@@ -31,7 +31,7 @@ const SpotScreen: React.FC = observer(() => {
     document.title = `Spark | ${marketStore.marketSymbol}`;
   }, [marketStore.marketSymbol]);
 
-  return media.mobile ? <SpotScreenMobile /> : <SpotScreenDesktop />;
+  return media.mobile ? <PerpScreenMobile /> : <PerpScreenDesktop />;
 });
 
-export default SpotScreen;
+export default PerpScreen;

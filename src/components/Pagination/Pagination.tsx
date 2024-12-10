@@ -12,7 +12,7 @@ interface PaginationProps {
   totalPages?: number;
   showDots?: boolean;
   sibling?: number;
-  onChange?: (page: PaginationProps["currentPage"]) => void;
+  onChange?: (page: number) => void;
   lengthData: number;
 }
 

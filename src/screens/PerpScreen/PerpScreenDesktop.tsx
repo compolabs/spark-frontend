@@ -3,21 +3,14 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import MarketStatisticsBar from "@components/MarketHeader";
+import MarketSelection from "@components/MarketSelection";
 import { SmartFlex } from "@components/SmartFlex";
-import StatusBar from "@components/StatusBar/StatusBar";
+import StatusBar from "@components/StatusBar";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import BottomTables from "@screens/SpotScreen/BottomTables";
-import Chart from "@screens/SpotScreen/Chart";
-
-import MarketSelection from "../../components/MarketSelection";
-
-import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
-import RightBlock from "./RightBlock/RightBlock";
-
-const SpotScreenDesktop: React.FC = observer(() => {
+const PerpScreenDesktop: React.FC = observer(() => {
   const { marketStore } = useStores();
 
   return (
@@ -26,18 +19,20 @@ const SpotScreenDesktop: React.FC = observer(() => {
       {marketStore.marketSelectionOpened && <MarketSelection />}
       <ContentContainer>
         <SmartFlex gap="4px" column>
-          <Chart />
-          <BottomTables />
+          {/* <Chart /> */}
+          CHART
+          {/* <BottomTables /> */}
         </SmartFlex>
-        <OrderbookAndTradesInterface />
-        <RightBlock />
+        ORDERBOOK
+        {/* <OrderbookAndTradesInterface /> */}
+        {/* <RightBlock /> */}
       </ContentContainer>
       <StatusBar />
     </Root>
   );
 });
 
-export default SpotScreenDesktop;
+export default PerpScreenDesktop;
 
 const Root = styled.div`
   display: flex;
