@@ -1,44 +1,32 @@
-import { makeAutoObservable } from "mobx";
+import BN from "@utils/BN";
 
-import { FuelNetwork } from "@blockchain";
+import { BaseMarket, BaseMarketParams } from "./BaseMarket";
 
-import { DEFAULT_DECIMALS } from "../constants";
-import BN from "../utils/BN";
-
-import { Token } from "./Token";
-
-interface PerpMarketParams {
-  baseTokenAddress: string;
-  quoteTokenAddress: string;
+type PerpMarketParams = {
   imRatio: BN;
   mmRatio: BN;
   status: "Opened" | "Paused" | "Closed";
   pausedIndexPrice?: BN;
   pausedTimestamp?: number;
   closedPrice?: BN;
-  contractAddress: string;
-}
+} & BaseMarketParams;
 
-export class PerpMarket {
-  readonly baseToken: Token;
-  readonly quoteToken: Token;
-  readonly contractAddress: string;
+export class PerpMarket extends BaseMarket {
+  readonly type = "perp" as const;
 
-  readonly imRatio: BN;
-  readonly mmRatio: BN;
-  readonly status: "Opened" | "Paused" | "Closed";
-  readonly pausedIndexPrice?: BN;
-  readonly pausedTimestamp?: number;
-  readonly closedPrice?: BN;
-
-  price: BN = BN.ZERO;
-  setPrice = (price: BN) => (this.price = price);
+  readonly imRatio: PerpMarketParams["imRatio"];
+  readonly mmRatio: PerpMarketParams["mmRatio"];
+  readonly status: PerpMarketParams["status"];
+  readonly pausedIndexPrice: PerpMarketParams["pausedIndexPrice"];
+  readonly pausedTimestamp: PerpMarketParams["pausedTimestamp"];
+  readonly closedPrice: PerpMarketParams["closedPrice"];
 
   constructor(params: PerpMarketParams) {
-    const bcNetwork = FuelNetwork.getInstance();
-
-    this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
-    this.quoteToken = bcNetwork.getTokenByAssetId(params.quoteTokenAddress);
+    super({
+      baseTokenAddress: params.baseTokenAddress,
+      quoteTokenAddress: params.quoteTokenAddress,
+      contractAddress: params.contractAddress,
+    });
 
     this.imRatio = params.imRatio;
     this.mmRatio = params.mmRatio;
@@ -46,16 +34,13 @@ export class PerpMarket {
     this.pausedIndexPrice = params.pausedIndexPrice;
     this.pausedTimestamp = params.pausedTimestamp;
     this.closedPrice = params.closedPrice;
-    this.contractAddress = params.contractAddress;
-
-    makeAutoObservable(this);
   }
 
   get symbol(): string {
     return `${this.baseToken.symbol}-PERP`;
   }
 
-  get priceUnits(): BN {
-    return BN.formatUnits(this.price, DEFAULT_DECIMALS);
+  static isInstance(market: BaseMarket): market is PerpMarket {
+    return market.type === "perp";
   }
 }

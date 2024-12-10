@@ -34,10 +34,11 @@ const getLanguageFromURL = (): LanguageCode | null => {
 };
 
 const TradingViewChartAdvance = observer(() => {
+  const { marketStore } = useStores();
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
-  const { tradeStore } = useStores();
+
   const defaultProps: Omit<ChartContainerProps, "container"> = {
-    symbol: tradeStore.market?.symbol.replace("-", ""),
+    symbol: marketStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
     datafeedUrl: "https://spark-candles.staging.sprk.fi",
     libraryPath: "/charting_library/",
@@ -86,7 +87,7 @@ const TradingViewChartAdvance = observer(() => {
     return () => {
       tvWidget.remove();
     };
-  }, [tradeStore?.market]);
+  }, [marketStore?.market]);
   return <div ref={chartContainerRef} className="TVChartContainer" />;
 });
 

@@ -7,6 +7,7 @@ import numeral from "numeral";
 import { Column, Row } from "@components/Flex";
 import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
+import OrderbookAndTradesSkeletonWrapper from "@components/Skeletons/OrderbookAndTradesSkeletonWrapper";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
@@ -18,14 +19,12 @@ import sellIcon from "@assets/icons/sellOrderBookIcon.svg";
 import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
+import { ORDER_MODE } from "@stores/SpotCreateOrderStore";
 
 import BN from "@utils/BN";
 import { hexToRgba } from "@utils/hexToRgb";
 
 import { SpotMarketOrder } from "@entity";
-
-import OrderbookAndTradesSkeletonWrapper from "../../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";
-import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -45,11 +44,10 @@ const SPOT_SETTINGS_ICONS = {
 
 export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const { spotOrderBookStore } = useStores();
-  const orderSpotVm = useCreateOrderVM();
   const media = useMedia();
   const theme = useTheme();
-  const { tradeStore } = useStores();
-  const market = tradeStore.market;
+  const { marketStore, spotCreateOrderStore } = useStores();
+  const market = marketStore.market;
 
   const [isSettingsOpen, openSettings, closeSettings] = useFlag();
 
@@ -110,12 +108,15 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         ? ord.initialAmount.div(spotOrderBookStore.totalSell)
         : ord.initialQuoteAmount.div(spotOrderBookStore.totalBuy);
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
-    const newOrder = [...orders];
-    newOrder.reverse();
+    const sortedOrders = [...orders].reverse();
     return (
       <>
-        {newOrder.map((o, index) => (
-          <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
+        {sortedOrders.map((o, index) => (
+          <OrderRow
+            key={index + "order"}
+            type={type}
+            onClick={() => spotCreateOrderStore.selectOrderbookOrder(o, orderMode)}
+          >
             <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
             <TextOverflow color={color}>{o.priceUnits.toFormat(spotOrderBookStore.decimalGroup)}</TextOverflow>
             <TextRightAlign primary>{numeral(o.currentAmountUnits).format(`0.${"0".repeat(4)}a`)}</TextRightAlign>

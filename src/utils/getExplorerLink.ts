@@ -1,9 +1,9 @@
 import { CONFIG } from "./getConfig";
 
 export const getExplorerLinkByHash = (hash: string) => {
-  return `${CONFIG.APP.explorerUrl}/tx/${hash}`;
+  return `${CONFIG.APP.links.explorerUrl}/tx/${hash}`;
 };
 
 export const getExplorerLinkByAddress = (address: string) => {
-  return `${CONFIG.APP.explorerUrl}/account/${address}`;
+  return `${CONFIG.APP.links.explorerUrl}/account/${address}`;
 };

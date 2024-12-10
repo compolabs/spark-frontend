@@ -11,7 +11,8 @@ import { media } from "@themes/breakpoints";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
-import { MAX_TABLE_HEIGHT } from "./constants";
+import { MAX_TABLE_HEIGHT } from "@constants";
+
 import { TableActionButtons } from "./TableActionButtons";
 
 interface Props {
