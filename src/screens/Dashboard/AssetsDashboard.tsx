@@ -5,36 +5,41 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
-import Button from "@components/Button.tsx";
-import Chip from "@components/Chip.tsx";
-import { Column } from "@components/Flex.tsx";
-import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Table from "@components/Table.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import Button from "@components/Button";
+import Chip from "@components/Chip";
+import { Column } from "@components/Flex";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
+import { SmartFlex } from "@components/SmartFlex";
+import Table from "@components/Table";
+import Text, { TEXT_TYPES } from "@components/Text";
 
 import { useMedia } from "@hooks/useMedia.ts";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
 
-import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable.tsx";
+import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable";
 
 const orderColumnHelper = createColumnHelper<any>();
 
 const AssetsDashboard = observer(() => {
-  const [isLoading, setLoading] = useState(false);
-  const media = useMedia();
   const { balanceStore } = useStores();
+  const media = useMedia();
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
+
   const data = balancesInfoList.map((el) => ({
     asset: el.asset,
     amount: el,
     value: new BN(el.balance).multipliedBy(el.price).toSignificant(el.asset.decimals),
     currentPrice: new BN(el.price).toSignificant(2),
   }));
+
   const allContractBalance = balancesInfoList.reduce((acc, el) => {
     return acc.plus(el.contractBalance);
   }, BN.ZERO);
+
   const columns = [
     orderColumnHelper.accessor("asset", {
       header: "Name",
@@ -158,18 +163,18 @@ const AssetsDashboard = observer(() => {
   };
 
   const withdrawalBalance = async (selectAsset: AssetBlockData) => {
-    setLoading(true);
+    setIsLoading(true);
     await balanceStore.withdrawBalance(
       selectAsset.asset.assetId,
       BN.parseUnits(selectAsset.contractBalance, selectAsset.asset.decimals).toString(),
     );
-    setLoading(false);
+    setIsLoading(false);
   };
 
   const handleWithdrawAll = async () => {
-    setLoading(true);
+    setIsLoading(true);
     await balanceStore.withdrawBalanceAll();
-    setLoading(false);
+    setIsLoading(false);
   };
 
   return (
