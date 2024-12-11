@@ -12,6 +12,8 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
+import { PerpOrderBook } from "@screens/PerpScreen/OrderbookAndTradesInterface/PerpOrderBook/PerpOrderBook.tsx";
+
 const PerpScreenMobile: React.FC = observer(() => {
   const { marketStore } = useStores();
   const [isChartOpen, setIsChartOpen] = useState(false);
@@ -32,7 +34,9 @@ const PerpScreenMobile: React.FC = observer(() => {
   const renderOrderBook = () => {
     return (
       <MobileContent>
-        <ContentWrapper>{/* <SpotOrderBook /> */}</ContentWrapper>
+        <ContentWrapper>
+          <PerpOrderBook />
+        </ContentWrapper>
         <ContentWrapper>{/* <CreateOrder /> */}</ContentWrapper>
       </MobileContent>
     );
