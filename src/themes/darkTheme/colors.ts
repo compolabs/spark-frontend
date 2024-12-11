@@ -28,6 +28,9 @@ const colors = {
   favorite: "#FFEC06",
 
   overlayBackground: "#93939338",
+
+  accentPrimary: "#292929",
+  strokeSecondary: "#2e2e2e",
 };
 
 export default colors;

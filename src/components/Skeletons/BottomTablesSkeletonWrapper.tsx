@@ -4,9 +4,8 @@ import styled from "@emotion/styled";
 import SkeletonWrapper, { Dimensions } from "@components/SkeletonWrapper";
 import { media } from "@themes/breakpoints";
 
+import { MAX_TABLE_HEIGHT } from "@constants";
 import { clone } from "@utils/clone";
-
-import { MAX_TABLE_HEIGHT } from "../../screens/SpotScreen/BottomTables/constants";
 
 const createSkeletonLayout = (padding: number, widthFactor: number, data: Dimensions) => {
   const maxInnerWidth = Math.max(data.width - 2 * padding, 0);

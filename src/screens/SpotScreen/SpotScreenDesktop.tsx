@@ -2,27 +2,28 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import MarketStatisticsBar from "@components/MarketHeader";
 import { SmartFlex } from "@components/SmartFlex";
+import StatusBar from "@components/StatusBar/StatusBar";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
 import BottomTables from "@screens/SpotScreen/BottomTables";
 import Chart from "@screens/SpotScreen/Chart";
-import MarketStatisticsBar from "@screens/SpotScreen/MarketStatisticsBar";
-import StatusBar from "@screens/SpotScreen/StatusBar/StatusBar";
+
+import MarketSelection from "../../components/MarketSelection";
 
 import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
-import MarketSelection from "./RightBlock/MarketSelection";
 import RightBlock from "./RightBlock/RightBlock";
 
 const SpotScreenDesktop: React.FC = observer(() => {
-  const { tradeStore } = useStores();
+  const { marketStore } = useStores();
 
   return (
     <Root>
       <MarketStatisticsBar />
-      {tradeStore.marketSelectionOpened && <MarketSelection />}
+      {marketStore.marketSelectionOpened && <MarketSelection />}
       <ContentContainer>
         <SmartFlex gap="4px" column>
           <Chart />

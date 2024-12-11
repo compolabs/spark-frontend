@@ -1,15 +1,10 @@
 import assert from "assert";
 
-import { Undefinable } from "tsdef";
-
 import TOKEN_LOGOS from "@constants/tokenLogos";
 
 import { Token } from "@entity";
 
-import configProdJSON from "@src/config.json";
 import configDevJSON from "@src/config-dev.json";
-
-const CURRENT_CONFIG_VER = "1.7.0";
 
 export interface Market {
   marketName: string;
@@ -23,25 +18,28 @@ export interface Market {
   contractId: string;
 }
 
-function getConfigByBranch(branchName: Undefinable<string>) {
-  if (branchName === "main") {
-    return configProdJSON;
-  }
+// function getConfigByBranch(branchName: Undefinable<string>) {
+//   if (branchName === "main") {
+//     return configProdJSON;
+//   }
 
-  if (branchName?.includes("stage/")) {
-    return configDevJSON;
-  }
+//   if (branchName?.includes("stage/")) {
+//     return configDevJSON;
+//   }
 
-  return configDevJSON;
-}
+//   return configDevJSON;
+// }
 
 function createConfig() {
-  const configJSON = getConfigByBranch(import.meta.env.VITE_BRANCH_NAME);
+  const CURRENT_CONFIG_VER = import.meta.env.DEV ? "2.0.0" : "1.7.1";
+  // const configJSON = getConfigByBranch(import.meta.env.VITE_BRANCH_NAME);
+  const configJSON = configDevJSON;
 
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
   console.warn("SPARK CONFIG", configJSON);
-  console.log("Contract Ver.", configJSON.contractVer);
+  console.log("Contract Spot Ver.", configJSON.spot.contractVer);
+  console.log("Contract Perp Ver.", configJSON.perp.contractVer);
 
   const tokens = configJSON.tokens.map(({ name, symbol, decimals, assetId, priceFeed, precision }) => {
     return new Token({
@@ -55,9 +53,6 @@ function createConfig() {
     });
   });
 
-  const markets = configJSON.markets as Market[];
-
-  // TODO: Refactor this workaround that adds duplicate tokens without the 't' prefix.
   const tokensBySymbol = tokens.reduce(
     (acc, t) => {
       acc[t.symbol] = t;
@@ -73,7 +68,16 @@ function createConfig() {
 
   return {
     APP: configJSON,
-    MARKETS: markets,
+    SPOT: {
+      MARKETS: configJSON.spot.markets as Market[],
+      CONTRACTS: configDevJSON.spot.contracts,
+      INDEXERS: configDevJSON.spot.indexers,
+    },
+    PERP: {
+      MARKETS: configJSON.perp.markets as Market[],
+      CONTRACTS: configDevJSON.perp.contracts,
+      INDEXERS: configDevJSON.perp.indexers,
+    },
     TOKENS: tokens,
     TOKENS_BY_SYMBOL: tokensBySymbol,
     TOKENS_BY_ASSET_ID: tokensByAssetId,

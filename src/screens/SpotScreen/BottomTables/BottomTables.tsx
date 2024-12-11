@@ -18,6 +18,8 @@ export default BottomTables;
 
 const StyledBottomTables = styled.div`
   width: 100%;
+  border: 1px solid rgba(46, 46, 46, 1);
+  border-radius: 8px;
 
   ${media.mobile} {
     flex-grow: 1;

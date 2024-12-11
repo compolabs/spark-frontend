@@ -2,14 +2,14 @@ import mixpanel, { Mixpanel } from "mixpanel-browser";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import RootStore from "@stores/RootStore";
-
 import { CONFIG } from "@utils/getConfig";
+
+import RootStore from "./RootStore";
 
 const MAINNET_KEY = "1753ab2fe514a08e22df236ff4095905";
 const TESTNET_KEY = "126ffbcd33aa8abbf4f91bea25e70cc4";
 
-class MixPanelStore {
+export class MixPanelStore {
   private readonly rootStore: RootStore;
 
   mixpanel: Nullable<Mixpanel> = null;

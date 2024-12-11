@@ -10,7 +10,7 @@ import ThemeWrapper from "@themes/ThemeProvider";
 
 import { RootStore, storesContext } from "@stores";
 
-import { CONFIG } from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig";
 import { loadState } from "@utils/localStorage";
 
 import GlobalStyles from "./themes/GlobalStyles";
@@ -33,7 +33,7 @@ const queryClient = new QueryClient();
 const networks: Array<Network> = [
   {
     chainId: CONFIG.APP.isMainnet ? CHAIN_IDS.fuel.mainnet : CHAIN_IDS.fuel.testnet,
-    url: CONFIG.APP.networkUrl,
+    url: CONFIG.APP.links.networkUrl,
   },
 ];
 

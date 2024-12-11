@@ -2,7 +2,7 @@ import React from "react";
 import { ButtonHTMLAttributes } from "react";
 import styled from "@emotion/styled";
 
-import Button from "@components/Button.tsx";
+import Button from "@components/Button";
 
 export interface PaginationButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean;

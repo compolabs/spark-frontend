@@ -6,6 +6,7 @@ import numeral from "numeral";
 import { Row } from "@components/Flex";
 import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
+import OrderbookAndTradesSkeletonWrapper from "@components/Skeletons/OrderbookAndTradesSkeletonWrapper";
 import { SmartFlex } from "@components/SmartFlex";
 import TableOrderBook, { ColumnProps, DataArray, SPOT_ORDER_FILTER } from "@components/TableOrderBook/TableOrderBook";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -22,8 +23,6 @@ import { useStores } from "@stores";
 import BN from "@utils/BN";
 
 import { SpotMarketOrder } from "@entity";
-
-import OrderbookAndTradesSkeletonWrapper from "../../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -43,8 +42,8 @@ const SPOT_SETTINGS_ICONS = {
 export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const { spotOrderBookStore } = useStores();
   const media = useMedia();
-  const { tradeStore } = useStores();
-  const market = tradeStore.market;
+  const { marketStore } = useStores();
+  const market = marketStore.market;
 
   const column: ColumnProps[] = [
     {

@@ -1,0 +1,14 @@
+ingress:
+  enabled: true
+  hosts:
+    - host: app.production.sprk.fi
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: spark-frontend-tls
+      hosts:
+        - app.production.sprk.fi
+
+vault:
+  mount: production

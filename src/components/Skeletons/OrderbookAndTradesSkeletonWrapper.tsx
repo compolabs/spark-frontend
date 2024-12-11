@@ -21,11 +21,11 @@ const SKELETON_LAYOUTS = {
   desktop: (data: Dimensions) => createSkeletonLayout(12, data),
 };
 
-const ChartSkeletonWrapper = styled(clone(SkeletonWrapper, { skeletonLayouts: SKELETON_LAYOUTS }))`
+const OrderbookAndTradesSkeletonWrapper = styled(clone(SkeletonWrapper, { skeletonLayouts: SKELETON_LAYOUTS }))`
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 10px;
   height: 100%;
   min-height: 416px;
 `;
 
-export default ChartSkeletonWrapper;
+export default OrderbookAndTradesSkeletonWrapper;

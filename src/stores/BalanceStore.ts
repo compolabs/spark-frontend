@@ -62,9 +62,9 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
     const tokens = bcNetwork.getTokenList();
 
-    const formattedBalance = tokens.map((token) => {
-      const balance = this.balances.get(token.assetId) ?? BN.ZERO;
-      const contractBalance = this.contractBalances.get(token.assetId) ?? BN.ZERO;
+    return tokens.map((token) => {
+      const balance = this.getWalletBalance(token.assetId);
+      const contractBalance = this.getContractBalance(token.assetId);
       const totalBalance = balance.plus(contractBalance);
 
       return {
@@ -76,8 +76,6 @@ export class BalanceStore {
         price: BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed), DEFAULT_DECIMALS).toString(),
       };
     });
-
-    return formattedBalance;
   }
 
   clearBalance = () => {
@@ -110,16 +108,30 @@ export class BalanceStore {
         });
       }
 
-      CONFIG.MARKETS.forEach((market, index) => {
-        const marketBalance = contractBalances[index];
+      const aggregatedBalances = CONFIG.SPOT.MARKETS.reduce(
+        (acc, market, index) => {
+          const marketBalance = contractBalances[index];
 
-        const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
-        const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
+          const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
+          const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
 
-        runInAction(() => {
-          this.contractBalances.set(market.baseAssetId, baseAmount);
-          this.contractBalances.set(market.quoteAssetId, quoteAmount);
-        });
+          if (!acc[market.baseAssetId]) {
+            acc[market.baseAssetId] = BN.ZERO;
+          }
+          acc[market.baseAssetId] = acc[market.baseAssetId].plus(baseAmount);
+
+          if (!acc[market.quoteAssetId]) {
+            acc[market.quoteAssetId] = BN.ZERO;
+          }
+          acc[market.quoteAssetId] = acc[market.quoteAssetId].plus(quoteAmount);
+
+          return acc;
+        },
+        {} as Record<string, BN>,
+      );
+
+      Object.entries(aggregatedBalances).forEach(([assetId, balance]) => {
+        this.contractBalances.set(assetId, balance);
       });
     } catch (error) {
       console.error("Error updating user balances:", error);
@@ -170,7 +182,7 @@ export class BalanceStore {
     const token = bcNetwork.getTokenByAssetId(assetId);
     const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
     try {
-      const tx = await bcNetwork?.depositSpotBalance(token, amount);
+      const tx = await bcNetwork?.spotDepositBalance(token, amount);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
@@ -188,7 +200,7 @@ export class BalanceStore {
 
   withdrawBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
-    const markets = CONFIG.MARKETS.filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId);
+    const markets = CONFIG.SPOT.MARKETS.filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId);
 
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -211,7 +223,7 @@ export class BalanceStore {
     }
 
     try {
-      const tx = await bcNetwork?.withdrawSpotBalance(
+      const tx = await bcNetwork?.spotWithdrawBalance(
         type,
         markets.map((m) => m.contractId),
         amount,
@@ -239,10 +251,10 @@ export class BalanceStore {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
-    const markets = CONFIG.MARKETS.map((el) => el.contractId);
+    const markets = CONFIG.SPOT.MARKETS.map((el) => el.contractId);
 
     try {
-      await bcNetwork?.withdrawSpotBalanceAll(markets);
+      await bcNetwork?.spotWithdrawBalanceAll(markets);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS)(),
         hash: "",
@@ -267,9 +279,9 @@ export class BalanceStore {
   private fetchUserContractBalances = async (address: Address): Promise<UserMarketBalance[]> => {
     const bcNetwork = FuelNetwork.getInstance();
 
-    return bcNetwork.fetchUserMarketBalanceByContracts(
+    return bcNetwork.spotFetchUserMarketBalanceByContracts(
       address.bech32Address,
-      CONFIG.MARKETS.map((m) => m.contractId),
+      CONFIG.SPOT.MARKETS.map((m) => m.contractId),
     );
   };
 }

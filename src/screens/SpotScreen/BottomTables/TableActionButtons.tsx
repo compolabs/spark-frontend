@@ -17,10 +17,9 @@ import TableSizeSelectorIcon from "@assets/icons/tablesSizeSelector.svg?react";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
-import { Checkbox } from "@src/components/Checkbox";
+import { RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "@constants";
 
-import { useSpotTableVMProvider } from "./SpotTable/SpotTableVM";
-import { RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "./constants";
+import { Checkbox } from "@src/components/Checkbox";
 
 const useTooltipConfig = (isVisible: boolean, setIsVisible: React.Dispatch<React.SetStateAction<boolean>>): Config => ({
   ...RESIZE_TOOLTIP_CONFIG,
@@ -29,8 +28,7 @@ const useTooltipConfig = (isVisible: boolean, setIsVisible: React.Dispatch<React
 });
 
 export const TableActionButtons: React.FC = observer(() => {
-  const vm = useSpotTableVMProvider();
-  const { settingsStore } = useStores();
+  const { settingsStore, spotTableStore } = useStores();
 
   const [isResizeTooltipVisible, setIsResizeTooltipVisible] = useState(false);
   const [isSettingsTooltipVisible, setIsSettingsTooltipVisible] = useState(false);
@@ -62,6 +60,19 @@ export const TableActionButtons: React.FC = observer(() => {
   };
 
   const renderSettingsTooltipContent = () => {
+    const filters = [
+      {
+        label: "BUY",
+        checked: spotTableStore.filterIsBuyOrderTypeEnabled,
+        onChange: () => spotTableStore.toggleFilterOrderType(OrderType.Buy),
+      },
+      {
+        label: "SELL",
+        checked: spotTableStore.filterIsSellOrderTypeEnabled,
+        onChange: () => spotTableStore.toggleFilterOrderType(OrderType.Sell),
+      },
+    ];
+
     return (
       <SettingsTooltipContainer>
         {/* <SmartFlex alignItems="flex-start" gap="12px" column>
@@ -83,16 +94,13 @@ export const TableActionButtons: React.FC = observer(() => {
           <Text type={TEXT_TYPES.BODY} secondary>
             Side
           </Text>
-          <Checkbox checked={vm.filterIsBuyOrderTypeEnabled} onChange={() => vm.toggleFilterOrderType(OrderType.Buy)}>
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-              BUY
-            </Text>
-          </Checkbox>
-          <Checkbox checked={vm.filterIsSellOrderTypeEnabled} onChange={() => vm.toggleFilterOrderType(OrderType.Sell)}>
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-              SELL
-            </Text>
-          </Checkbox>
+          {filters.map((filter) => (
+            <Checkbox key={filter.label} checked={filter.checked} onChange={filter.onChange}>
+              <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+                {filter.label}
+              </Text>
+            </Checkbox>
+          ))}
         </SmartFlex>
       </SettingsTooltipContainer>
     );

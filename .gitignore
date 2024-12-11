@@ -24,8 +24,9 @@ yarn-error.log*
 .idea
 .env
 
-public/charting_library/
 public/datafeeds/
+public/charting_library/
 src/charting_library/
 
 package-lock.json
+.npmrc

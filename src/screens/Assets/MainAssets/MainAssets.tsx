@@ -37,21 +37,21 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
   const theme = useTheme();
 
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
-
   const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.balance).isZero());
+
   const accumulateBalance = balancesInfoList.reduce(
     (acc, account) => {
       const balanceValue = new BN(account.balance).multipliedBy(account.price);
       const contractBalanceValue = new BN(account.contractBalance).multipliedBy(account.price);
-
+      const walletBalance = new BN(account.walletBalance).multipliedBy(account.price);
       return {
         balance: acc.balance.plus(balanceValue),
         contractBalance: acc.contractBalance.plus(contractBalanceValue),
+        walletBalance: acc.walletBalance.plus(walletBalance),
       };
     },
-    { balance: BN.ZERO, contractBalance: BN.ZERO },
+    { balance: BN.ZERO, contractBalance: BN.ZERO, walletBalance: BN.ZERO },
   );
-
   const handleWithdraw = async () => {
     setIsLoading(true);
     await balanceStore.withdrawBalanceAll();
@@ -84,10 +84,13 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             primary
             onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
           >
-            Assets
+            Assets in my wallet: ${accumulateBalance?.walletBalance.toSignificant(2)}
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
+        <TextTitle type={TEXT_TYPES.BUTTON} primary>
+          *These are assets in your wallet, not in Spark
+        </TextTitle>
         <WalletBlock gap="8px" column>
           {isConnected ? (
             accumulateBalance.balance.isPositive() && (
@@ -171,6 +174,7 @@ const SizedBoxStyled = styled(SizedBox)`
 `;
 const HeaderBlock = styled(SmartFlex)`
   width: 100%;
+  margin-bottom: 10px;
 `;
 const OverallBlock = styled(SmartFlex)`
   margin: 16px 15px;
@@ -183,14 +187,14 @@ const AssetItem = styled(SmartFlex)`
 
 const WalletBlock = styled(SmartFlex)`
   width: 100%;
-  margin-top: 40px;
+  margin-top: 20px;
 `;
 const BottomColumn = styled(Column)`
   gap: 15px;
   width: 100%;
 `;
 const TextTitle = styled(Text)`
-  width: 182px;
+  width: 100%;
   text-align: left;
 `;
 
@@ -207,7 +211,7 @@ const BoxShadow = styled(SmartFlex)`
   width: calc(100% + 40px);
   position: absolute;
   left: -20px;
-  top: 30px;
+  top: 50px;
   background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
 `;
 
