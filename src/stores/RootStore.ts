@@ -16,6 +16,7 @@ import { ModalStore } from "./ModalStore";
 import OracleStore from "./OracleStore";
 import SpotOrderBookStore from "./SpotOrderBookStore";
 import SwapStore from "./SwapStore";
+import LeaderBoardStore from "@stores/LeaderBaordStore.ts";
 
 export interface ISerializedRootStore {
   accountStore?: ISerializedAccountStore;
@@ -38,6 +39,7 @@ export default class RootStore {
   quickAssetsStore: QuickAssetsStore;
   spotOrderBookStore: SpotOrderBookStore;
   dashboardStore: DashboardStore;
+  leaderBoardStore: LeaderBoardStore
 
   private constructor(initState?: ISerializedRootStore) {
     this.notificationStore = new NotificationStore(this);
@@ -53,6 +55,7 @@ export default class RootStore {
     this.quickAssetsStore = new QuickAssetsStore(this);
     this.spotOrderBookStore = new SpotOrderBookStore(this);
     this.dashboardStore = new DashboardStore(this);
+    this.leaderBoardStore = new LeaderBoardStore(this);
 
     makeAutoObservable(this);
 

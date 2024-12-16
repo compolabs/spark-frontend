@@ -24,6 +24,7 @@ import { ROUTES } from "@constants";
 
 import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
 import { DiscordProvider } from "@src/providers/DiscordProvider";
+import LeaderBoard from "@screens/LeaderBoard";
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore } = useStores();
 
@@ -47,6 +48,7 @@ const App: React.FC = observer(() => {
                 <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
                 <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
                 <Route element={<Dashboard />} path={ROUTES.DASHBOARD} />
+                <Route element={<LeaderBoard />} path={ROUTES.LEADERBOARD} />
               </Routes>
               <SideManageAssets />
               <PWAModal />

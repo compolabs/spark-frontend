@@ -116,7 +116,6 @@ const PaginationText = styled.span<{ current: boolean }>`
 `;
 
 const PaginationContainer = styled.div`
-  background: ${({ theme }) => theme.colors.bgSecondary};
   height: 48px;
   display: flex;
   align-items: center;

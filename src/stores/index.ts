@@ -12,6 +12,7 @@ import RootStore from "./RootStore";
 import SettingsStore from "./SettingsStore";
 import SpotOrderBookStore from "./SpotOrderBookStore";
 import TradeStore from "./TradeStore";
+import LeaderBoardStore from "./LeaderBaordStore";
 
 export {
   AccountStore,
@@ -24,6 +25,7 @@ export {
   RootStore,
   SettingsStore,
   SpotOrderBookStore,
+  LeaderBoardStore,
   storesContext,
   // SpotOrdersStore,
   TradeStore,
