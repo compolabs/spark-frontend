@@ -39,7 +39,7 @@ const TradingViewChartAdvance = observer(() => {
   const defaultProps: Omit<ChartContainerProps, "container"> = {
     symbol: tradeStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
-    datafeedUrl: "https://spark-candles.staging.sprk.fi",
+    datafeedUrl: "https://spark-candles.production.sprk.fi",
     libraryPath: "/charting_library/",
     chartsStorageUrl: "https://saveload.tradingview.com",
     chartsStorageApiVersion: "1.1",

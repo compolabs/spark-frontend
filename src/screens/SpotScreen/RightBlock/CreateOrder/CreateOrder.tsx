@@ -31,7 +31,7 @@ import CreateOrderSkeletonWrapper from "../../../../components/Skeletons/CreateO
 import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "./CreateOrderVM";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
-const ORDER_OPTIONS = [
+export const ORDER_OPTIONS = [
   // { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
   { title: "Limit", key: ORDER_TYPE.Limit, timeInForce: LimitType.GTC },
   // { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },

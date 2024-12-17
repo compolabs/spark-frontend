@@ -6,6 +6,7 @@ export const ROUTES = {
   FAUCET: "/faucet",
   SWAP: "/swap",
   DASHBOARD: "/dashboard",
+  LEADERBOARD: "/leaderboard",
 };
 
 export const BRIDGE_LINK = "https://app.fuel.network/bridge";
