@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 
 import { Pagination } from "@components/Pagination/Pagination";
 import { SmartFlex } from "@components/SmartFlex";
-import Text from "@components/Text";
+import Text, { TEXT_TYPES } from "@components/Text";
 
 import { useStores } from "@stores";
 
@@ -37,9 +37,11 @@ export const LeaderboardTable = observer(() => {
           </HeaderItem>
         ))}
       </HeaderTable>
-      {data.map((el, key) => (
-        <LeaderboardItem key={`${el.id}-${key}`} item={el} />
-      ))}
+      {data.length > 0 ? (
+        data.map((el, key) => <LeaderboardItem key={`${el.id}-${key}`} item={el} />)
+      ) : (
+        <NoData type={TEXT_TYPES.TEXT}>No Data</NoData>
+      )}
       {maxTotalCount > 0 && (
         <Pagination
           currentPage={leaderboardStore.page}
@@ -59,6 +61,7 @@ const LeaderboardTableContainer = styled(SmartFlex)`
   border-radius: 8px;
   width: 100%;
   flex-direction: column;
+  min-height: 110px;
 `;
 
 const HeaderTable = styled(SmartFlex)`
@@ -73,4 +76,11 @@ const HeaderItem = styled(Text)<{ flex?: number }>`
   &:first-child {
     margin-left: 8px;
   }
+`;
+
+const NoData = styled(Text)`
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

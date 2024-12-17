@@ -7,6 +7,7 @@ import { Column } from "@components/Flex";
 import SearchInput from "@components/SearchInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 import { FiltersProps } from "@stores/DashboardStore";
@@ -55,6 +56,10 @@ const DashboardFilterContainer = styled(SmartFlex)`
   margin-bottom: 8px;
   height: 32px;
   justify-content: space-between;
+  ${media.mobile} {
+    flex-direction: column;
+    height: 100px;
+  }
 `;
 
 const FilterButton = styled(Button)`

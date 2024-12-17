@@ -40,12 +40,27 @@ class LeaderboardStore {
     );
 
     reaction(
+      () => [this.searchWallet],
+      () => {
+        this.page = 1;
+      },
+    );
+
+    reaction(
       () => [accountStore.isConnected],
       () => {
         if (!accountStore.isConnected) this.disconnect();
       },
     );
   }
+
+  private shortenAddress = (address: string, chars = 4) => {
+    if (!address) return "";
+    const prefix = address.slice(0, 2); // '0x'
+    const start = address.slice(2, 2 + chars); // первые 4 символа
+    const end = address.slice(-chars); // последние 4 символа
+    return `${prefix}${start}...${end}`;
+  };
 
   private fetchLeaderboard = async () => {
     const bcNetwork = FuelNetwork.getInstance();
@@ -68,7 +83,10 @@ class LeaderboardStore {
         finalData = [...dataMe, ...mainData];
       }
     }
-    this.leaderboard = finalData;
+    this.leaderboard = finalData.map((el) => ({
+      ...el,
+      walletId: this.shortenAddress(el.walletId),
+    }));
   };
 
   private fetchMeLeaderboard = async (params: GetLeaderboardQueryParams) => {
