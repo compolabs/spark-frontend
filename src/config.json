@@ -1,5 +1,5 @@
 {
-  "version": "1.7.1",
+  "version": "1.7.2",
   "isMainnet": true,
   "contractVer": 1539,
   "tokens": [
@@ -26,6 +26,14 @@
       "assetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
       "priceFeed": "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b",
       "precision": 2
+    },
+    {
+      "name": "FUEL",
+      "symbol": "FUEL",
+      "decimals": 9,
+      "assetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
+      "priceFeed": "",
+      "precision": 9
     }
   ],
   "markets": [
@@ -50,6 +58,17 @@
       "priceDecimals": 9,
       "version": 1542,
       "contractId": "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352"
+    },
+    {
+      "marketName": "FUELUSDC",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
+      "baseAssetDecimals": 9,
+      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+      "quoteAssetDecimals": 6,
+      "priceDecimals": 9,
+      "version": 1542,
+      "contractId": "0x81e83f73530c262b0dbf5414649a875c48a48144de3c08ff68cb9d54b36f2eaa"
     }
   ],
   "indexers": {
@@ -58,6 +77,10 @@
       "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
     },
     "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352": {
+      "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
+    "0x81e83f73530c262b0dbf5414649a875c48a48144de3c08ff68cb9d54b36f2eaa": {
       "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
       "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
     }
