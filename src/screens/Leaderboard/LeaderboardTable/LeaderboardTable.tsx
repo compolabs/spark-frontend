@@ -58,7 +58,7 @@ export const LeaderboardTable = observer(() => {
             onChange={leaderboardStore.setActivePage}
           />
           <SmartFlex alignItems="center">
-            <Text>SHOW:</Text>
+            <Text type={TEXT_TYPES.BUTTON}>SHOW:</Text>
             <SelectStyled
               options={PAGINATION_PER_PAGE}
               selected={leaderboardStore.orderPerPage.key}
@@ -110,4 +110,5 @@ const NoData = styled(Text)`
 const SelectStyled = styled(Select)`
   background: #171717;
   border: none;
+  font-size: 14px;
 `;
