@@ -25,8 +25,10 @@ interface IProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
 
 const Select = <T,>({ options, selected, onSelect, label, ...rest }: IProps<T>) => {
   const [isVisible, setIsVisible] = useState(false);
+  console.log("1", options);
+  console.log("2", selected);
   const selectedOption = options.find(({ key }) => selected === key);
-
+  console.log("selectedOption", selectedOption);
   const handleSelectClick = (v: IOption<T>, index: number) => {
     onSelect(v, index);
     setIsVisible(false);

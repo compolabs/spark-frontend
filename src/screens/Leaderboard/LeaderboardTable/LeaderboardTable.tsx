@@ -3,10 +3,12 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Pagination } from "@components/Pagination/Pagination";
+import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 
 import { useStores } from "@stores";
+import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore.ts";
 
 import { LeaderboardItem } from "@screens/Leaderboard/LeaderboardTable/LeaderboardItem";
 
@@ -28,6 +30,11 @@ export const LeaderboardTable = observer(() => {
 
   const data = leaderboardStore.leaderboard;
   const maxTotalCount = leaderboardStore.maxTotalCount;
+
+  const onSelectOrderPerPage = (page: any) => {
+    leaderboardStore.setOrderPerPage(page);
+  };
+
   return (
     <LeaderboardTableContainer>
       <HeaderTable>
@@ -43,16 +50,31 @@ export const LeaderboardTable = observer(() => {
         <NoData type={TEXT_TYPES.TEXT}>No Data</NoData>
       )}
       {maxTotalCount > 0 && (
-        <Pagination
-          currentPage={leaderboardStore.page}
-          lengthData={maxTotalCount}
-          onChange={leaderboardStore.setActivePage}
-        />
+        <FooterTable>
+          <Pagination
+            currentPage={leaderboardStore.page}
+            lengthData={maxTotalCount}
+            limit={leaderboardStore.orderPerPage.key}
+            onChange={leaderboardStore.setActivePage}
+          />
+          <SmartFlex alignItems="center">
+            <Text>SHOW:</Text>
+            <SelectStyled
+              options={PAGINATION_PER_PAGE}
+              selected={leaderboardStore.orderPerPage.key}
+              onSelect={onSelectOrderPerPage}
+            />
+          </SmartFlex>
+        </FooterTable>
       )}
     </LeaderboardTableContainer>
   );
 });
 
+const FooterTable = styled(SmartFlex)`
+  justify-content: space-between;
+  align-items: center;
+`;
 const LeaderboardTableContainer = styled(SmartFlex)`
   margin-top: 12px;
   background: #171717;
@@ -83,4 +105,9 @@ const NoData = styled(Text)`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const SelectStyled = styled(Select)`
+  background: #171717;
+  border: none;
 `;

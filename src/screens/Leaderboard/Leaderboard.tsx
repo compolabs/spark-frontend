@@ -28,6 +28,7 @@ const LeaderboardContent = styled(Column)`
 
 const LeaderboardContainer = styled(Column)`
   width: 90%;
+  gap: 10px;
   height: 100%;
   margin: 0px auto;
   justify-content: space-between;

@@ -18,6 +18,18 @@ const config = {
   apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
 };
 
+export interface PaginationProps {
+  title: string;
+  key: number;
+}
+
+export const PAGINATION_PER_PAGE: PaginationProps[] = [
+  { title: "10", key: 10 },
+  { title: "25", key: 25 },
+  { title: "50", key: 50 },
+  { title: "100", key: 100 },
+];
+
 class LeaderboardStore {
   initialized = false;
   activeUserStat = 0;
@@ -26,6 +38,7 @@ class LeaderboardStore {
   activeFilter = filters[0];
   leaderboard: TraderVolumeResponse[] = [];
   searchWallet = "";
+  orderPerPage: PaginationProps = PAGINATION_PER_PAGE[0];
 
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
@@ -33,16 +46,10 @@ class LeaderboardStore {
     this.init();
 
     reaction(
-      () => [this.activeFilter, accountStore.address],
-      () => {
-        this.fetchLeaderboard();
-      },
-    );
-
-    reaction(
-      () => [this.searchWallet],
+      () => [this.activeFilter, accountStore.address, this.searchWallet, this.orderPerPage],
       () => {
         this.page = 1;
+        this.fetchLeaderboard();
       },
     );
 
@@ -65,6 +72,7 @@ class LeaderboardStore {
   private fetchLeaderboard = async () => {
     const bcNetwork = FuelNetwork.getInstance();
     const params = {
+      limit: this.orderPerPage.key,
       page: this.page - 1,
       search: this.searchWallet,
       currentTimestamp: Math.floor(new Date().getTime() / 1000),
@@ -120,6 +128,10 @@ class LeaderboardStore {
 
   public setActiveFilter = (filter: FiltersProps) => {
     this.activeFilter = filter;
+  };
+
+  public setOrderPerPage = (page: PaginationProps) => {
+    this.orderPerPage = page;
   };
 
   fetchLeaderboardDebounce = _.debounce(this.fetchLeaderboard, 250);
