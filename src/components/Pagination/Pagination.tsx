@@ -55,7 +55,7 @@ export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProp
       return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
     }
     return range(firstPageIndex, lastPageIndex);
-  }, [currentPage]);
+  }, [currentPage, lengthData]);
 
   const handleClick = (page: number) => {
     onChange?.(page);

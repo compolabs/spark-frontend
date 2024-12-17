@@ -27,9 +27,7 @@ export const LeaderboardTable = observer(() => {
   ];
 
   const data = leaderboardStore.leaderboard;
-  const maxTotalCount = data.reduce((max, item) => {
-    return item?.totalCount > max ? item.totalCount : max;
-  }, 0);
+  const maxTotalCount = leaderboardStore.maxTotalCount;
   return (
     <LeaderboardTableContainer>
       <HeaderTable>

@@ -111,6 +111,12 @@ class LeaderboardStore {
     this.fetchLeaderboardDebounce();
   };
 
+  get maxTotalCount() {
+    return this.leaderboard.reduce((max, item) => {
+      return item?.totalCount > max ? item.totalCount : max;
+    }, 0);
+  }
+
   init = async () => {
     this.initialized = true;
     const date = new Date();
