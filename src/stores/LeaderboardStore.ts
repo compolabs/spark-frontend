@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 
-import { GetLeaderBoardQueryParams, TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import { GetLeaderboardQueryParams, TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { FiltersProps } from "@stores/DashboardStore.ts";
 
@@ -18,13 +18,13 @@ const config = {
   apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
 };
 
-class LeaderBoardStore {
+class LeaderboardStore {
   initialized = false;
   activeUserStat = 0;
   activeTime = 0;
   page = 1;
   activeFilter = filters[0];
-  leaderBoard: TraderVolumeResponse[] = [];
+  leaderboard: TraderVolumeResponse[] = [];
   searchWallet = "";
 
   constructor(private rootStore: RootStore) {
@@ -35,7 +35,7 @@ class LeaderBoardStore {
     reaction(
       () => [this.activeFilter, accountStore.address],
       () => {
-        this.fetchLeaderBoard();
+        this.fetchLeaderboard();
       },
     );
 
@@ -47,7 +47,7 @@ class LeaderBoardStore {
     );
   }
 
-  private fetchLeaderBoard = async () => {
+  private fetchLeaderboard = async () => {
     const bcNetwork = FuelNetwork.getInstance();
     const params = {
       page: this.page - 1,
@@ -57,50 +57,64 @@ class LeaderBoardStore {
     };
     bcNetwork.setSentioConfig(config);
 
-    const data = await bcNetwork.getLeaderBoard(params);
+    const data = await bcNetwork.getLeaderboard(params);
     const mainData = data?.result?.rows ?? [];
 
     let finalData = mainData;
 
     if (this.page === 1) {
-      const dataMe = await this.fetchMeLeaderBoard(params);
+      const dataMe = await this.fetchMeLeaderboard(params);
       if (dataMe.length > 0) {
         finalData = [...dataMe, ...mainData];
       }
     }
-    this.leaderBoard = finalData;
+    this.leaderboard = finalData;
   };
 
-  private fetchMeLeaderBoard = async (params: GetLeaderBoardQueryParams) => {
+  private fetchMeLeaderboard = async (params: GetLeaderboardQueryParams) => {
     const { accountStore } = this.rootStore;
     if (!accountStore.address) return [];
     const bcNetwork = FuelNetwork.getInstance();
     params.page = this.page - 1;
     params.search = accountStore.address;
-    const data = await bcNetwork.getLeaderBoard(params);
-    return data?.result?.rows ?? [];
+    const data = await bcNetwork.getLeaderboard(params);
+    let meData = data?.result?.rows[0] ?? null;
+    const meDataMock: TraderVolumeResponse = {
+      walletId: accountStore.address,
+      traderVolume: 0,
+      id: "N/A",
+      totalCount: 0,
+      isYour: true,
+    };
+    if (meData) {
+      meDataMock.id = (meData?.id as number) > 100 ? (meData.id as number) : "N/A";
+    } else {
+      meData = meDataMock;
+    }
+
+    return [meData];
   };
 
   public setActivePage = (page: number) => {
     this.page = page;
-    this.fetchLeaderBoard();
+    this.fetchLeaderboard();
   };
 
   public setActiveFilter = (filter: FiltersProps) => {
     this.activeFilter = filter;
   };
 
-  fetchLeaderBoardDebounce = _.debounce(this.fetchLeaderBoard, 250);
+  fetchLeaderboardDebounce = _.debounce(this.fetchLeaderboard, 250);
 
   public setSearchWallet = (searchWallet: string) => {
     this.searchWallet = searchWallet;
-    this.fetchLeaderBoardDebounce();
+    this.fetchLeaderboardDebounce();
   };
 
   init = async () => {
     this.initialized = true;
     const date = new Date();
-    this.fetchLeaderBoard();
+    this.fetchLeaderboard();
     this.activeTime = this.calculateTime(date, 24);
   };
 
@@ -116,4 +130,4 @@ class LeaderBoardStore {
   };
 }
 
-export default LeaderBoardStore;
+export default LeaderboardStore;

@@ -234,7 +234,7 @@ export class FuelNetwork {
     return await this.orderbookSdk.getTradeEvent(...params);
   };
 
-  getLeaderBoard = async (...params: Parameters<typeof this.orderbookSdk.getLeaderBoard>) => {
-    return await this.orderbookSdk.getLeaderBoard(...params);
+  getLeaderboard = async (...params: Parameters<typeof this.orderbookSdk.getLeaderboard>) => {
+    return await this.orderbookSdk.getLeaderboard(...params);
   };
 }

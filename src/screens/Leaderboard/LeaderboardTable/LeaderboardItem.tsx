@@ -4,14 +4,14 @@ import { observer } from "mobx-react";
 
 import { TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { SmartFlex } from "@components/SmartFlex.tsx";
+import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 
 import oneSt from "@assets/images/1st.png";
 import twoSt from "@assets/images/2st.png";
 import three from "@assets/images/3st.png";
 
-const generatePosition = (key: number) => {
+const generatePosition = (key: TraderVolumeResponse["id"]) => {
   if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;
   if (key === 2) return <img alt="2st" height={40} src={twoSt} width={40} />;
   if (key === 3) return <img alt="3st" height={40} src={three} width={40} />;
@@ -24,9 +24,9 @@ const generatePosition = (key: number) => {
   );
 };
 
-export const LeaderBoardItem = observer(({ item }: { item: TraderVolumeResponse }) => {
+export const LeaderboardItem = observer(({ item }: { item: TraderVolumeResponse }) => {
   return (
-    <LeaderBoardContainer>
+    <LeaderboardContainer>
       <LeftContent>
         {generatePosition(item.id)}
         <TextStyled type={TEXT_TYPES.BODY} primary>
@@ -37,7 +37,7 @@ export const LeaderBoardItem = observer(({ item }: { item: TraderVolumeResponse 
       <TextStyled type={TEXT_TYPES.BODY} primary>
         ${item.traderVolume.toFixed(2)}
       </TextStyled>
-    </LeaderBoardContainer>
+    </LeaderboardContainer>
   );
 });
 
@@ -45,7 +45,7 @@ const TextStyled = styled(Text)`
   font-size: 14px;
 `;
 
-const LeaderBoardContainer = styled(SmartFlex)`
+const LeaderboardContainer = styled(SmartFlex)`
   align-items: center;
   justify-content: space-between;
   padding: 8px;
