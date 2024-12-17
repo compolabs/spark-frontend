@@ -87,7 +87,7 @@ class LeaderboardStore {
       isYour: true,
     };
     if (meData) {
-      meDataMock.id = (meData?.id as number) > 100 ? (meData.id as number) : "N/A";
+      meDataMock.id = (meData?.id as number) > 100 ? (meData.id as number) : "+100";
     } else {
       meData = meDataMock;
     }

@@ -71,7 +71,7 @@ const HeaderTable = styled(SmartFlex)`
 
 const HeaderItem = styled(Text)<{ flex?: number }>`
   ${({ flex }) => flex && `flex: ${flex};`}
-  margin-right: 10px;
+  margin-right: 15px;
   &:first-child {
     margin-left: 8px;
   }
