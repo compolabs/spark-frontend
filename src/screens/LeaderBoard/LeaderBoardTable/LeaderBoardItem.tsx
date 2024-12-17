@@ -1,52 +1,78 @@
 import React from "react";
-import { SmartFlex } from "@components/SmartFlex.tsx";
 import styled from "@emotion/styled";
-import Text, { TEXT_TYPES } from "@components/Text";
+import { observer } from "mobx-react";
+
+import { TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
+
+import { SmartFlex } from "@components/SmartFlex.tsx";
+import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+
+import oneSt from "@assets/images/1st.png";
+import twoSt from "@assets/images/2st.png";
+import three from "@assets/images/3st.png";
 
 const generatePosition = (key: number) => {
+  if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;
+  if (key === 2) return <img alt="2st" height={40} src={twoSt} width={40} />;
+  if (key === 3) return <img alt="3st" height={40} src={three} width={40} />;
   return (
     <PositionBox>
-      <Text type={TEXT_TYPES.H} primary>{key}</Text>
+      <Text type={TEXT_TYPES.H} primary>
+        {key}
+      </Text>
     </PositionBox>
-  )
-}
+  );
+};
 
-export const LeaderBoardItem = ({item}: any) => {
+export const LeaderBoardItem = observer(({ item }: { item: TraderVolumeResponse }) => {
   return (
     <LeaderBoardContainer>
       <LeftContent>
-        {generatePosition(item.key)}
-        <TextStyled type={TEXT_TYPES.BODY} primary>{item.add}</TextStyled>
+        {generatePosition(item.id)}
+        <TextStyled type={TEXT_TYPES.BODY} primary>
+          {item.walletId}
+        </TextStyled>
+        {item.isYour && <SnackStyled>You</SnackStyled>}
       </LeftContent>
-      <TextStyled primary type={TEXT_TYPES.BODY}>{item.volume}</TextStyled>
+      <TextStyled type={TEXT_TYPES.BODY} primary>
+        ${item.traderVolume.toFixed(2)}
+      </TextStyled>
     </LeaderBoardContainer>
-  )
-}
+  );
+});
 
 const TextStyled = styled(Text)`
-    font-size: 14px;
-`
+  font-size: 14px;
+`;
 
 const LeaderBoardContainer = styled(SmartFlex)`
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px;
-    border-bottom: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
-    &:last-child {
-        border-bottom: none;
-    }
-`
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
+  &:last-child {
+    border-bottom: none;
+  }
+`;
 
 const LeftContent = styled(SmartFlex)`
-    align-items: center;
-    gap: 12px;
-`
+  align-items: center;
+  gap: 12px;
+`;
 
 const PositionBox = styled(SmartFlex)`
-    width: 40px;
-    height: 40px;
-    background: ${({theme }) => (theme.colors.accentPrimary)};
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-`
+  width: 40px;
+  height: 40px;
+  background: ${({ theme }) => theme.colors.accentPrimary};
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+`;
+
+const SnackStyled = styled.span`
+  border-radius: 8px;
+  background: black;
+  display: flex;
+  padding: 4px;
+  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+`;

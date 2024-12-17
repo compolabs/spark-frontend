@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 
 import Button from "@components/Button";
 import { Column } from "@components/Flex";
+import SearchInput from "@components/SearchInput.tsx";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 
@@ -14,27 +15,25 @@ import { filters } from "./const";
 
 export const LeaderBoardFilter = observer(() => {
   const [active, setActive] = useState(0);
-  const { leaderBoardStore, settingsStore } = useStores();
+  const { leaderBoardStore } = useStores();
 
   const handleClick = (filter: FiltersProps, index: number) => {
     setActive(index);
-    // leaderBoardStore.setActiveTime(filter);
+    leaderBoardStore.setActiveFilter(filter);
   };
-  const isInfoDashboardPerHours = settingsStore.isInfoDashboardPerHours;
-  // const portfolioVolume = leaderBoardStore.getChartDataPortfolio();
-  // const sumStatsUser = portfolioVolume[portfolioVolume.length - 1];
   return (
     <DashboardTitleContainer>
       <DashboardFilterContainer>
-        <SmartFlex column gap="8px">
-        <TitleText type={TEXT_TYPES.H} primary>
-          Leaderboard
-        </TitleText>
+        <SmartFlex gap="8px" column>
+          <TitleText type={TEXT_TYPES.H} primary>
+            Leaderboard
+          </TitleText>
           <TitleText type={TEXT_TYPES.TEXT} primary>
             Top 100 Spark traders by total volume (spot)
           </TitleText>
         </SmartFlex>
         <SmartFlex gap="5px">
+          <SearchInput value={leaderBoardStore.searchWallet} onChange={leaderBoardStore.setSearchWallet} />
           {filters.map((filter, index) => (
             <FilterButton key={filter.title} grey={active === index} onClick={() => handleClick(filter, index)}>
               {filter.title}
@@ -66,8 +65,4 @@ const FilterButton = styled(Button)`
 const TitleText = styled(Text)`
   display: flex;
   align-items: center;
-`;
-
-const TitleTextBalance = styled(TitleText)`
-  margin-bottom: 10px;
 `;

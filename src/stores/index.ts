@@ -3,6 +3,7 @@ import { storesContext, useStores } from "@stores/useStores";
 import AccountStore from "./AccountStore";
 import DashboardStore from "./DashboardStore";
 import FaucetStore from "./FaucetStore";
+import LeaderBoardStore from "./LeaderBaordStore";
 import MixPanelStore from "./MixPanelStore";
 import NotificationStore from "./NotificationStore";
 // import SpotOrdersStore from "./SpotOrdersStore";
@@ -12,12 +13,12 @@ import RootStore from "./RootStore";
 import SettingsStore from "./SettingsStore";
 import SpotOrderBookStore from "./SpotOrderBookStore";
 import TradeStore from "./TradeStore";
-import LeaderBoardStore from "./LeaderBaordStore";
 
 export {
   AccountStore,
   DashboardStore,
   FaucetStore,
+  LeaderBoardStore,
   MixPanelStore,
   NotificationStore,
   OracleStore,
@@ -25,7 +26,6 @@ export {
   RootStore,
   SettingsStore,
   SpotOrderBookStore,
-  LeaderBoardStore,
   storesContext,
   // SpotOrdersStore,
   TradeStore,

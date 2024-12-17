@@ -10,5 +10,5 @@ export const filters = [
   {
     title: "30d",
     value: 24 * 30,
-  }
+  },
 ];

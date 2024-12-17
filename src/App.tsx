@@ -17,6 +17,7 @@ import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets"
 import ConnectWalletDialog from "@screens/ConnectWallet";
 import Dashboard from "@screens/Dashboard";
 import Faucet from "@screens/Faucet";
+import LeaderBoard from "@screens/LeaderBoard";
 import SpotScreen from "@screens/SpotScreen";
 import { SwapScreen } from "@screens/SwapScreen";
 
@@ -24,7 +25,6 @@ import { ROUTES } from "@constants";
 
 import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
 import { DiscordProvider } from "@src/providers/DiscordProvider";
-import LeaderBoard from "@screens/LeaderBoard";
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore } = useStores();
 
