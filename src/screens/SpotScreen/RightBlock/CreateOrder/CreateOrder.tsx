@@ -139,13 +139,13 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (vm.inputPrice.lt(minimalOrder.minPrice)) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (vm.inputPrice.lt(minimalOrder.minPrice)) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
     return (
       <CreateOrderButton
