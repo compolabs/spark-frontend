@@ -213,7 +213,7 @@ class TradeStore {
     this.isMatcherFeeLoading = true;
     const matcherFee = await bcNetwork.fetchSpotMatcherFee();
 
-    this.matcherFee = new BN(matcherFee);
+    this.matcherFee = BN.ZERO;
     this.isMatcherFeeLoading = false;
   };
 
@@ -233,7 +233,7 @@ class TradeStore {
 
     const { makerFee, takerFee } = await bcNetwork.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
 
-    this.tradeFee = { makerFee: new BN(makerFee), takerFee: new BN(takerFee) };
+    this.tradeFee = { makerFee: BN.ZERO, takerFee: BN.ZERO };
     this.isTradeFeeLoading = false;
   };
 

@@ -297,6 +297,8 @@ class CreateOrderVM {
 
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
     const depositAmountWithFee = tradeStore.exchangeFee.plus(tradeStore.matcherFee);
+
+    console.log(depositAmountWithFee.toString());
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
       amountFee: depositAmountWithFee.toString(),
