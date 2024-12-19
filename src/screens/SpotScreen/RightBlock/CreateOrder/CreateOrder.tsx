@@ -118,7 +118,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (!isButtonDisabled && !tradeStore.isEnoughtMoneyForFee) {
+    if (!isButtonDisabled && !tradeStore.getIsEnoughtMoneyForFee(vm.isSell)) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
