@@ -3,10 +3,10 @@ name: Build Docker Image and Push Helm Chart
 on:
   push:
     branches:
-      - dev
+      - develop
       - main
     tags:
-      - '*'
+      - "*"
   workflow_dispatch:
 
 jobs:

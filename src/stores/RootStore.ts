@@ -3,6 +3,7 @@ import { autorun, makeAutoObservable } from "mobx";
 import AccountStore, { ISerializedAccountStore } from "@stores/AccountStore";
 import DashboardStore from "@stores/DashboardStore";
 import FaucetStore from "@stores/FaucetStore";
+import LeaderboardStore from "@stores/LeaderboardStore.ts";
 import MixPanelStore from "@stores/MixPanelStore";
 import NotificationStore from "@stores/NotificationStore";
 import QuickAssetsStore from "@stores/QuickAssetsStore";
@@ -38,6 +39,7 @@ export default class RootStore {
   quickAssetsStore: QuickAssetsStore;
   spotOrderBookStore: SpotOrderBookStore;
   dashboardStore: DashboardStore;
+  leaderboardStore: LeaderboardStore;
 
   private constructor(initState?: ISerializedRootStore) {
     this.notificationStore = new NotificationStore(this);
@@ -53,6 +55,7 @@ export default class RootStore {
     this.quickAssetsStore = new QuickAssetsStore(this);
     this.spotOrderBookStore = new SpotOrderBookStore(this);
     this.dashboardStore = new DashboardStore(this);
+    this.leaderboardStore = new LeaderboardStore(this);
 
     makeAutoObservable(this);
 

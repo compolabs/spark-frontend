@@ -5,19 +5,19 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
-import Button from "@components/Button.tsx";
-import Chip from "@components/Chip.tsx";
-import { Column } from "@components/Flex.tsx";
-import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Table from "@components/Table.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import Button from "@components/Button";
+import Chip from "@components/Chip";
+import { Column } from "@components/Flex";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
+import { SmartFlex } from "@components/SmartFlex";
+import Table from "@components/Table";
+import Text, { TEXT_TYPES } from "@components/Text";
 
-import { useMedia } from "@hooks/useMedia.ts";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
 
-import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable.tsx";
+import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable";
 
 const orderColumnHelper = createColumnHelper<any>();
 
