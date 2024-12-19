@@ -60,7 +60,7 @@ class SettingsStore {
   tradeTableSize: TRADE_TABLE_SIZE = TRADE_TABLE_SIZE.S;
   setTradeTableSize = (v: TRADE_TABLE_SIZE) => (this.tradeTableSize = v);
 
-  orderType: ORDER_TYPE = ORDER_TYPE.Market;
+  orderType: ORDER_TYPE = ORDER_TYPE.Limit;
   setOrderType = (v: ORDER_TYPE) => (this.orderType = v);
 
   timeInForce: LimitType = LimitType.GTC;
