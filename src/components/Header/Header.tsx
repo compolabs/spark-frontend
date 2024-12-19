@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
+import DepositWithdrawModal from "@components/DepositWithdrawModal";
 import { media } from "@themes/breakpoints";
 
 import DataBase from "@assets/icons/dataBase.svg?react";
@@ -128,6 +129,10 @@ const Header: React.FC = observer(() => {
         onWalletConnect={openConnectModal}
       />
       <AccountInfoSheet isOpen={isAccountInfoSheetOpen} onClose={closeAccountInfo} />
+      <DepositWithdrawModal
+        visible={modalStore.isOpen(MODAL_TYPE.PERP_DEPOSIT_WITHDRAW_MODAL)}
+        onClose={modalStore.close}
+      />
     </Root>
   );
 });

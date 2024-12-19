@@ -16,18 +16,22 @@ import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { toCurrency } from "@utils/toCurrency";
 
+import { SpotMarket } from "@entity";
+
 const MarketStatistics: React.FC = observer(() => {
-  const { tradeStore, spotOrderBookStore } = useStores();
+  const { spotMarketInfoStore, spotOrderBookStore, marketStore } = useStores();
   const theme = useTheme();
   const media = useMedia();
 
+  if (!marketStore.market) return;
+
   const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
-  const volumeInDollars = tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn);
+  const volumeInDollars = spotMarketInfoStore.marketInfo.volume.multipliedBy(indexPriceBn);
 
   const indexPrice = toCurrency(indexPriceBn.toSignificant(2));
   const volume24h = toCurrency(volumeInDollars.toSignificant(2));
-  const high24h = toCurrency(tradeStore.spotMarketInfo.high.toSignificant(2));
-  const low24h = toCurrency(tradeStore.spotMarketInfo.low.toSignificant(2));
+  const high24h = toCurrency(spotMarketInfoStore.marketInfo.high.toSignificant(2));
+  const low24h = toCurrency(spotMarketInfoStore.marketInfo.low.toSignificant(2));
 
   const spotStatsArr = [
     { title: "24h volume", value: volume24h },
@@ -35,7 +39,18 @@ const MarketStatistics: React.FC = observer(() => {
     { title: "24h Low", value: low24h },
   ];
 
-  const activeDataArr = spotStatsArr;
+  const perpStatsArr = [
+    ...(media.mobile ? [] : [{ title: "Index Price", value: indexPrice }]),
+    {
+      title: media.mobile ? "Pred. funding rate" : "Predicted funding rate",
+      value: BN.ZERO.toSignificant(2),
+    },
+    { title: "24H AVG. funding", value: BN.ZERO.toSignificant(2) },
+    { title: "Open interest", value: BN.ZERO.toSignificant(2) },
+    { title: "24H volume", value: volume24h },
+  ];
+
+  const activeDataArr = SpotMarket.isInstance(marketStore.market) ? spotStatsArr : perpStatsArr;
 
   const renderMobile = () => {
     return (

@@ -33,7 +33,7 @@ const queryClient = new QueryClient();
 const networks: Array<Network> = [
   {
     chainId: CONFIG.APP.isMainnet ? CHAIN_IDS.fuel.mainnet : CHAIN_IDS.fuel.testnet,
-    url: CONFIG.APP.networkUrl,
+    url: CONFIG.APP.links.networkUrl,
   },
 ];
 
