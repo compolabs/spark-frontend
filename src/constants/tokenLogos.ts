@@ -1,5 +1,6 @@
 import btc from "@assets/tokens/bitcoin.svg";
 import eth from "@assets/tokens/ethereum.svg";
+import fuel from "@assets/tokens/fuel.svg";
 import kemele from "@assets/tokens/kemele.svg";
 import tremp from "@assets/tokens/tremp.svg";
 import uni from "@assets/tokens/uni.svg";
@@ -17,6 +18,7 @@ const TOKEN_LOGOS: Record<string, string> = {
   UNI: uni,
   KMLA: kemele,
   TRMP: tremp,
+  FUEL: fuel,
 };
 
 export default TOKEN_LOGOS;

@@ -1,4 +1,4 @@
-import { defaultConnectors } from "@fuels/connectors";
+import { BakoSafeConnector, FueletWalletConnector, FuelWalletConnector } from "@fuels/connectors";
 
 export const ROUTES = {
   ROOT: "/",
@@ -35,7 +35,7 @@ export const DEFAULT_MARKET = "BTC-USDC";
 
 export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
-const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
+// const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 
 // const METADATA = {
 //   name: "Spark",
@@ -45,8 +45,9 @@ const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 // };
 
 export const FUEL_CONFIG = {
-  connectors: defaultConnectors({
-    devMode: import.meta.env.DEV,
-    wcProjectId: WC_PROJECT_ID,
-  }),
+  // connectors: defaultConnectors({
+  //   devMode: import.meta.env.DEV,
+  //   wcProjectId: WC_PROJECT_ID,
+  // }),
+  connectors: [new FuelWalletConnector(), new FueletWalletConnector(), new BakoSafeConnector()],
 };

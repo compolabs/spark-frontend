@@ -155,7 +155,8 @@ class SwapStore {
     // TODO: check if there is enough price sum to fulfill the order
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
     const formattedVolume = BN.parseUnits(this.receiveAmount, this.buyToken.decimals).toString();
-    const depositAmountWithFee = tradeStore.exchangeFee.plus(this.rootStore.tradeStore.matcherFee);
+    // const depositAmountWithFee = tradeStore.exchangeFee.plus(this.rootStore.tradeStore.matcherFee);
+    const depositAmountWithFee = BN.ZERO.plus(BN.ZERO); // TODO: Fix it
 
     const pair = this.getMarketPair(this.buyToken, this.sellToken);
     if (!pair) return true;

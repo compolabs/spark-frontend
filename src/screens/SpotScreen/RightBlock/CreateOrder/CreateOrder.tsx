@@ -25,6 +25,7 @@ import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+import { getRealFee } from "@utils/getRealFee";
 
 import CreateOrderSkeletonWrapper from "../../../../components/Skeletons/CreateOrderSkeletonWrapper";
 
@@ -101,6 +102,8 @@ const CreateOrder: React.FC = observer(() => {
   const disabledOrderTypes = [ORDER_TYPE.Limit, ORDER_TYPE.LimitFOK, ORDER_TYPE.LimitIOC];
   const isInputPriceDisabled = !disabledOrderTypes.includes(settingsStore.orderType);
 
+  const fee = getRealFee(tradeStore.market, tradeStore.matcherFee, tradeStore.exchangeFee, vm.mode === ORDER_MODE.SELL);
+
   const renderButton = () => {
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
     const minimalOrder = tradeStore.minimalOrder;
@@ -115,7 +118,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (!isButtonDisabled && !tradeStore.isEnoughtMoneyForFee) {
+    if (!isButtonDisabled && !tradeStore.getIsEnoughtMoneyForFee(vm.isSell)) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
@@ -261,14 +264,14 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{tradeStore.matcherFeeFormat.toSignificant(2)}</Text>
+              <Text primary>{fee.matcherFeeFormat.toSignificant(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Exchange Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{tradeStore.exchangeFeeFormat.toSignificant(2)}</Text>
+              <Text primary>{fee.exchangeFeeFormat.toSignificant(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>

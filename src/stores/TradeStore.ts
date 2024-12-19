@@ -122,8 +122,8 @@ class TradeStore {
     return BN.formatUnits(this.matcherFee, decimals);
   }
 
-  get isEnoughtMoneyForFee() {
-    if (!this.market) return true;
+  getIsEnoughtMoneyForFee(isSell: boolean) {
+    if (!this.market || isSell) return true;
     const { balanceStore } = this.rootStore;
 
     const { quoteToken } = this.market;
