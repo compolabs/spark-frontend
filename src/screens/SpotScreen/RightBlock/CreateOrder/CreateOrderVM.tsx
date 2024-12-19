@@ -21,6 +21,7 @@ import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { CONFIG } from "@utils/getConfig";
+import { getRealFee } from "@utils/getRealFee";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import Math from "@utils/Math";
 
@@ -295,8 +296,10 @@ class CreateOrderVM {
     const isBuy = this.mode === ORDER_MODE.BUY;
     const type = isBuy ? OrderType.Buy : OrderType.Sell;
 
+    const fee = getRealFee(market, tradeStore.matcherFee, tradeStore.exchangeFee, !isBuy);
+
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
-    const depositAmountWithFee = tradeStore.exchangeFee.plus(tradeStore.matcherFee);
+    const depositAmountWithFee = fee.exchangeFee.plus(fee.matcherFee);
 
     console.log(depositAmountWithFee.toString());
     const deposit: DepositInfo = {

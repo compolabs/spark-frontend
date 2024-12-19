@@ -25,14 +25,17 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
   const theme = useTheme();
   const [showDetails, setShowDetails] = useState(false);
   const [isSlippageSettingOpen, setSlippageSettingOpen] = useState(false);
-  const { swapStore, oracleStore, tradeStore } = useStores();
+  const { swapStore, oracleStore } = useStores();
   const exchangeRate = oracleStore
     .getTokenIndexPrice(swapStore.sellToken.priceFeed)
     .dividedBy(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed))
     .toNumber();
 
-  const exchangeFee = tradeStore.exchangeFeeFormat;
-  const matcherFee = tradeStore.matcherFeeFormat;
+  // TODO: Fix it
+  // const exchangeFee = tradeStore.exchangeFeeFormat;
+  // const matcherFee = tradeStore.matcherFeeFormat;
+  const exchangeFee = BN.ZERO;
+  const matcherFee = BN.ZERO;
   const totalFee = exchangeFee.plus(matcherFee);
   return (
     <Root>
