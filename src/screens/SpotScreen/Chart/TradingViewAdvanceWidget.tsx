@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useFlag } from "@unleash/proxy-client-react";
 import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
@@ -34,12 +35,15 @@ const getLanguageFromURL = (): LanguageCode | null => {
 };
 
 const TradingViewChartAdvance = observer(() => {
+  const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
   const { tradeStore } = useStores();
   const defaultProps: Omit<ChartContainerProps, "container"> = {
     symbol: tradeStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
-    datafeedUrl: "https://spark-candles.staging.sprk.fi",
+    datafeedUrl: isUnderConstruction
+      ? "https://spark-candles.production.sprk.fi"
+      : "https://spark-candles.staging.sprk.fi",
     libraryPath: "/charting_library/",
     chartsStorageUrl: "https://saveload.tradingview.com",
     chartsStorageApiVersion: "1.1",
