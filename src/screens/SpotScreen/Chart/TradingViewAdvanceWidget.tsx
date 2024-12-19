@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
+import { useFlag } from "@unleash/proxy-client-react";
 import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
 
 import { useStores } from "@stores";
-import { useFlag, useFlagsStatus } from "@unleash/proxy-client-react";
 
 // @ts-ignore
 import("@compolabs/tradingview-chart/dist/bundle").then((module) => {
