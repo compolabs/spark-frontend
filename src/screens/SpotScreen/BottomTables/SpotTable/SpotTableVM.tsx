@@ -174,11 +174,7 @@ class SpotTableVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(
-            data.Order,
-            market.baseToken.assetId,
-            market.quoteToken.assetId,
-          ).sort(sortDesc);
+          const sortedOrder = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
           this.setUserOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -205,11 +201,7 @@ class SpotTableVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = formatSpotMarketOrders(
-            data.Order,
-            market.baseToken.assetId,
-            market.quoteToken.assetId,
-          ).sort(sortDesc);
+          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
           this.setUserOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {
