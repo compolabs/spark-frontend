@@ -11,6 +11,7 @@ import { Token } from "./Token";
 
 export type SpotMarketOrderParams = {
   quoteAssetId: string;
+  baseAssetId: string;
 } & Order;
 
 export class SpotMarketOrder {
@@ -42,7 +43,7 @@ export class SpotMarketOrder {
     this.user = order.user;
     this.status = order.status;
 
-    this.baseToken = bcNetwork.getTokenByAssetId(order.asset);
+    this.baseToken = bcNetwork.getTokenByAssetId(order.baseAssetId);
     this.quoteToken = bcNetwork.getTokenByAssetId(order.quoteAssetId);
 
     this.orderType = order.orderType;

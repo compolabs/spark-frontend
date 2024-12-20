@@ -404,6 +404,7 @@ class CreateOrderVM {
     const formatOrder = (order: Order) =>
       new SpotMarketOrder({
         ...order,
+        baseAssetId: market.baseToken.assetId,
         quoteAssetId: market.quoteToken.assetId,
       });
 

@@ -25,6 +25,7 @@ export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMa
         initialAmount: BN.ZERO.toString(),
         orderType: order.orderType,
         asset: order.baseToken.assetId,
+        baseAssetId: order.baseToken.assetId,
         quoteAssetId: order.quoteToken.assetId,
         timestamp: order.timestamp.toString(),
         market: order.market,
