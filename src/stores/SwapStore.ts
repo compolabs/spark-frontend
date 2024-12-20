@@ -143,6 +143,7 @@ class SwapStore {
     const formatOrder = (order: Order) =>
       new SpotMarketOrder({
         ...order,
+        baseAssetId: baseToken.assetId,
         quoteAssetId: quoteToken.assetId,
       });
 
