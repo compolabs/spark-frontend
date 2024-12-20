@@ -149,7 +149,6 @@ class SpotOrderBookStore {
 
         const orders = formatSpotMarketOrders(
           "ActiveBuyOrder" in data ? data.ActiveBuyOrder : data.ActiveSellOrder,
-          market!.baseToken.assetId,
           market!.quoteToken.assetId,
         );
         updateOrders(orders);
