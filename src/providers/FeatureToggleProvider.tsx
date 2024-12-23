@@ -19,9 +19,5 @@ export const FeatureToggleProvider: React.FC<FeatureProviderProps> = ({ children
     return children;
   }
 
-  return (
-    <FlagProvider config={config} startClient>
-      {children}
-    </FlagProvider>
-  );
+  return <FlagProvider config={config}>{children}</FlagProvider>;
 };
