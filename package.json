@@ -17,7 +17,8 @@
     "pnpm": ">=9.7.0"
   },
   "dependencies": {
-    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.7.tgz",
+    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.8.tgz",
+    "@compolabs/spark-perpetual-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.1.tgz",
     "@compolabs/tradingview-chart": "^1.0.21",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -38,7 +39,7 @@
     "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.10",
     "framer-motion": "^11.0.3",
-    "fuels": "^0.96.1",
+    "fuels": "^0.97.1",
     "gh-pages": "^6.1.1",
     "lightweight-charts": "^4.2.1",
     "lodash": "^4.17.21",
