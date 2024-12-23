@@ -13,7 +13,7 @@ import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
 
-import { useMedia } from "@hooks/useMedia.ts";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
 

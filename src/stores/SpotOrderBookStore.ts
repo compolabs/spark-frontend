@@ -29,7 +29,7 @@ export class SpotOrderBookStore {
   allBuyOrders: SpotMarketOrder[] = [];
   allSellOrders: SpotMarketOrder[] = [];
 
-  decimalGroup = 2;
+  decimalGroup = 3;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
 
   isOrderBookLoading = true;

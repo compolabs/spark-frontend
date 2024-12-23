@@ -27,10 +27,11 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE } from "@stores/SpotCreateOrderStore";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+import { getRealFee } from "@utils/getRealFee";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
-const ORDER_OPTIONS = [
+export const ORDER_OPTIONS = [
   // { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
   { title: "Limit", key: ORDER_TYPE.Limit, timeInForce: LimitType.GTC },
   // { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },
@@ -108,6 +109,13 @@ const CreateOrder: React.FC = observer(() => {
   const disabledOrderTypes = [ORDER_TYPE.Limit, ORDER_TYPE.LimitFOK, ORDER_TYPE.LimitIOC];
   const isInputPriceDisabled = !disabledOrderTypes.includes(settingsStore.orderType);
 
+  const fee = getRealFee(
+    marketStore.market,
+    spotMarketInfoStore.matcherFee,
+    spotMarketInfoStore.exchangeFee,
+    spotCreateOrderStore.isSell,
+  );
+
   const renderButton = () => {
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
     const minimalOrder = spotMarketInfoStore.minimalOrder;
@@ -122,7 +130,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (!isButtonDisabled && !spotMarketInfoStore.isEnoughtMoneyForFee) {
+    if (!isButtonDisabled && !spotMarketInfoStore.getIsEnoughtMoneyForFee(spotCreateOrderStore.isSell)) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
@@ -274,14 +282,14 @@ const CreateOrder: React.FC = observer(() => {
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Matcher Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{spotMarketInfoStore.matcherFeeFormat.toSignificant(2)}</Text>
+              <Text primary>{fee.matcherFeeFormat.toSignificant(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>
           <Row alignItems="center" justifyContent="space-between">
             <Text nowrap>Exchange Fee</Text>
             <Row alignItems="center" justifyContent="flex-end">
-              <Text primary>{spotMarketInfoStore.exchangeFeeFormat.toSignificant(2)}</Text>
+              <Text primary>{fee.exchangeFeeFormat.toSignificant(2)}</Text>
               <Text>&nbsp;{quoteToken.symbol}</Text>
             </Row>
           </Row>

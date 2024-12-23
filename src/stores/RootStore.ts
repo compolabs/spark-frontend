@@ -6,6 +6,7 @@ import { AccountStore, ISerializedAccountStore } from "./AccountStore";
 import { BalanceStore } from "./BalanceStore";
 import { DashboardStore } from "./DashboardStore";
 import { FaucetStore } from "./FaucetStore";
+import { LeaderboardStore } from "./LeaderboardStore";
 import { ISerializedMarketStore, MarketStore } from "./MarketStore";
 import MixPanelStore from "./MixPanelStore";
 import { ModalStore } from "./ModalStore";
@@ -49,6 +50,7 @@ export default class RootStore {
   spotTableStore: SpotTableStore;
 
   dashboardStore: DashboardStore;
+  leaderboardStore: LeaderboardStore;
 
   private constructor(initState?: ISerializedRootStore) {
     this.accountStore = new AccountStore(this, initState?.accountStore);
@@ -70,6 +72,7 @@ export default class RootStore {
     this.spotTableStore = new SpotTableStore(this);
 
     this.dashboardStore = new DashboardStore(this);
+    this.leaderboardStore = new LeaderboardStore(this);
 
     makeAutoObservable(this);
 

@@ -26,7 +26,6 @@ interface IProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
 const Select = <T,>({ options, selected, onSelect, label, ...rest }: IProps<T>) => {
   const [isVisible, setIsVisible] = useState(false);
   const selectedOption = options.find(({ key }) => selected === key);
-
   const handleSelectClick = (v: IOption<T>, index: number) => {
     onSelect(v, index);
     setIsVisible(false);
@@ -59,8 +58,12 @@ const Select = <T,>({ options, selected, onSelect, label, ...rest }: IProps<T>) 
       }
     >
       <Wrap focused={isVisible}>
-        <Text>{label}</Text>
-        <SizedBox height={2} />
+        {label && (
+          <>
+            <Text>{label}</Text>
+            <SizedBox height={2} />
+          </>
+        )}
         <Root onBlur={() => setIsVisible(false)} onClick={() => setIsVisible(true)} {...rest}>
           {selectedOption?.title ?? options[0]?.title}
           {/*<SizedBox width={10}/>*/}

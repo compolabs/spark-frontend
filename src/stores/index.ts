@@ -5,6 +5,7 @@ export { AccountStore } from "./AccountStore";
 export { BalanceStore } from "./BalanceStore";
 export { DashboardStore } from "./DashboardStore";
 export { FaucetStore } from "./FaucetStore";
+export { LeaderboardStore } from "./LeaderboardStore";
 export { MarketStore } from "./MarketStore";
 export { MixPanelStore } from "./MixPanelStore";
 export { ModalStore } from "./ModalStore";

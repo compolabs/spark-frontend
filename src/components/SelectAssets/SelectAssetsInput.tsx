@@ -73,7 +73,12 @@ const SelectAssetsInput = ({
     setSelectPresent(el);
     if (!showBalance || !selectedOption || !decimals) return;
 
-    const amount = BN.parseUnits(new BN(selectedOption[showBalance] ?? 0).multipliedBy(el).div(new BN(100)), decimals);
+    const amount = new BN(
+      BN.parseUnits(new BN(selectedOption[showBalance] ?? 0).multipliedBy(el).div(new BN(100)), decimals).decimalPlaces(
+        0,
+        BN.ROUND_DOWN,
+      ),
+    );
     onChangeValue(amount);
   };
   if (!selectedOption || !showBalance) return;

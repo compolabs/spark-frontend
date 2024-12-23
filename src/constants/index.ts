@@ -1,5 +1,5 @@
 import { Config } from "react-popper-tooltip";
-import { defaultConnectors } from "@fuels/connectors";
+import { BakoSafeConnector, FueletWalletConnector, FuelWalletConnector } from "@fuels/connectors";
 
 import tableLargeSize from "@assets/icons/tableLargeSize.svg";
 import tableMediumSize from "@assets/icons/tableMediumSize.svg";
@@ -15,6 +15,7 @@ export const ROUTES = {
   FAUCET: "/faucet",
   SWAP: "/swap",
   DASHBOARD: "/dashboard",
+  LEADERBOARD: "/leaderboard",
 };
 
 export const BRIDGE_LINK = "https://app.fuel.network/bridge";
@@ -43,7 +44,7 @@ export const DEFAULT_MARKET = "BTC-USDC";
 
 export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
-const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
+// const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 
 // const METADATA = {
 //   name: "Spark",
@@ -53,10 +54,11 @@ const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 // };
 
 export const FUEL_CONFIG = {
-  connectors: defaultConnectors({
-    devMode: import.meta.env.DEV,
-    wcProjectId: WC_PROJECT_ID,
-  }),
+  // connectors: defaultConnectors({
+  //   devMode: import.meta.env.DEV,
+  //   wcProjectId: WC_PROJECT_ID,
+  // }),
+  connectors: [new FuelWalletConnector(), new FueletWalletConnector(), new BakoSafeConnector()],
 };
 
 export const MAX_TABLE_HEIGHT = {

@@ -6,12 +6,7 @@ RUN npm i -g pnpm@9
 RUN pnpm install
 RUN pnpm run build
 
-FROM node:20
-COPY --from=build-env /app /app
-WORKDIR /app
+FROM nginx
+COPY --from=build-env /app/build /usr/share/nginx/html
 
-RUN npm i -g pnpm@9
-
-EXPOSE 5173
-
-CMD ["pnpm", "vite", "--host"]
+EXPOSE 80

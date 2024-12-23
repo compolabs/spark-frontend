@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
+import Leaderboard from "src/screens/Leaderboard";
 
 import { Column } from "@components/Flex";
 import Header from "@components/Header";
@@ -48,6 +49,7 @@ const App: React.FC = observer(() => {
                 <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
                 <Route element={<Navigate to={`${ROUTES.SPOT}/${marketStore.marketSymbol}`} />} path={ROUTES.ROOT} />
                 <Route element={<Dashboard />} path={ROUTES.DASHBOARD} />
+                <Route element={<Leaderboard />} path={ROUTES.LEADERBOARD} />
               </Routes>
               <SideManageAssets />
               <PWAModal />

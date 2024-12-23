@@ -8,8 +8,6 @@ import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
-import { useStores } from "@stores";
-
 import TradingViewChartAdvance from "@screens/SpotScreen/Chart/TradingViewAdvanceWidget";
 import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget";
 
@@ -19,15 +17,11 @@ const TABS = [
 ];
 
 const Chart: React.FC = observer(() => {
-  const { marketStore } = useStores();
-
   const [activeChart, setActiveChart] = useState(1);
 
   const handleSelect = (active: number) => {
     setActiveChart(active);
   };
-
-  const market = marketStore.market?.symbol.replace("-", "");
 
   return (
     <Root>
@@ -46,15 +40,7 @@ const Chart: React.FC = observer(() => {
           ))}
         </TabContainer>
       </HeaderTradingView>
-      {activeChart === 1 ? (
-        market === "USDCUSDT" ? (
-          <CenterContainer>Not data</CenterContainer>
-        ) : (
-          <TradingViewChartAdvance />
-        )
-      ) : (
-        <TradingViewWidget />
-      )}
+      {activeChart === 1 ? <TradingViewChartAdvance /> : <TradingViewWidget />}
     </Root>
   );
 });
@@ -81,11 +67,6 @@ const Root = styled.div`
     width: 100%;
     height: 100%;
   }
-`;
-
-const CenterContainer = styled(SmartFlex)`
-  justify-content: center;
-  align-items: center;
 `;
 
 const HeaderTradingView = styled(SmartFlex)`
