@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useFlag } from "@unleash/proxy-client-react";
+// import { useFlag } from "@unleash/proxy-client-react";
 import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
@@ -35,7 +35,9 @@ const getLanguageFromURL = (): LanguageCode | null => {
 };
 
 const TradingViewChartAdvance = observer(() => {
-  const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
+  // const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
+  const isUnderConstruction = false;
+
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
   const { tradeStore } = useStores();
   const defaultProps: Omit<ChartContainerProps, "container"> = {
