@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
-import { FlagProvider } from "@unleash/proxy-client-react";
+import { FlagProvider, IConfig } from "@unleash/proxy-client-react";
 
-const config = {
+const config: IConfig = {
   url: "https://unleash.spark-defi.com/unleash/api/frontend/",
   clientKey: import.meta.env.VITE_FEATURE_TOGGLE_CLIENT_KEY ?? "",
   refreshInterval: 15,
@@ -12,6 +12,16 @@ interface FeatureProviderProps {
   children: ReactNode;
 }
 
+const isFeaturesDisabled = true;
+
 export const FeatureToggleProvider: React.FC<FeatureProviderProps> = ({ children }) => {
-  return <FlagProvider config={config}>{children}</FlagProvider>;
+  if (isFeaturesDisabled) {
+    return children;
+  }
+
+  return (
+    <FlagProvider config={config} startClient>
+      {children}
+    </FlagProvider>
+  );
 };
