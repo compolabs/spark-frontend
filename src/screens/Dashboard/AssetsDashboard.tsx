@@ -31,12 +31,14 @@ const AssetsDashboard = observer(() => {
   const media = useMedia();
   const { balanceStore } = useStores();
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
-  const data = balancesInfoList.map((el) => ({
-    asset: el.asset,
-    amount: el,
-    value: new BN(el.contractBalance).multipliedBy(el.price),
-    currentPrice: new BN(el.price).toSignificant(2),
-  }));
+  const data = balancesInfoList
+    .map((el) => ({
+      asset: el.asset,
+      amount: el,
+      value: new BN(el.contractBalance).multipliedBy(el.price),
+      currentPrice: new BN(el.price).toSignificant(2),
+    }))
+    .filter((item) => new BN(item.value).isGreaterThan(BN.ZERO));
   const allContractBalance = balancesInfoList.reduce((acc, el) => {
     return acc.plus(el.contractBalance);
   }, BN.ZERO);
