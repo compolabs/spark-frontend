@@ -60,8 +60,6 @@ const TradingViewChartAdvance = observer(() => {
     if (!window?.Datafeeds) return;
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: defaultProps.symbol as string,
-      // BEWARE: no trailing slash is expected in feed URL
-      // tslint:disable-next-line:no-any
       datafeed: new window.Datafeeds.UDFCompatibleDatafeed(defaultProps.datafeedUrl),
       interval: "5" as ResolutionString,
       container: chartContainerRef.current,
