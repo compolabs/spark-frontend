@@ -39,11 +39,9 @@ const TradingViewScoreboardWidget: React.FC<TradingViewScoreboardWidgetProps> = 
   useEffect(() => {
     if (!chartContainerRef.current || containerDimensions.width === 0 || containerDimensions.height === 0) return;
 
-    // Если график уже существует, обновляем его размеры
     if (chartRef.current) {
       chartRef.current.resize(containerDimensions.width, containerDimensions.height);
     } else {
-      // Создаем новый график
       const chart = createChart(chartContainerRef.current, {
         width: containerDimensions.width,
         height: containerDimensions.height,
@@ -78,7 +76,9 @@ const TradingViewScoreboardWidget: React.FC<TradingViewScoreboardWidgetProps> = 
         lineColor: "#04E78C",
         lineWidth: 2,
       });
+
       areaSeries.setData(data);
+      chart.timeScale().fitContent();
     }
 
     return () => {
