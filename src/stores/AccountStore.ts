@@ -71,7 +71,6 @@ class AccountStore {
 
   get address(): Nullable<B256Address> {
     const bcNetwork = FuelNetwork.getInstance();
-    return "0x5641abaadefc029016b2f5ddec90011bccc2d41ba547e381bf3c30267ee44558";
     return bcNetwork.getAddress();
   }
 
