@@ -132,6 +132,8 @@ const SpotTableImpl: React.FC = observer(() => {
   const [page, setPage] = useState(startPage);
   const historyOrders = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
   const openOrders = vm.userOrdersStats?.active ?? 0;
+  const closeOrders = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
+  const PAGINATION_LENGTH = [openOrders, closeOrders];
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: openOrders },
     { title: "HISTORY", disabled: false, rowCount: historyOrders },
@@ -277,7 +279,7 @@ const SpotTableImpl: React.FC = observer(() => {
         {renderTable()}
       </BaseTable>
       {data.length >= minNeedLengthPagination || page > startPage - 1 ? (
-        <Pagination currentPage={page} lengthData={openOrders} onChange={handleChangePagination} />
+        <Pagination currentPage={page} lengthData={PAGINATION_LENGTH[tabIndex]} onChange={handleChangePagination} />
       ) : null}
       {/*{!!vm.userOrders.length && tabIndex === 0 && (*/}
       {/*  //todo здесь была кнопка cancel all orders*/}

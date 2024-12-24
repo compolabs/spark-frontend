@@ -3,6 +3,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import { RowSnapshot, RowTradeEvent } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { filters } from "@screens/Dashboard/const";
+import { TradeEvent } from "@screens/Dashboard/InfoDataGraph";
 
 import { CONFIG } from "@utils/getConfig";
 
@@ -10,8 +11,11 @@ import { FuelNetwork } from "@blockchain";
 
 import RootStore from "./RootStore";
 
-export interface ISerializedDashboardStore {
-  data: string;
+interface IRecord {
+  user: string;
+  market: string;
+  tvl: number;
+  timestamp: number;
 }
 
 export interface FiltersProps {
@@ -69,37 +73,39 @@ class DashboardStore {
     this.activeFilter = filters[0];
   };
 
-  getCumulativeStats = () => {
-    return this.rowSnapshots.reduce(
-      (acc, cur) => {
-        acc.total_value_locked_score += cur.total_value_locked_score;
-        acc.tradeVolume += cur.tradeVolume;
-        return acc;
-      },
-      { total_value_locked_score: 0, tradeVolume: 0 },
-    );
-  };
-
   getChartDataPortfolio = () => {
-    const groupedData = this.rowSnapshots.reduce((acc: Record<number, DataPoint>, el) => {
-      const date = Math.floor(new Date(el.block_date).getTime() / 1000);
-      const value = el.total_value_locked_score;
+    const result: TradeEvent[] = [];
+    const lastValues: { [market: string]: { tvl: number; timestamp: number } } = {};
 
-      if (!acc[date]) {
-        acc[date] = { time: date, value: 0 };
-      }
-      acc[date].value += value;
+    this.rowSnapshots.forEach((hourData) => {
+      const { hour, records_in_hour } = hourData;
+      const currentHourValues: { [market: string]: { tvl: number; timestamp: number } } = {};
+      records_in_hour.forEach((record) => {
+        const { market, tvl, timestamp }: IRecord = JSON.parse(record);
+        if (!currentHourValues[market] || currentHourValues[market].timestamp < timestamp) {
+          currentHourValues[market] = { tvl, timestamp };
+        }
+      });
 
-      return acc;
-    }, {});
+      let accumulatedValue = 0;
+      Object.keys(currentHourValues).forEach((market) => {
+        accumulatedValue += currentHourValues[market].tvl;
+        lastValues[market] = currentHourValues[market];
+      });
+      result.push({
+        time: Math.floor(new Date(hour).getTime() / 1000),
+        value: accumulatedValue,
+      });
+    });
 
-    return Object.values(groupedData);
+    return result;
   };
 
   getChartDataTrading = () => {
     const groupedData = this.tradeEvents.reduce((acc: Record<number, DataPoint>, el) => {
       const date = Math.floor(new Date(el.timestamp).getTime());
       const value = el.volume;
+
       if (!acc[date]) {
         acc[date] = { time: date, value: 0 };
       }
@@ -131,7 +137,8 @@ class DashboardStore {
     if (!accountStore?.address) return;
     const params = {
       userAddress: accountStore.address,
-      blockDate: this.activeTime,
+      fromTimestamp: this.activeTime,
+      toTimestamp: this.calculateTime(new Date(), 0),
     };
     const config = {
       url: CONFIG.APP.sentioUrl,

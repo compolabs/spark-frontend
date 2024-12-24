@@ -29,7 +29,7 @@ const AssetsDashboard = observer(() => {
   const data = balancesInfoList.map((el) => ({
     asset: el.asset,
     amount: el,
-    value: new BN(el.balance).multipliedBy(el.price).toSignificant(el.asset.decimals),
+    value: new BN(el.balance).multipliedBy(el.price),
     currentPrice: new BN(el.price).toSignificant(2),
   }));
   const allContractBalance = balancesInfoList.reduce((acc, el) => {
