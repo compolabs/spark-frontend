@@ -84,7 +84,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             primary
             onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
           >
-            Assets in Spark: ${accumulateBalance?.contractBalance.toSignificant(2)}
+            Assets in Spark
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
@@ -93,11 +93,11 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
         </TextTitle>
         <WalletBlock gap="8px" column>
           {isConnected ? (
-            accumulateBalance.contractBalance.isLessThan(BN.ZERO) && (
+            accumulateBalance.contractBalance.isGreaterThan(BN.ZERO) && (
               <>
                 {balancesInfoList.map((el) => {
-                  const balance = new BN(el.contractBalance).isLessThan(BN.ZERO);
-                  if (balance) return <></>;
+                  const balance = new BN(el.contractBalance).isGreaterThan(BN.ZERO);
+                  if (!balance) return <></>;
                   return (
                     <AssetItem key={el.assetId}>
                       <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
