@@ -88,9 +88,6 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
-        <TextTitle type={TEXT_TYPES.BUTTON} primary>
-          *These are assets in your wallet, not in Spark
-        </TextTitle>
         <WalletBlock gap="8px" column>
           {isConnected ? (
             accumulateBalance.contractBalance.isGreaterThan(BN.ZERO) && (
