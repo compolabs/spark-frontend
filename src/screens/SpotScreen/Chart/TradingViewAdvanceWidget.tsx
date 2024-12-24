@@ -57,7 +57,6 @@ const TradingViewChartAdvance = observer(() => {
   };
 
   useEffect(() => {
-    console.log("window", window?.Datafeeds);
     if (!window?.Datafeeds) return;
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: defaultProps.symbol as string,
