@@ -28,7 +28,7 @@ const Backdrop = styled.div`
   right: 0;
   background-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
-  z-index: 2;
+  z-index: 3;
 `;
 const ModalDialog = styled.div`
   position: fixed;
