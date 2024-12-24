@@ -79,7 +79,6 @@ const SelectAssetsInput = ({
         BN.ROUND_DOWN,
       ),
     );
-    console.log("amount", amount.toString());
     onChangeValue(amount);
   };
   if (!selectedOption || !showBalance) return;
