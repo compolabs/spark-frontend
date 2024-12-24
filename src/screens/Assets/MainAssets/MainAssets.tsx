@@ -51,7 +51,6 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
     },
     { balance: BN.ZERO, contractBalance: BN.ZERO, walletBalance: BN.ZERO },
   );
-  // console.log('accumulateBalance', accumulateBalance.contractBalance.toString(), accumulateBalance.contractBalance.isLessThan(BN.ZERO));
   const handleWithdraw = async () => {
     setIsLoading(true);
     await balanceStore.withdrawBalanceAll();
