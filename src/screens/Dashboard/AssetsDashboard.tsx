@@ -61,7 +61,7 @@ const AssetsDashboard = observer(() => {
         const value = props.getValue();
         return (
           <ValueContainer>
-            <Text primary>{new BN(value.balance).toSignificant(value.asset.decimals)}</Text>
+            <Text primary>{new BN(value.contractBalance).toSignificant(value.asset.decimals)}</Text>
             <SymbolContainer>{value.asset.symbol}</SymbolContainer>
           </ValueContainer>
         );
@@ -146,9 +146,9 @@ const AssetsDashboard = observer(() => {
         <MobileTableRowColumn>
           <Column>
             <RightText primary>
-              {ord.amount.balance} {ord.asset.symbol}
+              {ord.amount.contractBalance} {ord.asset.symbol}
             </RightText>
-            <RightText>${new BN(ord.amount.balance).multipliedBy(ord.amount.price).toSignificant(2)}</RightText>
+            <RightText>${new BN(ord.amount.contractBalance).multipliedBy(ord.amount.price).toSignificant(2)}</RightText>
           </Column>
         </MobileTableRowColumn>
       </MobileTableOrderRow>
