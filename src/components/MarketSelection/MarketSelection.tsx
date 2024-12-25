@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
@@ -39,42 +39,39 @@ const MarketSelection: React.FC = observer(() => {
 
   const marketsFiltered = marketStore.markets.filter((market) => market.symbol.includes(searchValue)); // TODO: add memo
 
-  const renderSpotMarketList = () => {
-    if (!isSpotMarketType) return;
+  useLayoutEffect(() => {
+    if (!marketStore.market) return;
+
+    const isCurrentMarketSpot = SpotMarket.isInstance(marketStore.market);
+
+    setIsSpotMarketType(isCurrentMarketSpot);
+  }, [marketStore.market]);
+
+  const renderMarketList = () => {
+    const isSpot = isSpotMarketType;
+    const MarketClass = isSpot ? SpotMarket : PerpMarket;
+    const noMarketsText = isSpot ? "No spot markets found" : "No perp markets found";
 
     if (!marketsFiltered.length) {
       return (
         <>
           <SizedBox height={16} />
           <Row justifyContent="center">
-            <Text>No spot markets found</Text>
+            <Text>{noMarketsText}</Text>
           </Row>
         </>
       );
     }
 
     return marketsFiltered
-      .filter((m) => SpotMarket.isInstance(m))
-      .map((market) => <MarketRow key={market.symbol} market={market} />);
-  };
-
-  const renderPerpMarketList = () => {
-    if (isSpotMarketType) return;
-
-    if (!marketsFiltered.length) {
-      return (
-        <>
-          <SizedBox height={16} />
-          <Row justifyContent="center">
-            <Text>No perp markets found</Text>
-          </Row>
-        </>
-      );
-    }
-
-    return marketsFiltered
-      .filter((m) => PerpMarket.isInstance(m))
-      .map((market) => <MarketRow key={market.symbol} market={market} showLeverage showPriceChange />);
+      .filter((m) => MarketClass.isInstance(m))
+      .map((market) => (
+        <MarketRow
+          key={market.symbol}
+          market={market}
+          {...(!isSpot && { showLeverage: true, showPriceChange: true })}
+        />
+      ));
   };
 
   return (
@@ -98,8 +95,7 @@ const MarketSelection: React.FC = observer(() => {
           <Text type={TEXT_TYPES.BODY}>PRICE</Text>
         </SmartFlex>
         <Divider />
-        {renderSpotMarketList()}
-        {renderPerpMarketList()}
+        {renderMarketList()}
       </Root>
     </Container>
   );

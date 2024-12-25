@@ -172,7 +172,7 @@ const AssetsDashboard = observer(() => {
 
   const withdrawalBalance = async (selectAsset: AssetBlockData) => {
     setIsLoading(true);
-    await balanceStore.withdrawBalance(
+    await balanceStore.withdrawSpotBalance(
       selectAsset.asset.assetId,
       BN.parseUnits(selectAsset.contractBalance, selectAsset.asset.decimals).toString(),
     );
@@ -181,7 +181,7 @@ const AssetsDashboard = observer(() => {
 
   const handleWithdrawAll = async () => {
     setIsLoading(true);
-    await balanceStore.withdrawBalanceAll();
+    await balanceStore.withdrawSpotBalanceAll();
     setIsLoading(false);
   };
 

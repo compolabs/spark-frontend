@@ -2,7 +2,8 @@ import { Account, B256Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import SparkOrderBookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import SparkOrderbookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import SparkPerpetualSdk from "@compolabs/spark-perpetual-ts-sdk";
 
 import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
@@ -16,17 +17,22 @@ export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
 
   private walletManager = new WalletManager();
-  private orderbookSdk: SparkOrderBookSdk;
+  private orderbookSdk: SparkOrderbookSdk;
+  private perpetualSdk: SparkPerpetualSdk;
 
   private constructor() {
     makeObservable(this.walletManager);
 
-    this.orderbookSdk = new SparkOrderBookSdk({
+    this.orderbookSdk = new SparkOrderbookSdk({
       networkUrl: CONFIG.APP.links.networkUrl,
       contractAddresses: {
         registry: CONFIG.SPOT.CONTRACTS.registry,
         multiAsset: CONFIG.SPOT.CONTRACTS.multiAsset,
       },
+    });
+
+    this.perpetualSdk = new SparkPerpetualSdk({
+      networkUrl: CONFIG.APP.links.networkUrl,
     });
   }
 

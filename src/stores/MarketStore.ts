@@ -73,6 +73,14 @@ export class MarketStore {
     }
   }
 
+  get perpMarket(): Undefinable<PerpMarket> {
+    if (!this.market) return;
+
+    if (PerpMarket.isInstance(this.market)) {
+      return this.market;
+    }
+  }
+
   get initialized() {
     return true;
   }

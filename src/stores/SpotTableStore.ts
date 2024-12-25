@@ -152,8 +152,8 @@ export class SpotTableStore {
     this.isWithdrawing = true;
     this.withdrawingAssetId = assetId;
 
-    const amount = balanceStore.getContractBalance(assetId);
-    await balanceStore.withdrawBalance(assetId, amount.toString());
+    const amount = balanceStore.getSpotContractBalance(assetId);
+    await balanceStore.withdrawSpotBalance(assetId, amount.toString());
 
     this.isWithdrawing = false;
     this.withdrawingAssetId = null;

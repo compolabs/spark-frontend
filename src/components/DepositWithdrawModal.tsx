@@ -23,9 +23,9 @@ export interface IProps extends IDialogPropTypes {}
 const tokens = [{ title: "USDC", key: "USDC" }];
 
 const DepositWithdrawModal: React.FC<IProps> = observer(({ ...rest }) => {
-  const [isDeposit, setIsDeposit] = useState(true);
-
   const theme = useTheme();
+
+  const [isDeposit, setIsDeposit] = useState(true);
 
   const [depositAmount, setDepositAmount] = useState(BN.ZERO);
   const [withdrawAmount, setWithdrawAmount] = useState(BN.ZERO);

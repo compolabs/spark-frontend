@@ -20,7 +20,7 @@ const UPDATE_INTERVAL = 5 * 1000;
 
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
-  public contractBalances: Map<string, BN> = new Map();
+  public spotContractBalances: Map<string, BN> = new Map();
   public initialized = false;
 
   private balancesUpdater: IntervalUpdater;
@@ -38,7 +38,7 @@ export class BalanceStore {
       ([isConnected]) => {
         if (!isConnected) {
           this.balances = new Map();
-          this.contractBalances = new Map();
+          this.spotContractBalances = new Map();
           this.initialized = false;
           return;
         }
@@ -64,14 +64,14 @@ export class BalanceStore {
 
     return tokens.map((token) => {
       const balance = this.getWalletBalance(token.assetId);
-      const contractBalance = this.getContractBalance(token.assetId);
-      const totalBalance = balance.plus(contractBalance);
+      const spotContractBalance = this.getSpotContractBalance(token.assetId);
+      const totalBalance = balance.plus(spotContractBalance);
 
       return {
         assetId: token.assetId,
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toString(),
-        contractBalance: BN.formatUnits(contractBalance, token.decimals).toString(),
+        contractBalance: BN.formatUnits(spotContractBalance, token.decimals).toString(),
         balance: BN.formatUnits(totalBalance, token.decimals).toString(),
         price: BN.formatUnits(oracleStore.getTokenIndexPrice(token.priceFeed), DEFAULT_DECIMALS).toString(),
       };
@@ -80,7 +80,7 @@ export class BalanceStore {
 
   clearBalance = () => {
     this.balances = new Map();
-    this.contractBalances = new Map();
+    this.spotContractBalances = new Map();
   };
 
   update = async () => {
@@ -92,9 +92,9 @@ export class BalanceStore {
 
     const address = Address.fromB256(accountStore.address);
 
-    const [balances, contractBalances] = await Promise.all([
+    const [balances, spotContractBalances] = await Promise.all([
       this.fetchUserBalances(),
-      this.fetchUserContractBalances(address),
+      this.fetchUserSpotContractBalances(address),
     ]);
 
     try {
@@ -108,9 +108,9 @@ export class BalanceStore {
         });
       }
 
-      const aggregatedBalances = CONFIG.SPOT.MARKETS.reduce(
+      const aggregatedSpotBalances = CONFIG.SPOT.MARKETS.reduce(
         (acc, market, index) => {
-          const marketBalance = contractBalances[index];
+          const marketBalance = spotContractBalances[index];
 
           const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
           const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
@@ -130,8 +130,8 @@ export class BalanceStore {
         {} as Record<string, BN>,
       );
 
-      Object.entries(aggregatedBalances).forEach(([assetId, balance]) => {
-        this.contractBalances.set(assetId, balance);
+      Object.entries(aggregatedSpotBalances).forEach(([assetId, balance]) => {
+        this.spotContractBalances.set(assetId, balance);
       });
     } catch (error) {
       console.error("Error updating user balances:", error);
@@ -150,27 +150,27 @@ export class BalanceStore {
     return this.balances.get(CONFIG.TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
   };
 
-  getContractBalance = (assetId: string) => {
-    const amount = this.contractBalances.get(assetId);
-    return amount ?? BN.ZERO;
-  };
-
-  getFormatContractBalance = (assetId: string, decimals: number) => {
-    return BN.formatUnits(this.getContractBalance(assetId), decimals).toSignificant(2) ?? "-";
-  };
-
   getTotalBalance = (assetId: string) => {
     const walletBalance = this.balances.get(assetId) ?? BN.ZERO;
-    const contractBalance = this.contractBalances.get(assetId) ?? BN.ZERO;
+    const spotContractBalance = this.spotContractBalances.get(assetId) ?? BN.ZERO;
 
-    return walletBalance.plus(contractBalance);
+    return walletBalance.plus(spotContractBalance);
   };
 
   getFormatTotalBalance = (assetId: string, decimals: number) => {
     return BN.formatUnits(this.getTotalBalance(assetId), decimals).toSignificant(2) ?? "-";
   };
 
-  depositBalance = async (assetId: string, amount: string) => {
+  getSpotContractBalance = (assetId: string) => {
+    const amount = this.spotContractBalances.get(assetId);
+    return amount ?? BN.ZERO;
+  };
+
+  getFormatSpotContractBalance = (assetId: string, decimals: number) => {
+    return BN.formatUnits(this.getSpotContractBalance(assetId), decimals).toSignificant(2) ?? "-";
+  };
+
+  depositSpotBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -198,7 +198,7 @@ export class BalanceStore {
     }
   };
 
-  withdrawBalance = async (assetId: string, amount: string) => {
+  withdrawSpotBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
     const markets = CONFIG.SPOT.MARKETS.filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId);
 
@@ -243,7 +243,7 @@ export class BalanceStore {
     }
   };
 
-  withdrawBalanceAll = async () => {
+  withdrawSpotBalanceAll = async () => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -276,7 +276,7 @@ export class BalanceStore {
     return bcNetwork.getBalances();
   };
 
-  private fetchUserContractBalances = async (address: Address): Promise<UserMarketBalance[]> => {
+  private fetchUserSpotContractBalances = async (address: Address): Promise<UserMarketBalance[]> => {
     const bcNetwork = FuelNetwork.getInstance();
 
     return bcNetwork.spotFetchUserMarketBalanceByContracts(
