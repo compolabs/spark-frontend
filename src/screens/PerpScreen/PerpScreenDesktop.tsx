@@ -11,6 +11,7 @@ import { media } from "@themes/breakpoints";
 import { useStores } from "@stores";
 
 import OrderbookAndTradesInterface from "@screens/PerpScreen/OrderbookAndTradesInterface/OrderbookAndTradesInterface.tsx";
+import RightBlockPerp from "@screens/PerpScreen/RightBlockPerp";
 
 import BottomTables from "./BottomTables/BottomTables";
 
@@ -28,7 +29,7 @@ const PerpScreenDesktop: React.FC = observer(() => {
           <BottomTables />
         </SmartFlex>
         <OrderbookAndTradesInterface />
-        {/* <RightBlock /> */}
+        <RightBlockPerp />
       </ContentContainer>
       <StatusBar />
     </Root>

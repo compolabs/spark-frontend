@@ -127,7 +127,8 @@ const SpotTable: React.FC = observer(() => {
 
   return (
     <BottomTablesSkeletonWrapper
-      isReady={spotTableStore.initialized || !accountStore.isConnected}
+      // isReady={spotTableStore.initialized || !accountStore.isConnected}
+      isReady={true}
       size={settingsStore.tradeTableSize}
     >
       <BaseTable activeTab={tabIndex} tabs={TABS} onTabClick={handleTab}>

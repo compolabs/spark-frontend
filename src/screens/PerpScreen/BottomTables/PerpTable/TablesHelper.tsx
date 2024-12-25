@@ -25,12 +25,12 @@ export const POSITIONS_COLUMNS = (theme: Theme) => {
         console.log("base", props.row.original);
         const color = props.row.original.type === "Long" ? theme.colors.greenLight : theme.colors.redLight;
         return (
-          <SmartFlex gap="4px">
+          <SmartFlex alignItems="center" gap="10px">
             <TokenIcon
               alt={props.row.original.symbol}
-              height={16}
+              height={20}
               src={TOKEN_LOGOS[props.getValue().symbol]}
-              width={16}
+              width={20}
             />
             <SmartFlex column>
               <Text>{props.row.original.symbol}</Text>
