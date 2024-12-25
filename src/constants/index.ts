@@ -20,7 +20,7 @@ export const ROUTES = {
 
 export const BRIDGE_LINK = "https://app.fuel.network/bridge";
 export const SWAP_LINK = "https://layerswap.io/app";
-export const POINTS_LINK = "https://app.fuel.network/earn-points";
+export const POINTS_LINK = "https://app.fuel.network/earn-points/phase-2/";
 export const isProduction = window.location.host === "app.sprk.fi";
 
 export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/sepolia";

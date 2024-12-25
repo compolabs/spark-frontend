@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useFlag } from "@unleash/proxy-client-react";
+// import { useFlag } from "@unleash/proxy-client-react";
 import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
@@ -37,7 +37,9 @@ const getLanguageFromURL = (): LanguageCode | null => {
 const TradingViewChartAdvance = observer(() => {
   const { marketStore } = useStores();
 
-  const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
+  // const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
+  const isUnderConstruction = false;
+
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
 
   const defaultProps: Omit<ChartContainerProps, "container"> = {
@@ -57,11 +59,9 @@ const TradingViewChartAdvance = observer(() => {
   };
 
   useEffect(() => {
-    console.log("window", window?.Datafeeds);
+    if (!window?.Datafeeds) return;
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: defaultProps.symbol as string,
-      // BEWARE: no trailing slash is expected in feed URL
-      // tslint:disable-next-line:no-any
       datafeed: new window.Datafeeds.UDFCompatibleDatafeed(defaultProps.datafeedUrl),
       interval: "5" as ResolutionString,
       container: chartContainerRef.current,

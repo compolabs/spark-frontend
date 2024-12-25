@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
@@ -13,11 +14,15 @@ import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
 
+import DepositAssets from "@assets/icons/depositAssets.svg?react";
+
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
 
 import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable";
+
+import { BRIDGE_LINK } from "@constants";
 
 const orderColumnHelper = createColumnHelper<any>();
 
@@ -29,17 +34,20 @@ const AssetsDashboard = observer(() => {
 
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
 
-  const data = balancesInfoList.map((el) => ({
-    asset: el.asset,
-    amount: el,
-    value: new BN(el.balance).multipliedBy(el.price).toSignificant(el.asset.decimals),
-    currentPrice: new BN(el.price).toSignificant(2),
-  }));
+  const data = balancesInfoList
+    .map((el) => ({
+      asset: el.asset,
+      amount: el,
+      value: new BN(el.contractBalance).multipliedBy(el.price),
+      currentPrice: new BN(el.price).toSignificant(2),
+    }))
+    .filter((item) => new BN(item.value).isGreaterThan(BN.ZERO));
 
   const allContractBalance = balancesInfoList.reduce((acc, el) => {
     return acc.plus(el.contractBalance);
   }, BN.ZERO);
 
+  const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.contractBalance).isZero());
   const columns = [
     orderColumnHelper.accessor("asset", {
       header: "Name",
@@ -58,7 +66,7 @@ const AssetsDashboard = observer(() => {
         const value = props.getValue();
         return (
           <ValueContainer>
-            <Text primary>{new BN(value.balance).toSignificant(value.asset.decimals)}</Text>
+            <Text primary>{new BN(value.contractBalance).toSignificant(value.asset.decimals)}</Text>
             <SymbolContainer>{value.asset.symbol}</SymbolContainer>
           </ValueContainer>
         );
@@ -143,9 +151,9 @@ const AssetsDashboard = observer(() => {
         <MobileTableRowColumn>
           <Column>
             <RightText primary>
-              {ord.amount.balance} {ord.asset.symbol}
+              {ord.amount.contractBalance} {ord.asset.symbol}
             </RightText>
-            <RightText>${new BN(ord.amount.balance).multipliedBy(ord.amount.price).toSignificant(2)}</RightText>
+            <RightText>${new BN(ord.amount.contractBalance).multipliedBy(ord.amount.price).toSignificant(2)}</RightText>
           </Column>
         </MobileTableRowColumn>
       </MobileTableOrderRow>
@@ -180,15 +188,37 @@ const AssetsDashboard = observer(() => {
   return (
     <>
       <TitleText type={TEXT_TYPES.H} primary>
-        Assets in my wallet
+        Assets in Spark
       </TitleText>
       <StyledTables>
-        {media.desktop ? (
-          <BaseTable activeTab={0} size={TRADE_TABLE_SIZE.AUTO} onTabClick={() => {}}>
-            {renderTable()}
-          </BaseTable>
+        {hasPositiveBalance ? (
+          <>
+            {media.desktop ? (
+              <BaseTable activeTab={0} size={TRADE_TABLE_SIZE.AUTO} onTabClick={() => {}}>
+                {renderTable()}
+              </BaseTable>
+            ) : (
+              renderMobileRows()
+            )}
+          </>
         ) : (
-          renderMobileRows()
+          <>
+            <ColumnContainer>
+              <DepositAssets />
+              <EmptyAsset type={TEXT_TYPES.TEXT_BIG}>
+                It looks like you don’t have assets in Spark. Tap the{" "}
+                <LinkStyled
+                  to="#"
+                  onClick={() => {
+                    window.open(BRIDGE_LINK, "_blank");
+                  }}
+                >
+                  bridge
+                </LinkStyled>{" "}
+                to grab some tokens.
+              </EmptyAsset>
+            </ColumnContainer>
+          </>
         )}
       </StyledTables>
     </>
@@ -196,6 +226,12 @@ const AssetsDashboard = observer(() => {
 });
 
 export default AssetsDashboard;
+
+const ColumnContainer = styled(Column)`
+  width: 100%;
+  align-items: center;
+  padding: 20px 0px;
+`;
 
 const TitleText = styled(Text)`
   padding-top: 32px;
@@ -278,4 +314,21 @@ const RightText = styled(Text)`
 const ButtonConfirm = styled(Button)`
   width: 100%;
   min-width: 90px;
+`;
+
+const TextTitle = styled(Text)`
+  width: 100%;
+  text-align: left;
+`;
+
+const EmptyAsset = styled(TextTitle)`
+  text-align: center;
+`;
+
+const LinkStyled = styled(Link)`
+  color: ${({ theme }) => theme.colors.greenLight};
+  text-decoration: underline;
+  &:hover {
+    cursor: pointer;
+  }
 `;

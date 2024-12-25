@@ -93,7 +93,10 @@ export const Pagination = observer(({ currentPage, onChange, lengthData, limit =
             </PaginationEntity>
           );
         })}
-        <PaginationButton disabled={lengthData < 1} onClick={() => handleClick(currentPage + 1)}>
+        <PaginationButton
+          disabled={totalPages === 1 || totalPages === currentPage}
+          onClick={() => handleClick(currentPage + 1)}
+        >
           <ArrowIconStyledRight />
         </PaginationButton>
       </SmartFlex>
@@ -123,4 +126,5 @@ const PaginationContainer = styled.div`
   align-items: center;
   padding: 12px;
   border-radius: 0px 0px 10px 10px;
+  background: ${({ theme }) => theme.colors.bgSecondary};
 `;
