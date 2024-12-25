@@ -85,12 +85,13 @@ export class SpotMarketInfoStore {
     return BN.formatUnits(this.matcherFee, decimals);
   }
 
-  get isEnoughtMoneyForFee() {
-    const { marketStore, balanceStore } = this.rootStore;
-    if (!marketStore.spotMarket) return true;
+  getIsEnoughtMoneyForFee(isSell: boolean) {
+    const { marketStore } = this.rootStore;
 
-    const { quoteToken } = marketStore.spotMarket;
-    const walletAmount = balanceStore.getWalletBalance(quoteToken.assetId);
+    if (!marketStore.spotMarket || isSell) return true;
+    const { balanceStore } = this.rootStore;
+
+    const walletAmount = balanceStore.getWalletBalance(marketStore.spotMarket.quoteToken.assetId);
 
     return this.exchangeFee.plus(this.matcherFee).lte(walletAmount);
   }

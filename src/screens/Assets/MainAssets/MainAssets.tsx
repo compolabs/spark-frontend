@@ -22,7 +22,7 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import ConnectWalletDialog from "@screens/ConnectWallet";
 
-import { ROUTES } from "@constants";
+import { BRIDGE_LINK } from "@constants";
 import BN from "@utils/BN";
 
 interface MainAssetsProps {
@@ -37,8 +37,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
   const theme = useTheme();
 
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
-  const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.balance).isZero());
-
+  const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.contractBalance).isZero());
   const accumulateBalance = balancesInfoList.reduce(
     (acc, account) => {
       const balanceValue = new BN(account.balance).multipliedBy(account.price);
@@ -84,23 +83,24 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             primary
             onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
           >
-            Assets in my wallet: ${accumulateBalance?.walletBalance.toSignificant(2)}
+            Assets in Spark
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
-        <TextTitle type={TEXT_TYPES.BUTTON} primary>
-          *These are assets in your wallet, not in Spark
-        </TextTitle>
         <WalletBlock gap="8px" column>
           {isConnected ? (
-            accumulateBalance.balance.isPositive() && (
+            accumulateBalance.contractBalance.isGreaterThan(BN.ZERO) && (
               <>
-                {balancesInfoList.map((el) => (
-                  <AssetItem key={el.assetId}>
-                    <AssetBlock options={{ showBalance: "balance" }} token={el} />
-                  </AssetItem>
-                ))}
-                {renderOverallContent({ isConnected, balance: accumulateBalance.balance })}
+                {balancesInfoList.map((el) => {
+                  const balance = new BN(el.contractBalance).isGreaterThan(BN.ZERO);
+                  if (!balance) return <></>;
+                  return (
+                    <AssetItem key={el.assetId}>
+                      <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
+                    </AssetItem>
+                  );
+                })}
+                {renderOverallContent({ isConnected, balance: accumulateBalance.contractBalance })}
               </>
             )
           ) : (
@@ -110,7 +110,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
                   <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
                 </AssetItem>
               ))}
-              {renderOverallContent({ isConnected, balance: accumulateBalance.balance })}
+              {renderOverallContent({ isConnected, balance: accumulateBalance.contractBalance })}
               <BoxShadow />
             </>
           )}
@@ -120,14 +120,15 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
         <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
           <DepositAssets />
           <TextTitleDeposit type={TEXT_TYPES.TEXT_BIG}>
-            It looks like your wallet is empty. Tap the{" "}
+            It looks like you don’t have assets in Spark. Tap the{" "}
             <LinkStyled
-              to={ROUTES.FAUCET}
+              to="#"
               onClick={() => {
                 quickAssetsStore.setQuickAssets(false);
+                window.open(BRIDGE_LINK, "_blank");
               }}
             >
-              faucet
+              bridge
             </LinkStyled>{" "}
             to grab some tokens.
           </TextTitleDeposit>

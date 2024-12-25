@@ -34,7 +34,6 @@ const AssetBlock: React.FC<IAssetBlock> = observer(
     const { oracleStore } = useStores();
     const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.asset.priceFeed), DEFAULT_DECIMALS);
     const theme = useTheme();
-
     if (!showNullBalance && new BN(token[showBalance]).isLessThanOrEqualTo(BN.ZERO)) return null;
 
     return (

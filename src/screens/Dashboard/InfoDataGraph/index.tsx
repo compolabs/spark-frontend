@@ -13,7 +13,7 @@ import { useStores } from "@stores";
 
 import TradingViewScoreboardWidget from "@screens/Dashboard/TradingViewScoreboardWidget";
 
-interface TradeEvent {
+export interface TradeEvent {
   time: number;
   value: number;
 }
@@ -64,7 +64,7 @@ const InfoDataGraph: React.FC = observer(() => {
   const { dashboardStore } = useStores();
   const data = dashboardStore.activeUserStat
     ? generateTradingData(dashboardStore.getChartDataTrading())
-    : dashboardStore.getChartDataPortfolio();
+    : generateTradingData(dashboardStore.getChartDataPortfolio());
   return data.length > 0 ? <TradingViewScoreboardWidget data={data} /> : <NoDataTrading />;
 });
 

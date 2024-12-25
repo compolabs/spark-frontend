@@ -15,7 +15,7 @@ export const PaginationEntity = ({ selected, disabled, ...props }: PaginationBut
 const ButtonStyled = styled(Button)`
   border: none;
   height: 16px !important;
-  width: 16px !important;
+  min-width: 16px !important;
   padding: 0px !important;
   box-sizing: content-box;
 `;

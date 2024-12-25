@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import styled from "@emotion/styled";
+import { observer } from "mobx-react";
 
 import { PaginationButton } from "@components/Pagination/Pagination-button";
 import { PaginationEntity } from "@components/Pagination/Pagination-entity";
@@ -10,6 +11,7 @@ import ArrowIcon from "@assets/icons/arrowUp.svg?react";
 interface PaginationProps {
   currentPage: number;
   totalPages?: number;
+  limit?: number;
   showDots?: boolean;
   sibling?: number;
   onChange?: (page: number) => void;
@@ -20,8 +22,8 @@ export const range = (start: number, end: number) => {
   return Array.from({ length: end - start + 1 }, (_, index) => index + start);
 };
 
-export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProps) => {
-  const totalPages = Math.ceil(lengthData / 10);
+export const Pagination = observer(({ currentPage, onChange, lengthData, limit = 10 }: PaginationProps) => {
+  const totalPages = Math.ceil(lengthData / limit);
   const sibling = 1;
   const pagination = useMemo(() => {
     const totalPageCount = Math.ceil(totalPages);
@@ -55,7 +57,7 @@ export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProp
       return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
     }
     return range(firstPageIndex, lastPageIndex);
-  }, [currentPage]);
+  }, [currentPage, lengthData, limit]);
 
   const handleClick = (page: number) => {
     onChange?.(page);
@@ -91,13 +93,16 @@ export const Pagination = ({ currentPage, onChange, lengthData }: PaginationProp
             </PaginationEntity>
           );
         })}
-        <PaginationButton disabled={lengthData < 1} onClick={() => handleClick(currentPage + 1)}>
+        <PaginationButton
+          disabled={totalPages === 1 || totalPages === currentPage}
+          onClick={() => handleClick(currentPage + 1)}
+        >
           <ArrowIconStyledRight />
         </PaginationButton>
       </SmartFlex>
     </PaginationContainer>
   );
-};
+});
 
 const ArrowIconStyled = styled(ArrowIcon)`
   transform: rotate(90deg);
@@ -116,10 +121,10 @@ const PaginationText = styled.span<{ current: boolean }>`
 `;
 
 const PaginationContainer = styled.div`
-  background: ${({ theme }) => theme.colors.bgSecondary};
   height: 48px;
   display: flex;
   align-items: center;
   padding: 12px;
   border-radius: 0px 0px 10px 10px;
+  background: ${({ theme }) => theme.colors.bgSecondary};
 `;

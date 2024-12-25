@@ -19,6 +19,7 @@ import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { CONFIG } from "@utils/getConfig";
+import { getRealFee } from "@utils/getRealFee";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import Math from "@utils/Math";
 
@@ -287,8 +288,11 @@ export class SpotCreateOrderStore {
     const isBuy = this.mode === ORDER_MODE.BUY;
     const type = isBuy ? OrderType.Buy : OrderType.Sell;
 
+    const fee = getRealFee(marketStore.market, spotMarketInfoStore.matcherFee, spotMarketInfoStore.exchangeFee, !isBuy);
+
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
-    const depositAmountWithFee = spotMarketInfoStore.exchangeFee.plus(spotMarketInfoStore.matcherFee);
+    const depositAmountWithFee = fee.exchangeFee.plus(fee.matcherFee);
+
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
       amountFee: depositAmountWithFee.toString(),
