@@ -15,7 +15,7 @@ export const UnderConstructionProvider: React.FC<UnderConstructionProviderProps>
   // const { flagsReady } = useFlagsStatus();
 
   const flagsReady = true;
-  const isUnderConstruction = true;
+  const isUnderConstruction = false;
 
   if (!flagsReady) {
     return <LoaderStyled size={32} hideText />;
