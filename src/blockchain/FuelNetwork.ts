@@ -18,7 +18,7 @@ export class FuelNetwork {
 
   private walletManager = new WalletManager();
   private orderbookSdk: SparkOrderbookSdk;
-  private perpetualSdk: SparkPerpetualSdk;
+  perpetualSdk: SparkPerpetualSdk;
 
   private constructor() {
     makeObservable(this.walletManager);
@@ -76,18 +76,24 @@ export class FuelNetwork {
 
   connect = async (wallet: Account): Promise<void> => {
     await this.walletManager.connect(wallet);
+
     this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
+    this.perpetualSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {
     const provider = await this.orderbookSdk.getProvider();
     await this.walletManager.connectByPrivateKey(privateKey, provider);
+
     this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
+    this.perpetualSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   disconnectWallet = async (): Promise<void> => {
     await this.walletManager.disconnect();
+
     this.orderbookSdk.setActiveWallet(undefined);
+    this.perpetualSdk.setActiveWallet(undefined);
   };
 
   addAssetToWallet = async (assetId: string): Promise<void> => {

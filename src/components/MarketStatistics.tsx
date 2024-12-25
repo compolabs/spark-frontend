@@ -33,14 +33,15 @@ const MarketStatistics: React.FC = observer(() => {
   const high24h = toCurrency(spotMarketInfoStore.marketInfo.high.toSignificant(2));
   const low24h = toCurrency(spotMarketInfoStore.marketInfo.low.toSignificant(2));
 
-  const spotStatsArr = [
+  const spotMarketData = [
+    { title: "Price", value: indexPrice },
     { title: "24h volume", value: volume24h },
     { title: "24h High", value: high24h },
     { title: "24h Low", value: low24h },
   ];
 
-  const perpStatsArr = [
-    ...(media.mobile ? [] : [{ title: "Index Price", value: indexPrice }]),
+  const perpMarketData = [
+    { title: "Index Price", value: indexPrice },
     {
       title: media.mobile ? "Pred. funding rate" : "Predicted funding rate",
       value: BN.ZERO.toSignificant(2),
@@ -50,16 +51,16 @@ const MarketStatistics: React.FC = observer(() => {
     { title: "24H volume", value: volume24h },
   ];
 
-  const activeDataArr = SpotMarket.isInstance(marketStore.market) ? spotStatsArr : perpStatsArr;
+  const [price, ...marketData] = SpotMarket.isInstance(marketStore.market) ? spotMarketData : perpMarketData;
 
   const renderMobile = () => {
     return (
       <MobileRoot>
         <Text color={theme.colors.greenLight} type={TEXT_TYPES.H}>
-          {indexPrice}
+          {price.value}
         </Text>
         <MobileStatsContent gap="12px" justifySelf="flex-end">
-          {activeDataArr.map((data) => (
+          {marketData.map((data) => (
             <SmartFlex key={data.title} gap="2px" column>
               <Text>{data.title}</Text>
               <Text primary>{data.value}</Text>
@@ -76,11 +77,11 @@ const MarketStatistics: React.FC = observer(() => {
         <PriceRow alignItems="center">
           <Column alignItems="flex-end">
             <Text type={TEXT_TYPES.H} primary>
-              {indexPrice}
+              {price.value}
             </Text>
           </Column>
           <DesktopRow>
-            {activeDataArr.map(({ title, value }) => (
+            {marketData.map(({ title, value }) => (
               <React.Fragment key={title}>
                 <SizedBox height={30} style={{ background: theme.colors.bgPrimary, margin: "0 8px" }} width={1} />
                 <Column>

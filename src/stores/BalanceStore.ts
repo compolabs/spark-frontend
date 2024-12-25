@@ -2,6 +2,7 @@ import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
+import { Deposit } from "@compolabs/spark-perpetual-ts-sdk";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
@@ -183,6 +184,47 @@ export class BalanceStore {
     const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
     try {
       const tx = await bcNetwork?.spotDepositBalance(token, amount);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, token.symbol),
+        hash: tx.transactionId,
+      });
+      return true;
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED)(amountFormatted, token.symbol),
+      );
+      return false;
+    }
+  };
+
+  depositPerpBalance = async (assetId: string, amount: string) => {
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    if (bcNetwork?.getIsExternalWallet()) {
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
+      });
+    }
+    const token = bcNetwork.getTokenByAssetId(assetId);
+
+    const amountBN = BN.formatUnits(amount, token.decimals);
+    const amountFormatted = amountBN.toSignificant(2);
+
+    console.log("get contract");
+    const vaultContract = await bcNetwork.perpetualSdk.getVaultContract(CONFIG.PERP.CONTRACTS.vault);
+
+    const deposit: Deposit = {
+      amount: amountBN,
+      token: token.assetId,
+    };
+
+    console.log("depositCollateral");
+
+    try {
+      const tx = await vaultContract.depositCollateral(bcNetwork.getAddress()!, deposit);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
