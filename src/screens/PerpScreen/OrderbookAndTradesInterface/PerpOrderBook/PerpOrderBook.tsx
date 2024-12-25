@@ -39,11 +39,14 @@ const SPOT_SETTINGS_ICONS = {
   [SPOT_ORDER_FILTER.BUY]: buyIcon,
 };
 
-export const SpotOrderBook: React.FC<IProps> = observer(() => {
+import mock from "./mock.json";
+
+export const PerpOrderBook: React.FC<IProps> = observer(() => {
   const { spotOrderBookStore } = useStores();
   const media = useMedia();
-  const { marketStore } = useStores();
-  const market = marketStore.market;
+  // const { marketStore } = useStores();
+  // const market = marketStore.market;
+  const market = mock.market; // TODO: мок убрать
 
   const column: ColumnProps[] = [
     {
