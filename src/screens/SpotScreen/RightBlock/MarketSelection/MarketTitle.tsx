@@ -15,7 +15,7 @@ export const MarketTitle = ({ market, iconSize = 16 }: IProps) => {
   return (
     <MarketTitleContainer size={iconSize * 2}>
       <SmartFlex width="fit-content">
-        <Icon alt="logo" size={iconSize} src={market.baseToken?.logo} />
+        <MainIcon alt="logo" size={iconSize} src={market.baseToken?.logo} />
         <StyleIcon alt="logo" size={iconSize} src={market.quoteToken?.logo} />
       </SmartFlex>
       <StyledText color="primary" type={TEXT_TYPES.H}>
@@ -49,4 +49,8 @@ const StyledText = styled(Text)`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+`;
+
+const MainIcon = styled(Icon)`
+  z-index: 9;
 `;
