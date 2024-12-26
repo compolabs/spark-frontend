@@ -18,13 +18,17 @@ const AccordionItem: React.FC<Props> = ({ header, ...rest }) => (
     }}
     className="item"
     contentProps={{ className: "itemContent" }}
+    header={header}
     panelProps={{ className: "itemPanel" }}
   />
 );
 
 export default AccordionItem;
 
-const AccordionItemRoot = styled(RawAccordionItem)<{ hideBottomBorder?: boolean; header?: React.JSX.Element }>`
+const AccordionItemRoot = styled(RawAccordionItem)<{
+  hideBottomBorder?: boolean;
+  header?: AccordionItemProps["header"];
+}>`
   ${({ hideBottomBorder, theme }) =>
     hideBottomBorder ? "" : `border-bottom: 1px solid ${theme.colors.borderSecondary}`};
   padding: 12px 0;
