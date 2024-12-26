@@ -1,7 +1,15 @@
 {
   "version": "2.0.0",
-  "isMainnet": false,
+  "isMainnet": true,
   "tokens": [
+    {
+      "name": "USDC",
+      "symbol": "USDC",
+      "decimals": 6,
+      "assetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+      "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+      "precision": 2
+    },
     {
       "name": "Ethereum",
       "symbol": "ETH",
@@ -11,18 +19,26 @@
       "precision": 9
     },
     {
-      "name": "Bitcoin",
-      "symbol": "BTC",
-      "decimals": 8,
-      "assetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-      "priceFeed": "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
-      "precision": 8
+      "name": "USDT",
+      "symbol": "USDT",
+      "decimals": 6,
+      "assetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
+      "priceFeed": "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b",
+      "precision": 2
     },
     {
-      "name": "USDC",
-      "symbol": "USDC",
+      "name": "FUEL",
+      "symbol": "FUEL",
+      "decimals": 9,
+      "assetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
+      "priceFeed": "0x8a757d54e5d34c7ff1aea8502a2d968686027a304d00418092aaf7e60ed98d95",
+      "precision": 9
+    },
+    {
+      "name": "tUSDC",
+      "symbol": "tUSDC",
       "decimals": 6,
-      "assetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+      "assetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
       "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
       "precision": 2
     }
@@ -32,39 +48,54 @@
     "markets": [
       {
         "marketName": "ETHUSDC",
-        "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
         "baseAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
         "baseAssetDecimals": 9,
-        "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
         "quoteAssetDecimals": 6,
         "priceDecimals": 9,
-        "version": 1539,
-        "contractId": "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998"
+        "version": 1541,
+        "contractId": "0xfe2c524ad8e088f33d232a45dbea43e792861640b71aa1814b30506bf8430ee5"
       },
       {
-        "marketName": "BTCUSDC",
-        "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
-        "baseAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
-        "baseAssetDecimals": 8,
-        "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+        "marketName": "USDCUSDT",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "baseAssetDecimals": 6,
+        "quoteAssetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
         "quoteAssetDecimals": 6,
         "priceDecimals": 9,
-        "version": 1539,
-        "contractId": "0xc5ed0d9b17beedd1c6c10a84bb496f12a5082aa3ce2ad55630bbcac22c64fcf4"
+        "version": 1542,
+        "contractId": "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352"
+      },
+      {
+        "marketName": "FUELUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
+        "baseAssetDecimals": 9,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0x81e83f73530c262b0dbf5414649a875c48a48144de3c08ff68cb9d54b36f2eaa"
       }
     ],
     "indexers": {
-      "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998": {
-        "httpUrl": "https://indexer.dev.hyperindex.xyz/bb0f8de/v1/graphql",
-        "wsUrl": "wss://indexer.dev.hyperindex.xyz/bb0f8de/v1/graphql"
+      "0xfe2c524ad8e088f33d232a45dbea43e792861640b71aa1814b30506bf8430ee5": {
+        "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+        "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
       },
-      "0xc5ed0d9b17beedd1c6c10a84bb496f12a5082aa3ce2ad55630bbcac22c64fcf4": {
-        "httpUrl": "https://indexer.dev.hyperindex.xyz/bb0f8de/v1/graphql",
-        "wsUrl": "wss://indexer.dev.hyperindex.xyz/bb0f8de/v1/graphql"
+      "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352": {
+        "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+        "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+      },
+      "0x81e83f73530c262b0dbf5414649a875c48a48144de3c08ff68cb9d54b36f2eaa": {
+        "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+        "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
       }
     },
     "contracts": {
-      "registry": "0x0c26b7134516773469cd02030a783e43776d1fd26e0698b51af3cef4938e2925",
+      "registry": "0xbb91b7f9d31ee562b24e35d756ce20913f9752600582f51008c63b2d3792926b",
       "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
     }
   },
@@ -74,29 +105,29 @@
       {
         "marketName": "BTCUSDC",
         "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
-        "baseAssetId": "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc",
+        "baseAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
         "baseAssetDecimals": 8,
-        "quoteAssetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+        "quoteAssetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
         "quoteAssetDecimals": 6,
         "priceDecimals": 9,
         "version": 1539,
-        "contractId": "0xc5ed0d9b17beedd1c6c10a84bb496f12a5082aa3ce2ad55630bbcac22c64fcf4"
+        "contractId": "0xc17dd80692a8987fb3d7b310061aaa27c1b9a12cd5d2dfc9e800d7bb01b54cf4"
       }
     ],
     "indexers": {
-      "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998": {
+      "0xc17dd80692a8987fb3d7b310061aaa27c1b9a12cd5d2dfc9e800d7bb01b54cf4": {
         "httpUrl": "https://indexer.dev.hyperindex.xyz/67b693c/v1/graphql",
         "wsUrl": "wss://indexer.dev.hyperindex.xyz/67b693c/v1/graphql"
       }
     },
     "contracts": {
-      "registry": "0x0c26b7134516773469cd02030a783e43776d1fd26e0698b51af3cef4938e2925",
+      "vault": "0x0c26b7134516773469cd02030a783e43776d1fd26e0698b51af3cef4938e2925",
       "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
     }
   },
   "links": {
-    "networkUrl": "https://testnet.fuel.network/v1/graphql",
-    "explorerUrl": "https://app-testnet.fuel.network",
+    "networkUrl": "https://mainnet.fuel.network/v1/graphql",
+    "explorerUrl": "https://app.fuel.network",
     "sentioUrl": "https://app.sentio.xyz/api/v1/analytics/zhpv96/spark-processor/sql/execute"
   }
 }

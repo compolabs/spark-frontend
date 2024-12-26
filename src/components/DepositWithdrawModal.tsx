@@ -1,10 +1,12 @@
-import React, { MouseEvent, useState } from "react";
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
 import TokenInput from "@components/TokenInput";
+
+import { useStores } from "@stores";
 
 import LeftCaretIcon from "@src/assets/icons/arrowUp.svg?react";
 import { FuelNetwork } from "@src/blockchain";
@@ -23,9 +25,10 @@ export interface IProps extends IDialogPropTypes {}
 const tokens = [{ title: "USDC", key: "USDC" }];
 
 const DepositWithdrawModal: React.FC<IProps> = observer(({ ...rest }) => {
-  const [isDeposit, setIsDeposit] = useState(true);
-
+  const { balanceStore } = useStores();
   const theme = useTheme();
+
+  const [isDeposit, setIsDeposit] = useState(true);
 
   const [depositAmount, setDepositAmount] = useState(BN.ZERO);
   const [withdrawAmount, setWithdrawAmount] = useState(BN.ZERO);
@@ -65,8 +68,10 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ ...rest }) => {
     setWithdrawAmount(v);
   };
 
-  const onSubmit = (_e: MouseEvent<HTMLButtonElement>) => {
+  const onSubmit = () => {
     if (isDeposit) {
+      console.log("123");
+      balanceStore.depositPerpBalance("0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276", "1000000");
       // TODO: Deposit to PERP
       // collateralStore.deposit(USDC, depositAmount);
     } else {

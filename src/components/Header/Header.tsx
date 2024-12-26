@@ -27,7 +27,7 @@ import MobileMenu from "./MobileMenu";
 import WalletAddressButton from "./WalletAddressButton";
 
 const Header: React.FC = observer(() => {
-  const { modalStore, quickAssetsStore } = useStores();
+  const { marketStore, modalStore, quickAssetsStore } = useStores();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
@@ -107,6 +107,11 @@ const Header: React.FC = observer(() => {
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
+          {marketStore.perpMarket && (
+            <Button fitContent onClick={() => modalStore.open(MODAL_TYPE.PERP_DEPOSIT_WITHDRAW_MODAL)}>
+              Deposit / Withdraw
+            </Button>
+          )}
           <Button data-onboarding="assets-desktop" fitContent onClick={() => quickAssetsStore.setQuickAssets(true)}>
             <SmartFlex center="y" gap="8px">
               <DataBase />

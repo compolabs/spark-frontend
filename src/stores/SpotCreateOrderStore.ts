@@ -135,8 +135,10 @@ export class SpotCreateOrderStore {
   get isSpotInputError(): boolean {
     const { balanceStore, marketStore } = this.rootStore;
 
+    if (!marketStore.spotMarket) return false;
+
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
-    const token = this.isSell ? marketStore.spotMarket!.baseToken : marketStore.spotMarket!.quoteToken;
+    const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
 
     const totalBalance = balanceStore.getTotalBalance(token.assetId);
 

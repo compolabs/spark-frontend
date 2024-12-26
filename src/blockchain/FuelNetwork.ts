@@ -2,7 +2,8 @@ import { Account, B256Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import SparkOrderBookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import SparkOrderbookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import SparkPerpetualSdk from "@compolabs/spark-perpetual-ts-sdk";
 
 import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
@@ -16,17 +17,22 @@ export class FuelNetwork {
   private static instance: Nullable<FuelNetwork> = null;
 
   private walletManager = new WalletManager();
-  private orderbookSdk: SparkOrderBookSdk;
+  private orderbookSdk: SparkOrderbookSdk;
+  perpetualSdk: SparkPerpetualSdk;
 
   private constructor() {
     makeObservable(this.walletManager);
 
-    this.orderbookSdk = new SparkOrderBookSdk({
+    this.orderbookSdk = new SparkOrderbookSdk({
       networkUrl: CONFIG.APP.links.networkUrl,
       contractAddresses: {
         registry: CONFIG.SPOT.CONTRACTS.registry,
         multiAsset: CONFIG.SPOT.CONTRACTS.multiAsset,
       },
+    });
+
+    this.perpetualSdk = new SparkPerpetualSdk({
+      networkUrl: CONFIG.APP.links.networkUrl,
     });
   }
 
@@ -70,18 +76,24 @@ export class FuelNetwork {
 
   connect = async (wallet: Account): Promise<void> => {
     await this.walletManager.connect(wallet);
+
     this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
+    this.perpetualSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   connectWalletByPrivateKey = async (privateKey: string): Promise<void> => {
     const provider = await this.orderbookSdk.getProvider();
     await this.walletManager.connectByPrivateKey(privateKey, provider);
+
     this.orderbookSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
+    this.perpetualSdk.setActiveWallet((this.walletManager.wallet as any) ?? undefined);
   };
 
   disconnectWallet = async (): Promise<void> => {
     await this.walletManager.disconnect();
+
     this.orderbookSdk.setActiveWallet(undefined);
+    this.perpetualSdk.setActiveWallet(undefined);
   };
 
   addAssetToWallet = async (assetId: string): Promise<void> => {
