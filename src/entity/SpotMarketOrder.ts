@@ -4,13 +4,14 @@ import { Order } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
+import { CONFIG } from "@utils/getConfig.ts";
 
 import { FuelNetwork } from "@blockchain";
 
 import { Token } from "./Token";
 
 export type SpotMarketOrderParams = {
-  quoteAssetId: string;
+  quoteAssetId?: string;
 } & Order;
 
 export class SpotMarketOrder {
@@ -37,13 +38,16 @@ export class SpotMarketOrder {
 
   constructor(order: SpotMarketOrderParams) {
     const bcNetwork = FuelNetwork.getInstance();
+    const activeMarket = CONFIG.SPOT.MARKETS.find((el) => el.contractId === order.market);
+
+    const baseToken = order.quoteAssetId ? order.asset : (activeMarket?.baseAssetId ?? "");
+    const quoteToken = order.quoteAssetId ?? activeMarket?.quoteAssetId ?? "";
 
     this.id = order.id;
     this.user = order.user;
     this.status = order.status;
-
-    this.baseToken = bcNetwork.getTokenByAssetId(order.asset);
-    this.quoteToken = bcNetwork.getTokenByAssetId(order.quoteAssetId);
+    this.baseToken = bcNetwork.getTokenByAssetId(baseToken);
+    this.quoteToken = bcNetwork.getTokenByAssetId(quoteToken);
 
     this.orderType = order.orderType;
 

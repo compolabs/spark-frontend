@@ -68,7 +68,7 @@ const MarketRow: React.FC<Props> = observer(({ market, showLeverage = false, sho
         </SmartFlex>
         <SmartFlex>
           <SmartFlex>
-            <Icon alt="logo" src={market.baseToken?.logo} />
+            <MainIcon alt="logo" src={market.baseToken?.logo} />
             <StyledIcon alt="logo" src={market.quoteToken?.logo} />
           </SmartFlex>
           <Text color="primary" type={TEXT_TYPES.H}>
@@ -144,4 +144,8 @@ const PriceChangeContainer = styled(SmartFlex)<{ isPositive: boolean }>`
       fill: ${({ theme, isPositive }) => (isPositive ? theme.colors.greenLight : theme.colors.redLight)};
     }
   }
+`;
+
+const MainIcon = styled(Icon)`
+  z-index: 9;
 `;

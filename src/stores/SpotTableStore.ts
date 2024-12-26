@@ -88,7 +88,7 @@ export class SpotTableStore {
           return;
         }
 
-        this.subscribeToOrders(market);
+        this.subscribeToOrders();
       },
       { fireImmediately: true },
     );
@@ -159,7 +159,7 @@ export class SpotTableStore {
     this.withdrawingAssetId = null;
   };
 
-  private subscribeToOpenOrders = (market: SpotMarket) => {
+  private subscribeToOpenOrders = () => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -177,7 +177,7 @@ export class SpotTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
+          const sortedOrder = formatSpotMarketOrders(data.Order).sort(sortDesc);
           this.setUserOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -187,7 +187,7 @@ export class SpotTableStore {
       });
   };
 
-  private subscribeToHistoryOrders = (market: SpotMarket) => {
+  private subscribeToHistoryOrders = () => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -204,7 +204,7 @@ export class SpotTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
+          const sortedOrdersHistory = formatSpotMarketOrders(data.Order).sort(sortDesc);
           this.setUserOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {
@@ -214,9 +214,9 @@ export class SpotTableStore {
       });
   };
 
-  private subscribeToOrders = (market: SpotMarket) => {
-    this.subscribeToOpenOrders(market);
-    this.subscribeToHistoryOrders(market);
+  private subscribeToOrders = () => {
+    this.subscribeToOpenOrders();
+    this.subscribeToHistoryOrders();
     this.subscribeUserInfo();
   };
 
