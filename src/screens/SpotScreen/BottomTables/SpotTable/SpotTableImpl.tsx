@@ -132,8 +132,7 @@ const SpotTableImpl: React.FC = observer(() => {
   const [page, setPage] = useState(startPage);
   const historyOrders = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
   const openOrders = vm.userOrdersStats?.active ?? 0;
-  const closeOrders = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
-  const PAGINATION_LENGTH = [openOrders, closeOrders];
+  const PAGINATION_LENGTH = [openOrders, historyOrders];
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: openOrders },
     { title: "HISTORY", disabled: false, rowCount: historyOrders },

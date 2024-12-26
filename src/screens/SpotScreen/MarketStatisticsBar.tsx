@@ -51,7 +51,7 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
 
     return (
       <>
-        <Icon alt={tradeStore.market?.baseToken.symbol} src={tradeStore.market?.baseToken.logo} />
+        <MainIcon alt={tradeStore.market?.baseToken.symbol} src={tradeStore.market?.baseToken.logo} />
         <Icon
           alt={tradeStore.market?.quoteToken.symbol}
           src={tradeStore.market?.quoteToken.logo}
@@ -123,8 +123,8 @@ const Icon = styled.img`
 `;
 
 const StyledArrow = styled.img`
-  width: 24;
-  height: 24;
+  width: 24px;
+  height: 24px;
 `;
 
 const MarketSelect = styled.div<{
@@ -196,4 +196,8 @@ const SwitchContainer = styled(SmartFlex)<{ isVisible?: boolean }>`
     opacity: ${({ isVisible }) => (isVisible ? "1" : "0")};
     transition: opacity 250ms;
   }
+`;
+
+const MainIcon = styled(Icon)`
+  z-index: 9;
 `;

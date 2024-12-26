@@ -12,7 +12,7 @@ import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarket, SpotMarketOrder } from "@entity";
+import { SpotMarketOrder } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
@@ -85,7 +85,7 @@ class SpotTableVM {
           return;
         }
 
-        this.subscribeToOrders(market);
+        this.subscribeToOrders();
       },
       { fireImmediately: true },
     );
@@ -156,7 +156,7 @@ class SpotTableVM {
     this.withdrawingAssetId = null;
   };
 
-  private subscribeToOpenOrders = (market: SpotMarket) => {
+  private subscribeToOpenOrders = () => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -174,7 +174,7 @@ class SpotTableVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
+          const sortedOrder = formatSpotMarketOrders(data.Order).sort(sortDesc);
           this.setUserOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -184,7 +184,7 @@ class SpotTableVM {
       });
   };
 
-  private subscribeToHistoryOrders = (market: SpotMarket) => {
+  private subscribeToHistoryOrders = () => {
     const { accountStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -201,7 +201,7 @@ class SpotTableVM {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = formatSpotMarketOrders(data.Order, market.quoteToken.assetId).sort(sortDesc);
+          const sortedOrdersHistory = formatSpotMarketOrders(data.Order).sort(sortDesc);
           this.setUserOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {
@@ -211,9 +211,9 @@ class SpotTableVM {
       });
   };
 
-  private subscribeToOrders = (market: SpotMarket) => {
-    this.subscribeToOpenOrders(market);
-    this.subscribeToHistoryOrders(market);
+  private subscribeToOrders = () => {
+    this.subscribeToOpenOrders();
+    this.subscribeToHistoryOrders();
     this.subscribeUserInfo();
   };
 
