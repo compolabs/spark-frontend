@@ -1,5 +1,7 @@
 import { autorun, makeAutoObservable } from "mobx";
 
+import { PerpCreateOrderStore } from "@stores/PerpCreateOrderStore.ts";
+
 import { saveState } from "@utils/localStorage";
 
 import { AccountStore, ISerializedAccountStore } from "./AccountStore";
@@ -49,6 +51,10 @@ export default class RootStore {
   spotOrderBookStore: SpotOrderBookStore;
   spotTableStore: SpotTableStore;
 
+  // Prep Stores
+
+  perpCreateOrderStore: PerpCreateOrderStore;
+
   dashboardStore: DashboardStore;
   leaderboardStore: LeaderboardStore;
 
@@ -70,6 +76,8 @@ export default class RootStore {
     this.spotMarketInfoStore = new SpotMarketInfoStore(this);
     this.spotOrderBookStore = new SpotOrderBookStore(this);
     this.spotTableStore = new SpotTableStore(this);
+
+    this.perpCreateOrderStore = new PerpCreateOrderStore(this);
 
     this.dashboardStore = new DashboardStore(this);
     this.leaderboardStore = new LeaderboardStore(this);
