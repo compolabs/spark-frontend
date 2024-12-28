@@ -22,7 +22,6 @@ export const POSITIONS_COLUMNS = (theme: Theme) => {
     positionColumnHelper.accessor("baseToken", {
       header: "Trading Pair",
       cell: (props) => {
-        console.log("base", props.row.original);
         const color = props.row.original.type === "Long" ? theme.colors.greenLight : theme.colors.redLight;
         return (
           <SmartFlex alignItems="center" gap="10px">

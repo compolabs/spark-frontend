@@ -8,7 +8,8 @@
       "decimals": 6,
       "assetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
       "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
-      "precision": 2
+      "precision": 2,
+      "collateral": false
     },
     {
       "name": "Ethereum",
@@ -16,7 +17,8 @@
       "decimals": 9,
       "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-      "precision": 9
+      "precision": 9,
+      "collateral": false
     },
     {
       "name": "USDT",
@@ -24,7 +26,8 @@
       "decimals": 6,
       "assetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
       "priceFeed": "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b",
-      "precision": 2
+      "precision": 2,
+      "collateral": false
     },
     {
       "name": "FUEL",
@@ -32,7 +35,8 @@
       "decimals": 9,
       "assetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
       "priceFeed": "0x8a757d54e5d34c7ff1aea8502a2d968686027a304d00418092aaf7e60ed98d95",
-      "precision": 9
+      "precision": 9,
+      "collateral": false
     },
     {
       "name": "tUSDC",
@@ -40,7 +44,8 @@
       "decimals": 6,
       "assetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
       "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
-      "precision": 2
+      "precision": 2,
+      "collateral": true
     }
   ],
   "spot": {
@@ -121,7 +126,8 @@
       }
     },
     "contracts": {
-      "vault": "0x0c26b7134516773469cd02030a783e43776d1fd26e0698b51af3cef4938e2925",
+      "clearingHouse": "0xc17dd80692a8987fb3d7b310061aaa27c1b9a12cd5d2dfc9e800d7bb01b54cf4",
+      "vault": "0xc615234baccb2dc002b92a091872782869e99c602e4759181d6cf827840c4a36",
       "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
     }
   },

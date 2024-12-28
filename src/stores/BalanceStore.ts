@@ -22,6 +22,7 @@ const UPDATE_INTERVAL = 5 * 1000;
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
   public spotContractBalances: Map<string, BN> = new Map();
+  public perpContractBalances: Map<string, BN> = new Map();
   public initialized = false;
 
   private balancesUpdater: IntervalUpdater;
@@ -40,6 +41,7 @@ export class BalanceStore {
         if (!isConnected) {
           this.balances = new Map();
           this.spotContractBalances = new Map();
+          this.perpContractBalances = new Map();
           this.initialized = false;
           return;
         }
@@ -93,10 +95,13 @@ export class BalanceStore {
 
     const address = Address.fromB256(accountStore.address);
 
-    const [balances, spotContractBalances] = await Promise.all([
+    const [balances, spotContractBalances, perpContractBalances] = await Promise.all([
       this.fetchUserBalances(),
       this.fetchUserSpotContractBalances(address),
+      this.fetchUserPerpVaultBalances(),
     ]);
+
+    console.log("perpContractBalances", perpContractBalances);
 
     try {
       for (const [tokenAddress, balance] of Object.entries(balances)) {
@@ -109,31 +114,28 @@ export class BalanceStore {
         });
       }
 
-      const aggregatedSpotBalances = CONFIG.SPOT.MARKETS.reduce(
-        (acc, market, index) => {
-          const marketBalance = spotContractBalances[index];
+      const aggregatedSpotBalances = CONFIG.SPOT.MARKETS.reduce<Record<string, BN>>((acc, market, index) => {
+        const marketBalance = spotContractBalances[index];
 
-          const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
-          const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
+        const baseAmount = marketBalance ? new BN(marketBalance.liquid.base) : BN.ZERO;
+        const quoteAmount = marketBalance ? new BN(marketBalance.liquid.quote) : BN.ZERO;
 
-          if (!acc[market.baseAssetId]) {
-            acc[market.baseAssetId] = BN.ZERO;
-          }
-          acc[market.baseAssetId] = acc[market.baseAssetId].plus(baseAmount);
+        acc[market.baseAssetId] = (acc[market.baseAssetId] || BN.ZERO).plus(baseAmount);
+        acc[market.quoteAssetId] = (acc[market.quoteAssetId] || BN.ZERO).plus(quoteAmount);
 
-          if (!acc[market.quoteAssetId]) {
-            acc[market.quoteAssetId] = BN.ZERO;
-          }
-          acc[market.quoteAssetId] = acc[market.quoteAssetId].plus(quoteAmount);
+        return acc;
+      }, {});
 
-          return acc;
-        },
-        {} as Record<string, BN>,
-      );
+      const aggregatedPerpBalances = perpContractBalances.reduce<Record<string, BN>>((acc, vault) => {
+        console.log(vault.balance.toString());
+        acc[vault.token.assetId] = (acc[vault.token.assetId] ?? BN.ZERO).plus(vault.balance);
+        return acc;
+      }, {});
 
-      Object.entries(aggregatedSpotBalances).forEach(([assetId, balance]) => {
-        this.spotContractBalances.set(assetId, balance);
-      });
+      console.log("asdsad", { aggregatedPerpBalances });
+
+      this.spotContractBalances = new Map(Object.entries(aggregatedSpotBalances));
+      this.perpContractBalances = new Map(Object.entries(aggregatedPerpBalances));
     } catch (error) {
       console.error("Error updating user balances:", error);
     }
@@ -199,7 +201,7 @@ export class BalanceStore {
     }
   };
 
-  depositPerpBalance = async (assetId: string, amount: string) => {
+  depositPerpBalance = async (assetId: string, amount: BN) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -213,18 +215,18 @@ export class BalanceStore {
     const amountBN = BN.formatUnits(amount, token.decimals);
     const amountFormatted = amountBN.toSignificant(2);
 
-    console.log("get contract");
-    const vaultContract = await bcNetwork.perpetualSdk.getVaultContract(CONFIG.PERP.CONTRACTS.vault);
+    console.log("get contract", CONFIG.PERP.CONTRACTS.clearingHouse);
+    const vaultContract = await bcNetwork.perpetualSdk.getClearingHouseContract(CONFIG.PERP.CONTRACTS.clearingHouse);
 
     const deposit: Deposit = {
-      amount: amountBN,
+      amount,
       token: token.assetId,
     };
 
     console.log("depositCollateral");
 
     try {
-      const tx = await vaultContract.depositCollateral(bcNetwork.getAddress()!, deposit);
+      const tx = await vaultContract.depositCollateralC(deposit);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
@@ -312,6 +314,39 @@ export class BalanceStore {
     }
   };
 
+  withdrawPerpBalance = async (assetId: string, amount: BN) => {
+    const { notificationStore } = this.rootStore;
+    const bcNetwork = FuelNetwork.getInstance();
+
+    if (bcNetwork?.getIsExternalWallet()) {
+      notificationStore.info({
+        text: "Please, confirm operation in your wallet",
+      });
+    }
+    const token = bcNetwork.getTokenByAssetId(assetId);
+
+    const amountBN = BN.formatUnits(amount, token.decimals);
+    const amountFormatted = amountBN.toSignificant(2);
+
+    const vaultContract = await bcNetwork.perpetualSdk.getClearingHouseContract(CONFIG.PERP.CONTRACTS.clearingHouse);
+
+    try {
+      const tx = await vaultContract.withdrawCollateralC(assetId, amount, bcNetwork.getAddress()!);
+      notificationStore.success({
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
+        hash: tx.transactionId,
+      });
+      return true;
+    } catch (error: any) {
+      handleWalletErrors(
+        notificationStore,
+        error,
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amountFormatted, token.symbol),
+      );
+      return false;
+    }
+  };
+
   private fetchUserBalances = async (): Promise<Balances> => {
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -325,5 +360,26 @@ export class BalanceStore {
       address.bech32Address,
       CONFIG.SPOT.MARKETS.map((m) => m.contractId),
     );
+  };
+
+  private fetchUserPerpVaultBalances = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const vaultContract = await bcNetwork.perpetualSdk.getVaultContract(CONFIG.PERP.CONTRACTS.vault, true);
+
+    const balanceRequests = CONFIG.TOKENS.map(async (token) => {
+      const balance = await vaultContract.getCollateralBalance(bcNetwork.getAddress()!, token.assetId);
+
+      console.log("loafing", balance);
+
+      return {
+        token,
+        balance,
+      };
+    });
+
+    const balances = await Promise.all(balanceRequests);
+
+    return balances;
   };
 }

@@ -47,8 +47,7 @@ const CreateOrderPerp: React.FC = observer(() => {
   const media = useMedia();
 
   const market = marketStore.market;
-  console.log("market", market);
-  const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
+  const dataOnboardingTradingKey = `trade-${market?.symbol}-${media.mobile ? "mobile" : "desktop"}`;
 
   const isButtonDisabled = perpCreateOrderStore.isLoading || !perpCreateOrderStore.canProceed;
   const isMarketOrderType = settingsStore.orderType === ORDER_TYPE.Market;

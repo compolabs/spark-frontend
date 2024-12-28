@@ -112,18 +112,7 @@ export class SwapStore {
   fetchNewTokens(): Token[] {
     const bcNetwork = FuelNetwork.getInstance();
 
-    return bcNetwork!.getTokenList().map((v) => {
-      const token = bcNetwork!.getTokenByAssetId(v.assetId);
-      return {
-        name: token.name,
-        symbol: token.symbol,
-        logo: token.logo,
-        priceFeed: token.priceFeed,
-        assetId: token.assetId,
-        decimals: token.decimals,
-        precision: token.precision,
-      };
-    });
+    return bcNetwork!.getTokenList();
   }
 
   swapTokens = async ({ slippage }: { slippage: number }): Promise<boolean> => {

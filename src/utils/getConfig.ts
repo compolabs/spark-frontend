@@ -41,7 +41,7 @@ function createConfig() {
   console.log("Contract Spot Ver.", configJSON.spot.contractVer);
   console.log("Contract Perp Ver.", configJSON.perp.contractVer);
 
-  const tokens = configJSON.tokens.map(({ name, symbol, decimals, assetId, priceFeed, precision }) => {
+  const tokens = configJSON.tokens.map(({ name, symbol, decimals, assetId, priceFeed, precision, collateral }) => {
     return new Token({
       name,
       symbol,
@@ -50,6 +50,7 @@ function createConfig() {
       logo: TOKEN_LOGOS[symbol],
       priceFeed,
       precision,
+      collateral,
     });
   });
 
