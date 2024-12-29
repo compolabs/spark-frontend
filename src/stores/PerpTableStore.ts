@@ -1,20 +1,19 @@
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { BN, OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
+import { OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { RootStore } from "@stores";
 
-import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
-import { PerpMarket, SpotMarketOrder } from "@entity";
+import { PerpMarket, PerpMarketOrder } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
-const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
+const sortDesc = (a: PerpMarketOrder, b: PerpMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
 
 export const PAGINATION_LIMIT = 10;
 
@@ -24,11 +23,11 @@ export class PerpTableStore {
   private subscriptionToHistoryOrders: Nullable<Subscription> = null;
   private subscriptionToOrdersStats: Nullable<Subscription> = null;
 
-  userOrders: SpotMarketOrder[] = [];
-  private setUserOrders = (orders: SpotMarketOrder[]) => (this.userOrders = orders);
+  userOrders: PerpMarketOrder[] = [];
+  private setUserOrders = (orders: PerpMarketOrder[]) => (this.userOrders = orders);
 
-  userOrdersHistory: SpotMarketOrder[] = [];
-  private setUserOrdersHistory = (orders: SpotMarketOrder[]) => (this.userOrdersHistory = orders);
+  userOrdersHistory: PerpMarketOrder[] = [];
+  private setUserOrdersHistory = (orders: PerpMarketOrder[]) => (this.userOrdersHistory = orders);
 
   userOrdersStats: Nullable<UserInfo> = null;
   private setUserOrdersStats = (stats: UserInfo) => (this.userOrdersStats = stats);
@@ -87,6 +86,7 @@ export class PerpTableStore {
           this.setUserOrdersHistory([]);
           return;
         }
+
         this.subscribeToOrders();
       },
       { fireImmediately: true },
@@ -116,7 +116,7 @@ export class PerpTableStore {
     this.userOrdersStats = null;
   };
 
-  cancelOrder = async (order: SpotMarketOrder) => {
+  cancelOrder = async (order: PerpMarketOrder) => {
     const { notificationStore, marketStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -152,7 +152,7 @@ export class PerpTableStore {
     this.withdrawingAssetId = assetId;
 
     const amount = balanceStore.getSpotContractBalance(assetId);
-    await balanceStore.withdrawPerpBalance(assetId, new BN(amount.toString()));
+    await balanceStore.withdrawSpotBalance(assetId, amount.toString());
 
     this.isWithdrawing = false;
     this.withdrawingAssetId = null;
@@ -167,7 +167,7 @@ export class PerpTableStore {
     }
 
     this.subscriptionToOpenOrders = bcNetwork
-      .spotSubscribeOrders({
+      .perpSubscribeOrders({
         ...this.tableFilters,
         user: accountStore.address!,
         status: ["Active"],
@@ -176,7 +176,7 @@ export class PerpTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(data.Order).sort(sortDesc);
+          const sortedOrder = data.Order.map((order) => new PerpMarketOrder(order)).sort(sortDesc);
           this.setUserOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -194,7 +194,7 @@ export class PerpTableStore {
       this.subscriptionToHistoryOrders.unsubscribe();
     }
     this.subscriptionToHistoryOrders = bcNetwork
-      .spotSubscribeOrders({
+      .perpSubscribeOrders({
         ...this.tableFilters,
         user: accountStore.address!,
         status: ["Closed", "Canceled"],
@@ -203,7 +203,7 @@ export class PerpTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = formatSpotMarketOrders(data.Order).sort(sortDesc);
+          const sortedOrdersHistory = data.Order.map((order) => new PerpMarketOrder(order)).sort(sortDesc);
           this.setUserOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {

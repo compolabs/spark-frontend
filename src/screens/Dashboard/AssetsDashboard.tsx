@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
+import { BaseTable } from "@components/BaseTable";
 import Button from "@components/Button";
 import Chip from "@components/Chip";
 import { Column } from "@components/Flex";
@@ -18,9 +19,7 @@ import DepositAssets from "@assets/icons/depositAssets.svg?react";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
-import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
-
-import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable";
+import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
 import { BRIDGE_LINK } from "@constants";
 

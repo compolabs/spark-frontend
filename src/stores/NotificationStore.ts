@@ -59,5 +59,3 @@ export class NotificationStore {
     this.notify(params, "info");
   };
 }
-
-export default NotificationStore;

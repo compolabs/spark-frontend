@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Chart from "@components/Chart";
 import MarketStatisticsBar from "@components/MarketHeader";
 import { SmartFlex } from "@components/SmartFlex";
 import StatusBar from "@components/StatusBar/StatusBar";
@@ -10,11 +11,10 @@ import { media } from "@themes/breakpoints";
 import { useStores } from "@stores";
 
 import BottomTables from "@screens/SpotScreen/BottomTables";
-import Chart from "@screens/SpotScreen/Chart";
 
 import MarketSelection from "../../components/MarketSelection";
 
-import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
+import OrderbookAndTradesInterface from "./OrderbookAndTrades/OrderbookAndTrades";
 import RightBlock from "./RightBlock/RightBlock";
 
 const SpotScreenDesktop: React.FC = observer(() => {

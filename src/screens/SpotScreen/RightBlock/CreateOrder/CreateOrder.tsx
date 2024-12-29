@@ -70,7 +70,7 @@ const CreateOrder: React.FC = observer(() => {
   const handlePercentChange = (v: number) => {
     const token = spotCreateOrderStore.isSell ? baseToken : quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getSpotTotalBalance(token.assetId);
 
     if (totalBalance.isZero()) return;
 
@@ -309,7 +309,7 @@ const CreateOrder: React.FC = observer(() => {
 
   const getAvailableAmount = () => {
     const token = spotCreateOrderStore.isSell ? baseToken : quoteToken;
-    return balanceStore.getFormatTotalBalance(token.assetId, token.decimals);
+    return balanceStore.getSpotFormatTotalBalance(token.assetId, token.decimals);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {

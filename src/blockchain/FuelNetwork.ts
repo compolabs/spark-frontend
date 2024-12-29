@@ -171,6 +171,10 @@ export class FuelNetwork {
     return this.orderbookSdk.subscribeOrders(...params);
   };
 
+  perpSubscribeOrders = (...params: Parameters<typeof this.perpetualSdk.subscribeOrders>) => {
+    return this.perpetualSdk.subscribeOrders(...params);
+  };
+
   perpSubscribeActiveOrders = <T extends OrderType>(
     ...params: Parameters<typeof this.perpetualSdk.subscribeActiveOrders<T>>
   ): ReturnType<typeof this.perpetualSdk.subscribeActiveOrders<T>> => {
@@ -181,6 +185,12 @@ export class FuelNetwork {
     ...params: Parameters<typeof this.orderbookSdk.subscribeActiveOrders<T>>
   ): ReturnType<typeof this.orderbookSdk.subscribeActiveOrders<T>> => {
     return this.orderbookSdk.subscribeActiveOrders(...params);
+  };
+
+  perpSubscribeTradeOrderEvents = (
+    ...params: Parameters<typeof this.perpetualSdk.subscribeTradeOrderEvents>
+  ): ReturnType<typeof this.perpetualSdk.subscribeTradeOrderEvents> => {
+    return this.perpetualSdk.subscribeTradeOrderEvents(...params);
   };
 
   spotSubscribeTradeOrderEvents = (

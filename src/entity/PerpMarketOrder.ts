@@ -1,22 +1,25 @@
 import dayjs, { Dayjs } from "dayjs";
 
-import { Order } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 
+import { Order } from "../../../spark-perpetual-ts-sdk";
+
 import { Token } from "./Token";
 
-export type SpotMarketOrderParams = {
+export type PerpMarketOrderParams = {
   quoteAssetId?: string;
+  baseAssetId?: string;
 } & Order;
 
-export class SpotMarketOrder {
+// TODO: implement perp logic for this
+export class PerpMarketOrder {
   readonly id: Order["id"];
-  readonly user: Order["user"];
+  readonly db_write_timestamp: Order["db_write_timestamp"];
+  readonly contractTimestamp: Order["contractTimestamp"];
   readonly orderType: Order["orderType"];
   readonly status: Order["status"];
   readonly market: Order["market"];
@@ -27,6 +30,9 @@ export class SpotMarketOrder {
   readonly timestamp: Dayjs;
 
   readonly price: BN;
+  readonly trader: string;
+  readonly baseSize: BN;
+  readonly baseSizeI64: BN;
 
   initialAmount: BN;
   currentAmount: BN;
@@ -36,35 +42,36 @@ export class SpotMarketOrder {
   filledAmount: BN;
   filledQuoteAmount: BN;
 
-  constructor(order: SpotMarketOrderParams) {
+  constructor(order: PerpMarketOrderParams) {
     const bcNetwork = FuelNetwork.getInstance();
-    const activeMarket = CONFIG.SPOT.MARKETS.find((el) => el.contractId === order.market);
+    const activeMarket = CONFIG.PERP.MARKETS.find((el) => el.contractId === order.market);
 
-    const baseToken = order.quoteAssetId ? order.asset : (activeMarket?.baseAssetId ?? "");
+    const baseToken = order.baseAssetId ? order.baseToken : (activeMarket?.baseAssetId ?? "");
     const quoteToken = order.quoteAssetId ?? activeMarket?.quoteAssetId ?? "";
 
     this.id = order.id;
-    this.user = order.user;
-    this.status = order.status;
+    this.db_write_timestamp = order.db_write_timestamp;
+    this.contractTimestamp = order.contractTimestamp;
     this.baseToken = bcNetwork.getTokenByAssetId(baseToken);
     this.quoteToken = bcNetwork.getTokenByAssetId(quoteToken);
-
-    this.orderType = order.orderType;
-
-    this.price = new BN(order.price);
+    this.baseSizeI64 = new BN(order.baseSizeI64).abs();
+    this.baseSize = new BN(order.baseSize).abs();
 
     this.market = order.market;
+    this.orderType = order.orderType;
+    this.status = order.status;
+    this.timestamp = dayjs(order.timestamp);
+    this.trader = order.trader;
+    this.price = new BN(order.price);
 
-    this.initialAmount = new BN(order.initialAmount);
+    this.initialAmount = new BN(order.baseSizeI64);
     this.initialQuoteAmount = this.getQuoteAmount(this.initialAmount, this.price);
 
-    this.currentAmount = new BN(order.amount);
+    this.currentAmount = new BN(order.baseSizeI64);
     this.currentQuoteAmount = this.getQuoteAmount(this.currentAmount, this.price);
 
     this.filledAmount = this.getFilledAmount(this.initialAmount, this.currentAmount);
     this.filledQuoteAmount = this.getQuoteAmount(this.filledAmount, this.price);
-
-    this.timestamp = dayjs(order.timestamp);
   }
 
   get marketSymbol() {
@@ -92,7 +99,7 @@ export class SpotMarketOrder {
   }
 
   get currentQuoteAmountUnits(): BN {
-    return BN.formatUnits(this.currentQuoteAmount, this.quoteToken.decimals);
+    return BN.formatUnits(this.baseSize.multipliedBy(this.price), this.quoteToken.decimals);
   }
 
   get filledQuoteAmountUnits(): BN {

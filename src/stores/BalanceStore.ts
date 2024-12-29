@@ -101,8 +101,6 @@ export class BalanceStore {
       this.fetchUserPerpVaultBalances(),
     ]);
 
-    console.log("perpContractBalances", perpContractBalances);
-
     try {
       for (const [tokenAddress, balance] of Object.entries(balances)) {
         const isTokenExist = !!bcNetwork.getTokenByAssetId(tokenAddress);
@@ -127,12 +125,9 @@ export class BalanceStore {
       }, {});
 
       const aggregatedPerpBalances = perpContractBalances.reduce<Record<string, BN>>((acc, vault) => {
-        console.log(vault.balance.toString());
         acc[vault.token.assetId] = (acc[vault.token.assetId] ?? BN.ZERO).plus(vault.balance);
         return acc;
       }, {});
-
-      console.log("asdsad", { aggregatedPerpBalances });
 
       this.spotContractBalances = new Map(Object.entries(aggregatedSpotBalances));
       this.perpContractBalances = new Map(Object.entries(aggregatedPerpBalances));
@@ -153,15 +148,27 @@ export class BalanceStore {
     return this.balances.get(CONFIG.TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
   };
 
-  getTotalBalance = (assetId: string) => {
+  getSpotTotalBalance = (assetId: string) => {
     const walletBalance = this.balances.get(assetId) ?? BN.ZERO;
     const spotContractBalance = this.spotContractBalances.get(assetId) ?? BN.ZERO;
 
     return walletBalance.plus(spotContractBalance);
   };
 
-  getFormatTotalBalance = (assetId: string, decimals: number) => {
-    return BN.formatUnits(this.getTotalBalance(assetId), decimals).toSignificant(2) ?? "-";
+  getSpotFormatTotalBalance = (assetId: string, decimals: number) => {
+    return BN.formatUnits(this.getSpotTotalBalance(assetId), decimals).toSignificant(2) ?? "-";
+  };
+
+  getPerpTotalBalance = (assetId: string) => {
+    // const walletBalance = this.balances.get(assetId) ?? BN.ZERO;
+    const perpContractBalance = this.perpContractBalances.get(assetId) ?? BN.ZERO;
+
+    // return walletBalance.plus(perpContractBalances);
+    return perpContractBalance;
+  };
+
+  getPerpFormatTotalBalance = (assetId: string, decimals: number) => {
+    return BN.formatUnits(this.getPerpTotalBalance(assetId), decimals).toSignificant(2) ?? "-";
   };
 
   getSpotContractBalance = (assetId: string) => {
@@ -215,15 +222,12 @@ export class BalanceStore {
     const amountBN = BN.formatUnits(amount, token.decimals);
     const amountFormatted = amountBN.toSignificant(2);
 
-    console.log("get contract", CONFIG.PERP.CONTRACTS.clearingHouse);
     const vaultContract = await bcNetwork.perpetualSdk.getClearingHouseContract(CONFIG.PERP.CONTRACTS.clearingHouse);
 
     const deposit: Deposit = {
       amount,
       token: token.assetId,
     };
-
-    console.log("depositCollateral");
 
     try {
       const tx = await vaultContract.depositCollateralC(deposit);
@@ -368,9 +372,9 @@ export class BalanceStore {
     const vaultContract = await bcNetwork.perpetualSdk.getVaultContract(CONFIG.PERP.CONTRACTS.vault, true);
 
     const balanceRequests = CONFIG.TOKENS.map(async (token) => {
-      const balance = await vaultContract.getCollateralBalance(bcNetwork.getAddress()!, token.assetId);
-
-      console.log("loafing", balance);
+      const balance = await vaultContract
+        .getCollateralBalance(bcNetwork.getAddress()!, token.assetId)
+        .catch(() => BN.ZERO);
 
       return {
         token,

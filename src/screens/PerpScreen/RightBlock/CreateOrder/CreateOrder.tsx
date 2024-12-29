@@ -25,7 +25,7 @@ import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE } from "@stores/PerpCreateOrderStore";
 
-import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+import { DEFAULT_DECIMALS } from "@constants";
 import { getRealFee } from "@utils/getRealFee";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
@@ -41,8 +41,8 @@ const LEVERAGE_OPTIONS = [5, 10, 20];
 
 const VISIBLE_MARKET_DECIMALS = 2;
 
-const CreateOrderPerp: React.FC = observer(() => {
-  const { balanceStore, marketStore, settingsStore, mixPanelStore, spotMarketInfoStore, perpCreateOrderStore } =
+const CreateOrder: React.FC = observer(() => {
+  const { balanceStore, marketStore, settingsStore, mixPanelStore, perpCreateOrderStore, perpMarketInfoStore } =
     useStores();
   const media = useMedia();
 
@@ -62,7 +62,7 @@ const CreateOrderPerp: React.FC = observer(() => {
   const handlePercentChange = (v: number) => {
     const token = perpCreateOrderStore.isSell ? baseToken : quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getPerpTotalBalance(token.assetId);
 
     if (totalBalance.isZero()) return;
 
@@ -151,12 +151,12 @@ const CreateOrderPerp: React.FC = observer(() => {
   );
 
   const renderButton = () => {
-    const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
-    const minimalOrder = spotMarketInfoStore.minimalOrder;
-    const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
-    const formatMinimalPrice = BN.formatUnits(minimalOrder.minPrice.toString(), DEFAULT_DECIMALS).toString();
+    // const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
+    // const minimalOrder = perpMarketInfoStore.minimalOrder;
+    // const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
+    // const formatMinimalPrice = BN.formatUnits(minimalOrder.minPrice.toString(), DEFAULT_DECIMALS).toString();
 
-    if (!isButtonDisabled && spotMarketInfoStore.isFeeLoading) {
+    if (!isButtonDisabled && perpMarketInfoStore.isFeeLoading) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Loading...</Text>
@@ -164,37 +164,37 @@ const CreateOrderPerp: React.FC = observer(() => {
       );
     }
 
-    if (!isButtonDisabled && !spotMarketInfoStore.getIsEnoughtMoneyForFee(perpCreateOrderStore.isSell)) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (!isButtonDisabled && !perpMarketInfoStore.getIsEnoughtMoneyForFee(perpCreateOrderStore.isSell)) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
-    if (!isButtonDisabled && !isEnoughGas) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Insufficient ETH for gas</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (!isButtonDisabled && !isEnoughGas) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Insufficient ETH for gas</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
-    if (perpCreateOrderStore.inputAmount.lt(minimalOrder.minOrder)) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Minimum amount {formatMinimalAmount}</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (perpCreateOrderStore.inputAmount.lt(minimalOrder.minOrder)) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Minimum amount {formatMinimalAmount}</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
-    if (perpCreateOrderStore.inputPrice.lt(minimalOrder.minPrice)) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (perpCreateOrderStore.inputPrice.lt(minimalOrder.minPrice)) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
     return (
       <CreateOrderButton
@@ -285,7 +285,7 @@ const CreateOrderPerp: React.FC = observer(() => {
 
   const getAvailableAmount = () => {
     const token = perpCreateOrderStore.isSell ? baseToken : quoteToken;
-    return balanceStore.getFormatTotalBalance(token.assetId, token.decimals);
+    return balanceStore.getPerpFormatTotalBalance(token.assetId, token.decimals);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {
@@ -415,7 +415,7 @@ const CreateOrderPerp: React.FC = observer(() => {
   );
 });
 
-export default CreateOrderPerp;
+export default CreateOrder;
 
 const Root = styled(SmartFlex)`
   padding: 12px;

@@ -12,7 +12,7 @@ import OrderbookAndTradesSkeletonWrapper from "../../../components/Skeletons/Ord
 
 import { SpotOrderBook } from "./SpotOrderBook/SpotOrderBook";
 import { SpotTrades } from "./SpotTrades/SpotTrades";
-const OrderbookAndTradesInterface: React.FC = observer(() => {
+const OrderbookAndTrades: React.FC = observer(() => {
   const [isOrderbook, setIsOrderbook] = useState(true);
 
   const { spotOrderBookStore } = useStores();
@@ -39,7 +39,7 @@ const OrderbookAndTradesInterface: React.FC = observer(() => {
   );
 });
 
-export default OrderbookAndTradesInterface;
+export default OrderbookAndTrades;
 
 const Root = styled.div`
   display: flex;

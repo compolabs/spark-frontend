@@ -11,7 +11,7 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { PAGINATION_LIMIT } from "@stores/SpotTableStore";
 
-import { BaseTable } from "../BaseTable";
+import { BaseTable } from "../../../../components/BaseTable";
 
 import { MobileTableRows, TABLE_TYPE } from "./SpotTableMobileRow";
 import { TableContainer } from "./styles";

@@ -22,7 +22,7 @@ import { useStores } from "@stores";
 
 import BN from "@utils/BN";
 
-import { SpotMarketOrder } from "@entity";
+import { PerpMarketOrder } from "@entity";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -39,15 +39,11 @@ const SPOT_SETTINGS_ICONS = {
   [SPOT_ORDER_FILTER.BUY]: buyIcon,
 };
 
-import mock from "./mock.json";
-
 export const PerpOrderBook: React.FC<IProps> = observer(() => {
   const { perpOrderBookStore } = useStores();
   const media = useMedia();
-  // const { marketStore } = useStores();
-  // const market = marketStore.market;
-  const market = mock.market; // TODO: мок убрать
-  console.log("perpOrderBookStore", perpOrderBookStore);
+  const { marketStore } = useStores();
+  const market = marketStore.market;
   const column: ColumnProps[] = [
     {
       title: `Price ${market?.quoteToken.symbol}`,
@@ -75,7 +71,6 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
 
   const isOrderBookEmpty =
     perpOrderBookStore.allBuyOrders.length === 0 && perpOrderBookStore.allSellOrders.length === 0;
-
   const renderSettingsIcons = () => {
     if (media.mobile) {
       return <SettingIcon alt="filter" src={sellAndBuyIcon} onClick={openSettings} />;
@@ -99,13 +94,13 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
     perpOrderBookStore.setDecimalGroup(value);
   };
 
-  const renderOrders = (orders: SpotMarketOrder[], type: "sell" | "buy") => {
+  const renderOrders = (orders: PerpMarketOrder[], type: "sell" | "buy") => {
     const newOrder = [...orders];
     newOrder.reverse();
     return newOrder.map(
       (o): DataArray => [
         o.priceUnits.toFormat(perpOrderBookStore.decimalGroup),
-        numeral(o.currentAmountUnits).format(`0.${"0".repeat(4)}a`),
+        numeral(o.baseSize).format(`0.${"0".repeat(4)}a`),
         numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(perpOrderBookStore.decimalGroup)}a`),
         type === "sell",
       ],
@@ -121,20 +116,19 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
   }
 
   const orderBook = (): OrderBookData => {
-    console.log("perpOrderBookStore", perpOrderBookStore);
     if (perpOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL) {
       return {
-        firstData: renderOrders(perpOrderBookStore.sellOrders, "sell"),
+        firstData: renderOrders(perpOrderBookStore.allSellOrders, "sell"),
       };
     }
     if (perpOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY) {
       return {
-        firstData: renderOrders(perpOrderBookStore.buyOrders, "buy"),
+        firstData: renderOrders(perpOrderBookStore.allBuyOrders, "buy"),
       };
     }
     return {
-      firstData: renderOrders(perpOrderBookStore.buyOrders, "buy"),
-      secondData: renderOrders(perpOrderBookStore.sellOrders, "sell"),
+      firstData: renderOrders(perpOrderBookStore.allBuyOrders, "buy"),
+      secondData: renderOrders(perpOrderBookStore.allSellOrders, "sell"),
     };
   };
   const orderBookResult: OrderBookData = orderBook();

@@ -6,7 +6,7 @@ import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-
 
 import { RootStore } from "@stores";
 
-import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
+import { SPOT_ORDER_FILTER } from "@screens/PerpScreen/OrderbookAndTrades/PerpOrderBook/PerpOrderBook.tsx";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
@@ -14,7 +14,7 @@ import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarketOrder, SpotMarketTrade } from "@entity";
+import { PerpMarketOrder, PerpMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
@@ -22,11 +22,11 @@ export class PerpOrderBookStore {
   private readonly rootStore: RootStore;
   private subscriptionToTradeOrderEvents: Nullable<Subscription> = null;
 
-  trades: SpotMarketTrade[] = [];
+  trades: PerpMarketTrade[] = [];
   isInitialLoadComplete = false;
 
-  allBuyOrders: SpotMarketOrder[] = [];
-  allSellOrders: SpotMarketOrder[] = [];
+  allBuyOrders: PerpMarketOrder[] = [];
+  allSellOrders: PerpMarketOrder[] = [];
 
   decimalGroup = 3;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
@@ -46,10 +46,8 @@ export class PerpOrderBookStore {
     const { initialized, marketStore } = this.rootStore;
 
     reaction(
-      () => [initialized, marketStore.spotMarket],
+      () => [initialized, marketStore.perpMarket],
       ([market, initialized]) => {
-        // const isPerpMarket = market && PerpMarket.isInstance(market);
-        console.log("market", initialized);
         if (!initialized || !market) return;
 
         this.updateOrderBook();
@@ -59,7 +57,7 @@ export class PerpOrderBookStore {
     );
   }
 
-  private _sortOrders(orders: SpotMarketOrder[], reverse: boolean): SpotMarketOrder[] {
+  private _sortOrders(orders: PerpMarketOrder[], reverse: boolean): PerpMarketOrder[] {
     return orders.sort((a, b) => {
       if (reverse) {
         return a.price.lt(b.price) ? -1 : 1;
@@ -69,16 +67,16 @@ export class PerpOrderBookStore {
     });
   }
 
-  private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
+  private _getOrders(orders: PerpMarketOrder[], reverse = false): PerpMarketOrder[] {
     const groupedOrders = groupOrders(orders, this.decimalGroup);
     return this._sortOrders(groupedOrders.slice(), reverse);
   }
 
-  get buyOrders(): SpotMarketOrder[] {
+  get buyOrders(): PerpMarketOrder[] {
     return this._getOrders(this.allBuyOrders, true);
   }
 
-  get sellOrders(): SpotMarketOrder[] {
+  get sellOrders(): PerpMarketOrder[] {
     return this._getOrders(this.allSellOrders);
   }
 
@@ -106,7 +104,7 @@ export class PerpOrderBookStore {
 
   updateOrderBook = () => {
     const { marketStore } = this.rootStore;
-    const market = marketStore.spotMarket;
+    const market = marketStore.perpMarket;
 
     if (!this.rootStore.initialized || !market) return;
 
@@ -115,7 +113,6 @@ export class PerpOrderBookStore {
     const params: Omit<GetActiveOrdersParams, "orderType"> = {
       limit: 150,
       market: [market.contractAddress],
-      asset: market.baseToken.assetId,
     };
 
     this.subscribeToBuyOrders(bcNetwork, params);
@@ -125,7 +122,7 @@ export class PerpOrderBookStore {
   private subscribeToOrders(
     orderType: OrderType,
     subscription: Subscription | null,
-    updateOrders: (orders: SpotMarketOrder[]) => void,
+    updateOrders: (orders: PerpMarketOrder[]) => void,
     bcNetwork: FuelNetwork,
     params: Omit<GetActiveOrdersParams, "orderType">,
   ) {
@@ -134,35 +131,25 @@ export class PerpOrderBookStore {
     }
 
     const { marketStore } = this.rootStore;
-    const market = marketStore.spotMarket;
-    console.log("suv");
-    console.log("orderType", orderType);
-    console.log("subscription", subscription);
-    console.log("bcNetwork", bcNetwork);
-    console.log("params", params);
-    try {
-      const newSubscription = bcNetwork.perpSubscribeActiveOrders({ ...params, orderType }).subscribe({
-        next: ({ data }) => {
-          console.log("data", data);
-          this.isOrderBookLoading = false;
-          if (!data) return;
-
-          // const orders = formatSpotMarketOrders(
-          //   "ActiveBuyOrder" in data ? data.ActiveBuyOrder : data.ActiveSellOrder,
-          //   market!.quoteToken.assetId,
-          // );
-          // updateOrders(orders);
-        },
-      });
-      console.log("orderType", orderType, OrderType.Buy);
-      console.log("======");
-      if (orderType === OrderType.Buy) {
-        this.buySubscription = newSubscription;
-      } else {
-        this.sellSubscription = newSubscription;
-      }
-    } catch (e) {
-      console.log("!!error", e);
+    const market = marketStore.perpMarket;
+    const newSubscription = bcNetwork.perpSubscribeActiveOrders({ ...params, orderType }).subscribe({
+      next: ({ data }) => {
+        this.isOrderBookLoading = false;
+        if (!data) return;
+        const orders = ("ActiveBuyOrder" in data ? data.ActiveBuyOrder : data.ActiveSellOrder).map(
+          (order) =>
+            new PerpMarketOrder({
+              ...order,
+              quoteAssetId: market!.quoteToken.assetId,
+            }),
+        );
+        updateOrders(orders);
+      },
+    });
+    if (orderType === OrderType.Buy) {
+      this.buySubscription = newSubscription;
+    } else {
+      this.sellSubscription = newSubscription;
     }
   }
 
@@ -180,13 +167,15 @@ export class PerpOrderBookStore {
     this.subscribeToOrders(
       OrderType.Sell,
       this.sellSubscription,
-      (orders) => (this.allSellOrders = orders),
+      (orders) => {
+        this.allSellOrders = orders;
+      },
       bcNetwork,
       params,
     );
   }
 
-  private getPrice(orders: SpotMarketOrder[], priceType: "max" | "min"): BN {
+  private getPrice(orders: PerpMarketOrder[], priceType: "max" | "min"): BN {
     const compareType = priceType === "max" ? "gt" : "lt";
     return orders.reduce(
       (value, order) => (order.price[compareType](value) ? order.price : value),
@@ -224,7 +213,7 @@ export class PerpOrderBookStore {
 
   subscribeTrades = () => {
     const { marketStore } = this.rootStore;
-    const market = marketStore.spotMarket;
+    const market = marketStore.perpMarket;
 
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -240,16 +229,16 @@ export class PerpOrderBookStore {
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
-          const trades = data.TradeOrderEvent.map(
-            (trade) =>
-              new SpotMarketTrade({
-                ...trade,
-                baseAssetId: market!.baseToken.assetId,
-                quoteAssetId: market!.quoteToken.assetId,
-              }),
-          );
+          // TODO implement perp logic
+          // const trades = data.TradeOrderEvent.map(
+          //   (trade) =>
+          //     new PerpMarketTrade({
+          //       ...trade,
+          //       baseAssetId: market!.baseToken.assetId,
+          //     }),
+          // );
 
-          this.trades = trades;
+          this.trades = [];
 
           const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
           this.ohlcvData = ohlcvData.ohlcvData;

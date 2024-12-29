@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Chart from "@components/Chart";
 import MarketStatisticsBar from "@components/MarketHeader";
 import MarketSelection from "@components/MarketSelection";
 import MarketStatistics from "@components/MarketStatistics";
@@ -12,7 +13,7 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import { PerpOrderBook } from "@screens/PerpScreen/OrderbookAndTradesInterface/PerpOrderBook/PerpOrderBook.tsx";
+import { PerpOrderBook } from "./OrderbookAndTrades/PerpOrderBook/PerpOrderBook";
 
 const PerpScreenMobile: React.FC = observer(() => {
   const { marketStore } = useStores();
@@ -26,7 +27,7 @@ const PerpScreenMobile: React.FC = observer(() => {
     return (
       <>
         <MarketStatistics />
-        {/* <Chart /> */}
+        <Chart />
       </>
     );
   };

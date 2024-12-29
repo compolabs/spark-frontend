@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Chart from "@components/Chart";
 import MarketStatisticsBar from "@components/MarketHeader";
 import MarketSelection from "@components/MarketSelection";
 import { SmartFlex } from "@components/SmartFlex";
@@ -10,10 +11,10 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import RightBlockPerp from "@screens/PerpScreen/RightBlockPerp";
+import OrderbookAndTrades from "@screens/PerpScreen/OrderbookAndTrades/OrderbookAndTrades";
+import RightBlock from "@screens/PerpScreen/RightBlock";
 
 import BottomTables from "./BottomTables/BottomTables";
-import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
 
 const PerpScreenDesktop: React.FC = observer(() => {
   const { marketStore } = useStores();
@@ -24,12 +25,11 @@ const PerpScreenDesktop: React.FC = observer(() => {
       {marketStore.marketSelectionOpened && <MarketSelection />}
       <ContentContainer>
         <SmartFlex gap="4px" column>
-          {/* <Chart /> */}
-          <div id="chart" style={{ height: 800 }} />
+          <Chart />
           <BottomTables />
         </SmartFlex>
-        <OrderbookAndTradesInterface />
-        <RightBlockPerp />
+        <OrderbookAndTrades />
+        <RightBlock />
       </ContentContainer>
       <StatusBar />
     </Root>

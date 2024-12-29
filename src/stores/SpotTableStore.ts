@@ -5,7 +5,6 @@ import { OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { RootStore } from "@stores";
 
-import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
@@ -177,7 +176,7 @@ export class SpotTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(data.Order).sort(sortDesc);
+          const sortedOrder = data.Order.map((order) => new SpotMarketOrder(order)).sort(sortDesc);
           this.setUserOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -204,7 +203,7 @@ export class SpotTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = formatSpotMarketOrders(data.Order).sort(sortDesc);
+          const sortedOrdersHistory = data.Order.map((order) => new SpotMarketOrder(order)).sort(sortDesc);
           this.setUserOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {

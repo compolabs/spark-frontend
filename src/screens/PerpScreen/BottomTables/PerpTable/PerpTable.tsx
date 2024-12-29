@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { observer } from "mobx-react-lite";
 
+import { BaseTable } from "@components/BaseTable";
 import { Pagination } from "@components/Pagination/Pagination";
 import BottomTablesSkeletonWrapper from "@components/Skeletons/BottomTablesSkeletonWrapper";
 import Table from "@components/Table";
@@ -10,9 +11,7 @@ import Text, { TEXT_TYPES } from "@components/Text";
 import { useStores } from "@stores";
 import { PAGINATION_LIMIT } from "@stores/SpotTableStore";
 
-import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable.tsx";
-
-import BN from "@utils/BN.ts";
+import BN from "@utils/BN";
 
 import { TABLE_TYPE } from "./PerpTableMobileRow";
 import { TableContainer } from "./styles";

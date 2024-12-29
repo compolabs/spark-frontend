@@ -129,10 +129,6 @@ export class SpotCreateOrderStore {
   }
 
   get isInputError(): boolean {
-    return this.isSpotInputError;
-  }
-
-  get isSpotInputError(): boolean {
     const { balanceStore, marketStore } = this.rootStore;
 
     if (!marketStore.spotMarket) return false;
@@ -140,7 +136,7 @@ export class SpotCreateOrderStore {
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getSpotTotalBalance(token.assetId);
 
     return totalBalance ? amount.gt(totalBalance) : false;
   }
@@ -160,17 +156,13 @@ export class SpotCreateOrderStore {
   };
 
   onMaxClick = () => {
-    this.onSpotMaxClick();
-  };
-
-  private onSpotMaxClick = () => {
     const { mixPanelStore, balanceStore, marketStore } = this.rootStore;
 
     if (!marketStore.spotMarket) return;
 
     const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getSpotTotalBalance(token.assetId);
     if (this.isSell) {
       this.setInputAmount(totalBalance);
       return;
@@ -252,7 +244,7 @@ export class SpotCreateOrderStore {
 
     const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getSpotTotalBalance(token.assetId);
 
     if (totalBalance.isZero()) {
       this.inputPercent = BN.ZERO;
