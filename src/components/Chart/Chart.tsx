@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import TradingViewChartAdvance from "@components/Chart/TradingViewAdvanceWidget";
+import TradingViewWidget from "@components/Chart/TradingViewWidget";
 import { Row } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
-
-import TradingViewChartAdvance from "@screens/SpotScreen/Chart/TradingViewAdvanceWidget";
-import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget";
 
 const TABS = [
   { title: "SIMPLE CHART", disabled: false },

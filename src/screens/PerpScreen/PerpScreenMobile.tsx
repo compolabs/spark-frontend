@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Chart from "@components/Chart";
 import MarketStatisticsBar from "@components/MarketHeader";
 import MarketSelection from "@components/MarketSelection";
 import MarketStatistics from "@components/MarketStatistics";
@@ -26,7 +27,7 @@ const PerpScreenMobile: React.FC = observer(() => {
     return (
       <>
         <MarketStatistics />
-        {/* <Chart /> */}
+        <Chart />
       </>
     );
   };

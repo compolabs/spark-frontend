@@ -3,9 +3,9 @@ import styled from "@emotion/styled";
 import { createChart, IChartApi } from "lightweight-charts";
 import { observer } from "mobx-react-lite";
 
-import { useStores } from "@stores";
+import { candlestickSeriesConfig, chartConfig, histogramConfig } from "@components/Chart/configChart";
 
-import { candlestickSeriesConfig, chartConfig, histogramConfig } from "@screens/SpotScreen/Chart/configChart";
+import { useStores } from "@stores";
 
 const TradingViewWidgetNew: React.FC = observer(() => {
   const { spotOrderBookStore } = useStores();

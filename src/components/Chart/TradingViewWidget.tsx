@@ -5,7 +5,9 @@ import { observer } from "mobx-react";
 
 import { useStores } from "@stores";
 
-import ChartSkeletonWrapper from "../../../components/Skeletons/ChartSkeletonWrapper";
+import { PerpMarket } from "@entity";
+
+import ChartSkeletonWrapper from "../Skeletons/ChartSkeletonWrapper";
 
 const tvScriptLoadingPromise = () =>
   new Promise((resolve) => {
@@ -38,10 +40,17 @@ const TradingViewWidget: React.FC = observer(() => {
       return;
     }
 
+    console.log(market);
+
     const marketCEX = market.baseToken.symbol === "FUEL" ? "BYBIT" : "OKX";
     const quoteTokenSymbol = market.baseToken.symbol === "FUEL" ? "USDT" : market.quoteToken.symbol;
 
-    const symbol = `${marketCEX}:${market.baseToken.symbol}${quoteTokenSymbol}`;
+    let symbol = `${marketCEX}:${market.baseToken.symbol}${quoteTokenSymbol}`;
+
+    if (PerpMarket.isInstance(market)) {
+      symbol = `OKX:BTCUSDT`;
+    }
+
     const widgetConfig = {
       autosize: true,
       symbol,
