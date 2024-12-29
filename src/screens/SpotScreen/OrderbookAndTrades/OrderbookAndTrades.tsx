@@ -8,11 +8,11 @@ import Text, { TEXT_TYPES } from "@components/Text";
 
 import { useStores } from "@stores";
 
-import { PerpOrderBook } from "@screens/PerpScreen/OrderbookAndTradesInterface/PerpOrderBook/PerpOrderBook.tsx";
-import { PerpTrades } from "@screens/PerpScreen/OrderbookAndTradesInterface/PerpTrades/PerpTrades.tsx";
-
 import OrderbookAndTradesSkeletonWrapper from "../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";
-const OrderbookAndTradesInterface: React.FC = observer(() => {
+
+import { SpotOrderBook } from "./SpotOrderBook/SpotOrderBook";
+import { SpotTrades } from "./SpotTrades/SpotTrades";
+const OrderbookAndTrades: React.FC = observer(() => {
   const [isOrderbook, setIsOrderbook] = useState(true);
 
   const { spotOrderBookStore } = useStores();
@@ -33,13 +33,13 @@ const OrderbookAndTradesInterface: React.FC = observer(() => {
           </Button>
         </ButtonGroup>
         <SizedBox height={8} />
-        {isOrderbook ? <PerpOrderBook /> : <PerpTrades />}
+        {isOrderbook ? <SpotOrderBook /> : <SpotTrades />}
       </Root>
     </OrderbookAndTradesSkeletonWrapper>
   );
 });
 
-export default OrderbookAndTradesInterface;
+export default OrderbookAndTrades;
 
 const Root = styled.div`
   display: flex;

@@ -54,8 +54,6 @@ const DepositWithdrawModal: React.FC<IProps> = observer(({ ...rest }) => {
 
   const shouldBeDisabled = isIncorrectAmount || isZero;
 
-  console.log(withdrawAmount.toString(), selectedTokenBalance.toString());
-
   const handleMaxClick = () => {
     if (isDeposit) {
       setDepositAmount(selectedTokenWalletBalance);

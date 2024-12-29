@@ -13,7 +13,7 @@ import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
 import { MAX_TABLE_HEIGHT } from "@constants";
 
-import { TableActionButtons } from "./TableActionButtons";
+import { TableActionButtons } from "../screens/SpotScreen/BottomTables/TableActionButtons";
 
 interface Props {
   tabs?: { title: string; disabled: boolean; rowCount: number }[];

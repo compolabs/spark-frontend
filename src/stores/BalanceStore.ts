@@ -101,8 +101,6 @@ export class BalanceStore {
       this.fetchUserPerpVaultBalances(),
     ]);
 
-    console.log("perpContractBalances", perpContractBalances);
-
     try {
       for (const [tokenAddress, balance] of Object.entries(balances)) {
         const isTokenExist = !!bcNetwork.getTokenByAssetId(tokenAddress);
@@ -127,12 +125,9 @@ export class BalanceStore {
       }, {});
 
       const aggregatedPerpBalances = perpContractBalances.reduce<Record<string, BN>>((acc, vault) => {
-        console.log(vault.balance.toString());
         acc[vault.token.assetId] = (acc[vault.token.assetId] ?? BN.ZERO).plus(vault.balance);
         return acc;
       }, {});
-
-      console.log("asdsad", { aggregatedPerpBalances });
 
       this.spotContractBalances = new Map(Object.entries(aggregatedSpotBalances));
       this.perpContractBalances = new Map(Object.entries(aggregatedPerpBalances));
@@ -215,15 +210,12 @@ export class BalanceStore {
     const amountBN = BN.formatUnits(amount, token.decimals);
     const amountFormatted = amountBN.toSignificant(2);
 
-    console.log("get contract", CONFIG.PERP.CONTRACTS.clearingHouse);
     const vaultContract = await bcNetwork.perpetualSdk.getClearingHouseContract(CONFIG.PERP.CONTRACTS.clearingHouse);
 
     const deposit: Deposit = {
       amount,
       token: token.assetId,
     };
-
-    console.log("depositCollateral");
 
     try {
       const tx = await vaultContract.depositCollateralC(deposit);
@@ -369,8 +361,6 @@ export class BalanceStore {
 
     const balanceRequests = CONFIG.TOKENS.map(async (token) => {
       const balance = await vaultContract.getCollateralBalance(bcNetwork.getAddress()!, token.assetId);
-
-      console.log("loafing", balance);
 
       return {
         token,

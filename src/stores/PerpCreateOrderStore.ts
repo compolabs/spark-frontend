@@ -1,16 +1,7 @@
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
-import { Undefinable } from "tsdef";
 
-import {
-  AssetType,
-  CreateOrderWithDepositParams,
-  FulfillOrderManyWithDepositParams,
-  GetActiveOrdersParams,
-  LimitType,
-  Order,
-  OrderType,
-} from "@compolabs/spark-orderbook-ts-sdk";
+import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { RootStore } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
@@ -19,12 +10,11 @@ import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { CONFIG } from "@utils/getConfig";
-import { getRealFee } from "@utils/getRealFee";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import Math from "@utils/Math";
 
 import { FuelNetwork } from "@blockchain";
-import { PerpMarket, PerpMarketOrder } from "@entity";
+import { PerpMarketOrder } from "@entity";
 
 const PRICE_UPDATE_THROTTLE_INTERVAL = 1000; // 1s
 
@@ -48,14 +38,6 @@ export enum ORDER_TYPE {
   TakeProfitLimit,
   LimitFOK,
   LimitIOC, // TODO: Когда TimeInForce будет переделана в отдельную вкладку оставить только тип limit
-}
-
-interface DepositInfo {
-  amountToSpend: string;
-  amountFee: string;
-  depositAssetId: string;
-  feeAssetId: string;
-  assetType: AssetType;
 }
 
 export class PerpCreateOrderStore {
@@ -263,60 +245,32 @@ export class PerpCreateOrderStore {
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
 
   createOrder = async () => {
-    const {
-      marketStore,
-      notificationStore,
-      balanceStore,
-      mixPanelStore,
-      settingsStore,
-      accountStore,
-      perpMarketInfoStore,
-    } = this.rootStore;
-
-    const bcNetwork = FuelNetwork.getInstance();
+    const { marketStore, notificationStore, balanceStore, mixPanelStore, settingsStore, accountStore } = this.rootStore;
 
     if (!marketStore.perpMarket) return;
 
     this.isLoading = true;
 
     const isBuy = this.mode === ORDER_MODE.BUY;
-    const type = isBuy ? OrderType.Buy : OrderType.Sell;
 
-    const fee = getRealFee(marketStore.market, perpMarketInfoStore.matcherFee, perpMarketInfoStore.exchangeFee, !isBuy);
-
-    const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
-    const depositAmountWithFee = fee.exchangeFee.plus(fee.matcherFee);
-
-    const deposit: DepositInfo = {
-      amountToSpend: depositAmount.toString(),
-      amountFee: depositAmountWithFee.toString(),
-      depositAssetId: isBuy ? marketStore.perpMarket.quoteToken.assetId : marketStore.perpMarket.baseToken.assetId,
-      feeAssetId: marketStore.perpMarket.quoteToken.assetId,
-      assetType: isBuy ? AssetType.Quote : AssetType.Base,
-    };
-
-    const marketContractsByType = isBuy
-      ? CONFIG.PERP.MARKETS.filter((m) => m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase())
-      : CONFIG.PERP.MARKETS.filter((m) => m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase());
-
-    const marketContracts = marketContractsByType.map((m) => m.contractId);
+    const bcNetwork = FuelNetwork.getInstance();
+    const clearingHouseContract = await bcNetwork.perpetualSdk.getClearingHouseContract(
+      CONFIG.PERP.CONTRACTS.clearingHouse,
+    );
 
     if (bcNetwork.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
+    const token = isBuy ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
+    const amount = isBuy ? this.inputTotal : this.inputAmount;
+    const price = this.inputPrice;
+
     try {
-      let hash: Undefinable<string> = "";
+      const hash = await clearingHouseContract.openOrderC(marketStore.perpMarket.baseToken.assetId, amount, price);
 
-      if (settingsStore.timeInForce === LimitType.GTC) {
-        hash = await this.createGTCOrder(type, deposit, marketContracts);
-      } else {
-        hash = await this.createMarketOrLimitOrder(type, marketStore.perpMarket, deposit, marketContracts);
-      }
-
-      const token = isBuy ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
-      const amount = isBuy ? this.inputAmount : this.inputTotal;
       this.setInputTotal(BN.ZERO);
+
       mixPanelStore.trackEvent(MIXPANEL_EVENTS.CONFIRM_ORDER, {
         order_type: isBuy ? "BUY" : "SELL",
         token_1: marketStore.perpMarket.baseToken.symbol,
@@ -324,6 +278,7 @@ export class PerpCreateOrderStore {
         transaction_sum: BN.formatUnits(amount, token.decimals).toSignificant(2),
         user_address: accountStore.address,
       });
+
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_ORDER)(
           BN.formatUnits(amount, token.decimals).toSignificant(2),
@@ -343,105 +298,6 @@ export class PerpCreateOrderStore {
 
     await balanceStore.update();
     this.isLoading = false;
-  };
-
-  // Extracted function for creating GTC orders with deposits
-  private createGTCOrder = async (
-    type: OrderType,
-    deposit: DepositInfo,
-    marketContracts: string[],
-  ): Promise<string> => {
-    const bcNetwork = FuelNetwork.getInstance();
-
-    const order: CreateOrderWithDepositParams = {
-      type,
-      amount: this.inputAmount.toString(),
-      price: this.inputPrice.toString(),
-      ...deposit,
-    };
-
-    const data = await bcNetwork.spotCreateOrderWithDeposit(order, marketContracts);
-    return data.transactionId;
-  };
-
-  private createMarketOrLimitOrder = async (
-    type: OrderType,
-    market: PerpMarket,
-    deposit: DepositInfo,
-    marketContracts: string[],
-  ): Promise<string> => {
-    const { settingsStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
-
-    const isBuy = type === OrderType.Buy;
-
-    const params: GetActiveOrdersParams = {
-      limit: 50,
-      market: [market.contractAddress],
-      asset: market.baseToken.assetId ?? "",
-      orderType: isBuy ? OrderType.Sell : OrderType.Buy,
-    };
-
-    const activeOrders = await bcNetwork.spotFetchActiveOrders(params);
-
-    let orders: PerpMarketOrder[] = [];
-
-    const formatOrder = (order: Order) =>
-      new PerpMarketOrder({
-        ...order,
-        quoteAssetId: market.quoteToken.assetId,
-      });
-
-    if ("ActiveSellOrder" in activeOrders.data) {
-      orders = activeOrders.data.ActiveSellOrder.map(formatOrder);
-    } else {
-      orders = activeOrders.data.ActiveBuyOrder.map(formatOrder);
-    }
-
-    let total = this.inputTotal;
-    let spend = BN.ZERO;
-    const orderList = orders
-      .map((el) => {
-        if (total.toNumber() < 0) {
-          return null;
-        }
-        spend = spend.plus(el.currentAmount);
-        total = total.minus(el.currentQuoteAmount);
-        return el;
-      })
-      .filter((el) => el !== null);
-
-    const price =
-      settingsStore.orderType === ORDER_TYPE.Market
-        ? orderList[orderList.length - 1].price.toString()
-        : this.inputPrice.toString();
-
-    const baseDecimals = market.baseToken.decimals;
-    const quoteDecimals = market.quoteToken.decimals;
-    const newInputTotal = this.inputTotal.minus(deposit.amountFee);
-    const fullPrecent = "10000";
-    const slippage =
-      settingsStore.orderType === ORDER_TYPE.Market ? this.slippage.multipliedBy(100).toString() : fullPrecent;
-    const newInputAmount = Math.divideWithDifferentDecimals(
-      newInputTotal,
-      quoteDecimals,
-      this.inputPrice,
-      DEFAULT_DECIMALS,
-      baseDecimals,
-    );
-
-    const order: FulfillOrderManyWithDepositParams = {
-      ...deposit,
-      amountToSpend: newInputTotal.toString(),
-      amount: newInputAmount.toString(),
-      orderType: type,
-      limitType: settingsStore.timeInForce,
-      price,
-      orders: orderList.map((el) => el.id),
-      slippage: slippage,
-    };
-    const data = await bcNetwork.spotFulfillOrderManyWithDeposit(order, marketContracts);
-    return data.transactionId;
   };
 
   selectOrderbookOrder = async (order: PerpMarketOrder, mode: ORDER_MODE) => {

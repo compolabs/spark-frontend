@@ -13,7 +13,7 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import { PerpOrderBook } from "@screens/PerpScreen/OrderbookAndTradesInterface/PerpOrderBook/PerpOrderBook.tsx";
+import { PerpOrderBook } from "./OrderbookAndTrades/PerpOrderBook/PerpOrderBook";
 
 const PerpScreenMobile: React.FC = observer(() => {
   const { marketStore } = useStores();

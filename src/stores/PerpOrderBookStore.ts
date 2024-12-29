@@ -6,7 +6,7 @@ import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-
 
 import { RootStore } from "@stores";
 
-import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
+import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTrades/SpotOrderBook/SpotOrderBook";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";

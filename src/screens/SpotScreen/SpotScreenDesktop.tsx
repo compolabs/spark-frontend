@@ -14,7 +14,7 @@ import BottomTables from "@screens/SpotScreen/BottomTables";
 
 import MarketSelection from "../../components/MarketSelection";
 
-import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
+import OrderbookAndTradesInterface from "./OrderbookAndTrades/OrderbookAndTrades";
 import RightBlock from "./RightBlock/RightBlock";
 
 const SpotScreenDesktop: React.FC = observer(() => {

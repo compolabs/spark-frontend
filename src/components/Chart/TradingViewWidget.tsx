@@ -40,8 +40,6 @@ const TradingViewWidget: React.FC = observer(() => {
       return;
     }
 
-    console.log(market);
-
     const marketCEX = market.baseToken.symbol === "FUEL" ? "BYBIT" : "OKX";
     const quoteTokenSymbol = market.baseToken.symbol === "FUEL" ? "USDT" : market.quoteToken.symbol;
 

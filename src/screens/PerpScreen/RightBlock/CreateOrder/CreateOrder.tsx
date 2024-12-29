@@ -41,7 +41,7 @@ const LEVERAGE_OPTIONS = [5, 10, 20];
 
 const VISIBLE_MARKET_DECIMALS = 2;
 
-const CreateOrderPerp: React.FC = observer(() => {
+const CreateOrder: React.FC = observer(() => {
   const { balanceStore, marketStore, settingsStore, mixPanelStore, spotMarketInfoStore, perpCreateOrderStore } =
     useStores();
   const media = useMedia();
@@ -415,7 +415,7 @@ const CreateOrderPerp: React.FC = observer(() => {
   );
 });
 
-export default CreateOrderPerp;
+export default CreateOrder;
 
 const Root = styled(SmartFlex)`
   padding: 12px;

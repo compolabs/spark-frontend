@@ -10,9 +10,9 @@ import { useStores } from "@stores";
 
 import OrderbookAndTradesSkeletonWrapper from "../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";
 
-import { SpotOrderBook } from "./SpotOrderBook/SpotOrderBook";
-import { SpotTrades } from "./SpotTrades/SpotTrades";
-const OrderbookAndTradesInterface: React.FC = observer(() => {
+import { PerpOrderBook } from "./PerpOrderBook/PerpOrderBook";
+import { PerpTrades } from "./PerpTrades/PerpTrades";
+const OrderbookAndTrades: React.FC = observer(() => {
   const [isOrderbook, setIsOrderbook] = useState(true);
 
   const { spotOrderBookStore } = useStores();
@@ -33,13 +33,13 @@ const OrderbookAndTradesInterface: React.FC = observer(() => {
           </Button>
         </ButtonGroup>
         <SizedBox height={8} />
-        {isOrderbook ? <SpotOrderBook /> : <SpotTrades />}
+        {isOrderbook ? <PerpOrderBook /> : <PerpTrades />}
       </Root>
     </OrderbookAndTradesSkeletonWrapper>
   );
 });
 
-export default OrderbookAndTradesInterface;
+export default OrderbookAndTrades;
 
 const Root = styled.div`
   display: flex;

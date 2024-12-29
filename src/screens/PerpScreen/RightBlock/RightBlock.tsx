@@ -2,17 +2,17 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import CreateOrderPerp from "./CreateOrderPerp";
+import CreateOrder from "./CreateOrder";
 
-const RightBlockPerp: React.FC = observer(() => {
+const RightBlock: React.FC = observer(() => {
   return (
     <Root>
-      <CreateOrderPerp />
+      <CreateOrder />
     </Root>
   );
 });
 
-export default RightBlockPerp;
+export default RightBlock;
 
 const Root = styled.div`
   display: flex;

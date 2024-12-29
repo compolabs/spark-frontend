@@ -16,7 +16,7 @@ import BottomTables from "@screens/SpotScreen/BottomTables";
 import MarketSelection from "../../components/MarketSelection";
 import MarketStatistics from "../../components/MarketStatistics";
 
-import { SpotOrderBook } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
+import { SpotOrderBook } from "./OrderbookAndTrades/SpotOrderBook/SpotOrderBook";
 import CreateOrder from "./RightBlock/CreateOrder";
 
 const SpotScreenMobile: React.FC = observer(() => {
