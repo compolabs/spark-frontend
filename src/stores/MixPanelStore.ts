@@ -61,6 +61,8 @@ export enum MIXPANEL_EVENTS {
   CLICK_DASHBOARD = "click_dashboard",
   CLICK_SPOT = "click_spot",
   CLICK_MAX_SPOT = "click_max_spot",
+  CLICK_PERP = "click_perp",
+  CLICK_MAX_PERP = "click_max_perp",
   AGREE_WITH_TERMS = "agree_with_terms",
 
   WALLET_CONNECTED = "wallet_connected",

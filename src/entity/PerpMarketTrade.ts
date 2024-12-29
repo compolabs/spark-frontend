@@ -10,7 +10,7 @@ import { FuelNetwork } from "@blockchain";
 import { Token } from "./Token";
 
 interface PerpMarketTradeParams {
-  baseToken: string;
+  baseAssetId: string;
   seller: string;
   buyer: string;
   tradeSize: string;
@@ -47,7 +47,7 @@ export class PerpMarketTrade {
 
   constructor(params: PerpMarketTradeParams) {
     const bcNetwork = FuelNetwork.getInstance();
-    const baseToken = bcNetwork.getTokenByAssetId(params.baseToken);
+    const baseToken = bcNetwork.getTokenByAssetId(params.baseAssetId);
 
     this.id = params.id;
     this.baseToken = baseToken;

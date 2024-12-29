@@ -1,7 +1,5 @@
 import { autorun, makeAutoObservable } from "mobx";
 
-import { PerpCreateOrderStore } from "@stores/PerpCreateOrderStore.ts";
-
 import { saveState } from "@utils/localStorage";
 
 import { AccountStore, ISerializedAccountStore } from "./AccountStore";
@@ -14,6 +12,8 @@ import MixPanelStore from "./MixPanelStore";
 import { ModalStore } from "./ModalStore";
 import NotificationStore from "./NotificationStore";
 import { OracleStore } from "./OracleStore";
+import { PerpCreateOrderStore } from "./PerpCreateOrderStore";
+import { PerpMarketInfoStore } from "./PerpMarketInfoStore";
 import { QuickAssetsStore } from "./QuickAssetsStore";
 import { ISerializedSettingStore, SettingsStore } from "./SettingsStore";
 import { SpotCreateOrderStore } from "./SpotCreateOrderStore";
@@ -54,6 +54,7 @@ export default class RootStore {
   // Prep Stores
 
   perpCreateOrderStore: PerpCreateOrderStore;
+  perpMarketInfoStore: PerpMarketInfoStore;
 
   dashboardStore: DashboardStore;
   leaderboardStore: LeaderboardStore;
@@ -78,6 +79,7 @@ export default class RootStore {
     this.spotTableStore = new SpotTableStore(this);
 
     this.perpCreateOrderStore = new PerpCreateOrderStore(this);
+    this.perpMarketInfoStore = new PerpMarketInfoStore(this);
 
     this.dashboardStore = new DashboardStore(this);
     this.leaderboardStore = new LeaderboardStore(this);

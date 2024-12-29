@@ -24,7 +24,7 @@ import { handleWalletErrors } from "@utils/handleWalletErrors";
 import Math from "@utils/Math";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarket, SpotMarketOrder } from "@entity";
+import { PerpMarket, PerpMarketOrder } from "@entity";
 
 const PRICE_UPDATE_THROTTLE_INTERVAL = 1000; // 1s
 
@@ -113,7 +113,7 @@ export class PerpCreateOrderStore {
     );
 
     reaction(
-      () => marketStore.spotMarket,
+      () => marketStore.perpMarket,
       () => {
         this.setInputAmount(BN.ZERO);
         this.setInputTotal(BN.ZERO);
@@ -135,10 +135,10 @@ export class PerpCreateOrderStore {
   get isSpotInputError(): boolean {
     const { balanceStore, marketStore } = this.rootStore;
 
-    if (!marketStore.spotMarket) return false;
+    if (!marketStore.perpMarket) return false;
 
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
-    const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
+    const token = this.isSell ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
 
     const totalBalance = balanceStore.getTotalBalance(token.assetId);
 
@@ -166,9 +166,9 @@ export class PerpCreateOrderStore {
   private onSpotMaxClick = () => {
     const { mixPanelStore, balanceStore, marketStore } = this.rootStore;
 
-    if (!marketStore.spotMarket) return;
+    if (!marketStore.perpMarket) return;
 
-    const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
+    const token = this.isSell ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
 
     const totalBalance = balanceStore.getTotalBalance(token.assetId);
     if (this.isSell) {
@@ -176,7 +176,7 @@ export class PerpCreateOrderStore {
       return;
     }
 
-    mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_MAX_SPOT, {
+    mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_MAX_PERP, {
       type: this.isSell ? "SELL" : "BUY",
       value: totalBalance.toString(),
     });
@@ -208,11 +208,11 @@ export class PerpCreateOrderStore {
   };
 
   private calculateInputs(): void {
-    const { marketStore, spotMarketInfoStore } = this.rootStore;
-    if (!marketStore.spotMarket) return;
+    const { marketStore, perpMarketInfoStore } = this.rootStore;
+    if (!marketStore.perpMarket) return;
 
-    const baseDecimals = marketStore.spotMarket.baseToken.decimals;
-    const quoteDecimals = marketStore.spotMarket.quoteToken.decimals;
+    const baseDecimals = marketStore.perpMarket.baseToken.decimals;
+    const quoteDecimals = marketStore.perpMarket.quoteToken.decimals;
 
     const newInputTotal = Math.multiplyWithDifferentDecimals(
       this.inputAmount,
@@ -242,15 +242,15 @@ export class PerpCreateOrderStore {
 
     this.updatePercent();
 
-    spotMarketInfoStore.fetchTradeFeeDebounce(this.inputTotal.toString());
+    perpMarketInfoStore.fetchTradeFeeDebounce(this.inputTotal.toString());
   }
 
   private updatePercent(): void {
     const { balanceStore, marketStore } = this.rootStore;
 
-    if (!marketStore.spotMarket) return;
+    if (!marketStore.perpMarket) return;
 
-    const token = this.isSell ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
+    const token = this.isSell ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
 
     const totalBalance = balanceStore.getTotalBalance(token.assetId);
 
@@ -278,19 +278,19 @@ export class PerpCreateOrderStore {
       mixPanelStore,
       settingsStore,
       accountStore,
-      spotMarketInfoStore,
+      perpMarketInfoStore,
     } = this.rootStore;
 
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!marketStore.spotMarket) return;
+    if (!marketStore.perpMarket) return;
 
     this.isLoading = true;
 
     const isBuy = this.mode === ORDER_MODE.BUY;
     const type = isBuy ? OrderType.Buy : OrderType.Sell;
 
-    const fee = getRealFee(marketStore.market, spotMarketInfoStore.matcherFee, spotMarketInfoStore.exchangeFee, !isBuy);
+    const fee = getRealFee(marketStore.market, perpMarketInfoStore.matcherFee, perpMarketInfoStore.exchangeFee, !isBuy);
 
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
     const depositAmountWithFee = fee.exchangeFee.plus(fee.matcherFee);
@@ -298,8 +298,8 @@ export class PerpCreateOrderStore {
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
       amountFee: depositAmountWithFee.toString(),
-      depositAssetId: isBuy ? marketStore.spotMarket.quoteToken.assetId : marketStore.spotMarket.baseToken.assetId,
-      feeAssetId: marketStore.spotMarket.quoteToken.assetId,
+      depositAssetId: isBuy ? marketStore.perpMarket.quoteToken.assetId : marketStore.perpMarket.baseToken.assetId,
+      feeAssetId: marketStore.perpMarket.quoteToken.assetId,
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
     };
 
@@ -319,16 +319,16 @@ export class PerpCreateOrderStore {
       if (settingsStore.timeInForce === LimitType.GTC) {
         hash = await this.createGTCOrder(type, deposit, marketContracts);
       } else {
-        hash = await this.createMarketOrLimitOrder(type, marketStore.spotMarket, deposit, marketContracts);
+        hash = await this.createMarketOrLimitOrder(type, marketStore.perpMarket, deposit, marketContracts);
       }
 
-      const token = isBuy ? marketStore.spotMarket.baseToken : marketStore.spotMarket.quoteToken;
+      const token = isBuy ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
       const amount = isBuy ? this.inputAmount : this.inputTotal;
       this.setInputTotal(BN.ZERO);
       mixPanelStore.trackEvent(MIXPANEL_EVENTS.CONFIRM_ORDER, {
         order_type: isBuy ? "BUY" : "SELL",
-        token_1: marketStore.spotMarket.baseToken.symbol,
-        token_2: marketStore.spotMarket.quoteToken.symbol,
+        token_1: marketStore.perpMarket.baseToken.symbol,
+        token_2: marketStore.perpMarket.quoteToken.symbol,
         transaction_sum: BN.formatUnits(amount, token.decimals).toSignificant(2),
         user_address: accountStore.address,
       });
@@ -374,7 +374,7 @@ export class PerpCreateOrderStore {
 
   private createMarketOrLimitOrder = async (
     type: OrderType,
-    market: SpotMarket,
+    market: PerpMarket,
     deposit: DepositInfo,
     marketContracts: string[],
   ): Promise<string> => {
@@ -392,10 +392,10 @@ export class PerpCreateOrderStore {
 
     const activeOrders = await bcNetwork.spotFetchActiveOrders(params);
 
-    let orders: SpotMarketOrder[] = [];
+    let orders: PerpMarketOrder[] = [];
 
     const formatOrder = (order: Order) =>
-      new SpotMarketOrder({
+      new PerpMarketOrder({
         ...order,
         quoteAssetId: market.quoteToken.assetId,
       });
@@ -452,7 +452,7 @@ export class PerpCreateOrderStore {
     return data.transactionId;
   };
 
-  selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {
+  selectOrderbookOrder = async (order: PerpMarketOrder, mode: ORDER_MODE) => {
     const { settingsStore } = this.rootStore;
     settingsStore.setTimeInForce(LimitType.GTC);
     settingsStore.setOrderType(ORDER_TYPE.Limit);

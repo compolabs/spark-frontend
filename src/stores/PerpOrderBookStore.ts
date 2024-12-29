@@ -4,7 +4,7 @@ import { Nullable } from "tsdef";
 
 import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { RootStore } from "@stores";
+import { RootStore, SpotOrderBookStore } from "@stores";
 
 import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 
@@ -14,19 +14,19 @@ import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarketOrder, SpotMarketTrade } from "@entity";
+import { PerpMarketOrder, PerpMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
-export class SpotOrderBookStore {
+export class PerpOrderBookStore {
   private readonly rootStore: RootStore;
   private subscriptionToTradeOrderEvents: Nullable<Subscription> = null;
 
-  trades: SpotMarketTrade[] = [];
+  trades: PerpMarketTrade[] = [];
   isInitialLoadComplete = false;
 
-  allBuyOrders: SpotMarketOrder[] = [];
-  allSellOrders: SpotMarketOrder[] = [];
+  allBuyOrders: PerpMarketOrder[] = [];
+  allSellOrders: PerpMarketOrder[] = [];
 
   decimalGroup = 3;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
@@ -57,7 +57,7 @@ export class SpotOrderBookStore {
     );
   }
 
-  private _sortOrders(orders: SpotMarketOrder[], reverse: boolean): SpotMarketOrder[] {
+  private _sortOrders(orders: PerpMarketOrder[], reverse: boolean): PerpMarketOrder[] {
     return orders.sort((a, b) => {
       if (reverse) {
         return a.price.lt(b.price) ? -1 : 1;
@@ -67,16 +67,16 @@ export class SpotOrderBookStore {
     });
   }
 
-  private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
+  private _getOrders(orders: PerpMarketOrder[], reverse = false): PerpMarketOrder[] {
     const groupedOrders = groupOrders(orders, this.decimalGroup);
     return this._sortOrders(groupedOrders.slice(), reverse);
   }
 
-  get buyOrders(): SpotMarketOrder[] {
+  get buyOrders(): PerpMarketOrder[] {
     return this._getOrders(this.allBuyOrders, true);
   }
 
-  get sellOrders(): SpotMarketOrder[] {
+  get sellOrders(): PerpMarketOrder[] {
     return this._getOrders(this.allSellOrders);
   }
 
@@ -123,7 +123,7 @@ export class SpotOrderBookStore {
   private subscribeToOrders(
     orderType: OrderType,
     subscription: Subscription | null,
-    updateOrders: (orders: SpotMarketOrder[]) => void,
+    updateOrders: (orders: PerpMarketOrder[]) => void,
     bcNetwork: FuelNetwork,
     params: Omit<GetActiveOrdersParams, "orderType">,
   ) {
@@ -141,7 +141,7 @@ export class SpotOrderBookStore {
 
         const orders = ("ActiveBuyOrder" in data ? data.ActiveBuyOrder : data.ActiveSellOrder).map(
           (order) =>
-            new SpotMarketOrder({
+            new PerpMarketOrder({
               ...order,
               quoteAssetId: market!.quoteToken.assetId,
             }),
@@ -178,7 +178,7 @@ export class SpotOrderBookStore {
     );
   }
 
-  private getPrice(orders: SpotMarketOrder[], priceType: "max" | "min"): BN {
+  private getPrice(orders: PerpMarketOrder[], priceType: "max" | "min"): BN {
     const compareType = priceType === "max" ? "gt" : "lt";
     return orders.reduce(
       (value, order) => (order.price[compareType](value) ? order.price : value),
@@ -232,16 +232,16 @@ export class SpotOrderBookStore {
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
-          const trades = data.TradeOrderEvent.map(
-            (trade) =>
-              new SpotMarketTrade({
-                ...trade,
-                baseAssetId: market!.baseToken.assetId,
-                quoteAssetId: market!.quoteToken.assetId,
-              }),
-          );
+          // TODO implement perp logic
+          // const trades = data.TradeOrderEvent.map(
+          //   (trade) =>
+          //     new PerpMarketTrade({
+          //       ...trade,
+          //       baseAssetId: market!.baseToken.assetId,
+          //     }),
+          // );
 
-          this.trades = trades;
+          this.trades = [];
 
           const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
           this.ohlcvData = ohlcvData.ohlcvData;
