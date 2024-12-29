@@ -148,15 +148,29 @@ export class BalanceStore {
     return this.balances.get(CONFIG.TOKENS_BY_SYMBOL.ETH.assetId) ?? BN.ZERO;
   };
 
-  getTotalBalance = (assetId: string) => {
+  getSpotTotalBalance = (assetId: string) => {
     const walletBalance = this.balances.get(assetId) ?? BN.ZERO;
     const spotContractBalance = this.spotContractBalances.get(assetId) ?? BN.ZERO;
 
     return walletBalance.plus(spotContractBalance);
   };
 
-  getFormatTotalBalance = (assetId: string, decimals: number) => {
-    return BN.formatUnits(this.getTotalBalance(assetId), decimals).toSignificant(2) ?? "-";
+  getSpotFormatTotalBalance = (assetId: string, decimals: number) => {
+    return BN.formatUnits(this.getSpotTotalBalance(assetId), decimals).toSignificant(2) ?? "-";
+  };
+
+  getPerpTotalBalance = (assetId: string) => {
+    // const walletBalance = this.balances.get(assetId) ?? BN.ZERO;
+    const perpContractBalance = this.perpContractBalances.get(assetId) ?? BN.ZERO;
+
+    console.log(perpContractBalance);
+
+    // return walletBalance.plus(perpContractBalances);
+    return perpContractBalance;
+  };
+
+  getPerpFormatTotalBalance = (assetId: string, decimals: number) => {
+    return BN.formatUnits(this.getPerpTotalBalance(assetId), decimals).toSignificant(2) ?? "-";
   };
 
   getSpotContractBalance = (assetId: string) => {
@@ -360,7 +374,9 @@ export class BalanceStore {
     const vaultContract = await bcNetwork.perpetualSdk.getVaultContract(CONFIG.PERP.CONTRACTS.vault, true);
 
     const balanceRequests = CONFIG.TOKENS.map(async (token) => {
-      const balance = await vaultContract.getCollateralBalance(bcNetwork.getAddress()!, token.assetId);
+      const balance = await vaultContract
+        .getCollateralBalance(bcNetwork.getAddress()!, token.assetId)
+        .catch(() => BN.ZERO);
 
       return {
         token,

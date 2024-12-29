@@ -118,7 +118,7 @@ export class PerpCreateOrderStore {
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
     const token = this.isSell ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getPerpTotalBalance(token.assetId);
 
     return totalBalance ? amount.gt(totalBalance) : false;
   }
@@ -144,7 +144,7 @@ export class PerpCreateOrderStore {
 
     const token = this.isSell ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getPerpTotalBalance(token.assetId);
     if (this.isSell) {
       this.setInputAmount(totalBalance);
       return;
@@ -226,7 +226,7 @@ export class PerpCreateOrderStore {
 
     const token = this.isSell ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getPerpTotalBalance(token.assetId);
 
     if (totalBalance.isZero()) {
       this.inputPercent = BN.ZERO;

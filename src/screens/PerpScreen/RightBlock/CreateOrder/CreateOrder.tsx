@@ -42,7 +42,7 @@ const LEVERAGE_OPTIONS = [5, 10, 20];
 const VISIBLE_MARKET_DECIMALS = 2;
 
 const CreateOrder: React.FC = observer(() => {
-  const { balanceStore, marketStore, settingsStore, mixPanelStore, spotMarketInfoStore, perpCreateOrderStore } =
+  const { balanceStore, marketStore, settingsStore, mixPanelStore, perpCreateOrderStore, perpMarketInfoStore } =
     useStores();
   const media = useMedia();
 
@@ -62,7 +62,7 @@ const CreateOrder: React.FC = observer(() => {
   const handlePercentChange = (v: number) => {
     const token = perpCreateOrderStore.isSell ? baseToken : quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = balanceStore.getPerpTotalBalance(token.assetId);
 
     if (totalBalance.isZero()) return;
 
@@ -152,11 +152,11 @@ const CreateOrder: React.FC = observer(() => {
 
   const renderButton = () => {
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
-    const minimalOrder = spotMarketInfoStore.minimalOrder;
+    const minimalOrder = perpMarketInfoStore.minimalOrder;
     const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
     const formatMinimalPrice = BN.formatUnits(minimalOrder.minPrice.toString(), DEFAULT_DECIMALS).toString();
 
-    if (!isButtonDisabled && spotMarketInfoStore.isFeeLoading) {
+    if (!isButtonDisabled && perpMarketInfoStore.isFeeLoading) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Loading...</Text>
@@ -164,7 +164,7 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (!isButtonDisabled && !spotMarketInfoStore.getIsEnoughtMoneyForFee(perpCreateOrderStore.isSell)) {
+    if (!isButtonDisabled && !perpMarketInfoStore.getIsEnoughtMoneyForFee(perpCreateOrderStore.isSell)) {
       return (
         <CreateOrderButton disabled>
           <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
@@ -285,7 +285,7 @@ const CreateOrder: React.FC = observer(() => {
 
   const getAvailableAmount = () => {
     const token = perpCreateOrderStore.isSell ? baseToken : quoteToken;
-    return balanceStore.getFormatTotalBalance(token.assetId, token.decimals);
+    return balanceStore.getPerpFormatTotalBalance(token.assetId, token.decimals);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {
