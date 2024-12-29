@@ -4,7 +4,7 @@ import { Nullable } from "tsdef";
 
 import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { RootStore, SpotOrderBookStore } from "@stores";
+import { RootStore } from "@stores";
 
 import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 
@@ -46,7 +46,7 @@ export class PerpOrderBookStore {
     const { initialized, marketStore } = this.rootStore;
 
     reaction(
-      () => [initialized, marketStore.spotMarket],
+      () => [initialized, marketStore.perpMarket],
       ([market, initialized]) => {
         if (!initialized || !market) return;
 
@@ -104,7 +104,7 @@ export class PerpOrderBookStore {
 
   updateOrderBook = () => {
     const { marketStore } = this.rootStore;
-    const market = marketStore.spotMarket;
+    const market = marketStore.perpMarket;
 
     if (!this.rootStore.initialized || !market) return;
 
@@ -132,7 +132,7 @@ export class PerpOrderBookStore {
     }
 
     const { marketStore } = this.rootStore;
-    const market = marketStore.spotMarket;
+    const market = marketStore.perpMarket;
 
     const newSubscription = bcNetwork.spotSubscribeActiveOrders({ ...params, orderType }).subscribe({
       next: ({ data }) => {
@@ -216,7 +216,7 @@ export class PerpOrderBookStore {
 
   subscribeTrades = () => {
     const { marketStore } = this.rootStore;
-    const market = marketStore.spotMarket;
+    const market = marketStore.perpMarket;
 
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -258,5 +258,3 @@ export class PerpOrderBookStore {
     return !this.isInitialLoadComplete;
   }
 }
-
-export default SpotOrderBookStore;

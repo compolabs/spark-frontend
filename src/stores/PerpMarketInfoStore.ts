@@ -7,7 +7,6 @@ import BN from "@utils/BN";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarketVolume } from "@blockchain/types";
 
 import RootStore from "./RootStore";
 
@@ -16,7 +15,7 @@ const MARKET_INFO_UPDATE_INTERVAL = 5 * 60 * 1000; // 5 min
 export class PerpMarketInfoStore {
   private readonly rootStore: RootStore;
 
-  marketInfo: SpotMarketVolume = {
+  marketInfo = {
     volume: BN.ZERO,
     high: BN.ZERO,
     low: BN.ZERO,
@@ -71,27 +70,27 @@ export class PerpMarketInfoStore {
 
   get exchangeFeeFormat(): BN {
     const { marketStore } = this.rootStore;
-    if (!marketStore.spotMarket) return BN.ZERO;
+    if (!marketStore.perpMarket) return BN.ZERO;
 
-    const decimals = marketStore.spotMarket.quoteToken.decimals;
+    const decimals = marketStore.perpMarket.quoteToken.decimals;
     return BN.formatUnits(this.exchangeFee, decimals);
   }
 
   get matcherFeeFormat(): BN {
     const { marketStore } = this.rootStore;
-    if (!marketStore.spotMarket) return BN.ZERO;
+    if (!marketStore.perpMarket) return BN.ZERO;
 
-    const decimals = marketStore.spotMarket.quoteToken.decimals;
+    const decimals = marketStore.perpMarket.quoteToken.decimals;
     return BN.formatUnits(this.matcherFee, decimals);
   }
 
   getIsEnoughtMoneyForFee(isSell: boolean) {
     const { marketStore } = this.rootStore;
 
-    if (!marketStore.spotMarket || isSell) return true;
+    if (!marketStore.perpMarket || isSell) return true;
     const { balanceStore } = this.rootStore;
 
-    const walletAmount = balanceStore.getWalletBalance(marketStore.spotMarket.quoteToken.assetId);
+    const walletAmount = balanceStore.getWalletBalance(marketStore.perpMarket.quoteToken.assetId);
 
     return this.exchangeFee.plus(this.matcherFee).lte(walletAmount);
   }
@@ -107,14 +106,14 @@ export class PerpMarketInfoStore {
 
   updateMarketInfo = async () => {
     const { marketStore } = this.rootStore;
-    if (!marketStore.spotMarket) return;
+    if (!marketStore.perpMarket) return;
 
     const info = await FuelNetwork.getInstance().spotFetchVolume({
       limit: 1000,
-      market: [marketStore.spotMarket.contractAddress],
+      market: [marketStore.perpMarket.contractAddress],
     });
 
-    const volume = BN.formatUnits(info.volume, marketStore.spotMarket.baseToken.decimals);
+    const volume = BN.formatUnits(info.volume, marketStore.perpMarket.baseToken.decimals);
     const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
     const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
 
@@ -129,7 +128,7 @@ export class PerpMarketInfoStore {
     const { marketStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!marketStore.spotMarket) return;
+    if (!marketStore.perpMarket) return;
 
     this.isMatcherFeeLoading = true;
     const matcherFee = await bcNetwork.spotFetchMatcherFee();
@@ -148,7 +147,7 @@ export class PerpMarketInfoStore {
 
     const bcNetwork = FuelNetwork.getInstance();
 
-    if (!accountStore.address || !marketStore.spotMarket) return;
+    if (!accountStore.address || !marketStore.perpMarket) return;
 
     this.isTradeFeeLoading = true;
     const address = toBech32(accountStore.address!);

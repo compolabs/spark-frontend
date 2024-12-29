@@ -5,16 +5,15 @@ import { OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { RootStore } from "@stores";
 
-import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarket, SpotMarketOrder } from "@entity";
+import { PerpMarketOrder, SpotMarket } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
-const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
+const sortDesc = (a: PerpMarketOrder, b: PerpMarketOrder) => b.timestamp.valueOf() - a.timestamp.valueOf();
 
 export const PAGINATION_LIMIT = 10;
 
@@ -24,11 +23,11 @@ export class PerpTableStore {
   private subscriptionToHistoryOrders: Nullable<Subscription> = null;
   private subscriptionToOrdersStats: Nullable<Subscription> = null;
 
-  userOrders: SpotMarketOrder[] = [];
-  private setUserOrders = (orders: SpotMarketOrder[]) => (this.userOrders = orders);
+  userOrders: PerpMarketOrder[] = [];
+  private setUserOrders = (orders: PerpMarketOrder[]) => (this.userOrders = orders);
 
-  userOrdersHistory: SpotMarketOrder[] = [];
-  private setUserOrdersHistory = (orders: SpotMarketOrder[]) => (this.userOrdersHistory = orders);
+  userOrdersHistory: PerpMarketOrder[] = [];
+  private setUserOrdersHistory = (orders: PerpMarketOrder[]) => (this.userOrdersHistory = orders);
 
   userOrdersStats: Nullable<UserInfo> = null;
   private setUserOrdersStats = (stats: UserInfo) => (this.userOrdersStats = stats);
@@ -117,7 +116,7 @@ export class PerpTableStore {
     this.userOrdersStats = null;
   };
 
-  cancelOrder = async (order: SpotMarketOrder) => {
+  cancelOrder = async (order: PerpMarketOrder) => {
     const { notificationStore, marketStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -177,7 +176,7 @@ export class PerpTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = formatSpotMarketOrders(data.Order).sort(sortDesc);
+          const sortedOrder = data.Order.map((order) => new PerpMarketOrder(order)).sort(sortDesc);
           this.setUserOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -204,7 +203,7 @@ export class PerpTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = formatSpotMarketOrders(data.Order).sort(sortDesc);
+          const sortedOrdersHistory = data.Order.map((order) => new PerpMarketOrder(order)).sort(sortDesc);
           this.setUserOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {

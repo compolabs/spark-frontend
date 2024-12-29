@@ -129,10 +129,6 @@ export class SpotCreateOrderStore {
   }
 
   get isInputError(): boolean {
-    return this.isSpotInputError;
-  }
-
-  get isSpotInputError(): boolean {
     const { balanceStore, marketStore } = this.rootStore;
 
     if (!marketStore.spotMarket) return false;
@@ -160,10 +156,6 @@ export class SpotCreateOrderStore {
   };
 
   onMaxClick = () => {
-    this.onSpotMaxClick();
-  };
-
-  private onSpotMaxClick = () => {
     const { mixPanelStore, balanceStore, marketStore } = this.rootStore;
 
     if (!marketStore.spotMarket) return;

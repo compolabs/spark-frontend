@@ -258,5 +258,3 @@ export class SpotOrderBookStore {
     return !this.isInitialLoadComplete;
   }
 }
-
-export default SpotOrderBookStore;

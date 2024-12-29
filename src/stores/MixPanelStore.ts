@@ -55,8 +55,6 @@ export class MixPanelStore {
   }
 }
 
-export default MixPanelStore;
-
 export enum MIXPANEL_EVENTS {
   CLICK_DASHBOARD = "click_dashboard",
   CLICK_SPOT = "click_spot",

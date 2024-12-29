@@ -8,17 +8,19 @@ import { DashboardStore } from "./DashboardStore";
 import { FaucetStore } from "./FaucetStore";
 import { LeaderboardStore } from "./LeaderboardStore";
 import { ISerializedMarketStore, MarketStore } from "./MarketStore";
-import MixPanelStore from "./MixPanelStore";
+import { MixPanelStore } from "./MixPanelStore";
 import { ModalStore } from "./ModalStore";
-import NotificationStore from "./NotificationStore";
+import { NotificationStore } from "./NotificationStore";
 import { OracleStore } from "./OracleStore";
 import { PerpCreateOrderStore } from "./PerpCreateOrderStore";
 import { PerpMarketInfoStore } from "./PerpMarketInfoStore";
+import { PerpOrderBookStore } from "./PerpOrderBookStore";
+import { PerpTableStore } from "./PerpTableStore";
 import { QuickAssetsStore } from "./QuickAssetsStore";
 import { ISerializedSettingStore, SettingsStore } from "./SettingsStore";
 import { SpotCreateOrderStore } from "./SpotCreateOrderStore";
 import { SpotMarketInfoStore } from "./SpotMarketInfoStore";
-import SpotOrderBookStore from "./SpotOrderBookStore";
+import { SpotOrderBookStore } from "./SpotOrderBookStore";
 import { SpotTableStore } from "./SpotTableStore";
 import { SwapStore } from "./SwapStore";
 
@@ -52,9 +54,10 @@ export default class RootStore {
   spotTableStore: SpotTableStore;
 
   // Prep Stores
-
   perpCreateOrderStore: PerpCreateOrderStore;
   perpMarketInfoStore: PerpMarketInfoStore;
+  perpOrderBookStore: PerpOrderBookStore;
+  perpTableStore: PerpTableStore;
 
   dashboardStore: DashboardStore;
   leaderboardStore: LeaderboardStore;
@@ -77,9 +80,11 @@ export default class RootStore {
     this.spotMarketInfoStore = new SpotMarketInfoStore(this);
     this.spotOrderBookStore = new SpotOrderBookStore(this);
     this.spotTableStore = new SpotTableStore(this);
+    this.perpTableStore = new PerpTableStore(this);
 
     this.perpCreateOrderStore = new PerpCreateOrderStore(this);
     this.perpMarketInfoStore = new PerpMarketInfoStore(this);
+    this.perpOrderBookStore = new PerpOrderBookStore(this);
 
     this.dashboardStore = new DashboardStore(this);
     this.leaderboardStore = new LeaderboardStore(this);

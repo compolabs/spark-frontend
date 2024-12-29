@@ -77,11 +77,11 @@ export class PerpCreateOrderStore {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 
-    const { spotOrderBookStore, marketStore, settingsStore } = this.rootStore;
+    const { perpOrderBookStore, marketStore, settingsStore } = this.rootStore;
 
     // TODO: Fix the bug where the price doesn’t change when switching markets
     reaction(
-      () => [spotOrderBookStore.allBuyOrders, spotOrderBookStore.allSellOrders],
+      () => [perpOrderBookStore.allBuyOrders, perpOrderBookStore.allSellOrders],
       ([buyOrders, sellOrders]) => {
         const orders = this.isSell ? buyOrders : sellOrders;
         const order = orders[orders.length - 1];
@@ -103,7 +103,7 @@ export class PerpCreateOrderStore {
     reaction(
       () => [this.isSell, settingsStore.orderType],
       ([isSell]) => {
-        const orders = isSell ? spotOrderBookStore.allBuyOrders : spotOrderBookStore.allSellOrders;
+        const orders = isSell ? perpOrderBookStore.allBuyOrders : perpOrderBookStore.allSellOrders;
         const order = orders[orders.length - 1];
 
         if (!order) return;
@@ -129,10 +129,6 @@ export class PerpCreateOrderStore {
   }
 
   get isInputError(): boolean {
-    return this.isSpotInputError;
-  }
-
-  get isSpotInputError(): boolean {
     const { balanceStore, marketStore } = this.rootStore;
 
     if (!marketStore.perpMarket) return false;
@@ -160,10 +156,6 @@ export class PerpCreateOrderStore {
   };
 
   onMaxClick = () => {
-    this.onSpotMaxClick();
-  };
-
-  private onSpotMaxClick = () => {
     const { mixPanelStore, balanceStore, marketStore } = this.rootStore;
 
     if (!marketStore.perpMarket) return;
@@ -304,8 +296,8 @@ export class PerpCreateOrderStore {
     };
 
     const marketContractsByType = isBuy
-      ? CONFIG.SPOT.MARKETS.filter((m) => m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase())
-      : CONFIG.SPOT.MARKETS.filter((m) => m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase());
+      ? CONFIG.PERP.MARKETS.filter((m) => m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase())
+      : CONFIG.PERP.MARKETS.filter((m) => m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase());
 
     const marketContracts = marketContractsByType.map((m) => m.contractId);
 
