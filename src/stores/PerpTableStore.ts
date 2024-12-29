@@ -9,7 +9,7 @@ import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
-import { PerpMarketOrder, SpotMarket } from "@entity";
+import { PerpMarket, PerpMarketOrder } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
@@ -79,9 +79,9 @@ export class PerpTableStore {
     reaction(
       () => [marketStore.market, this.rootStore.initialized, accountStore.isConnected, this.tableFilters] as const,
       ([market, initialized, isConnected, _]) => {
-        const isSpotMarket = market && SpotMarket.isInstance(market);
+        const isPerpMarket = market && PerpMarket.isInstance(market);
 
-        if (!isSpotMarket || !initialized || !isConnected) {
+        if (!isPerpMarket || !initialized || !isConnected) {
           this.setUserOrders([]);
           this.setUserOrdersHistory([]);
           return;
