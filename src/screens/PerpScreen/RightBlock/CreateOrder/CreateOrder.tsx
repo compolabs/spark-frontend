@@ -25,7 +25,7 @@ import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE } from "@stores/PerpCreateOrderStore";
 
-import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
+import { DEFAULT_DECIMALS } from "@constants";
 import { getRealFee } from "@utils/getRealFee";
 
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
@@ -151,10 +151,10 @@ const CreateOrder: React.FC = observer(() => {
   );
 
   const renderButton = () => {
-    const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
-    const minimalOrder = perpMarketInfoStore.minimalOrder;
-    const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
-    const formatMinimalPrice = BN.formatUnits(minimalOrder.minPrice.toString(), DEFAULT_DECIMALS).toString();
+    // const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
+    // const minimalOrder = perpMarketInfoStore.minimalOrder;
+    // const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
+    // const formatMinimalPrice = BN.formatUnits(minimalOrder.minPrice.toString(), DEFAULT_DECIMALS).toString();
 
     if (!isButtonDisabled && perpMarketInfoStore.isFeeLoading) {
       return (
@@ -164,37 +164,37 @@ const CreateOrder: React.FC = observer(() => {
       );
     }
 
-    if (!isButtonDisabled && !perpMarketInfoStore.getIsEnoughtMoneyForFee(perpCreateOrderStore.isSell)) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (!isButtonDisabled && !perpMarketInfoStore.getIsEnoughtMoneyForFee(perpCreateOrderStore.isSell)) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
-    if (!isButtonDisabled && !isEnoughGas) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Insufficient ETH for gas</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (!isButtonDisabled && !isEnoughGas) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Insufficient ETH for gas</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
-    if (perpCreateOrderStore.inputAmount.lt(minimalOrder.minOrder)) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Minimum amount {formatMinimalAmount}</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (perpCreateOrderStore.inputAmount.lt(minimalOrder.minOrder)) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Minimum amount {formatMinimalAmount}</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
-    if (perpCreateOrderStore.inputPrice.lt(minimalOrder.minPrice)) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (perpCreateOrderStore.inputPrice.lt(minimalOrder.minPrice)) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
     return (
       <CreateOrderButton

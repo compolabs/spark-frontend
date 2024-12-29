@@ -262,12 +262,13 @@ export class PerpCreateOrderStore {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
-    const token = isBuy ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
+    // const token = isBuy ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
+    const token = marketStore.perpMarket.quoteToken;
     const amount = isBuy ? this.inputTotal : this.inputAmount;
     const price = this.inputPrice;
 
     try {
-      const hash = await clearingHouseContract.openOrderC(marketStore.perpMarket.baseToken.assetId, amount, price);
+      const hash = await clearingHouseContract.openOrderC(token.assetId, amount, price);
 
       this.setInputTotal(BN.ZERO);
 
