@@ -10,10 +10,10 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import OrderbookAndTradesInterface from "@screens/PerpScreen/OrderbookAndTradesInterface/OrderbookAndTradesInterface.tsx";
 import RightBlockPerp from "@screens/PerpScreen/RightBlockPerp";
 
 import BottomTables from "./BottomTables/BottomTables";
+import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
 
 const PerpScreenDesktop: React.FC = observer(() => {
   const { marketStore } = useStores();

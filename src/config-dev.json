@@ -121,8 +121,8 @@
     ],
     "indexers": {
       "0xc17dd80692a8987fb3d7b310061aaa27c1b9a12cd5d2dfc9e800d7bb01b54cf4": {
-        "httpUrl": "https://indexer.dev.hyperindex.xyz/67b693c/v1/graphql",
-        "wsUrl": "wss://indexer.dev.hyperindex.xyz/67b693c/v1/graphql"
+        "httpUrl": "https://indexer.dev.hyperindex.xyz/zhpv96/v1/graphql",
+        "wsUrl": "wss://indexer.dev.hyperindex.xyz/zhpv96/v1/graphql"
       }
     },
     "contracts": {

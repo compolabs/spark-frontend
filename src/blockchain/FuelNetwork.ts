@@ -33,6 +33,9 @@ export class FuelNetwork {
 
     this.perpetualSdk = new SparkPerpetualSdk({
       networkUrl: CONFIG.APP.links.networkUrl,
+      contractAddresses: {
+        multiAsset: CONFIG.SPOT.CONTRACTS.multiAsset,
+      },
     });
   }
 
@@ -108,6 +111,10 @@ export class FuelNetwork {
     this.orderbookSdk.setActiveMarket(...params);
   };
 
+  setPerpActiveMarket = (...params: Parameters<typeof this.orderbookSdk.setActiveMarket>) => {
+    this.perpetualSdk.setActiveMarket(...params);
+  };
+
   spotCreateOrder = async (
     ...params: Parameters<typeof this.orderbookSdk.createOrder>
   ): Promise<WriteTransactionResponse> => {
@@ -162,6 +169,12 @@ export class FuelNetwork {
 
   spotSubscribeOrders = (...params: Parameters<typeof this.orderbookSdk.subscribeOrders>) => {
     return this.orderbookSdk.subscribeOrders(...params);
+  };
+
+  perpSubscribeActiveOrders = <T extends OrderType>(
+    ...params: Parameters<typeof this.perpetualSdk.subscribeActiveOrders<T>>
+  ): ReturnType<typeof this.perpetualSdk.subscribeActiveOrders<T>> => {
+    return this.perpetualSdk.subscribeActiveOrders(...params);
   };
 
   spotSubscribeActiveOrders = <T extends OrderType>(

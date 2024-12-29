@@ -15,10 +15,10 @@ import OrderbookAndTradesSkeletonWrapper from "../../../components/Skeletons/Ord
 const OrderbookAndTradesInterface: React.FC = observer(() => {
   const [isOrderbook, setIsOrderbook] = useState(true);
 
-  const { spotOrderBookStore } = useStores();
+  const { perpOrderBookStore } = useStores();
 
   return (
-    <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
+    <OrderbookAndTradesSkeletonWrapper isReady={!perpOrderBookStore.isOrderBookLoading}>
       <Root>
         <ButtonGroup style={{ padding: "0 12px" }}>
           <Button active={isOrderbook} onClick={() => setIsOrderbook(true)}>

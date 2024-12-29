@@ -42,12 +42,12 @@ const SPOT_SETTINGS_ICONS = {
 import mock from "./mock.json";
 
 export const PerpOrderBook: React.FC<IProps> = observer(() => {
-  const { spotOrderBookStore } = useStores();
+  const { perpOrderBookStore } = useStores();
   const media = useMedia();
   // const { marketStore } = useStores();
   // const market = marketStore.market;
   const market = mock.market; // TODO: мок убрать
-
+  console.log("perpOrderBookStore", perpOrderBookStore);
   const column: ColumnProps[] = [
     {
       title: `Price ${market?.quoteToken.symbol}`,
@@ -64,17 +64,17 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
   ];
 
   const config = {
-    orderFilter: spotOrderBookStore.orderFilter,
-    isSpreadValid: spotOrderBookStore.isSpreadValid,
-    spreadPrice: spotOrderBookStore.spreadPrice,
-    spreadPercent: spotOrderBookStore.spreadPercent,
-    decimalGroup: spotOrderBookStore.decimalGroup,
+    orderFilter: perpOrderBookStore.orderFilter,
+    isSpreadValid: perpOrderBookStore.isSpreadValid,
+    spreadPrice: perpOrderBookStore.spreadPrice,
+    spreadPercent: perpOrderBookStore.spreadPercent,
+    decimalGroup: perpOrderBookStore.decimalGroup,
   };
 
   const [isSettingsOpen, openSettings, closeSettings] = useFlag();
 
   const isOrderBookEmpty =
-    spotOrderBookStore.allBuyOrders.length === 0 && spotOrderBookStore.allSellOrders.length === 0;
+    perpOrderBookStore.allBuyOrders.length === 0 && perpOrderBookStore.allSellOrders.length === 0;
 
   const renderSettingsIcons = () => {
     if (media.mobile) {
@@ -85,18 +85,18 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
       <SettingIcon
         key={index}
         alt="filter"
-        selected={spotOrderBookStore.orderFilter === index}
+        selected={perpOrderBookStore.orderFilter === index}
         src={value}
-        onClick={() => spotOrderBookStore.setOrderFilter(index)}
+        onClick={() => perpOrderBookStore.setOrderFilter(index)}
       />
     ));
   };
 
-  const indexOfDecimal = SPOT_DECIMAL_OPTIONS.indexOf(spotOrderBookStore.decimalGroup);
+  const indexOfDecimal = SPOT_DECIMAL_OPTIONS.indexOf(perpOrderBookStore.decimalGroup);
 
   const handleDecimalSelect = (index: string) => {
     const value = SPOT_DECIMAL_OPTIONS[Number(index)];
-    spotOrderBookStore.setDecimalGroup(value);
+    perpOrderBookStore.setDecimalGroup(value);
   };
 
   const renderOrders = (orders: SpotMarketOrder[], type: "sell" | "buy") => {
@@ -104,9 +104,9 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
     newOrder.reverse();
     return newOrder.map(
       (o): DataArray => [
-        o.priceUnits.toFormat(spotOrderBookStore.decimalGroup),
+        o.priceUnits.toFormat(perpOrderBookStore.decimalGroup),
         numeral(o.currentAmountUnits).format(`0.${"0".repeat(4)}a`),
-        numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`),
+        numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(perpOrderBookStore.decimalGroup)}a`),
         type === "sell",
       ],
     );
@@ -121,25 +121,26 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
   }
 
   const orderBook = (): OrderBookData => {
-    if (spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL) {
+    console.log("perpOrderBookStore", perpOrderBookStore);
+    if (perpOrderBookStore.orderFilter === SPOT_ORDER_FILTER.SELL) {
       return {
-        firstData: renderOrders(spotOrderBookStore.sellOrders, "sell"),
+        firstData: renderOrders(perpOrderBookStore.sellOrders, "sell"),
       };
     }
-    if (spotOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY) {
+    if (perpOrderBookStore.orderFilter === SPOT_ORDER_FILTER.BUY) {
       return {
-        firstData: renderOrders(spotOrderBookStore.buyOrders, "buy"),
+        firstData: renderOrders(perpOrderBookStore.buyOrders, "buy"),
       };
     }
     return {
-      firstData: renderOrders(spotOrderBookStore.buyOrders, "buy"),
-      secondData: renderOrders(spotOrderBookStore.sellOrders, "sell"),
+      firstData: renderOrders(perpOrderBookStore.buyOrders, "buy"),
+      secondData: renderOrders(perpOrderBookStore.sellOrders, "sell"),
     };
   };
   const orderBookResult: OrderBookData = orderBook();
 
   return (
-    <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
+    <OrderbookAndTradesSkeletonWrapper isReady={!perpOrderBookStore.isOrderBookLoading}>
       <Root>
         <SettingsContainer>
           <StyledSelect
@@ -164,10 +165,10 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
             filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([_, value]) => value)}
             isOpen={isSettingsOpen}
             selectedDecimal={String(indexOfDecimal)}
-            selectedFilter={spotOrderBookStore.orderFilter}
+            selectedFilter={perpOrderBookStore.orderFilter}
             onClose={closeSettings}
             onDecimalSelect={handleDecimalSelect}
-            onFilterSelect={spotOrderBookStore.setOrderFilter}
+            onFilterSelect={perpOrderBookStore.setOrderFilter}
           />
         </OrderbookContainer>
       </Root>

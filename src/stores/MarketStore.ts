@@ -91,15 +91,14 @@ export class MarketStore {
     if (!marketId || marketId === this.marketSymbol) return;
 
     const selectedMarket = this.markets.find((market) => market.symbol === marketId);
-
     if (!selectedMarket) return;
 
     if (SpotMarket.isInstance(selectedMarket)) {
-      const indexerInfo = CONFIG.SPOT.INDEXERS[selectedMarket.contractAddress as keyof typeof CONFIG.SPOT.INDEXERS];
-      bcNetwork.setSpotActiveMarket(selectedMarket.contractAddress, indexerInfo);
+      const spotIndexerInfo = CONFIG.SPOT.INDEXERS[selectedMarket.contractAddress as keyof typeof CONFIG.SPOT.INDEXERS];
+      bcNetwork.setSpotActiveMarket(selectedMarket.contractAddress, spotIndexerInfo);
     } else if (PerpMarket.isInstance(selectedMarket)) {
-      // TODO:
-      // const indexerInfo = CONFIG.PERP.INDEXERS[selectedMarket.contractAddress as keyof typeof CONFIG.PERP.INDEXERS];
+      const perpIndexerInfo = CONFIG.PERP.INDEXERS[selectedMarket.contractAddress as keyof typeof CONFIG.PERP.INDEXERS];
+      bcNetwork.setPerpActiveMarket(selectedMarket.contractAddress, perpIndexerInfo);
     } else {
       throw new Error("Market type not supported");
     }

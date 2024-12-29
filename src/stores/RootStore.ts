@@ -14,6 +14,7 @@ import MixPanelStore from "./MixPanelStore";
 import { ModalStore } from "./ModalStore";
 import NotificationStore from "./NotificationStore";
 import { OracleStore } from "./OracleStore";
+import { PerpOrderBookStore } from "./PerpOrderBookStore";
 import { QuickAssetsStore } from "./QuickAssetsStore";
 import { ISerializedSettingStore, SettingsStore } from "./SettingsStore";
 import { SpotCreateOrderStore } from "./SpotCreateOrderStore";
@@ -54,6 +55,7 @@ export default class RootStore {
   // Prep Stores
 
   perpCreateOrderStore: PerpCreateOrderStore;
+  perpOrderBookStore: PerpOrderBookStore;
 
   dashboardStore: DashboardStore;
   leaderboardStore: LeaderboardStore;
@@ -78,6 +80,7 @@ export default class RootStore {
     this.spotTableStore = new SpotTableStore(this);
 
     this.perpCreateOrderStore = new PerpCreateOrderStore(this);
+    this.perpOrderBookStore = new PerpOrderBookStore(this);
 
     this.dashboardStore = new DashboardStore(this);
     this.leaderboardStore = new LeaderboardStore(this);
