@@ -3,11 +3,11 @@ import { makeAutoObservable, reaction } from "mobx";
 
 import { GetLeaderboardQueryParams, TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { FiltersProps } from "@stores/DashboardStore.ts";
+import { FiltersProps } from "@stores/DashboardStore";
 
 import { filters } from "@screens/Dashboard/const";
 
-import { CONFIG } from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 

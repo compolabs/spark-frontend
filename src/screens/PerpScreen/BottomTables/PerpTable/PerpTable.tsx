@@ -11,7 +11,7 @@ import Text, { TEXT_TYPES } from "@components/Text";
 import { useStores } from "@stores";
 import { PAGINATION_LIMIT } from "@stores/SpotTableStore";
 
-import BN from "@utils/BN.ts";
+import BN from "@utils/BN";
 
 import { TABLE_TYPE } from "./PerpTableMobileRow";
 import { TableContainer } from "./styles";

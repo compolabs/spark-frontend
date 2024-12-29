@@ -19,7 +19,7 @@ import DepositAssets from "@assets/icons/depositAssets.svg?react";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
-import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
+import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
 import { BRIDGE_LINK } from "@constants";
 

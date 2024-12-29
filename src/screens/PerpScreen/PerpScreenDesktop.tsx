@@ -11,7 +11,7 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import OrderbookAndTrades from "@screens/PerpScreen/OrderbookAndTrades/OrderbookAndTrades.tsx";
+import OrderbookAndTrades from "@screens/PerpScreen/OrderbookAndTrades/OrderbookAndTrades";
 import RightBlock from "@screens/PerpScreen/RightBlock";
 
 import BottomTables from "./BottomTables/BottomTables";
