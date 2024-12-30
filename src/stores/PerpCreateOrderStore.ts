@@ -263,12 +263,13 @@ export class PerpCreateOrderStore {
     }
 
     // const token = isBuy ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
-    const token = marketStore.perpMarket.quoteToken;
+    const token = marketStore.perpMarket.baseToken;
     const amount = isBuy ? this.inputTotal : this.inputAmount;
     const price = this.inputPrice;
 
     try {
-      const hash = await clearingHouseContract.openOrderC(token.assetId, amount, price);
+      console.log(price.toString());
+      const hash = await clearingHouseContract.openOrderC(token.assetId, amount, price.div(100));
 
       this.setInputTotal(BN.ZERO);
 

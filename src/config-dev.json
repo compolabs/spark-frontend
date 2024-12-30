@@ -4,9 +4,9 @@
   "tokens": [
     {
       "name": "Bitcoin",
-      "symbol": "BTC",
+      "symbol": "tBTC",
       "decimals": 9,
-      "assetId": "0x00000000000000000000000000000000000000000000000000000000000000",
+      "assetId": "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
       "priceFeed": "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
       "precision": 9,
       "collateral": false
@@ -119,7 +119,7 @@
       {
         "marketName": "BTCUSDC",
         "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
-        "baseAssetId": "0x00000000000000000000000000000000000000000000000000000000000000",
+        "baseAssetId": "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
         "baseAssetDecimals": 8,
         "quoteAssetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
         "quoteAssetDecimals": 6,
