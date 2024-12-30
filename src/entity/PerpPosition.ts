@@ -85,4 +85,8 @@ export class PerpPosition {
   get isUnrealizedPnlInProfit() {
     return this.takerOpenNational.multipliedBy(this.takerPositionSize).multipliedBy(this.markPrice).isPositive();
   }
+
+  get leverage() {
+    return "20";
+  }
 }

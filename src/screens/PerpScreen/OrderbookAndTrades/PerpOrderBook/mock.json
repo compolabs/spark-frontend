@@ -1,0 +1,129 @@
+{
+  "market": {
+    "baseToken": {
+      "name": "Ethereum",
+      "symbol": "ETH",
+      "decimals": 9,
+      "logo": "/src/assets/tokens/ethereum.svg",
+      "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+      "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+      "precision": 9
+    },
+    "quoteToken": {
+      "name": "USDC",
+      "symbol": "USDC",
+      "decimals": 6,
+      "logo": "/src/assets/tokens/usdc.svg",
+      "assetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+      "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+      "precision": 2
+    },
+    "contractAddress": "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998",
+    "price": "0",
+    "type": "spot"
+  },
+  "perpData": {
+    "sellOrders": [
+      {
+        "id": "0x095ce36aa8d5aeed7a72d0902ad45c95a246582dd1e08b27c2bc26ff5303dcfb",
+        "user": "",
+        "orderType": "Sell",
+        "status": "Active",
+        "market": "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998",
+        "baseToken": {
+          "name": "Ethereum",
+          "symbol": "ETH",
+          "decimals": 9,
+          "logo": "/src/assets/tokens/ethereum.svg",
+          "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+          "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+          "precision": 9
+        },
+        "quoteToken": {
+          "name": "USDC",
+          "symbol": "USDC",
+          "decimals": 6,
+          "logo": "/src/assets/tokens/usdc.svg",
+          "assetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+          "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+          "precision": 2
+        },
+        "timestamp": "2024-11-07T00:13:22.000Z",
+        "price": "3100280000000",
+        "initialAmount": "32255151",
+        "currentAmount": "27002442",
+        "initialQuoteAmount": "99999999",
+        "currentQuoteAmount": "83715130",
+        "filledAmount": "5252709",
+        "filledQuoteAmount": "0"
+      },
+      {
+        "id": "0x7f3eb6b7ec933a095981a49a3bf780b4b3b0b61e8bbb00cb7e6783b1b7704c84",
+        "user": "",
+        "orderType": "Sell",
+        "status": "Active",
+        "market": "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998",
+        "baseToken": {
+          "name": "Ethereum",
+          "symbol": "ETH",
+          "decimals": 9,
+          "logo": "/src/assets/tokens/ethereum.svg",
+          "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+          "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+          "precision": 9
+        },
+        "quoteToken": {
+          "name": "USDC",
+          "symbol": "USDC",
+          "decimals": 6,
+          "logo": "/src/assets/tokens/usdc.svg",
+          "assetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+          "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+          "precision": 2
+        },
+        "timestamp": "2024-11-07T00:14:28.000Z",
+        "price": "3100050000000",
+        "initialAmount": "225802809",
+        "currentAmount": "30405581",
+        "initialQuoteAmount": "699999998",
+        "currentQuoteAmount": "94258821",
+        "filledAmount": "195397228",
+        "filledQuoteAmount": "0"
+      },
+      {
+        "id": "0xaaa9dc15cc8f59664eaf3b863656049f85cfa5ad59bbafb613034d3d5b805ecf",
+        "user": "",
+        "orderType": "Sell",
+        "status": "Active",
+        "market": "0x944a3d62e65f3aefa7ac4a065eb9390a98806ef254aaece6df239ee78e6c2998",
+        "baseToken": {
+          "name": "Ethereum",
+          "symbol": "ETH",
+          "decimals": 9,
+          "logo": "/src/assets/tokens/ethereum.svg",
+          "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+          "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+          "precision": 9
+        },
+        "quoteToken": {
+          "name": "USDC",
+          "symbol": "USDC",
+          "decimals": 6,
+          "logo": "/src/assets/tokens/usdc.svg",
+          "assetId": "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05",
+          "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+          "precision": 2
+        },
+        "timestamp": "2024-11-07T12:57:53.000Z",
+        "price": "3100010000000",
+        "initialAmount": "1377148823",
+        "currentAmount": "236787980",
+        "initialQuoteAmount": "4269175122",
+        "currentQuoteAmount": "734045105",
+        "filledAmount": "1140360843",
+        "filledQuoteAmount": "0"
+      }
+    ],
+    "buyOrders": []
+  }
+}

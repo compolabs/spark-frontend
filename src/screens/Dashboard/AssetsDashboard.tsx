@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
+import { BaseTable } from "@components/BaseTable";
 import Button from "@components/Button";
 import Chip from "@components/Chip";
 import { Column } from "@components/Flex";
@@ -18,19 +19,20 @@ import DepositAssets from "@assets/icons/depositAssets.svg?react";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
-import { TRADE_TABLE_SIZE } from "@stores/SettingsStore.ts";
-
-import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable";
+import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 
 import { BRIDGE_LINK } from "@constants";
 
 const orderColumnHelper = createColumnHelper<any>();
 
 const AssetsDashboard = observer(() => {
-  const [isLoading, setLoading] = useState(false);
-  const media = useMedia();
   const { balanceStore } = useStores();
+  const media = useMedia();
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
+
   const data = balancesInfoList
     .map((el) => ({
       asset: el.asset,
@@ -39,9 +41,11 @@ const AssetsDashboard = observer(() => {
       currentPrice: new BN(el.price).toSignificant(2),
     }))
     .filter((item) => new BN(item.value).isGreaterThan(BN.ZERO));
+
   const allContractBalance = balancesInfoList.reduce((acc, el) => {
     return acc.plus(el.contractBalance);
   }, BN.ZERO);
+
   const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.contractBalance).isZero());
   const columns = [
     orderColumnHelper.accessor("asset", {
@@ -166,18 +170,18 @@ const AssetsDashboard = observer(() => {
   };
 
   const withdrawalBalance = async (selectAsset: AssetBlockData) => {
-    setLoading(true);
-    await balanceStore.withdrawBalance(
+    setIsLoading(true);
+    await balanceStore.withdrawSpotBalance(
       selectAsset.asset.assetId,
       BN.parseUnits(selectAsset.contractBalance, selectAsset.asset.decimals).toString(),
     );
-    setLoading(false);
+    setIsLoading(false);
   };
 
   const handleWithdrawAll = async () => {
-    setLoading(true);
-    await balanceStore.withdrawBalanceAll();
-    setLoading(false);
+    setIsLoading(true);
+    await balanceStore.withdrawSpotBalanceAll();
+    setIsLoading(false);
   };
 
   return (

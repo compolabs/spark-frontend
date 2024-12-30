@@ -22,21 +22,24 @@ interface InfoBlockProps {
 }
 
 export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }) => {
+  const { swapStore, oracleStore } = useStores();
   const theme = useTheme();
+
   const [showDetails, setShowDetails] = useState(false);
   const [isSlippageSettingOpen, setSlippageSettingOpen] = useState(false);
-  const { swapStore, oracleStore } = useStores();
+
   const exchangeRate = oracleStore
     .getTokenIndexPrice(swapStore.sellToken.priceFeed)
     .dividedBy(oracleStore.getTokenIndexPrice(swapStore.buyToken.priceFeed))
     .toNumber();
 
   // TODO: Fix it
-  // const exchangeFee = tradeStore.exchangeFeeFormat;
-  // const matcherFee = tradeStore.matcherFeeFormat;
+  // const exchangeFee = spotMarketInfoStore.exchangeFeeFormat;
+  // const matcherFee = spotMarketInfoStore.matcherFeeFormat;
   const exchangeFee = BN.ZERO;
   const matcherFee = BN.ZERO;
   const totalFee = exchangeFee.plus(matcherFee);
+
   return (
     <Root>
       <InfoLine onClick={() => setShowDetails(!showDetails)}>

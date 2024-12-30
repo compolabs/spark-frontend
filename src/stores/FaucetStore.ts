@@ -1,14 +1,14 @@
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import RootStore from "@stores/RootStore";
-
 import { FUEL_FAUCET } from "@constants";
 import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
+
+import RootStore from "./RootStore";
 
 export const FAUCET_AMOUNTS: Record<string, number> = {
   ETH: 0.002,
@@ -18,7 +18,7 @@ export const FAUCET_AMOUNTS: Record<string, number> = {
 };
 const AVAILABLE_TOKENS = ["ETH", "UNI", "USDC"];
 
-class FaucetStore {
+export class FaucetStore {
   private readonly rootStore: RootStore;
 
   loading: boolean = false;
@@ -75,7 +75,7 @@ class FaucetStore {
     try {
       const amount = FAUCET_AMOUNTS[token.symbol].toString();
 
-      const tx = await bcNetwork?.mintToken(token, amount);
+      const tx = await bcNetwork?.spotMintToken(token, amount);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS)(amount, token.symbol),
         hash: tx.transactionId,
@@ -120,5 +120,3 @@ class FaucetStore {
 
   private setLoading = (l: boolean) => (this.loading = l);
 }
-
-export default FaucetStore;

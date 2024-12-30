@@ -6,6 +6,7 @@ interface TokenParams {
   assetId: string;
   priceFeed: string;
   precision: number;
+  collateral: boolean;
 }
 
 export class Token {
@@ -16,6 +17,7 @@ export class Token {
   public readonly assetId: TokenParams["assetId"];
   public readonly priceFeed: TokenParams["priceFeed"];
   public readonly precision: TokenParams["precision"];
+  public readonly collateral: TokenParams["collateral"];
 
   constructor(params: TokenParams) {
     this.name = params.name;
@@ -25,5 +27,6 @@ export class Token {
     this.assetId = params.assetId;
     this.priceFeed = params.priceFeed;
     this.precision = params.precision;
+    this.collateral = params.collateral;
   }
 }
