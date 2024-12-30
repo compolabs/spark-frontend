@@ -12,8 +12,8 @@ importers:
         specifier: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.9.tgz
         version: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.9.tgz(@types/react@18.3.13)(fuels@0.97.1)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@compolabs/spark-perpetual-ts-sdk':
-        specifier: https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.7.tgz
-        version: https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.7.tgz(@types/react@18.3.13)(fuels@0.97.1)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.8.tgz
+        version: https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.8.tgz(@types/react@18.3.13)(fuels@0.97.1)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@compolabs/tradingview-chart':
         specifier: ^1.0.21
         version: 1.0.21
@@ -1010,9 +1010,9 @@ packages:
     peerDependencies:
       fuels: '>=0.97.1'
 
-  '@compolabs/spark-perpetual-ts-sdk@https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.7.tgz':
-    resolution: {tarball: https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.7.tgz}
-    version: 0.0.7
+  '@compolabs/spark-perpetual-ts-sdk@https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.8.tgz':
+    resolution: {tarball: https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.8.tgz}
+    version: 0.0.8
     engines: {node: '>=20'}
     peerDependencies:
       fuels: '>=0.97.1'
@@ -8187,7 +8187,7 @@ snapshots:
       - react-dom
       - subscriptions-transport-ws
 
-  '@compolabs/spark-perpetual-ts-sdk@https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.7.tgz(@types/react@18.3.13)(fuels@0.97.1)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@compolabs/spark-perpetual-ts-sdk@https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.8.tgz(@types/react@18.3.13)(fuels@0.97.1)(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@apollo/client': 3.12.3(@types/react@18.3.13)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios: 1.7.9

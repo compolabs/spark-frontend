@@ -98,7 +98,7 @@ export class MarketStore {
       bcNetwork.setSpotActiveMarket(selectedMarket.contractAddress, spotIndexerInfo);
     } else if (PerpMarket.isInstance(selectedMarket)) {
       const perpIndexerInfo = CONFIG.PERP.INDEXERS[selectedMarket.contractAddress as keyof typeof CONFIG.PERP.INDEXERS];
-      bcNetwork.setPerpActiveMarket(selectedMarket.contractAddress, perpIndexerInfo);
+      bcNetwork.setPerpActiveMarket(perpIndexerInfo);
     } else {
       throw new Error("Market type not supported");
     }

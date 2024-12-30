@@ -41,6 +41,6 @@ export default defineConfig({
   //
   optimizeDeps: {
     // exclude: ["@compolabs/spark-orderbook-ts-sdk"],
-    exclude: ["@compolabs/spark-perpetual-ts-sdk"],
+    // exclude: ["@compolabs/spark-perpetual-ts-sdk"],
   },
 });
