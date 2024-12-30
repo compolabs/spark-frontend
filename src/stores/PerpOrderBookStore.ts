@@ -222,12 +222,13 @@ export class PerpOrderBookStore {
     }
 
     this.subscriptionToTradeOrderEvents = bcNetwork
-      .spotSubscribeTradeOrderEvents({
+      .perpSubscribeTradeOrderEvents({
         limit: 500,
         market: [market!.contractAddress],
       })
       .subscribe({
         next: ({ data }) => {
+          console.log("data!!", data);
           if (!data) return;
           // TODO implement perp logic
           // const trades = data.TradeOrderEvent.map(

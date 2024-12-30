@@ -25,19 +25,20 @@ const config = {
 };
 
 export const PerpTrades: React.FC = observer(() => {
-  const { spotOrderBookStore } = useStores();
+  const { perpOrderBookStore } = useStores();
 
-  const isOrderBookEmpty = spotOrderBookStore.trades.length === 0;
+  const isOrderBookEmpty = perpOrderBookStore.trades.length === 0;
 
-  if (spotOrderBookStore.isTradesLoading && isOrderBookEmpty) {
+  if (perpOrderBookStore.isTradesLoading && isOrderBookEmpty) {
     return <Loader size={32} hideText />;
   }
 
-  const formatDataTrades: DataArray[] = spotOrderBookStore.trades.map((trade) => [
+  const formatDataTrades: DataArray[] = perpOrderBookStore.trades.map((trade) => [
     trade.formatPrice,
     trade.formatTradeAmount,
     trade.timestamp.format("HH:mm:ss"),
-    trade.sellerIsMaker,
+    false,
+    // trade.sellerIsMaker,
   ]);
 
   return <TableOrderBook column={column} config={config} firstData={formatDataTrades} />;

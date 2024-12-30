@@ -170,12 +170,12 @@ export class PerpTableStore {
     this.subscriptionToOpenOrders = bcNetwork
       .perpSubscribeOrders({
         ...this.tableFilters,
-        // user: accountStore.address!, //TODO раскоментировать как сможем создавать ордера за пользователя
+        user: accountStore.address!, //TODO раскоментировать как сможем создавать ордера за пользователя
         status: ["Active"],
       })
       .subscribe({
         next: ({ data }) => {
-          console.log('data', data)
+          // console.log("data", data);
           if (!data) return;
 
           const sortedOrder = data.Order.map((order) => new PerpMarketOrder(order as PerpOrder)).sort(sortDesc);

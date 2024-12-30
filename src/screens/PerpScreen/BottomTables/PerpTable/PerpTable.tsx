@@ -62,7 +62,7 @@ const SpotTable: React.FC = observer(() => {
   const theme = useTheme();
   const [tabIndex, setTabIndex] = useState(0);
   const [page, setPage] = useState(PAGINATION_START_PAGE);
-  console.log('perpTableStore', perpTableStore.userOrders)
+  console.log("perpTableStore", perpTableStore.userOrders);
   const tabsConfig = [
     {
       title: "POSITIONS",

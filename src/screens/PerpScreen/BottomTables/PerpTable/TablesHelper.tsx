@@ -142,30 +142,35 @@ export const ORDER_COLUMNS = () => [
   }),
   orderColumnHelper.accessor("baseSize", {
     header: "Size / Value",
-    cell: (props) => {
-      console.log('123', props.row.original.baseToken.decimals)
-      return (
-        <SmartFlex column>
-          <SmartFlex center="y" gap="4px">
-            <Text primary>{new BN(props.row.original.baseSize).toString()}</Text>
-            <TokenBadge>
-              <Text>{props.row.original.baseToken.symbol}</Text>
-            </TokenBadge>
-            / <Text primary>{BN.formatUnits(new BN(props.row.original.baseSize.multipliedBy(props.row.original?.price ?? 0)), 2).toString()}</Text>
-            <TokenBadge>
-              <Text>{props.row.original.quoteToken?.symbol}</Text>
-            </TokenBadge>
-          </SmartFlex>
-          <Text primary>{props.row.original.baseSizeValueFormatted}</Text>
+    cell: (props) => (
+      <SmartFlex column>
+        <SmartFlex center="y" gap="4px">
+          <Text primary>{new BN(props.row.original.baseSize).toString()}</Text>
+          <TokenBadge>
+            <Text>{props.row.original.baseToken.symbol}</Text>
+          </TokenBadge>
+          /{" "}
+          <Text primary>
+            {BN.formatUnits(
+              new BN(props.row.original.baseSize.multipliedBy(props.row.original?.price ?? 0)),
+              props.row.original.quoteToken?.decimals,
+            ).toString()}
+          </Text>
+          <TokenBadge>
+            <Text>{props.row.original.quoteToken?.symbol}</Text>
+          </TokenBadge>
         </SmartFlex>
-      );
-    },
+        <Text primary>{props.row.original.baseSizeValueFormatted}</Text>
+      </SmartFlex>
+    ),
   }),
-  orderColumnHelper.accessor("orderPrice", {
+  orderColumnHelper.accessor("price", {
     header: "Price",
     cell: (props) => (
       <SmartFlex center="y" column>
-        <Text primary>{props.row.original.orderPriceFormatted}</Text>
+        <Text primary>
+          {BN.formatUnits(props.row.original.price ?? 0, props.row.original.quoteToken?.decimals).toString()}
+        </Text>
       </SmartFlex>
     ),
   }),
