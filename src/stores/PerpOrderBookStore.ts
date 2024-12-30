@@ -228,7 +228,6 @@ export class PerpOrderBookStore {
       })
       .subscribe({
         next: ({ data }) => {
-          console.log("data!!", data);
           if (!data) return;
           // TODO implement perp logic
           // const trades = data.TradeOrderEvent.map(
