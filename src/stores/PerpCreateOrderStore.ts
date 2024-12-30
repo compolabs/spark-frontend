@@ -258,6 +258,8 @@ export class PerpCreateOrderStore {
       CONFIG.PERP.CONTRACTS.clearingHouse,
     );
 
+    console.log("clearing house contract", CONFIG.PERP.CONTRACTS.clearingHouse);
+
     if (bcNetwork.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
@@ -269,7 +271,7 @@ export class PerpCreateOrderStore {
 
     try {
       console.log(price.toString());
-      const hash = await clearingHouseContract.openOrderC(token.assetId, amount, price.div(100));
+      const hash = await clearingHouseContract.openOrderC(token.assetId, amount, price);
 
       this.setInputTotal(BN.ZERO);
 

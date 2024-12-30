@@ -19,13 +19,15 @@ import { toCurrency } from "@utils/toCurrency";
 import { SpotMarket } from "@entity";
 
 const MarketStatistics: React.FC = observer(() => {
-  const { spotMarketInfoStore, spotOrderBookStore, marketStore } = useStores();
+  const { spotMarketInfoStore, spotOrderBookStore, perpOrderBookStore, marketStore } = useStores();
   const theme = useTheme();
   const media = useMedia();
 
   if (!marketStore.market) return;
 
-  const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
+  const indexPriceBn = SpotMarket.isInstance(marketStore.market)
+    ? BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS)
+    : BN.formatUnits(perpOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
   const volumeInDollars = spotMarketInfoStore.marketInfo.volume.multipliedBy(indexPriceBn);
 
   const indexPrice = toCurrency(indexPriceBn.toSignificant(2));

@@ -89,11 +89,19 @@ export class PerpOrderBookStore {
   }
 
   get lastTradePrice(): BN {
-    if (!this.trades.length) {
+    const { oracleStore, marketStore } = this.rootStore;
+
+    if (!marketStore.perpMarket) {
       return BN.ZERO;
     }
 
-    return new BN(this.trades[0].tradePrice);
+    return oracleStore.getTokenIndexPrice(marketStore.perpMarket.baseToken.priceFeed);
+
+    // if (!this.trades.length) {
+    //   return BN.ZERO;
+    // }
+
+    // return new BN(this.trades[0].tradePrice);
   }
 
   setDecimalGroup = (value: number) => {
