@@ -2,6 +2,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import { OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
+import { PerpOrder } from "@compolabs/spark-perpetual-ts-sdk";
 
 import { RootStore } from "@stores";
 
@@ -176,7 +177,7 @@ export class PerpTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrder = data.Order.map((order) => new PerpMarketOrder(order)).sort(sortDesc);
+          const sortedOrder = data.Order.map((order) => new PerpMarketOrder(order as PerpOrder)).sort(sortDesc);
           this.setUserOrders(sortedOrder);
 
           if (!this.isOpenOrdersLoaded) {
@@ -203,7 +204,7 @@ export class PerpTableStore {
         next: ({ data }) => {
           if (!data) return;
 
-          const sortedOrdersHistory = data.Order.map((order) => new PerpMarketOrder(order)).sort(sortDesc);
+          const sortedOrdersHistory = data.Order.map((order) => new PerpMarketOrder(order as PerpOrder)).sort(sortDesc);
           this.setUserOrdersHistory(sortedOrdersHistory);
 
           if (!this.isHistoryOrdersLoaded) {
