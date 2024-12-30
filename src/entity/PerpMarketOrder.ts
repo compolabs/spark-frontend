@@ -1,28 +1,28 @@
 import dayjs, { Dayjs } from "dayjs";
 
+import { PerpOrder } from "@compolabs/spark-perpetual-ts-sdk";
+
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 
-import { Order } from "../../../spark-perpetual-ts-sdk";
-
 import { Token } from "./Token";
 
 export type PerpMarketOrderParams = {
   quoteAssetId?: string;
   baseAssetId?: string;
-} & Order;
+} & PerpOrder;
 
 // TODO: implement perp logic for this
 export class PerpMarketOrder {
-  readonly id: Order["id"];
-  readonly db_write_timestamp: Order["db_write_timestamp"];
-  readonly contractTimestamp: Order["contractTimestamp"];
-  readonly orderType: Order["orderType"];
-  readonly status: Order["status"];
-  readonly market: Order["market"];
+  readonly id: PerpOrder["id"];
+  readonly db_write_timestamp: PerpOrder["db_write_timestamp"];
+  readonly contractTimestamp: PerpOrder["contractTimestamp"];
+  readonly orderType: PerpOrder["orderType"];
+  readonly status: PerpOrder["status"];
+  readonly market: PerpOrder["market"];
 
   readonly baseToken: Token;
   readonly quoteToken: Token;

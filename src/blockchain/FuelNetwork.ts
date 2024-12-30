@@ -33,9 +33,6 @@ export class FuelNetwork {
 
     this.perpetualSdk = new SparkPerpetualSdk({
       networkUrl: CONFIG.APP.links.networkUrl,
-      contractAddresses: {
-        multiAsset: CONFIG.SPOT.CONTRACTS.multiAsset,
-      },
     });
   }
 
@@ -111,7 +108,7 @@ export class FuelNetwork {
     this.orderbookSdk.setActiveMarket(...params);
   };
 
-  setPerpActiveMarket = (...params: Parameters<typeof this.orderbookSdk.setActiveMarket>) => {
+  setPerpActiveMarket = (...params: Parameters<typeof this.perpetualSdk.setActiveMarket>) => {
     this.perpetualSdk.setActiveMarket(...params);
   };
 
