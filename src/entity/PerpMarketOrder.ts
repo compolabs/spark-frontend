@@ -19,7 +19,6 @@ export type PerpMarketOrderParams = {
 export class PerpMarketOrder {
   readonly id: PerpOrder["id"];
   readonly db_write_timestamp: PerpOrder["db_write_timestamp"];
-  readonly contractTimestamp: PerpOrder["contractTimestamp"];
   readonly orderType: PerpOrder["orderType"];
   readonly status: PerpOrder["status"];
   readonly market: PerpOrder["market"];
@@ -51,7 +50,6 @@ export class PerpMarketOrder {
 
     this.id = order.id;
     this.db_write_timestamp = order.db_write_timestamp;
-    this.contractTimestamp = order.contractTimestamp;
     this.baseToken = bcNetwork.getTokenByAssetId(baseToken);
     this.quoteToken = bcNetwork.getTokenByAssetId(quoteToken);
     this.baseSizeI64 = new BN(order.baseSizeI64).abs();
@@ -79,7 +77,7 @@ export class PerpMarketOrder {
   }
 
   get priceUnits(): BN {
-    return BN.formatUnits(this.price, DEFAULT_DECIMALS);
+    return BN.formatUnits(this.price, this.quoteToken.decimals);
   }
 
   get initialAmountUnits(): BN {

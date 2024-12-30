@@ -230,7 +230,7 @@ export class PerpOrderBookStore {
     }
 
     this.subscriptionToTradeOrderEvents = bcNetwork
-      .spotSubscribeTradeOrderEvents({
+      .perpSubscribeTradeOrderEvents({
         limit: 500,
         market: [market!.contractAddress],
       })

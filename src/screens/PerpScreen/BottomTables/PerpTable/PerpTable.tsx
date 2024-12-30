@@ -58,24 +58,24 @@ const mock = {
   },
 };
 const SpotTable: React.FC = observer(() => {
-  const { accountStore, settingsStore, spotTableStore } = useStores();
+  const { accountStore, settingsStore, perpTableStore } = useStores();
   const theme = useTheme();
   const [tabIndex, setTabIndex] = useState(0);
   const [page, setPage] = useState(PAGINATION_START_PAGE);
-
+  console.log("perpTableStore", perpTableStore.userOrders);
   const tabsConfig = [
     {
       title: "POSITIONS",
       type: TABLE_TYPE.ORDER_DATA,
       data: mock.position.data,
-      count: spotTableStore.userOrdersStats?.active ?? 0,
+      count: perpTableStore.userOrdersStats?.active ?? 0,
       columns: POSITIONS_COLUMNS(theme),
     },
     {
       title: "ORDERS",
       type: TABLE_TYPE.HISTORY,
-      data: spotTableStore.userOrdersHistory,
-      count: (spotTableStore.userOrdersStats?.closed ?? 0) + (spotTableStore.userOrdersStats?.canceled ?? 0),
+      data: perpTableStore.userOrders,
+      count: perpTableStore.userOrdersStats?.active ?? 0,
       columns: ORDER_COLUMNS(),
     },
   ];
@@ -87,7 +87,7 @@ const SpotTable: React.FC = observer(() => {
   }));
 
   useEffect(() => {
-    spotTableStore.resetCounter();
+    perpTableStore.resetCounter();
   }, [accountStore.isConnected]);
 
   const tab = tabsConfig[tabIndex];
@@ -99,12 +99,12 @@ const SpotTable: React.FC = observer(() => {
   const handleTab = (tabIndex: number) => {
     setTabIndex(tabIndex);
     setPage(1);
-    spotTableStore.setOffset(0);
+    perpTableStore.setOffset(0);
   };
 
   const handleChangePagination = (newPage: number) => {
     setPage(newPage);
-    spotTableStore.setOffset(newPage);
+    perpTableStore.setOffset(newPage);
   };
 
   const renderTable = () => {
