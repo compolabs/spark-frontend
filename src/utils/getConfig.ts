@@ -31,7 +31,7 @@ export interface Market {
 // }
 
 function createConfig() {
-  const CURRENT_CONFIG_VER = import.meta.env.DEV ? "2.0.0" : "1.7.1";
+  const CURRENT_CONFIG_VER = import.meta.env.DEV ? "2.0.0" : "1.7.2";
   // const configJSON = getConfigByBranch(import.meta.env.VITE_BRANCH_NAME);
   const configJSON = configDevJSON;
 
