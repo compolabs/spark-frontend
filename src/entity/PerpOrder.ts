@@ -23,12 +23,12 @@ export class PerpOrder {
   readonly baseSize: BN;
   readonly orderPrice: BN;
   readonly trader: string;
+  readonly quoteToken: Token | undefined; // TODO от чего происходит, надо разобраться, просто в обхекте оно уже есть
+  readonly price: BN | undefined;
 
   constructor(params: PerpOrderParams) {
     const bcNetwork = FuelNetwork.getInstance();
-
     this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
-
     this.id = params.id;
     this.baseSize = params.baseSize;
     this.orderPrice = params.orderPrice;

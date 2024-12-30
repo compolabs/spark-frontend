@@ -3,6 +3,8 @@ import { Theme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { createColumnHelper } from "@tanstack/react-table";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import Chip from "@src/components/Chip";
 import { SmartFlex } from "@src/components/SmartFlex";
 import Text from "@src/components/Text";
@@ -132,23 +134,32 @@ export const ORDER_COLUMNS = () => [
     cell: (props) => (
       <SmartFlex center="y" gap="4px">
         <TokenIcon alt={props.row.original.symbol} height={16} src={TOKEN_LOGOS[props.getValue().symbol]} width={16} />
-        <Text>{props.row.original.symbol}</Text>
+        <Text>
+          {props.row.original.baseToken.symbol}/{props.row.original.quoteToken?.symbol}
+        </Text>
       </SmartFlex>
     ),
   }),
   orderColumnHelper.accessor("baseSize", {
     header: "Size / Value",
-    cell: (props) => (
-      <SmartFlex column>
-        <SmartFlex center="y" gap="4px">
-          <Text primary>{props.row.original.baseSizeFormatted}</Text>
-          <TokenBadge>
-            <Text>{props.row.original.baseToken.symbol}</Text>
-          </TokenBadge>
+    cell: (props) => {
+      console.log('123', props.row.original.baseToken.decimals)
+      return (
+        <SmartFlex column>
+          <SmartFlex center="y" gap="4px">
+            <Text primary>{new BN(props.row.original.baseSize).toString()}</Text>
+            <TokenBadge>
+              <Text>{props.row.original.baseToken.symbol}</Text>
+            </TokenBadge>
+            / <Text primary>{BN.formatUnits(new BN(props.row.original.baseSize.multipliedBy(props.row.original?.price ?? 0)), 2).toString()}</Text>
+            <TokenBadge>
+              <Text>{props.row.original.quoteToken?.symbol}</Text>
+            </TokenBadge>
+          </SmartFlex>
+          <Text primary>{props.row.original.baseSizeValueFormatted}</Text>
         </SmartFlex>
-        <Text primary>{props.row.original.baseSizeValueFormatted}</Text>
-      </SmartFlex>
-    ),
+      );
+    },
   }),
   orderColumnHelper.accessor("orderPrice", {
     header: "Price",
@@ -201,7 +212,7 @@ const TokenIcon = styled.img`
 `;
 
 const TokenBadge = styled(SmartFlex)`
-  padding: 4px 8px;
+  padding: 4px 0px;
   background: ${({ theme }) => theme.colors.bgSecondary};
   border-radius: 4px;
 
