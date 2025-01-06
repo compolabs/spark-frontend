@@ -12,12 +12,16 @@ interface FeatureProviderProps {
   children: ReactNode;
 }
 
-const isFeaturesDisabled = true;
+const isFeaturesDisabled = false;
 
 export const FeatureToggleProvider: React.FC<FeatureProviderProps> = ({ children }) => {
   if (isFeaturesDisabled) {
     return children;
   }
 
-  return <FlagProvider config={config}>{children}</FlagProvider>;
+  return (
+    <FlagProvider config={config} startClient>
+      {children}
+    </FlagProvider>
+  );
 };
