@@ -1,8 +1,6 @@
 import dayjs, { Dayjs } from "dayjs";
-import { Address, isBech32 } from "fuels";
 import { Nullable } from "tsdef";
 
-import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 
 import { FuelNetwork } from "@blockchain";
@@ -22,20 +20,21 @@ interface PerpMarketTradeParams {
   userAddress?: string;
 }
 
-const getType = (buyer: string, seller: string, userAddress?: string) => {
-  if (!userAddress) return null;
-
-  const address = isBech32(userAddress) ? new Address(userAddress as `fuel${string}`).toB256() : userAddress;
-  return address.toLowerCase() === seller.toLowerCase()
-    ? "SELL"
-    : address.toLowerCase() === buyer.toLowerCase()
-      ? "BUY"
-      : null;
-};
+// const getType = (buyer: string, seller: string, userAddress?: string) => {
+//   if (!userAddress) return null;
+//
+//   const address = isBech32(userAddress) ? new Address(userAddress as `fuel${string}`).toB256() : userAddress;
+//   return address.toLowerCase() === seller.toLowerCase()
+//     ? "SELL"
+//     : address.toLowerCase() === buyer.toLowerCase()
+//       ? "BUY"
+//       : null;
+// };
 
 export class PerpMarketTrade {
   readonly id: PerpMarketTradeParams["id"];
   readonly baseToken: Token;
+  readonly quoteToken: Token;
   readonly seller: PerpMarketTradeParams["seller"];
   readonly buyer: PerpMarketTradeParams["buyer"];
   readonly sellOrderId: PerpMarketTradeParams["sellOrderId"];
@@ -45,24 +44,37 @@ export class PerpMarketTrade {
   readonly timestamp: Dayjs;
   readonly type: Nullable<"SELL" | "BUY"> = null;
 
-  constructor(params: PerpMarketTradeParams) {
+  constructor(params: {
+    seller: string;
+    baseAssetId: string;
+    quoteAssetId: string;
+    buyOrderId: string;
+    tradeSize: string;
+    id: string;
+    tradePrice: string;
+    sellOrderId: string;
+    buyer: string;
+    timestamp: string;
+  }) {
     const bcNetwork = FuelNetwork.getInstance();
     const baseToken = bcNetwork.getTokenByAssetId(params.baseAssetId);
+    const quoteToken = bcNetwork.getTokenByAssetId(params.quoteAssetId);
 
     this.id = params.id;
     this.baseToken = baseToken;
+    this.quoteToken = quoteToken;
     this.seller = params.seller;
     this.buyer = params.buyer;
     this.sellOrderId = params.sellOrderId;
     this.buyOrderId = params.buyOrderId;
     this.tradeSize = params.tradeSize;
     this.tradePrice = params.tradePrice;
-    this.timestamp = dayjs.unix(params.timestamp);
-    this.type = getType(this.buyer, this.seller, params.userAddress);
+    this.timestamp = dayjs(params.timestamp);
+    // this.type = getType(this.buyer, this.seller, params.userAddress);
   }
 
   get formatPrice() {
-    return BN.formatUnits(this.tradePrice, DEFAULT_DECIMALS).toSignificant(2);
+    return BN.formatUnits(this.tradePrice, this.quoteToken.decimals).toSignificant(2);
   }
 
   get formatTradeAmount() {

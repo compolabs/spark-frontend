@@ -28,7 +28,6 @@ export const PerpTrades: React.FC = observer(() => {
   const { perpOrderBookStore } = useStores();
 
   const isOrderBookEmpty = perpOrderBookStore.trades.length === 0;
-
   if (perpOrderBookStore.isTradesLoading && isOrderBookEmpty) {
     return <Loader size={32} hideText />;
   }

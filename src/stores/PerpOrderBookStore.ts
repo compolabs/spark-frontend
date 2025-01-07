@@ -10,7 +10,7 @@ import { SPOT_ORDER_FILTER } from "@screens/PerpScreen/OrderbookAndTrades/PerpOr
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
-import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
+import { OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 
 import { FuelNetwork } from "@blockchain";
@@ -228,35 +228,40 @@ export class PerpOrderBookStore {
     if (this.subscriptionToTradeOrderEvents) {
       this.subscriptionToTradeOrderEvents.unsubscribe();
     }
+    console.log("!");
+    try {
+      this.subscriptionToTradeOrderEvents = bcNetwork
+        .perpSubscribeTradeOrderEvents({
+          limit: 500,
+          // market: [market!.contractAddress],
+        })
+        .subscribe({
+          next: ({ data }) => {
+            if (!data) return;
+            console.log("data", data);
+            // TODO implement perp logic
+            const trades = data.TradeEvent.map(
+              (trade) =>
+                new PerpMarketTrade({
+                  ...trade,
+                  baseAssetId: market!.baseToken.assetId,
+                  quoteAssetId: market!.quoteToken.assetId,
+                }),
+            );
+            this.trades = trades;
 
-    this.subscriptionToTradeOrderEvents = bcNetwork
-      .perpSubscribeTradeOrderEvents({
-        limit: 500,
-        market: [market!.contractAddress],
-      })
-      .subscribe({
-        next: ({ data }) => {
-          if (!data) return;
-          // TODO implement perp logic
-          // const trades = data.TradeOrderEvent.map(
-          //   (trade) =>
-          //     new PerpMarketTrade({
-          //       ...trade,
-          //       baseAssetId: market!.baseToken.assetId,
-          //     }),
-          // );
+            // const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
+            // this.ohlcvData = ohlcvData.ohlcvData;
+            // this.historgramData = ohlcvData.historgramData;
 
-          this.trades = [];
-
-          const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
-          this.ohlcvData = ohlcvData.ohlcvData;
-          this.historgramData = ohlcvData.historgramData;
-
-          if (!this.isInitialLoadComplete) {
-            this.isInitialLoadComplete = true;
-          }
-        },
-      });
+            if (!this.isInitialLoadComplete) {
+              this.isInitialLoadComplete = true;
+            }
+          },
+        });
+    } catch (err) {
+      console.log("err", err);
+    }
   };
 
   get isTradesLoading() {
