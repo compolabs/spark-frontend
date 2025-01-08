@@ -17,7 +17,7 @@
       "decimals": 9,
       "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-      "precision": 9
+      "precision": 3
     },
     {
       "name": "USDT",
@@ -33,7 +33,7 @@
       "decimals": 9,
       "assetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
       "priceFeed": "0x8a757d54e5d34c7ff1aea8502a2d968686027a304d00418092aaf7e60ed98d95",
-      "precision": 9
+      "precision": 5
     }
   ],
   "markets": [
