@@ -41,7 +41,7 @@ export class SpotMarketTrade {
   }
 
   get formatPrice() {
-    return BN.formatUnits(this.tradePrice, DEFAULT_DECIMALS).toFormat(this.quoteToken.precision);
+    return BN.formatUnits(this.tradePrice, DEFAULT_DECIMALS).toFormat(this.baseToken.precision);
   }
 
   get formatTradeAmount() {
