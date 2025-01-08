@@ -57,7 +57,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
       </SmartFlex>
       <SmartFlex alignSelf="flex-end" justifyContent="flex-end" width="100%">
         <Text color="primary" type={TEXT_TYPES.H} nowrap>
-          $ {market.priceUnits.toFormat(4)}
+          $ {market.priceUnits.toFormat(tradeStore.market?.baseToken.precision)}
         </Text>
       </SmartFlex>
     </Root>
