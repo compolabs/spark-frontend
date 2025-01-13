@@ -105,8 +105,7 @@ class CreateOrderVM {
           settingsStore.orderType === ORDER_TYPE.Limit &&
           this.inputPrice.isZero() &&
           this.activeInput !== ACTIVE_INPUT.Price;
-
-        if (shouldSetMarketPrice || shouldSetDefaultLimitPrice) {
+        if (shouldSetMarketPrice || shouldSetDefaultLimitPrice || order.market === tradeStore.market?.contractAddress) {
           this.setInputPriceThrottle(order.price);
         }
       },
@@ -119,7 +118,6 @@ class CreateOrderVM {
         const order = orders[orders.length - 1];
 
         if (!order) return;
-
         this.setInputPriceThrottle(order.price);
       },
     );
@@ -462,6 +460,7 @@ class CreateOrderVM {
   };
 
   selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {
+    console.log("selectOrderbookOrder");
     const { settingsStore } = this.rootStore;
     settingsStore.setTimeInForce(LimitType.GTC);
     settingsStore.setOrderType(ORDER_TYPE.Limit);
