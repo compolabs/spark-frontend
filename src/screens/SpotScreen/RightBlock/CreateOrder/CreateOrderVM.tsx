@@ -118,6 +118,7 @@ class CreateOrderVM {
         const order = orders[orders.length - 1];
 
         if (!order) return;
+
         this.setInputPriceThrottle(order.price);
       },
     );
