@@ -114,7 +114,7 @@ class SpotTableVM {
     this.userOrdersStats = null;
   };
 
-  агcancelOrder = async (order: SpotMarketOrder) => {
+  cancelOrder = async (order: SpotMarketOrder) => {
     const { notificationStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
 
