@@ -460,7 +460,6 @@ class CreateOrderVM {
   };
 
   selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {
-    console.log("selectOrderbookOrder");
     const { settingsStore } = this.rootStore;
     settingsStore.setTimeInForce(LimitType.GTC);
     settingsStore.setOrderType(ORDER_TYPE.Limit);
