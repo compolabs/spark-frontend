@@ -105,8 +105,7 @@ class CreateOrderVM {
           settingsStore.orderType === ORDER_TYPE.Limit &&
           this.inputPrice.isZero() &&
           this.activeInput !== ACTIVE_INPUT.Price;
-
-        if (shouldSetMarketPrice || shouldSetDefaultLimitPrice) {
+        if (shouldSetMarketPrice || shouldSetDefaultLimitPrice || order.market === tradeStore.market?.contractAddress) {
           this.setInputPriceThrottle(order.price);
         }
       },

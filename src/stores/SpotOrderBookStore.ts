@@ -48,7 +48,6 @@ class SpotOrderBookStore {
       () => [rootStore.initialized, rootStore.tradeStore.market],
       ([initialized]) => {
         if (!initialized) return;
-        console.log("!", this.rootStore.tradeStore.market?.baseToken);
         this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? 4;
         this.updateOrderBook();
       },
