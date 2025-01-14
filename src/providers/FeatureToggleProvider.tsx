@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { FlagProvider, IConfig } from "@unleash/proxy-client-react";
 
 const config: IConfig = {
-  url: "https://unleash.spark-defi.com/unleash/api/frontend/",
+  url: "https://unleash.production.sprk.fi/api/frontend/",
   clientKey: import.meta.env.VITE_FEATURE_TOGGLE_CLIENT_KEY ?? "",
   refreshInterval: 15,
   appName: "spark-frontend",
