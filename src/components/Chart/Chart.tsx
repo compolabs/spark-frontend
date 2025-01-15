@@ -16,8 +16,7 @@ const TABS = [
 ];
 
 const Chart: React.FC = observer(() => {
-  const [activeChart, setActiveChart] = useState(1);
-
+  const [activeChart, setActiveChart] = useState(0);
   const handleSelect = (active: number) => {
     setActiveChart(active);
   };

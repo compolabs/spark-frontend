@@ -135,6 +135,17 @@ export class MarketStore {
     });
   };
 
+  addToFav = (marketId: string) => {
+    if (!this.favMarkets.includes(marketId)) {
+      this.setFavMarkets([...this.favMarkets, marketId]);
+    }
+  };
+
+  removeFromFav = (marketId: string) => {
+    const index = this.favMarkets.indexOf(marketId);
+    index !== -1 && this.favMarkets.splice(index, 1);
+  };
+
   private initMarkets = async () => {
     try {
       const spotMarkets = CONFIG.SPOT.MARKETS.map(

@@ -17,7 +17,7 @@
     "pnpm": ">=9.7.0"
   },
   "dependencies": {
-    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.9.tgz",
+    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.10.tgz",
     "@compolabs/spark-perpetual-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-perpetual-ts-sdk/-/spark-perpetual-ts-sdk-0.0.12.tgz",
     "@compolabs/tradingview-chart": "^1.0.21",
     "@emotion/react": "^11.11.3",

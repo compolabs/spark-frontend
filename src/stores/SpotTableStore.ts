@@ -132,12 +132,14 @@ export class SpotTableStore {
 
     try {
       const bcNetworkCopy = await bcNetwork.spotChain();
+      console.log("order", order);
       const tx = await bcNetworkCopy.writeWithMarket(order.market).cancelOrder(order.id);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
         hash: tx.transactionId,
       });
     } catch (error: any) {
+      console.log("error", error);
       handleWalletErrors(notificationStore, error, getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER_FAILED)());
     }
 

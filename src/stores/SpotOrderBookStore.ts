@@ -28,7 +28,7 @@ export class SpotOrderBookStore {
   allBuyOrders: SpotMarketOrder[] = [];
   allSellOrders: SpotMarketOrder[] = [];
 
-  decimalGroup = 3;
+  decimalGroup = 4;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
 
   isOrderBookLoading = true;
@@ -46,11 +46,22 @@ export class SpotOrderBookStore {
     const { initialized, marketStore } = this.rootStore;
 
     reaction(
-      () => [initialized, marketStore.spotMarket],
+      () => [initialized, marketStore.market],
+      ([initialized]) => {
+        if (!initialized) return;
+        this.decimalGroup = this.rootStore.marketStore.market?.baseToken.precision ?? 4;
+        this.updateOrderBook();
+      },
+      { fireImmediately: true },
+    );
+
+    reaction(
+      () => [this.rootStore.marketStore.market, this.rootStore.initialized],
       ([market, initialized]) => {
         if (!initialized || !market) return;
 
         this.updateOrderBook();
+        this.decimalGroup = this.rootStore.marketStore.market?.baseToken.precision ?? 4;
         this.subscribeTrades();
       },
       { fireImmediately: true },
@@ -207,7 +218,7 @@ export class SpotOrderBookStore {
   }
 
   get spreadPrice(): string {
-    return BN.formatUnits(this.spread, DEFAULT_DECIMALS).toSignificant(2);
+    return BN.formatUnits(this.spread, DEFAULT_DECIMALS).toSignificant(4);
   }
 
   get spreadPercent(): string {

@@ -30,10 +30,14 @@ const MarketStatistics: React.FC = observer(() => {
     : BN.formatUnits(perpOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
   const volumeInDollars = spotMarketInfoStore.marketInfo.volume.multipliedBy(indexPriceBn);
 
-  const indexPrice = toCurrency(indexPriceBn.toSignificant(2));
-  const volume24h = toCurrency(volumeInDollars.toSignificant(2));
-  const high24h = toCurrency(spotMarketInfoStore.marketInfo.high.toSignificant(2));
-  const low24h = toCurrency(spotMarketInfoStore.marketInfo.low.toSignificant(2));
+  const indexPrice = toCurrency(indexPriceBn.toSignificant(marketStore.market?.baseToken.precision ?? 4));
+  const volume24h = toCurrency(volumeInDollars.toSignificant(marketStore.market?.baseToken.precision ?? 2));
+  const high24h = toCurrency(
+    spotMarketInfoStore.marketInfo.high.toSignificant(marketStore.market?.baseToken.precision ?? 2),
+  );
+  const low24h = toCurrency(
+    spotMarketInfoStore.marketInfo.low.toSignificant(marketStore.market?.baseToken.precision ?? 2),
+  );
 
   const spotMarketData = [
     { title: "Price", value: indexPrice },
