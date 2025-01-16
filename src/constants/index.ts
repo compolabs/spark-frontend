@@ -21,7 +21,7 @@ export const CHARTS_STORAGE = "https://tv-backend-v4.herokuapp.com/";
 
 export const DEFAULT_DECIMALS = 9;
 
-export const TWITTER_LINK = "https://twitter.com/Sprkfi";
+export const TWITTER_LINK = "https://x.com/v12trade";
 export const GITHUB_LINK = "https://github.com/compolabs";
 export const DOCS_LINK = "https://docs.sprk.fi";
 export const FUEL_LINK = "https://fuel.network";
