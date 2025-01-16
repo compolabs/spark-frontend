@@ -21,7 +21,7 @@ const Faucet: React.FC<IProps> = observer(() => {
   const { faucetStore, mixPanelStore, accountStore } = useStores();
 
   useEffect(() => {
-    document.title = `Spark | Faucet`;
+    document.title = `V12 | Faucet`;
   }, []);
 
   useEffect(() => {

@@ -38,8 +38,8 @@ export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 // const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 
 // const METADATA = {
-//   name: "Spark",
-//   description: "Spark is the fastest onchain order book based on Fuel Network",
+//   name: "V12",
+//   description: "V12 is the fastest onchain order book based on Fuel Network",
 //   url: location.href,
 //   icons: ["https://app.sprk.fi/pwa-192x192.png"],
 // };
