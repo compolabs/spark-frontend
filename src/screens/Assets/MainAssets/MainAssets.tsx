@@ -83,7 +83,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             primary
             onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
           >
-            Assets in Spark
+            Assets in V12
           </TextTitle>
           <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
         </HeaderBlock>
@@ -120,7 +120,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
         <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
           <DepositAssets />
           <TextTitleDeposit type={TEXT_TYPES.TEXT_BIG}>
-            It looks like you don’t have assets in Spark. Tap the{" "}
+            It looks like you don’t have assets in V12. Tap the{" "}
             <LinkStyled
               to="#"
               onClick={() => {

@@ -183,7 +183,7 @@ const AssetsDashboard = observer(() => {
   return (
     <>
       <TitleText type={TEXT_TYPES.H} primary>
-        Assets in Spark
+        Assets in V12
       </TitleText>
       <StyledTables>
         {hasPositiveBalance ? (
@@ -201,7 +201,7 @@ const AssetsDashboard = observer(() => {
             <ColumnContainer>
               <DepositAssets />
               <EmptyAsset type={TEXT_TYPES.TEXT_BIG}>
-                It looks like you don’t have assets in Spark. Tap the{" "}
+                It looks like you don’t have assets in V12. Tap the{" "}
                 <LinkStyled
                   to="#"
                   onClick={() => {

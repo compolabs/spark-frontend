@@ -10,7 +10,7 @@ import { DOCS_LINK, TWITTER_LINK } from "@constants";
 
 const UnderConstruction: React.FC = () => {
   useEffect(() => {
-    document.title = `Spark | Work in progress...`;
+    document.title = `V12 | Work in progress...`;
   }, []);
 
   return (

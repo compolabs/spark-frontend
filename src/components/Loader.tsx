@@ -25,15 +25,11 @@ const Loader: React.FC<Props> = ({ size = 64, hideText, text = "Loading", classN
 
 export default Loader;
 
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+const pulse = keyframes`
+  from { transform: scale(1.2); }
+  to { transform: scale(1.5); }
 `;
 
 const LoaderLogoImage = styled.img`
-  animation: ${rotate} 4s linear infinite;
+  animation: ${pulse} 1s infinite ease-in-out alternate;
 `;

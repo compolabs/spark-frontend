@@ -26,7 +26,7 @@ export const InfoBlockAssets = () => {
         Why do I have to deposit anything?
       </TextTitle>
       <TextInfo type={TEXT_TYPES.TEXT}>
-        Deposited assets stores on-chain in a smart-contract for quick order execution. Spark doesn’t store anything. We
+        Deposited assets stores on-chain in a smart-contract for quick order execution. V12 doesn’t store anything. We
         are not a CEX.
       </TextInfo>
     </InfoContainer>

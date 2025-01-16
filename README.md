@@ -1,8 +1,8 @@
-# Spark
+# V12
 
-## What is Spark?
+## What is V12?
 
-Spark is an order book, the Fuel.network, revolutionizing financial services with its integrated suite of
+V12 is an order book, the Fuel.network, revolutionizing financial services with its integrated suite of
 offerings.
 
 
@@ -13,11 +13,11 @@ offerings.
 - Typescript
 
 This frontend project is designed to provide users with a seamless and intuitive experience when interacting with the
-Spark DeFi platform.
+V12 DeFi platform.
 
 ### Getting Started
 
-To get started with Spark, clone the repository and follow these commands:
+To get started with V12, clone the repository and follow these commands:
 
 ```bash
 # Install dependencies
@@ -45,6 +45,6 @@ This project is licensed under the Business Source License 1.1. Please see the L
 
 ### More Information
 
-For more information on Spark and how to get involved, please visit our [official website](https://docs.sprk.fi/).
+For more information on V12 and how to get involved, please visit our [official website](https://docs.sprk.fi/).
 
 
