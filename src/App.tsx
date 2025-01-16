@@ -6,7 +6,6 @@ import Leaderboard from "src/screens/Leaderboard";
 
 import { Column } from "@components/Flex";
 import Header from "@components/Header";
-import { PWAModal } from "@components/PWAModal";
 import { SplashScreen } from "@components/Splashscreen";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
@@ -51,7 +50,7 @@ const App: React.FC = observer(() => {
                 <Route element={<Leaderboard />} path={ROUTES.LEADERBOARD} />
               </Routes>
               <SideManageAssets />
-              <PWAModal />
+              {/*<PWAModal />*/}
               <SplashScreen />
               <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
             </Root>
