@@ -43,9 +43,7 @@ const TradingViewChartAdvance = observer(() => {
   const defaultProps: Omit<ChartContainerProps, "container"> = {
     symbol: tradeStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
-    datafeedUrl: isUnderConstruction
-      ? "https://spark-candles.production.sprk.fi"
-      : "https://spark-candles.staging.sprk.fi",
+    datafeedUrl: isUnderConstruction ? "https://spark-candles.v12.trade" : "https://spark-candles.v12.trade", // После переезда 2 домен не сделали, если не появиться, можно убрать и удалить фича-флаг
     libraryPath: "/charting_library/",
     chartsStorageUrl: "https://saveload.tradingview.com",
     chartsStorageApiVersion: "1.1",
