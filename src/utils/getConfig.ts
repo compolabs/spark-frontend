@@ -24,7 +24,7 @@ function createConfig() {
   const configJSON = import.meta.env.DEV ? configDevJSON : configProdJSON;
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
-  console.warn("SPARK CONFIG", configJSON);
+  console.warn("V12 CONFIG", configJSON);
   console.log("Contract Ver.", configJSON.contractVer);
 
   const tokens = configJSON.tokens.map(({ name, symbol, decimals, assetId, priceFeed, precision }) => {
