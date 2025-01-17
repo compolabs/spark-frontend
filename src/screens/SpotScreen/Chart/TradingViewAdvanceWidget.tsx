@@ -59,7 +59,7 @@ const TradingViewChartAdvance = observer(() => {
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: defaultProps.symbol as string,
       datafeed: new window.Datafeeds.UDFCompatibleDatafeed(defaultProps.datafeedUrl),
-      interval: "5" as ResolutionString,
+      interval: "H" as ResolutionString,
       container: chartContainerRef.current,
       library_path: defaultProps.libraryPath as string,
       locale: getLanguageFromURL() || "en",
