@@ -45,9 +45,7 @@ const TradingViewChartAdvance = observer(() => {
   const defaultProps: Omit<ChartContainerProps, "container"> = {
     symbol: marketStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
-    datafeedUrl: isUnderConstruction
-      ? "https://spark-candles.production.sprk.fi"
-      : "https://spark-candles.staging.sprk.fi",
+    datafeedUrl: isUnderConstruction ? "https://spark-candles.v12.trade" : "https://spark-candles.v12.trade", // После переезда 2 домен не сделали, если не появиться, можно убрать и удалить фича-флаг
     libraryPath: "/charting_library/",
     chartsStorageUrl: "https://saveload.tradingview.com",
     chartsStorageApiVersion: "1.1",
@@ -63,7 +61,7 @@ const TradingViewChartAdvance = observer(() => {
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: defaultProps.symbol as string,
       datafeed: new window.Datafeeds.UDFCompatibleDatafeed(defaultProps.datafeedUrl),
-      interval: "5" as ResolutionString,
+      interval: "H" as ResolutionString,
       container: chartContainerRef.current,
       library_path: defaultProps.libraryPath as string,
       locale: getLanguageFromURL() || "en",

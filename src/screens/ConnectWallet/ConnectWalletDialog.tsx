@@ -132,33 +132,33 @@ const AGREEMENT_TEXT = (
   <>
     <Text type={TEXT_TYPES.BODY} secondary>
       This website-hosted user interface (this &quot;Interface&quot;) is an open source frontend software portal to the
-      Spark protocol, a decentralized and community-driven collection of blockchain-enabled smart contracts and tools
-      (the &quot;Spark Protocol&quot;). This Interface and the Spark Protocol are made available by the Spark Holding
-      Foundation, however all transactions conducted on the protocol are run by related permissionless smart contracts.
-      As the Interface is open-sourced and the Spark Protocol and its related smart contracts are accessible by any
-      user, entity or third party, there are a number of third party web and mobile user-interfaces that allow for
-      interaction with the Spark Protocol.
+      V12 protocol, a decentralized and community-driven collection of blockchain-enabled smart contracts and tools (the
+      &quot;V12 Protocol&quot;). This Interface and the V12 Protocol are made available by the V12 Holding Foundation,
+      however all transactions conducted on the protocol are run by related permissionless smart contracts. As the
+      Interface is open-sourced and the V12 Protocol and its related smart contracts are accessible by any user, entity
+      or third party, there are a number of third party web and mobile user-interfaces that allow for interaction with
+      the V12 Protocol.
     </Text>
     <Text type={TEXT_TYPES.BODY} secondary>
-      THIS INTERFACE AND THE SPARK PROTOCOL ARE PROVIDED &quot;AS IS&quot;, AT YOUR OWN RISK, AND WITHOUT WARRANTIES OF
-      ANY KIND. The Spark Holding Foundation does not provide, own, or control the Spark Protocol or any transactions
-      conducted on the protocol or via related smart contracts. By using or accessing this Interface or the Spark
-      Protocol and related smart contracts, you agree that no developer or entity involved in creating, deploying or
-      maintaining this Interface or the Spark Protocol will be liable for any claims or damages whatsoever associated
-      with your use, inability to use, or your interaction with other users of, this Interface or the Spark Protocol,
-      including any direct, indirect, incidental, special, exemplary, punitive or consequential damages, or loss of
-      profits, digital assets, tokens, or anything else of value.
+      THIS INTERFACE AND THE V12 PROTOCOL ARE PROVIDED &quot;AS IS&quot;, AT YOUR OWN RISK, AND WITHOUT WARRANTIES OF
+      ANY KIND. The V12 Holding Foundation does not provide, own, or control the V12 Protocol or any transactions
+      conducted on the protocol or via related smart contracts. By using or accessing this Interface or the V12 Protocol
+      and related smart contracts, you agree that no developer or entity involved in creating, deploying or maintaining
+      this Interface or the V12 Protocol will be liable for any claims or damages whatsoever associated with your use,
+      inability to use, or your interaction with other users of, this Interface or the V12 Protocol, including any
+      direct, indirect, incidental, special, exemplary, punitive or consequential damages, or loss of profits, digital
+      assets, tokens, or anything else of value.
     </Text>
     <Text type={TEXT_TYPES.BODY} secondary>
-      The Spark Protocol is not available to residents of Belarus, the Central African Republic, The Democratic Republic
+      The V12 Protocol is not available to residents of Belarus, the Central African Republic, The Democratic Republic
       of Congo, the Democratic People&apos;s Republic of Korea, the Crimea, Donetsk People&apos;s Republic, and Luhansk
       People&apos;s Republic regions of Ukraine, Cuba, Iran, Libya, Somalia, Sudan, South Sudan, Syria, the USA, Yemen,
-      Zimbabwe and any other jurisdiction in which accessing or using the Spark Protocol is prohibited (the
+      Zimbabwe and any other jurisdiction in which accessing or using the V12 Protocol is prohibited (the
       &quot;Prohibited Jurisdictions&quot;).
     </Text>
     <Text type={TEXT_TYPES.BODY} secondary>
-      By using or accessing this Interface, the Spark Protocol, or related smart contracts, you represent that you are
-      not located in, incorporated or established in, or a citizen or resident of the Prohibited Jurisdictions. You also
+      By using or accessing this Interface, the V12 Protocol, or related smart contracts, you represent that you are not
+      located in, incorporated or established in, or a citizen or resident of the Prohibited Jurisdictions. You also
       represent that you are not subject to sanctions or otherwise designated on any list of prohibited or restricted
       parties or excluded or denied persons, including but not limited to the lists maintained by the United
       States&apos; Department of Treasury&apos;s Office of Foreign Assets Control, the United Nations Security Council,

@@ -28,7 +28,7 @@ const SpotScreen: React.FC = observer(() => {
   }, []);
 
   useEffect(() => {
-    document.title = `Spark | ${marketStore.marketSymbol}`;
+    document.title = `V12 | ${marketStore.marketSymbol}`;
   }, [marketStore.marketSymbol]);
 
   return media.mobile ? <SpotScreenMobile /> : <SpotScreenDesktop />;

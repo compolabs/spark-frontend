@@ -37,7 +37,7 @@ function createConfig() {
 
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
-  console.warn("SPARK CONFIG", configJSON);
+  console.warn("V12 CONFIG", configJSON);
   console.log("Contract Spot Ver.", configJSON.spot.contractVer);
   console.log("Contract Perp Ver.", configJSON.perp.contractVer);
 

@@ -30,7 +30,7 @@ export const LeaderboardFilter = observer(() => {
             Leaderboard
           </TitleText>
           <TitleText type={TEXT_TYPES.TEXT} primary>
-            Top 100 Spark traders by total volume (spot)
+            Top 100 V12 traders by total volume (spot)
           </TitleText>
         </SmartFlex>
         <SmartFlex gap="5px">

@@ -20,7 +20,7 @@ export const ROUTES = {
 
 export const BRIDGE_LINK = "https://app.fuel.network/bridge";
 export const SWAP_LINK = "https://layerswap.io/app";
-export const POINTS_LINK = "https://app.fuel.network/earn-points/phase-2/";
+export const POINTS_LINK = "https://fuel.mirror.xyz/WbftLFQtWPaMZsQIgB-hMCPuma6iFjWgKGiu1DONUI4";
 export const isProduction = window.location.host === "app.sprk.fi";
 
 export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/sepolia";
@@ -30,7 +30,7 @@ export const CHARTS_STORAGE = "https://tv-backend-v4.herokuapp.com/";
 
 export const DEFAULT_DECIMALS = 9;
 
-export const TWITTER_LINK = "https://twitter.com/Sprkfi";
+export const TWITTER_LINK = "https://x.com/v12trade";
 export const GITHUB_LINK = "https://github.com/compolabs";
 export const DOCS_LINK = "https://docs.sprk.fi";
 export const FUEL_LINK = "https://fuel.network";
@@ -47,8 +47,8 @@ export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 // const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 
 // const METADATA = {
-//   name: "Spark",
-//   description: "Spark is the fastest onchain order book based on Fuel Network",
+//   name: "V12",
+//   description: "V12 is the fastest onchain order book based on Fuel Network",
 //   url: location.href,
 //   icons: ["https://app.sprk.fi/pwa-192x192.png"],
 // };
