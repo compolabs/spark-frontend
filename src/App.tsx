@@ -6,7 +6,6 @@ import Leaderboard from "src/screens/Leaderboard";
 
 import { Column } from "@components/Flex";
 import Header from "@components/Header";
-import { SplashScreen } from "@components/Splashscreen";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
 import { usePrivateKeyAsAuth } from "@hooks/usePrivateKeyAsAuth";
@@ -51,7 +50,7 @@ const App: React.FC = observer(() => {
               </Routes>
               <SideManageAssets />
               {/*<PWAModal />*/}
-              <SplashScreen />
+              {/*<SplashScreen />*/}
               <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
             </Root>
           </UnderConstructionProvider>
