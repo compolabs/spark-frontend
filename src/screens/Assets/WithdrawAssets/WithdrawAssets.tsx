@@ -48,7 +48,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const handleClick = async () => {
     if (!selectAsset || !amount) return;
     setIsLoading(true);
-    const response = await balanceStore.withdrawBalance(
+    const response = await balanceStore.withdrawSpotBalance(
       selectAsset.asset.assetId,
       BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
     );

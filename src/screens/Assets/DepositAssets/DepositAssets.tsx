@@ -48,7 +48,7 @@ const DepositAssets: React.FC<DepositAssetsProps> = observer(({ setStep }) => {
     setIsLoading(true);
 
     try {
-      const response = await balanceStore.depositBalance(
+      const response = await balanceStore.depositSpotBalance(
         currentAsset.asset.assetId,
         BN.parseUnits(BN.formatUnits(amount, currentAsset.asset.decimals), currentAsset.asset.decimals).toString(),
       );

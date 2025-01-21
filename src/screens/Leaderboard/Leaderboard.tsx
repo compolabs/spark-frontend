@@ -3,10 +3,10 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
+import StatusBar from "@components/StatusBar";
 
 import { LeaderboardFilter } from "@screens/Leaderboard/LeaderboardFilter";
 import { LeaderboardTable } from "@screens/Leaderboard/LeaderboardTable/LeaderboardTable";
-import StatusBar from "@screens/SpotScreen/StatusBar";
 
 const Leaderboard = observer(() => {
   return (

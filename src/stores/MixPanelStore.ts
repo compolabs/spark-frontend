@@ -2,14 +2,14 @@ import mixpanel, { Mixpanel } from "mixpanel-browser";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import RootStore from "@stores/RootStore";
-
 import { CONFIG } from "@utils/getConfig";
+
+import RootStore from "./RootStore";
 
 const MAINNET_KEY = "1753ab2fe514a08e22df236ff4095905";
 const TESTNET_KEY = "126ffbcd33aa8abbf4f91bea25e70cc4";
 
-class MixPanelStore {
+export class MixPanelStore {
   private readonly rootStore: RootStore;
 
   mixpanel: Nullable<Mixpanel> = null;
@@ -55,12 +55,12 @@ class MixPanelStore {
   }
 }
 
-export default MixPanelStore;
-
 export enum MIXPANEL_EVENTS {
   CLICK_DASHBOARD = "click_dashboard",
   CLICK_SPOT = "click_spot",
   CLICK_MAX_SPOT = "click_max_spot",
+  CLICK_PERP = "click_perp",
+  CLICK_MAX_PERP = "click_max_perp",
   AGREE_WITH_TERMS = "agree_with_terms",
 
   WALLET_CONNECTED = "wallet_connected",

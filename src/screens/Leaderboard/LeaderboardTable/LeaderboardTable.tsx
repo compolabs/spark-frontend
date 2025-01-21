@@ -8,7 +8,7 @@ import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 
 import { useStores } from "@stores";
-import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore.ts";
+import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore";
 
 import { LeaderboardItem } from "@screens/Leaderboard/LeaderboardTable/LeaderboardItem";
 

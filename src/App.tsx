@@ -8,7 +8,6 @@ import { Column } from "@components/Flex";
 import Header from "@components/Header";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
-import { usePrivateKeyAsAuth } from "@hooks/usePrivateKeyAsAuth";
 import { useStores } from "@stores";
 import { MODAL_TYPE } from "@stores/ModalStore";
 
@@ -16,6 +15,7 @@ import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets"
 import ConnectWalletDialog from "@screens/ConnectWallet";
 import Dashboard from "@screens/Dashboard";
 import Faucet from "@screens/Faucet";
+import PerpScreen from "@screens/PerpScreen/PerpScreen";
 import SpotScreen from "@screens/SpotScreen";
 import { SwapScreen } from "@screens/SwapScreen";
 
@@ -24,13 +24,13 @@ import { ROUTES } from "@constants";
 import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
 import { DiscordProvider } from "@src/providers/DiscordProvider";
 const App: React.FC = observer(() => {
-  const { modalStore, tradeStore } = useStores();
+  const { modalStore, marketStore } = useStores();
 
   // This hooks is used to clear unnecessary URL parameters,
   // specifically "tx_id", after returning from the faucet
   useClearUrlParam("tx_id");
 
-  usePrivateKeyAsAuth();
+  // usePrivateKeyAsAuth();
 
   return (
     <IntercomProvider>
@@ -41,10 +41,11 @@ const App: React.FC = observer(() => {
               <Header />
               <Routes>
                 <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
+                <Route element={<PerpScreen />} path={`${ROUTES.PERP}/:marketId`} />
                 <Route element={<SwapScreen />} path={ROUTES.SWAP} />
                 <Route element={<Faucet />} path={ROUTES.FAUCET} />
                 <Route element={<Navigate to={ROUTES.ROOT} />} path="*" />
-                <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
+                <Route element={<Navigate to={`${ROUTES.SPOT}/${marketStore.marketSymbol}`} />} path={ROUTES.ROOT} />
                 <Route element={<Dashboard />} path={ROUTES.DASHBOARD} />
                 <Route element={<Leaderboard />} path={ROUTES.LEADERBOARD} />
               </Routes>
