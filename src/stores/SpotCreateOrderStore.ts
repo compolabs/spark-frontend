@@ -93,7 +93,11 @@ export class SpotCreateOrderStore {
           settingsStore.orderType === ORDER_TYPE.Limit &&
           this.inputPrice.isZero() &&
           this.activeInput !== ACTIVE_INPUT.Price;
-        if (shouldSetMarketPrice || shouldSetDefaultLimitPrice || order.market === tradeStore.market?.contractAddress) {
+        if (
+          shouldSetMarketPrice ||
+          shouldSetDefaultLimitPrice ||
+          order.market === marketStore.market?.contractAddress
+        ) {
           this.setInputPriceThrottle(order.price);
         }
       },

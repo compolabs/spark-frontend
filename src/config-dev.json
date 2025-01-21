@@ -125,19 +125,20 @@
         "quoteAssetDecimals": 6,
         "priceDecimals": 9,
         "version": 1539,
-        "contractId": "0xc17dd80692a8987fb3d7b310061aaa27c1b9a12cd5d2dfc9e800d7bb01b54cf4"
+        "contractId": "0x812aa6cb0828d3d1b069d0e2c1e4eab49c62841dc9eb71043ac71105c382e3b6"
       }
     ],
     "indexers": {
-      "0xc17dd80692a8987fb3d7b310061aaa27c1b9a12cd5d2dfc9e800d7bb01b54cf4": {
+      "0x812aa6cb0828d3d1b069d0e2c1e4eab49c62841dc9eb71043ac71105c382e3b6": {
         "httpUrl": "https://indexer.hyperindex.xyz/3e409fa/v1/graphql",
         "wsUrl": "wss://indexer.hyperindex.xyz/3e409fa/v1/graphql"
       }
     },
     "contracts": {
-      "clearingHouse": "0xc17dd80692a8987fb3d7b310061aaa27c1b9a12cd5d2dfc9e800d7bb01b54cf4",
-      "vault": "0xc615234baccb2dc002b92a091872782869e99c602e4759181d6cf827840c4a36",
-      "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
+      "clearingHouse": "0x812aa6cb0828d3d1b069d0e2c1e4eab49c62841dc9eb71043ac71105c382e3b6",
+      "vault": "0x996c3cb59e0ec48ccc1b3053debf165e778c4127b24fe90432d63deca772d07e",
+      "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509",
+      "pyth": "0x1c86fdd9e0e7bc0d2ae1bf6817ef4834ffa7247655701ee1b031b52a24c523da"
     }
   },
   "links": {

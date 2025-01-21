@@ -254,11 +254,9 @@ export class PerpCreateOrderStore {
     const isBuy = this.mode === ORDER_MODE.BUY;
 
     const bcNetwork = FuelNetwork.getInstance();
-    const clearingHouseContract = await bcNetwork.perpetualSdk.getClearingHouseContract(
-      CONFIG.PERP.CONTRACTS.clearingHouse,
-    );
 
-    console.log("clearing house contract", CONFIG.PERP.CONTRACTS.clearingHouse);
+    const clearingHouseContract = bcNetwork.perpetualSdk.getClearingHouseContract(CONFIG.PERP.CONTRACTS.clearingHouse);
+    const pythContract = bcNetwork.perpetualSdk.getPythContract(CONFIG.PERP.CONTRACTS.pyth);
 
     if (bcNetwork.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
@@ -269,9 +267,16 @@ export class PerpCreateOrderStore {
     const amount = isBuy ? this.inputTotal : this.inputAmount;
     const price = this.inputPrice;
 
+    const totalAmount = isBuy ? amount : amount.negated();
+
     try {
-      console.log(price.toString());
-      const hash = await clearingHouseContract.openOrderC(token.assetId, amount, price);
+      const hash = await clearingHouseContract.openOrderC(
+        token.assetId,
+        token.priceFeed,
+        totalAmount,
+        price,
+        pythContract,
+      );
 
       this.setInputTotal(BN.ZERO);
 
