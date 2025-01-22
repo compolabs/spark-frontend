@@ -35,7 +35,6 @@ export interface ChartContainerProps {
 }
 
 function splitPairAndGetTokens(tokens: Token[], pair: string) {
-  // Найти базовый и котируемый токены
   const baseToken = tokens.find((token) => pair.startsWith(token.symbol));
   if (!baseToken) {
     throw new Error(`Base token not found for pair: ${pair}`);
