@@ -35,7 +35,7 @@ export const HeaderPoints: React.FC = observer(() => {
   return (
     <PointsContainer>
       <Text color="#000000" type={TEXT_TYPES.BODY}>
-        Introducing <BoostRewardsText to={ROUTES.LEADERBOARD}>Boost Rewards</BoostRewardsText>, earn $FUEL by providing
+        Introducing <BoostRewardsText to={ROUTES.DASHBOARD}>Boost Rewards</BoostRewardsText>, earn $FUEL by providing
         liquidity.{" "}
         <ExternalLink href={POINTS_LINK} rel="noreferrer noopener" target="_blank">
           Learn More →
