@@ -473,6 +473,6 @@ const SwapButton = styled.button`
 
   &:hover,
   &:active {
-    background-color: ${({ theme }) => theme.colors.greenMedium};
+    background-color: ${({ theme }) => theme.colors.greenMediumOld};
   }
 `;

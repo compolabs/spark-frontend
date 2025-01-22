@@ -42,10 +42,10 @@ const Button = styled.button<ButtonProps>`
         case green:
           return css`
             border: 1px solid ${theme.colors.greenLight};
-            background: ${active ? theme.colors.greenMedium : theme.colors.greenDark};
+            background: ${active ? theme.colors.greenMediumOld : theme.colors.greenDark};
 
             &:hover {
-              background: ${theme.colors.greenMedium};
+              background: ${theme.colors.greenMediumOld};
             }
 
             &:active {

@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex";
+import { DashboardPoints } from "@components/Points/DashboardPoints";
 import { SmartFlex } from "@components/SmartFlex";
 import { media } from "@themes/breakpoints";
 
@@ -18,6 +19,7 @@ const Dashboard = observer(() => {
   return (
     <DashboardContainer>
       <DashboardColumn>
+        <DashboardPoints />
         <DashboardFilter />
         <UserInfoData>
           <MarketDataSection />
@@ -47,6 +49,11 @@ const DashboardContainer = styled(Column)`
   width: 90%;
   margin: 0px auto;
   justify-content: space-between;
+
+  ${media.mobile} {
+    width: 100%;
+    padding: 0 8px;
+  }
 `;
 
 const DashboardColumn = styled(Column)`

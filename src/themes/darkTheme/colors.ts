@@ -17,8 +17,11 @@ const colors = {
 
   //accent
   greenLight: "#00E388",
-  greenMedium: "#007E4C",
+  greenMediumOld: "#007E4C",
   greenDark: "#004C2D",
+  greenWeek: "#172A22",
+  greenStrong: "#04E78C",
+  greenMedium: "#004B2E",
 
   redLight: "#E80247",
   redMedium: "#810127",
@@ -31,6 +34,10 @@ const colors = {
 
   accentPrimary: "#292929",
   strokeSecondary: "#2e2e2e",
+
+  fillBackground: "#000000",
+
+  blueVioletMedium: "#1A6FF9",
 };
 
 export default colors;

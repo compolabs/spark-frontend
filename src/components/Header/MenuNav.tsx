@@ -37,7 +37,7 @@ type MenuChildItem = {
 
 type MenuItem = {
   title: string;
-  isGradient?: boolean;
+  accent?: boolean;
   link?: string;
   dataOnboardingKey?: string;
   children?: MenuChildItem[];
@@ -50,7 +50,6 @@ const MENU_ITEMS: Array<MenuItem> = [
   { title: "DASHBOARD", link: ROUTES.DASHBOARD, trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
   {
     title: "TRADE",
-    isGradient: true,
     link: ROUTES.SPOT,
     trackEvent: MIXPANEL_EVENTS.CLICK_SPOT,
     // children: [],
@@ -70,7 +69,7 @@ const MENU_ITEMS: Array<MenuItem> = [
   },
   ...(CONFIG.APP.isMainnet
     ? [
-        { title: "POINTS", link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
+        { title: "POINTS", accent: true, link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
         {
           title: "LEADERBOARD",
           link: ROUTES.LEADERBOARD,
@@ -184,10 +183,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     });
   };
 
-  const renderChildMenuItem = (
-    { title, link, icon: Icon, desc, trackEvent, onClick }: MenuChildItem,
-    isGradient?: boolean,
-  ) => {
+  const renderChildMenuItem = ({ title, link, icon: Icon, desc, trackEvent, onClick }: MenuChildItem) => {
     const isActive = location.pathname.includes(link);
 
     const handleChildClick = () => {
@@ -199,7 +195,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
     return (
       <NavLink key={title} to={link} onClick={handleChildClick}>
-        <DropdownMenu isActive={isActive} isGradient={isGradient} onClick={onClick}>
+        <DropdownMenu isActive={isActive} onClick={onClick}>
           <IconContainer>{Icon && <Icon height={24} width={24} />}</IconContainer>
           <DropdownMenuContent>
             <DropdownMenuTitle type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</DropdownMenuTitle>
@@ -210,7 +206,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     );
   };
 
-  const renderMenuItem = ({ title, isGradient, link, dataOnboardingKey, children, trackEvent }: MenuItem) => {
+  const renderMenuItem = ({ title, accent, link, dataOnboardingKey, children, trackEvent }: MenuItem) => {
     const dataOnboardingDeviceKey = `${dataOnboardingKey}-${isMobile ? "mobile" : "desktop"}`;
     const isActive = Boolean(link && location.pathname.includes(link));
 
@@ -228,7 +224,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
       }
     };
 
-    const titleComponent = isGradient ? <BaseGradientText>{title}</BaseGradientText> : title;
+    const titleComponent = title;
 
     if (children) {
       const isDropdownOpen = openDropdown === title;
@@ -241,6 +237,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
         <DropdownContainer key={title}>
           <Element
             data-onboarding={dataOnboardingDeviceKey}
+            isAccent={accent}
             isActive={isActive}
             isDropdown
             onClick={handleDropdownToggle}
@@ -251,7 +248,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
           <AnimatePresence mode="wait">
             {isDropdownOpen && (
               <Dropdown key="dropdown" animate="open" exit="closed" initial="closed" variants={DROPDOWN_VARIANTS}>
-                {children.map((item) => renderChildMenuItem(item, isGradient))}
+                {children.map((item) => renderChildMenuItem(item))}
               </Dropdown>
             )}
           </AnimatePresence>
@@ -271,14 +268,16 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
           target="_blank"
           onClick={handleItemClick}
         >
-          <Element>{titleComponent}</Element>
+          <Element isAccent={accent}>{titleComponent}</Element>
         </a>
       );
     }
 
     return (
       <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleItemClick}>
-        <Element isActive={isActive}>{titleComponent}</Element>
+        <Element isAccent={accent} isActive={isActive}>
+          {titleComponent}
+        </Element>
       </NavLink>
     );
   };
@@ -298,7 +297,7 @@ const ArrowIconStyled = styled(ArrowIcon)<{ isOpen?: boolean }>`
   }
 `;
 
-const Tab = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean }>`
+const Tab = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean; isAccent?: boolean }>`
   ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]}
 
   display: flex;
@@ -309,7 +308,10 @@ const Tab = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean }>`
   padding: 0 4px;
 
   font-weight: ${({ isActive }) => (isActive ? 700 : 500)};
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.textPrimary : theme.colors.textSecondary)};
+  color: ${({ theme, isActive, isAccent }) => {
+    if (isAccent) return theme.colors.greenStrong;
+    return isActive ? theme.colors.textPrimary : theme.colors.textSecondary;
+  }};
 
   ${ArrowIconStyled} {
     & > path {
@@ -324,9 +326,12 @@ const Tab = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean }>`
   cursor: pointer;
 `;
 
-const Row = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean }>`
+const Row = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean; isAccent?: boolean }>`
   ${TEXT_TYPES_MAP[TEXT_TYPES.TEXT_BIG]}
-  color: ${({ theme, isActive }) => (isActive ? theme.colors.textPrimary : theme.colors.textSecondary)};
+  color: ${({ theme, isActive, isAccent }) => {
+    if (isAccent) return theme.colors.greenStrong;
+    return isActive ? theme.colors.textPrimary : theme.colors.textSecondary;
+  }};
 
   display: flex;
   align-items: center;
@@ -376,22 +381,13 @@ const Dropdown = styled(motion(SmartFlex))`
   }
 `;
 
-const BaseGradientText = styled.span`
-  width: fit-content;
-
-  background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
-
 const DropdownMenuTitle = styled(Text)`
   text-transform: uppercase;
 
   color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
-const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean; isGradient?: boolean }>`
+const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean }>`
   padding: 8px 16px;
   gap: 8px;
   align-items: center;
@@ -402,21 +398,13 @@ const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean; isGradient?: boolea
     min-height: 24px;
   }
 
-  ${({ isActive, isGradient }) =>
+  ${({ isActive }) =>
     isActive &&
     css`
       background-color: #232323;
 
       ${DropdownMenuTitle} {
         width: fit-content;
-
-        ${isGradient &&
-        css`
-          background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        `}
       }
     `};
 
@@ -425,15 +413,6 @@ const DropdownMenu = styled(SmartFlex)<{ isActive?: boolean; isGradient?: boolea
 
     ${DropdownMenuTitle} {
       width: fit-content;
-
-      ${({ isGradient }) =>
-        isGradient &&
-        css`
-          background: linear-gradient(to right, #fff, #ff9b57, #54bb94);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        `}
     }
   }
 
