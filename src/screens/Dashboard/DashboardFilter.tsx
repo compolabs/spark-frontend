@@ -7,12 +7,14 @@ import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { FiltersProps } from "@stores/DashboardStore";
 
 import { filters } from "@screens/Dashboard/const";
 import { DashboardInfo } from "@screens/Dashboard/DashboardInfo";
 export const DashboardFilter = observer(() => {
+  const media = useMedia();
   const [active, setActive] = useState(0);
   const { dashboardStore, settingsStore } = useStores();
 
@@ -21,13 +23,16 @@ export const DashboardFilter = observer(() => {
     dashboardStore.setActiveTime(filter);
   };
   const isInfoDashboardPerHours = settingsStore.isInfoDashboardPerHours;
-  const portfolioVolume = dashboardStore.getChartDataPortfolio();
-  const sumStatsUser = portfolioVolume[portfolioVolume.length - 1];
+  // const portfolioVolume = dashboardStore.getChartDataPortfolio();
+  // const sumStatsUser = portfolioVolume[portfolioVolume.length - 1];
+
+  const title = media.mobile ? "Assets" : "Your Assets in V12";
+
   return (
     <DashboardTitleContainer>
       <DashboardFilterContainer>
         <TitleText type={TEXT_TYPES.H} primary>
-          Your Assets in V12
+          {title}
         </TitleText>
         <SmartFlex gap="5px">
           {filters.map((filter, index) => (
@@ -37,9 +42,9 @@ export const DashboardFilter = observer(() => {
           ))}
         </SmartFlex>
       </DashboardFilterContainer>
-      <TitleTextBalance type={TEXT_TYPES.H} primary>
+      {/* <TitleTextBalance type={TEXT_TYPES.H} primary>
         {`$${sumStatsUser?.value.toFixed(4) ?? 0}`}
-      </TitleTextBalance>
+      </TitleTextBalance> */}
       {!isInfoDashboardPerHours && <DashboardInfo />}
     </DashboardTitleContainer>
   );
@@ -67,6 +72,6 @@ const TitleText = styled(Text)`
   align-items: center;
 `;
 
-const TitleTextBalance = styled(TitleText)`
-  margin-bottom: 10px;
-`;
+// const TitleTextBalance = styled(TitleText)`
+//   margin-bottom: 10px;
+// `;

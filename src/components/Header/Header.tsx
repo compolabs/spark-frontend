@@ -94,7 +94,7 @@ const Header: React.FC = observer(() => {
       <>
         <SmartFlex center="y">
           <a href="/" rel="noreferrer noopener">
-            <Logo />
+            <LogoStyled />
           </a>
           <Divider />
           <SmartFlex gap="28px">
@@ -175,4 +175,8 @@ const WalletContainer = styled(SmartFlex)<{ isVisible?: boolean }>`
       height: 32px;
     }
   }
+`;
+
+const LogoStyled = styled(Logo)`
+  width: 44px;
 `;

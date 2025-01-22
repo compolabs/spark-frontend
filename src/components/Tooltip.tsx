@@ -55,7 +55,6 @@ const Root = styled.div`
   display: flex;
   background: ${({ theme }) => `${theme.colors.bgSecondary}`};
   z-index: 999999999999;
-  padding-top: 16px;
   border-radius: 10px;
   width: fit-content;
   min-width: fit-content;
