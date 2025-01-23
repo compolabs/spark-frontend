@@ -75,7 +75,7 @@ const BoostRewardsText = styled(Link)`
 
   color: ${({ theme }) => theme.colors.fillBackground};
 
-  font-weight: 400;
+  font-weight: 600;
 
   text-decoration: underline;
   cursor: pointer;
