@@ -23,7 +23,7 @@ const TRADING_VIEW_ID = "tradingview_chart_container";
 const CHART_CHECK_INTERVAL = 1000;
 
 const getNormalName = (symbol: string) => {
-  if (symbol === "ezETH" || symbol === "pzETH") return "ETH";
+  if (symbol === "ezETH" || symbol === "pzETH" || symbol === "WETH") return "ETH";
 
   return symbol;
 };
