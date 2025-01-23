@@ -4,7 +4,6 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
 
 import outlineStarIcon from "@assets/icons/star.svg";
 import filledStarIcon from "@assets/icons/yellowStar.svg";
@@ -55,11 +54,11 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
         <Icon alt="Add to Favorite" src={isFavorite ? filledStarIcon : outlineStarIcon} onClick={handleFavoriteClick} />
         <MarketTitle market={market} />
       </SmartFlex>
-      <SmartFlex alignSelf="flex-end" justifyContent="flex-end" width="100%">
+      {/* <SmartFlex alignSelf="flex-end" justifyContent="flex-end" width="100%">
         <Text color="primary" type={TEXT_TYPES.H} nowrap>
           $ {market.priceUnits.toFormat(market?.baseToken.precision)}
         </Text>
-      </SmartFlex>
+      </SmartFlex> */}
     </Root>
   );
 });
