@@ -67,7 +67,7 @@ const MarketSelection: React.FC<IProps> = observer(() => {
 
         <SmartFlex justifyContent="space-between" margin="24px 0 12px 0" padding="0 12px">
           <Text type={TEXT_TYPES.BODY}>MARKET</Text>
-          <Text type={TEXT_TYPES.BODY}>PRICE</Text>
+          {/* <Text type={TEXT_TYPES.BODY}>PRICE</Text> */}
         </SmartFlex>
         <Divider />
         {renderSpotMarketList()}
