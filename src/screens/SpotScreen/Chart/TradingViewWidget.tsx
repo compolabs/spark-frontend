@@ -22,6 +22,12 @@ const TRADING_VIEW_ID = "tradingview_chart_container";
 
 const CHART_CHECK_INTERVAL = 1000;
 
+const getNormalName = (symbol: string) => {
+  if (symbol === "ezETH" || symbol === "pzETH") return "ETH";
+
+  return symbol;
+};
+
 const TradingViewWidget: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(true);
   const widgetRef = useRef<any>();
@@ -38,10 +44,12 @@ const TradingViewWidget: React.FC = observer(() => {
       return;
     }
 
-    const marketCEX = market.baseToken.symbol === "FUEL" ? "BYBIT" : "OKX";
-    const quoteTokenSymbol = market.baseToken.symbol === "FUEL" ? "USDT" : market.quoteToken.symbol;
+    const baseTokenSymbol = getNormalName(market.baseToken.symbol);
 
-    const symbol = `${marketCEX}:${market.baseToken.symbol}${quoteTokenSymbol}`;
+    const marketCEX = baseTokenSymbol === "FUEL" ? "BYBIT" : "OKX";
+    const quoteTokenSymbol = baseTokenSymbol === "FUEL" ? "USDT" : market.quoteToken.symbol;
+
+    const symbol = `${marketCEX}:${baseTokenSymbol}${quoteTokenSymbol}`;
     const widgetConfig = {
       autosize: true,
       symbol,

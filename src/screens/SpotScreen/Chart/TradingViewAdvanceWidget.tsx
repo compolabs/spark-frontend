@@ -63,7 +63,7 @@ const TradingViewChartAdvance = observer(() => {
   const bcNetwork = FuelNetwork.getInstance();
   const navigate = useNavigate();
   const defaultProps: Omit<ChartContainerProps, "container"> = {
-    symbol: tradeStore.market?.symbol.replace("-", ""),
+    symbol: tradeStore.market?.symbol.toUpperCase().replace("-", ""),
     interval: "D" as ResolutionString,
     datafeedUrl: isUnderConstruction ? "https://spark-candles.v12.trade" : "https://spark-candles.v12.trade", // После переезда 2 домен не сделали, если не появиться, можно убрать и удалить фича-флаг
     libraryPath: "/charting_library/",
