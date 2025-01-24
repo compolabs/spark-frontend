@@ -1,4 +1,4 @@
-import { autorun, makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 import { AssetType, GetActiveOrdersParams, LimitType, Order, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
@@ -36,27 +36,27 @@ export class SwapStore {
     this.buyTokenPrice = this.getPrice(this.buyToken);
     this.sellTokenPrice = this.getPrice(this.sellToken);
 
-    autorun(async () => {
-      await this.initialize();
-    });
+    // autorun(async () => {
+    //   await this.initialize();
+    // });
 
-    reaction(
-      () => [this.payAmount, this.receiveAmount],
-      () => {
-        const { spotMarketInfoStore } = this.rootStore;
-
-        spotMarketInfoStore.fetchTradeFeeDebounce(
-          BN.parseUnits(
-            this.isBuy() ? this.payAmount : this.receiveAmount,
-            this.isBuy() ? this.sellToken.decimals : this.buyToken.decimals,
-          ).toString(),
-        );
-      },
-    );
+    // reaction(
+    //   () => [this.payAmount, this.receiveAmount],
+    //   () => {
+    //     const { spotMarketInfoStore } = this.rootStore;
+    //
+    //     spotMarketInfoStore.fetchTradeFeeDebounce(
+    //       BN.parseUnits(
+    //         this.isBuy() ? this.payAmount : this.receiveAmount,
+    //         this.isBuy() ? this.sellToken.decimals : this.buyToken.decimals,
+    //       ).toString(),
+    //     );
+    //   },
+    // );
   }
 
   async initialize() {
-    await this.rootStore.balanceStore.initialize();
+    // await this.rootStore.balanceStore.initialize();
     this.updateTokens();
   }
 

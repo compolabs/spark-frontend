@@ -17,7 +17,7 @@ import { Balances } from "@blockchain/types";
 
 import RootStore from "./RootStore";
 
-const UPDATE_INTERVAL = 5 * 1000;
+const UPDATE_INTERVAL = 15 * 1000;
 
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
@@ -53,6 +53,7 @@ export class BalanceStore {
   }
 
   initialize = async () => {
+    console.log("init");
     await this.update();
     runInAction(() => {
       this.initialized = true;
@@ -94,7 +95,6 @@ export class BalanceStore {
     if (!accountStore.address || !wallet) return;
 
     const address = Address.fromB256(accountStore.address);
-
     const [balances, spotContractBalances, perpContractBalances] = await Promise.all([
       this.fetchUserBalances(),
       this.fetchUserSpotContractBalances(address),
