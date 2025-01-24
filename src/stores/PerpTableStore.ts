@@ -170,7 +170,7 @@ export class PerpTableStore {
     this.subscriptionToOpenOrders = bcNetwork
       .perpSubscribeOrders({
         ...this.tableFilters,
-        user: accountStore.address!, //TODO закоменентить, если хотим посмотреть открытые ордера, пока не создаются ордера
+        trader: accountStore.address!, //TODO закоменентить, если хотим посмотреть открытые ордера, пока не создаются ордера
         status: ["Active"],
       })
       .subscribe({
@@ -197,7 +197,7 @@ export class PerpTableStore {
     this.subscriptionToHistoryOrders = bcNetwork
       .perpSubscribeOrders({
         ...this.tableFilters,
-        user: accountStore.address!,
+        trader: accountStore.address!,
         status: ["Closed", "Canceled"],
       })
       .subscribe({

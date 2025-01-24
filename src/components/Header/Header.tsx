@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
+import DepositWithdrawModal from "@components/DepositWithdrawModal";
 import { media } from "@themes/breakpoints";
 
 import DataBase from "@assets/icons/dataBase.svg?react";
@@ -24,7 +25,7 @@ import MobileMenu from "./MobileMenu";
 import WalletAddressButton from "./WalletAddressButton";
 
 const Header: React.FC = observer(() => {
-  const { modalStore, quickAssetsStore } = useStores();
+  const { marketStore, modalStore, quickAssetsStore } = useStores();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
@@ -102,6 +103,11 @@ const Header: React.FC = observer(() => {
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
+          {marketStore.perpMarket && (
+            <Button fitContent onClick={() => modalStore.open(MODAL_TYPE.PERP_DEPOSIT_WITHDRAW_MODAL)}>
+              Deposit / Withdraw
+            </Button>
+          )}
           <Button data-onboarding="assets-desktop" fitContent onClick={() => quickAssetsStore.setQuickAssets(true)}>
             <SmartFlex center="y" gap="8px">
               <DataBase />
@@ -124,6 +130,10 @@ const Header: React.FC = observer(() => {
         onWalletConnect={openConnectModal}
       />
       <AccountInfoSheet isOpen={isAccountInfoSheetOpen} onClose={closeAccountInfo} />
+      <DepositWithdrawModal
+        visible={modalStore.isOpen(MODAL_TYPE.PERP_DEPOSIT_WITHDRAW_MODAL)}
+        onClose={modalStore.close}
+      />
     </Root>
   );
 });
