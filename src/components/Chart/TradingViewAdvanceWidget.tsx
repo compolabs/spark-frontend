@@ -1,11 +1,17 @@
 import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useFlag } from "@unleash/proxy-client-react";
 import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
 
 import { useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore.ts";
 
+import { ROUTES } from "@constants";
+
+import { FuelNetwork } from "@blockchain";
+import { Token } from "@entity";
 // @ts-ignore
 import("@compolabs/tradingview-chart/dist/bundle").then((module) => {
   window.Datafeeds = module;
@@ -28,6 +34,20 @@ export interface ChartContainerProps {
   container: ChartingLibraryWidgetOptions["container"];
 }
 
+function splitPairAndGetTokens(tokens: Token[], pair: string) {
+  const baseToken = tokens.find((token) => pair.startsWith(token.symbol));
+  if (!baseToken) {
+    throw new Error(`Base token not found for pair: ${pair}`);
+  }
+
+  const quoteToken = tokens.find((token) => pair.endsWith(token.symbol));
+  if (!quoteToken) {
+    throw new Error(`Quote token not found for pair: ${pair}`);
+  }
+
+  return { baseToken, quoteToken };
+}
+
 const getLanguageFromURL = (): LanguageCode | null => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
   const results = regex.exec(location.search);
@@ -37,11 +57,11 @@ const getLanguageFromURL = (): LanguageCode | null => {
 const TradingViewChartAdvance = observer(() => {
   const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
   // const isUnderConstruction = false;
-  const { marketStore } = useStores();
-
   // const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
-
+  const { marketStore, mixPanelStore, accountStore } = useStores();
+  const bcNetwork = FuelNetwork.getInstance();
+  const navigate = useNavigate();
   const defaultProps: Omit<ChartContainerProps, "container"> = {
     symbol: marketStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
@@ -86,6 +106,23 @@ const TradingViewChartAdvance = observer(() => {
     };
 
     const tvWidget = new widget(widgetOptions);
+
+    tvWidget.onChartReady(() => {
+      const chart = tvWidget.activeChart();
+      if (chart) {
+        chart.onSymbolChanged().subscribe(null, () => {
+          const tokenList = bcNetwork!.getTokenList();
+          const { baseToken, quoteToken } = splitPairAndGetTokens(tokenList, chart.symbol());
+          mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_CURRENCY_PAIR, {
+            user_address: accountStore.address,
+            token1: baseToken.symbol,
+            token2: quoteToken.symbol,
+          });
+          marketStore.setMarketSelectionOpened(false);
+          navigate(`${ROUTES.SPOT}/${baseToken.symbol}-${quoteToken.symbol}`);
+        });
+      }
+    });
 
     return () => {
       tvWidget.remove();

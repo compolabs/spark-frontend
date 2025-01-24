@@ -6,6 +6,7 @@ import Leaderboard from "src/screens/Leaderboard";
 
 import { Column } from "@components/Flex";
 import Header from "@components/Header";
+import { HeaderPoints } from "@components/Points/HeaderPoints";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
 import { useStores } from "@stores";
@@ -39,6 +40,7 @@ const App: React.FC = observer(() => {
           <UnderConstructionProvider>
             <Root>
               <Header />
+              <HeaderPoints />
               <Routes>
                 <Route element={<SpotScreen />} path={`${ROUTES.SPOT}/:marketId`} />
                 <Route element={<PerpScreen />} path={`${ROUTES.PERP}/:marketId`} />
