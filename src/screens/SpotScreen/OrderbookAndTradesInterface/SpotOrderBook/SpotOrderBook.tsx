@@ -2,10 +2,10 @@ import React, { HTMLAttributes } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
-import numeral from "numeral";
 
 import { Column, Row } from "@components/Flex";
 import { SpotOrderSettingsSheet } from "@components/Modal";
+import { PriceDisplay } from "@components/PriceDisplay";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -73,8 +73,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   };
 
   const renderSpread = () => {
-    let price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
-    price = price === "-" ? price : numeral(price).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`);
+    const price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
     const percent = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPercent : "-";
     if (media.mobile) {
       return (
@@ -110,17 +109,20 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         ? ord.initialAmount.div(spotOrderBookStore.totalSell)
         : ord.initialQuoteAmount.div(spotOrderBookStore.totalBuy);
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
-    const newOrder = [...orders];
-    newOrder.reverse();
+    const newOrder = [...orders].reverse();
     return (
       <>
         {newOrder.map((o, index) => (
           <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
             <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
-            <TextOverflow color={color}>{o.priceUnits.toFormat(spotOrderBookStore.decimalGroup)}</TextOverflow>
-            <TextRightAlign primary>{numeral(o.currentAmountUnits).format(`0.${"0".repeat(4)}a`)}</TextRightAlign>
+            <TextOverflow color={color}>
+              <PriceDisplay decimal={spotOrderBookStore.decimalGroup} value={o.priceUnits} />
+            </TextOverflow>
             <TextRightAlign primary>
-              {numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`)}
+              <PriceDisplay decimal={spotOrderBookStore.decimalGroup} value={o.currentAmountUnits} />
+            </TextRightAlign>
+            <TextRightAlign primary>
+              <PriceDisplay decimal={spotOrderBookStore.decimalGroup} value={o.currentQuoteAmountUnits} />
             </TextRightAlign>
           </OrderRow>
         ))}

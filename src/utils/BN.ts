@@ -123,11 +123,26 @@ class BN extends BigNumber {
   toSignificant = (
     significantDigits: number,
     roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
-    format?: BigNumber.Format,
+    formatOption: BigNumber.Format = {
+      groupSeparator: ",",
+      decimalSeparator: ".",
+      groupSize: 3,
+      prefix: "",
+      suffix: "",
+    },
   ): string => {
-    return this.abs().gte(1) || significantDigits === 0
-      ? this.toFormat(significantDigits, roundingMode, format).replace(/(\.[0-9]*[1-9])0+$|\.0+$/, "$1")
-      : super.precision(significantDigits, roundingMode).toString();
+    const isAboveOneOrZeroDigits = this.gte(1) || significantDigits === 0;
+
+    if (isAboveOneOrZeroDigits) {
+      return this.toFormat(significantDigits, roundingMode, formatOption);
+    } else {
+      const preciseNumber = super.precision(significantDigits, roundingMode);
+      if (formatOption) {
+        return preciseNumber.toFormat(formatOption);
+      } else {
+        return preciseNumber.toString();
+      }
+    }
   };
 
   clamp(min: TValue, max: TValue): BN {
