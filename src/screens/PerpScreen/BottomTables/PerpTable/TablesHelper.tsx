@@ -25,6 +25,7 @@ export const POSITIONS_COLUMNS = (theme: Theme) => {
       header: "Trading Pair",
       cell: (props) => {
         const color = props.row.original.type === "Long" ? theme.colors.greenLight : theme.colors.redLight;
+        console.log("props.getValue()", props.getValue());
         return (
           <SmartFlex alignItems="center" gap="10px">
             <TokenIcon
@@ -43,72 +44,72 @@ export const POSITIONS_COLUMNS = (theme: Theme) => {
         );
       },
     }),
-    positionColumnHelper.accessor("takerPositionSize", {
-      header: "Size / Value",
-      cell: (props) => (
-        <SmartFlex column>
-          <SmartFlex center="y" gap="4px">
-            <Text primary>{props.getValue().toSignificant(2)}</Text>
-            <TokenBadge>
-              <Text>{props.row.original.baseToken.symbol}</Text>
-            </TokenBadge>
-          </SmartFlex>
-          <Text primary>{props.row.original.entrySizeValue.toSignificant(2)}</Text>
-        </SmartFlex>
-      ),
-    }),
-    positionColumnHelper.accessor("margin", {
-      header: "Margin",
-      cell: (props) => (
-        <SmartFlex alignSelf="flex-start" center="y" gap="4px" height="100%">
-          <Text primary>{props.getValue().toSignificant(2)}</Text>
-          <TokenBadge>
-            <Text>{props.row.original.quoteToken.symbol}</Text>
-          </TokenBadge>
-        </SmartFlex>
-      ),
-    }),
-    positionColumnHelper.accessor("entryPrice", {
-      header: "Entry / Mark",
-      cell: (props) => (
-        <SmartFlex center="y" gap="2px" column>
-          <Text primary>{props.getValue().toSignificant(2)}</Text>
-          <Text primary>{props.row.original.markPrice.toSignificant(2)}</Text>
-        </SmartFlex>
-      ),
-    }),
-    positionColumnHelper.accessor("unrealizedPnl", {
-      header: "Unrealized PNL",
-      cell: (props) => {
-        const color = props.row.original.isUnrealizedPnlInProfit ? theme.colors.greenLight : theme.colors.redLight;
-        return (
-          <SmartFlex column>
-            <SmartFlex center="y" gap="4px">
-              <Text color={color} primary>
-                {props.getValue().toSignificant(2)}
-              </Text>
-              <TokenBadge>
-                <Text>{props.row.original.quoteToken.symbol}</Text>
-              </TokenBadge>
-            </SmartFlex>
-            <Text color={color}>{props.row.original.unrealizedPnlPercent.toSignificant(2)}%</Text>
-          </SmartFlex>
-        );
-      },
-    }),
-    positionColumnHelper.accessor("pendingFundingPayment", {
-      header: "Funding payment",
-      cell: (props) => (
-        <SmartFlex center="y" gap="4px">
-          <Text color={theme.colors.greenLight} primary>
-            {props.getValue().toSignificant(2)}
-          </Text>
-          <TokenBadge>
-            <Text>{props.row.original.quoteToken.symbol}</Text>
-          </TokenBadge>
-        </SmartFlex>
-      ),
-    }),
+    // positionColumnHelper.accessor("takerPositionSize", {
+    //   header: "Size / Value",
+    //   cell: (props) => (
+    //     <SmartFlex column>
+    //       <SmartFlex center="y" gap="4px">
+    //         <Text primary>{props.getValue().toFixed(2)}</Text>
+    //         <TokenBadge>
+    //           <Text>{props.row.original.baseToken.symbol}</Text>
+    //         </TokenBadge>
+    //       </SmartFlex>
+    //       <Text primary>{props.row.original.entrySizeValue.toSignificant(2)}</Text>
+    //     </SmartFlex>
+    //   ),
+    // }),
+    // positionColumnHelper.accessor("margin", {
+    //   header: "Margin",
+    //   cell: (props) => (
+    //     <SmartFlex alignSelf="flex-start" center="y" gap="4px" height="100%">
+    //       <Text primary>{props.getValue().toSignificant(2)}</Text>
+    //       <TokenBadge>
+    //         <Text>{props.row.original.quoteToken.symbol}</Text>
+    //       </TokenBadge>
+    //     </SmartFlex>
+    //   ),
+    // }),
+    // positionColumnHelper.accessor("entryPrice", {
+    //   header: "Entry / Mark",
+    //   cell: (props) => (
+    //     <SmartFlex center="y" gap="2px" column>
+    //       <Text primary>{props.getValue().toSignificant(2)}</Text>
+    //       <Text primary>{props.row.original.markPrice.toSignificant(2)}</Text>
+    //     </SmartFlex>
+    //   ),
+    // }),
+    // positionColumnHelper.accessor("unrealizedPnl", {
+    //   header: "Unrealized PNL",
+    //   cell: (props) => {
+    //     const color = props.row.original.isUnrealizedPnlInProfit ? theme.colors.greenLight : theme.colors.redLight;
+    //     return (
+    //       <SmartFlex column>
+    //         <SmartFlex center="y" gap="4px">
+    //           <Text color={color} primary>
+    //             {props.getValue().toSignificant(2)}
+    //           </Text>
+    //           <TokenBadge>
+    //             <Text>{props.row.original.quoteToken.symbol}</Text>
+    //           </TokenBadge>
+    //         </SmartFlex>
+    //         <Text color={color}>{props.row.original.unrealizedPnlPercent.toSignificant(2)}%</Text>
+    //       </SmartFlex>
+    //     );
+    //   },
+    // }),
+    // positionColumnHelper.accessor("pendingFundingPayment", {
+    //   header: "Funding payment",
+    //   cell: (props) => (
+    //     <SmartFlex center="y" gap="4px">
+    //       <Text color={theme.colors.greenLight} primary>
+    //         {props.getValue().toSignificant(2)}
+    //       </Text>
+    //       <TokenBadge>
+    //         <Text>{props.row.original.quoteToken.symbol}</Text>
+    //       </TokenBadge>
+    //     </SmartFlex>
+    //   ),
+    // }),
     // positionColumnHelper.accessor("id", {
     //   header: "",
     //   cell: (props) => (

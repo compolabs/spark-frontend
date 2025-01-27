@@ -7,6 +7,7 @@ import { PerpOrder } from "@compolabs/spark-perpetual-ts-sdk";
 import { RootStore } from "@stores";
 
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
+import { CONFIG } from "@utils/getConfig.ts";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
@@ -23,6 +24,7 @@ export class PerpTableStore {
   private subscriptionToOpenOrders: Nullable<Subscription> = null;
   private subscriptionToHistoryOrders: Nullable<Subscription> = null;
   private subscriptionToOrdersStats: Nullable<Subscription> = null;
+  private subscriptionToOpenPosition: Nullable<Subscription> = null;
 
   userOrders: PerpMarketOrder[] = [];
   private setUserOrders = (orders: PerpMarketOrder[]) => (this.userOrders = orders);
@@ -32,6 +34,9 @@ export class PerpTableStore {
 
   userOrdersStats: Nullable<UserInfo> = null;
   private setUserOrdersStats = (stats: UserInfo) => (this.userOrdersStats = stats);
+
+  userOpenPosition: any[] = [];
+  private setUserOpenPosition = (stats: any) => (this.userOpenPosition = stats);
 
   isOrderCancelling = false;
   cancelingOrderId: Nullable<string> = null;
@@ -78,11 +83,18 @@ export class PerpTableStore {
     this.rootStore = rootStore;
     const { accountStore, marketStore } = this.rootStore;
     reaction(
-      () => [marketStore.market, this.rootStore.initialized, accountStore.isConnected, this.tableFilters] as const,
-      ([market, initialized, isConnected, _]) => {
+      () =>
+        [
+          marketStore.market,
+          this.rootStore.initialized,
+          accountStore.isConnected,
+          this.tableFilters,
+          FuelNetwork.getInstance().getWallet(),
+        ] as const,
+      ([market, initialized, isConnected, _, instanceWallet]) => {
         const isPerpMarket = market && PerpMarket.isInstance(market);
-
-        if (!isPerpMarket || !initialized || !isConnected) {
+        console.log("instanceWallet", instanceWallet);
+        if (!isPerpMarket || !initialized || !isConnected || !instanceWallet) {
           this.setUserOrders([]);
           this.setUserOrdersHistory([]);
           return;
@@ -170,7 +182,7 @@ export class PerpTableStore {
     this.subscriptionToOpenOrders = bcNetwork
       .perpSubscribeOrders({
         ...this.tableFilters,
-        trader: accountStore.address!, //TODO закоменентить, если хотим посмотреть открытые ордера, пока не создаются ордера
+        trader: accountStore.address!,
         status: ["Active"],
       })
       .subscribe({
@@ -214,12 +226,6 @@ export class PerpTableStore {
       });
   };
 
-  private subscribeToOrders = () => {
-    this.subscribeToOpenOrders();
-    this.subscribeToHistoryOrders();
-    this.subscribeUserInfo();
-  };
-
   private subscribeUserInfo = () => {
     const bcNetwork = FuelNetwork.getInstance();
     const { accountStore } = this.rootStore;
@@ -240,5 +246,63 @@ export class PerpTableStore {
           this.setUserOrdersStats(data.User[0]);
         },
       });
+  };
+
+  private subscribeUserOpenPosition = async () => {
+    console.log("123");
+    const bcNetwork = FuelNetwork.getInstance();
+    const { accountStore } = this.rootStore;
+    // if (this.subscriptionToOpenPosition) {
+    //   this.subscriptionToOpenPosition.unsubscribe();
+    // }
+    console.log("test1");
+    try {
+      console.log("123", bcNetwork.perpetualSdk.getProvider());
+      const clearingHouseContract = bcNetwork.perpetualSdk.getAccountBalanceContract(
+        CONFIG.PERP.CONTRACTS.clearingHouse,
+      );
+      if (!accountStore?.address) return;
+      const s = await clearingHouseContract.getTakerPositionSizeA(
+        accountStore.address,
+        "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
+      );
+      const t = await clearingHouseContract.getTakerOpenNotionalA(
+        accountStore.address,
+        "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
+      );
+      console.log("notional", t.toString());
+      console.log("positional", s.toString());
+    } catch (err) {
+      console.log("err", err);
+    }
+    // this.subscriptionToOpenPosition = bcNetwork
+    //   .subscribeActivePositions({
+    //     ...this.tableFilters,
+    //     trader: accountStore.address!,
+    //   })
+    //   .subscribe({
+    //     next: ({ data }: any) => {
+    //       if (!data?.AccountBalanceChangeEvent?.length) {
+    //         return;
+    //       }
+    //       console.log('data?.AccountBalanceChangeEvent', data?.AccountBalanceChangeEvent)
+    //       try {
+    //         const sortedOrdersHistory = data?.AccountBalanceChangeEvent.map(
+    //           (position: any) => new PerpPosition(position),
+    //         );
+    //         console.log('sortedOrdersHistory', sortedOrdersHistory)
+    //         this.setUserOpenPosition(sortedOrdersHistory);
+    //       } catch (err) {
+    //         console.log('err', err)
+    //       }
+    //     },
+    //   });
+  };
+
+  private subscribeToOrders = () => {
+    this.subscribeToOpenOrders();
+    this.subscribeToHistoryOrders();
+    this.subscribeUserInfo();
+    this.subscribeUserOpenPosition();
   };
 }

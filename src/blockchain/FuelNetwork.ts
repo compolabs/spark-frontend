@@ -248,6 +248,10 @@ export class FuelNetwork {
     return this.orderbookSdk.subscribeUserInfo(...params);
   };
 
+  subscribeActivePositions = (...params: Parameters<typeof this.perpetualSdk.subscribeActivePositions>) => {
+    return this.perpetualSdk.subscribeActivePositions(...params);
+  };
+
   spotFetchMinOrderSize = async () => {
     return this.orderbookSdk.fetchMinOrderSize();
   };

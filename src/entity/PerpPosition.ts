@@ -1,5 +1,7 @@
 import { makeAutoObservable } from "mobx";
 
+import { CONFIG } from "@utils/getConfig.ts";
+
 import { FuelNetwork } from "@blockchain";
 
 import BN from "../utils/BN";
@@ -7,7 +9,8 @@ import BN from "../utils/BN";
 import { Token } from "./Token";
 
 interface PerpPositionParams {
-  baseTokenAddress: string;
+  baseToken: string;
+  market: string;
   lastTwPremiumGrowthGlobal: BN;
   takerOpenNational: BN;
   takerPositionSize: BN;
@@ -31,9 +34,10 @@ export class PerpPosition {
 
   constructor(params: PerpPositionParams) {
     const bcNetwork = FuelNetwork.getInstance();
+    const findMarket = CONFIG.PERP.MARKETS.find((el) => el.contractId === params.market) ?? CONFIG.PERP.MARKETS[0];
 
-    this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
-    this.quoteToken = bcNetwork.getTokenBySymbol("USDC");
+    this.baseToken = bcNetwork.getTokenByAssetId(findMarket?.baseAssetId);
+    this.quoteToken = bcNetwork.getTokenByAssetId(findMarket?.quoteAssetId);
 
     this.lastTwPremiumGrowthGlobal = params.lastTwPremiumGrowthGlobal;
     this.takerOpenNational = BN.formatUnits(params.takerOpenNational, this.baseToken.decimals);
