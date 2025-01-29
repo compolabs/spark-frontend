@@ -83,9 +83,7 @@ class LeaderboardStore {
         finalData = [...dataMe, ...mainData];
       }
     }
-    this.leaderboard = finalData.map((el) => ({
-      ...el,
-    }));
+    this.leaderboard = finalData;
   };
 
   private fetchMeLeaderboard = async (params: GetLeaderboardQueryParams) => {
