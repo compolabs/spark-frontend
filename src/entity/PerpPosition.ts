@@ -12,22 +12,21 @@ interface PerpPositionParams {
   baseToken: string;
   market: string;
   lastTwPremiumGrowthGlobal: BN;
-  takerOpenNational: BN;
+  takerOpenNotional: BN;
   takerPositionSize: BN;
+  imRatio: BN;
+  markPrice: BN;
 }
 
 export class PerpPosition {
   readonly baseToken: Token;
   readonly quoteToken: Token;
   readonly lastTwPremiumGrowthGlobal: BN;
-  readonly takerOpenNational: BN;
+  readonly takerOpenNotional: BN;
   readonly takerPositionSize: BN;
-
-  private _markPrice = BN.ZERO;
-  setMarkPrice = (price: BN) => (this._markPrice = price);
-
-  private _imRatio = BN.ZERO;
-  setImRatio = (ratio: BN) => (this._imRatio = ratio);
+  readonly imRatio: BN;
+  readonly _markPrice: BN;
+  readonly side: string;
 
   _pendingFundingPayment = BN.ZERO;
   setPendingFundingPayment = (payment: BN) => (this._pendingFundingPayment = payment);
@@ -40,9 +39,12 @@ export class PerpPosition {
     this.quoteToken = bcNetwork.getTokenByAssetId(findMarket?.quoteAssetId);
 
     this.lastTwPremiumGrowthGlobal = params.lastTwPremiumGrowthGlobal;
-    this.takerOpenNational = BN.formatUnits(params.takerOpenNational, this.baseToken.decimals);
-    this.takerPositionSize = BN.formatUnits(params.takerPositionSize, this.baseToken.decimals);
+    this.takerOpenNotional = new BN(params.takerOpenNotional).abs();
+    this.takerPositionSize = new BN(params.takerPositionSize);
 
+    this.imRatio = new BN(params.imRatio);
+    this.side = new BN(params.takerOpenNotional).isGreaterThan(0) ? "long" : "short";
+    this._markPrice = new BN(params.markPrice);
     makeAutoObservable(this);
   }
 
@@ -51,15 +53,15 @@ export class PerpPosition {
   }
 
   get entrySizeValue() {
-    return this.takerPositionSize.multipliedBy(this.markPrice);
+    return BN.formatUnits(this.takerPositionSize.multipliedBy(this.markPrice), this.baseToken.decimals);
+  }
+
+  get formatSizeValue() {
+    return BN.formatUnits(this.takerPositionSize, this.baseToken.decimals);
   }
 
   get markPrice() {
     return BN.formatUnits(this._markPrice, this.quoteToken.decimals);
-  }
-
-  get imRatio() {
-    return BN.formatUnits(this._imRatio, this.quoteToken.decimals);
   }
 
   get pendingFundingPayment() {
@@ -67,7 +69,7 @@ export class PerpPosition {
   }
 
   get margin() {
-    return this.entrySizeValue.multipliedBy(this.imRatio);
+    return this.entrySizeValue.multipliedBy(BN.formatUnits(this.imRatio, this.baseToken.decimals)).toSignificant(4);
   }
 
   get type() {
@@ -75,19 +77,28 @@ export class PerpPosition {
   }
 
   get entryPrice() {
-    return this.takerOpenNational.div(this.takerPositionSize);
+    const openNotional = BN.formatUnits(this.takerPositionSize, this.baseToken.decimals);
+
+    return this.entrySizeValue.div(openNotional);
   }
 
   get unrealizedPnl() {
-    return this.takerPositionSize.multipliedBy(this.markPrice).plus(this.takerOpenNational);
+    const openPosition = BN.formatUnits(this.takerPositionSize, this.quoteToken.decimals);
+    if (this.side === "long") {
+      return this.markPrice.minus(this.entryPrice).multipliedBy(openPosition);
+    } else {
+      return this.entryPrice.minus(this.markPrice).multipliedBy(openPosition);
+    }
   }
 
   get unrealizedPnlPercent() {
-    return this.takerPositionSize.multipliedBy(this.markPrice).dividedBy(this.takerOpenNational).minus(1);
+    const openPosition = BN.formatUnits(this.takerPositionSize, this.quoteToken.decimals);
+    const pnl = this.unrealizedPnl;
+    return pnl.dividedBy(this.entryPrice.multipliedBy(openPosition)).multipliedBy(100);
   }
 
   get isUnrealizedPnlInProfit() {
-    return this.takerOpenNational.multipliedBy(this.takerPositionSize).multipliedBy(this.markPrice).isPositive();
+    return this.unrealizedPnl.isPositive();
   }
 
   get leverage() {

@@ -1,7 +1,7 @@
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
 import { PerpOrder } from "@compolabs/spark-perpetual-ts-sdk";
 
 import { RootStore } from "@stores";
@@ -11,7 +11,7 @@ import { CONFIG } from "@utils/getConfig.ts";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
 import { FuelNetwork } from "@blockchain";
-import { PerpMarket, PerpMarketOrder } from "@entity";
+import { PerpMarket, PerpMarketOrder, PerpPosition } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
@@ -249,54 +249,43 @@ export class PerpTableStore {
   };
 
   private subscribeUserOpenPosition = async () => {
-    console.log("123");
     const bcNetwork = FuelNetwork.getInstance();
-    const { accountStore } = this.rootStore;
-    // if (this.subscriptionToOpenPosition) {
-    //   this.subscriptionToOpenPosition.unsubscribe();
-    // }
-    console.log("test1");
-    try {
-      console.log("123", bcNetwork.perpetualSdk.getProvider());
-      const clearingHouseContract = bcNetwork.perpetualSdk.getAccountBalanceContract(
-        CONFIG.PERP.CONTRACTS.clearingHouse,
-      );
-      if (!accountStore?.address) return;
-      const s = await clearingHouseContract.getTakerPositionSizeA(
-        accountStore.address,
-        "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
-      );
-      const t = await clearingHouseContract.getTakerOpenNotionalA(
-        accountStore.address,
-        "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
-      );
-      console.log("notional", t.toString());
-      console.log("positional", s.toString());
-    } catch (err) {
-      console.log("err", err);
+    const { accountStore, perpOrderBookStore } = this.rootStore;
+    if (this.subscriptionToOpenPosition) {
+      this.subscriptionToOpenPosition.unsubscribe();
     }
-    // this.subscriptionToOpenPosition = bcNetwork
-    //   .subscribeActivePositions({
-    //     ...this.tableFilters,
-    //     trader: accountStore.address!,
-    //   })
-    //   .subscribe({
-    //     next: ({ data }: any) => {
-    //       if (!data?.AccountBalanceChangeEvent?.length) {
-    //         return;
-    //       }
-    //       console.log('data?.AccountBalanceChangeEvent', data?.AccountBalanceChangeEvent)
-    //       try {
-    //         const sortedOrdersHistory = data?.AccountBalanceChangeEvent.map(
-    //           (position: any) => new PerpPosition(position),
-    //         );
-    //         console.log('sortedOrdersHistory', sortedOrdersHistory)
-    //         this.setUserOpenPosition(sortedOrdersHistory);
-    //       } catch (err) {
-    //         console.log('err', err)
-    //       }
-    //     },
-    //   });
+
+    const marketContract = bcNetwork.perpetualSdk.getPerpMarketContract(CONFIG.PERP.CONTRACTS.clearingHouse);
+
+    const actualMarket = await marketContract.getMarketM(
+      "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
+    );
+
+    this.subscriptionToOpenPosition = bcNetwork
+      .subscribeActivePositions({
+        ...this.tableFilters,
+        trader: accountStore.address!,
+      })
+      .subscribe({
+        next: ({ data }: any) => {
+          if (!data?.AccountBalanceChangeEvent?.length) {
+            return;
+          }
+          try {
+            const markPrice = perpOrderBookStore.trades[0]?.tradePrice;
+            const sortedOrdersHistory = data?.AccountBalanceChangeEvent.filter(
+              (position: any) =>
+                !new BN(position.takerOpenNotional).isZero() && !new BN(position.takerPositionSize).isZero(),
+            ).map(
+              (position: any) =>
+                new PerpPosition({ ...position, imRatio: actualMarket?.imRatio, markPrice: markPrice }),
+            );
+            this.setUserOpenPosition(sortedOrdersHistory);
+          } catch (err) {
+            console.log("err", err);
+          }
+        },
+      });
   };
 
   private subscribeToOrders = () => {
