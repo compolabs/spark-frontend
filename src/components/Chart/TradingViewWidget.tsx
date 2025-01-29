@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 
 import { useStores } from "@stores";
 
-import { PerpMarket } from "@entity";
+import { BaseMarket } from "@entity";
 
 import ChartSkeletonWrapper from "../Skeletons/ChartSkeletonWrapper";
 
@@ -24,11 +24,21 @@ const TRADING_VIEW_ID = "tradingview_chart_container";
 
 const CHART_CHECK_INTERVAL = 1000;
 
-// const getNormalName = (symbol: string) => {
-//   if (symbol === "ezETH" || symbol === "pzETH" || symbol === "WETH") return "ETH";
-//
-//   return symbol;
-// };
+// TODO: Implement logic using Market and tradingview symbol. Store symbol to get trading view chart in config
+
+const getNormalName = (market: BaseMarket): string => {
+  const { baseToken, quoteToken } = market;
+
+  if (baseToken.symbol === "FUEL") return "BYBIT:FUELUSDT";
+
+  if (baseToken.symbol === "ezETH") return "ezETHUSD";
+
+  if (baseToken.symbol === "WETH") return "OKX:ETHUSDT";
+
+  if (baseToken.symbol === "pzETH") return "OKX:ETHUSDT";
+
+  return `OKX:${baseToken.symbol}${quoteToken.symbol}`;
+};
 
 const TradingViewWidget: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(true);
@@ -46,20 +56,10 @@ const TradingViewWidget: React.FC = observer(() => {
       return;
     }
 
-    // const baseTokenSymbol = getNormalName(market.baseToken.symbol);
-    const marketCEX = market.baseToken.symbol === "FUEL" ? "BYBIT" : "OKX";
-    const quoteTokenSymbol = market.baseToken.symbol === "FUEL" ? "USDT" : market.quoteToken.symbol;
+    const symbol = getNormalName(market);
+    // const marketCEX = market.baseToken.symbol === "FUEL" ? "BYBIT" : "OKX";
+    // const quoteTokenSymbol = market.baseToken.symbol === "FUEL" ? "USDT" : market.quoteToken.symbol;
 
-    let symbol = `${marketCEX}:${market.baseToken.symbol}${quoteTokenSymbol}`;
-
-    if (PerpMarket.isInstance(market)) {
-      symbol = `OKX:BTCUSDT`;
-    }
-
-    // const marketCEX = baseTokenSymbol === "FUEL" ? "BYBIT" : "OKX";
-    // const quoteTokenSymbol = baseTokenSymbol === "FUEL" ? "USDT" : market.quoteToken.symbol;
-    //
-    // const symbol = `${marketCEX}:${baseTokenSymbol}${quoteTokenSymbol}`;
     const widgetConfig = {
       autosize: true,
       symbol,
