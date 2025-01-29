@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 
 import { useStores } from "@stores";
 
-import { BaseMarket } from "@entity";
+import { BaseMarket, PerpMarket } from "@entity";
 
 import ChartSkeletonWrapper from "../Skeletons/ChartSkeletonWrapper";
 
@@ -56,7 +56,13 @@ const TradingViewWidget: React.FC = observer(() => {
       return;
     }
 
-    const symbol = getNormalName(market);
+    let symbol;
+
+    if (PerpMarket.isInstance(market)) {
+      symbol = `OKX:BTCUSDT`;
+    } else {
+      symbol = getNormalName(market);
+    }
     // const marketCEX = market.baseToken.symbol === "FUEL" ? "BYBIT" : "OKX";
     // const quoteTokenSymbol = market.baseToken.symbol === "FUEL" ? "USDT" : market.quoteToken.symbol;
 
