@@ -43,7 +43,7 @@ export class PerpPosition {
     this.takerPositionSize = new BN(params.takerPositionSize);
 
     this.imRatio = new BN(params.imRatio);
-    this.side = new BN(params.takerOpenNotional).isGreaterThan(0) ? "long" : "short";
+    this.side = new BN(params.takerOpenNotional).isGreaterThan(0) ? "short" : "long";
     this._markPrice = new BN(params.markPrice);
     makeAutoObservable(this);
   }

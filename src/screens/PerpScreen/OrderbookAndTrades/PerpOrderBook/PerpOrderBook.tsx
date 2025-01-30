@@ -99,7 +99,9 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
     newOrder.reverse();
     return newOrder.map(
       (o): DataArray => [
-        o.priceUnits.toFormat(perpOrderBookStore.decimalGroup),
+        // BN.formatUnits(o.priceUnits, perpOrderBookStore.decimalGroup).toFixed(2),
+        // o.priceUnits.toFormat(perpOrderBookStore.decimalGroup),
+        o.formatPrice,
         numeral(o.baseSize).format(`0.${"0".repeat(4)}a`),
         numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(perpOrderBookStore.decimalGroup)}a`),
         type === "sell",

@@ -276,10 +276,12 @@ export class PerpTableStore {
             const sortedOrdersHistory = data?.AccountBalanceChangeEvent.filter(
               (position: any) =>
                 !new BN(position.takerOpenNotional).isZero() && !new BN(position.takerPositionSize).isZero(),
-            ).map(
-              (position: any) =>
-                new PerpPosition({ ...position, imRatio: actualMarket?.imRatio, markPrice: markPrice }),
-            );
+            )
+              .slice(0, 1) // Берем только первый элемент
+              .map(
+                (position: any) =>
+                  new PerpPosition({ ...position, imRatio: actualMarket?.imRatio, markPrice: markPrice }),
+              );
             this.setUserOpenPosition(sortedOrdersHistory);
           } catch (err) {
             console.log("err", err);

@@ -149,17 +149,16 @@ export const ORDER_COLUMNS = () => [
     cell: (props) => (
       <SmartFlex column>
         <SmartFlex center="y" gap="4px">
-          <Text primary>{new BN(props.row.original.baseSize).toString()}</Text>
+          <Text primary>
+            {BN.formatUnits(new BN(props.row.original.baseSize), props.row.original.baseToken?.decimals).toString()}
+          </Text>
           <TokenBadge>
             <Text>{props.row.original.baseToken.symbol}</Text>
           </TokenBadge>
           /{" "}
-          <Text primary>
-            {BN.formatUnits(
-              new BN(props.row.original.baseSize.multipliedBy(props.row.original?.price ?? 0)),
-              props.row.original.quoteToken?.decimals,
-            ).toString()}
-          </Text>
+          {BN.formatUnits(props.row.original?.price ?? 0, props.row.original.baseToken?.decimals)
+            .multipliedBy(BN.formatUnits(new BN(props.row.original.baseSize), props.row.original.baseToken?.decimals))
+            .toString()}
           <TokenBadge>
             <Text>{props.row.original.quoteToken?.symbol}</Text>
           </TokenBadge>
@@ -173,7 +172,7 @@ export const ORDER_COLUMNS = () => [
     cell: (props) => (
       <SmartFlex center="y" column>
         <Text primary>
-          {BN.formatUnits(props.row.original.price ?? 0, props.row.original.quoteToken?.decimals).toString()}
+          {BN.formatUnits(props.row.original.price ?? 0, props.row.original.baseToken?.decimals).toFixed(2)}
         </Text>
       </SmartFlex>
     ),
