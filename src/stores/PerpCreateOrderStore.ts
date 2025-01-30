@@ -264,10 +264,11 @@ export class PerpCreateOrderStore {
 
     // const token = isBuy ? marketStore.perpMarket.baseToken : marketStore.perpMarket.quoteToken;
     const token = marketStore.perpMarket.baseToken;
-    const amount = isBuy ? this.inputTotal : this.inputAmount;
+    const amount = this.inputAmount;
     const price = this.inputPrice;
 
     const totalAmount = isBuy ? amount : amount.negated();
+    console.log("price", price.toString(), totalAmount.toString());
 
     try {
       const hash = await clearingHouseContract.openOrderC(

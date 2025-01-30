@@ -13,9 +13,8 @@ import MaxButton from "@components/MaxButton";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
 import CreateOrderSkeletonWrapper from "@components/Skeletons/CreateOrderSkeletonWrapper";
-import Slider from "@components/Slider";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES } from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import { media } from "@themes/breakpoints";
 
@@ -37,7 +36,7 @@ export const ORDER_OPTIONS = [
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
 ];
 
-const LEVERAGE_OPTIONS = [5, 10, 20];
+// const LEVERAGE_OPTIONS = [5, 10, 20];
 
 const VISIBLE_MARKET_DECIMALS = 2;
 
@@ -59,22 +58,22 @@ const CreateOrder: React.FC = observer(() => {
 
   const { baseToken, quoteToken } = market;
 
-  const handlePercentChange = (v: number) => {
-    const token = perpCreateOrderStore.isSell ? baseToken : quoteToken;
+  // const handlePercentChange = (v: number) => {
+  //   const token = perpCreateOrderStore.isSell ? baseToken : quoteToken;
 
-    const totalBalance = balanceStore.getPerpTotalBalance(token.assetId);
+  //   const totalBalance = balanceStore.getPerpTotalBalance(token.assetId);
 
-    if (totalBalance.isZero()) return;
+  //   if (totalBalance.isZero()) return;
 
-    const value = BN.percentOf(totalBalance, v);
+  //   const value = BN.percentOf(totalBalance, v);
 
-    if (perpCreateOrderStore.isSell) {
-      perpCreateOrderStore.setInputAmount(value);
-      return;
-    }
+  //   if (perpCreateOrderStore.isSell) {
+  //     perpCreateOrderStore.setInputAmount(value);
+  //     return;
+  //   }
 
-    perpCreateOrderStore.setInputTotal(value);
-  };
+  //   perpCreateOrderStore.setInputTotal(value);
+  // };
 
   const handleSetOrderType = (type: ORDER_TYPE) => {
     settingsStore.setOrderType(type);
@@ -110,45 +109,45 @@ const CreateOrder: React.FC = observer(() => {
     perpCreateOrderStore.isSell,
   );
 
-  const renderLeverageContent = () => (
-    <Accordion transitionTimeout={400} transition>
-      <AccordionItem
-        header={
-          <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
-              LEVERAGE
-            </Text>
-            <Row alignItems="center" justifyContent="flex-end">
-              {/*<Text primary>{vm.inputLeveragePercent.toSignificant(2)}</Text>*/}
-              <Text primary>10%</Text>
-              <Text>&nbsp;%</Text>
-            </Row>
-          </Row>
-        }
-        defaultChecked
-        initialEntered
-      >
-        <SmartFlex gap="8px" column>
-          <Slider
-            max={100}
-            min={0}
-            percent={perpCreateOrderStore.inputPercent.toNumber()}
-            step={1}
-            value={perpCreateOrderStore.inputPercent.toNumber()}
-            onChange={(v) => handlePercentChange(v as number)}
-          />
-          <SmartFlex gap="8px">
-            <TokenInput amount={new BN(10)} decimals={0} setAmount={() => {}} />
-            {LEVERAGE_OPTIONS.map((option) => (
-              <LeverageButton key={option} onClick={() => {}}>
-                {option}x
-              </LeverageButton>
-            ))}
-          </SmartFlex>
-        </SmartFlex>
-      </AccordionItem>
-    </Accordion>
-  );
+  // const renderLeverageContent = () => (
+  //   <Accordion transitionTimeout={400} transition>
+  //     <AccordionItem
+  //       header={
+  //         <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
+  //           <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+  //             LEVERAGE
+  //           </Text>
+  //           <Row alignItems="center" justifyContent="flex-end">
+  //             {/*<Text primary>{vm.inputLeveragePercent.toSignificant(2)}</Text>*/}
+  //             <Text primary>10%</Text>
+  //             <Text>&nbsp;%</Text>
+  //           </Row>
+  //         </Row>
+  //       }
+  //       defaultChecked
+  //       initialEntered
+  //     >
+  //       <SmartFlex gap="8px" column>
+  //         <Slider
+  //           max={100}
+  //           min={0}
+  //           percent={perpCreateOrderStore.inputPercent.toNumber()}
+  //           step={1}
+  //           value={perpCreateOrderStore.inputPercent.toNumber()}
+  //           onChange={(v) => handlePercentChange(v as number)}
+  //         />
+  //         <SmartFlex gap="8px">
+  //           <TokenInput amount={new BN(10)} decimals={0} setAmount={() => {}} />
+  //           {LEVERAGE_OPTIONS.map((option) => (
+  //             <LeverageButton key={option} onClick={() => {}}>
+  //               {option}x
+  //             </LeverageButton>
+  //           ))}
+  //         </SmartFlex>
+  //       </SmartFlex>
+  //     </AccordionItem>
+  //   </Accordion>
+  // );
 
   const renderButton = () => {
     // const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
@@ -402,7 +401,7 @@ const CreateOrder: React.FC = observer(() => {
               </Row>
             )}
           </SmartFlex>
-          {renderLeverageContent()}
+          {/* {renderLeverageContent()} */}
           {renderOrderDetails()}
         </ParamsContainer>
         <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
@@ -474,12 +473,12 @@ const StyledMaxButton = styled(MaxButton)`
   transform: translateY(-4px);
 `;
 
-const LeverageButton = styled(Button)`
-  width: 34px;
-  height: 32px;
-  border-radius: 4px;
+// const LeverageButton = styled(Button)`
+//   width: 34px;
+//   height: 32px;
+//   border-radius: 4px;
 
-  background-color: ${({ theme }) => theme.colors.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
-`;
+//   background-color: ${({ theme }) => theme.colors.bgPrimary};
+//   border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+//   ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+// `;
