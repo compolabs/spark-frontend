@@ -101,9 +101,9 @@ export const PerpOrderBook: React.FC<IProps> = observer(() => {
       (o): DataArray => [
         // BN.formatUnits(o.priceUnits, perpOrderBookStore.decimalGroup).toFixed(2),
         // o.priceUnits.toFormat(perpOrderBookStore.decimalGroup),
-        o.formatPrice,
-        numeral(o.baseSize).format(`0.${"0".repeat(4)}a`),
-        numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(perpOrderBookStore.decimalGroup)}a`),
+        o.priceUnits.toFormat(perpOrderBookStore.decimalGroup),
+        o.currentAmountUnits.toFixed(9),
+        numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(9)}a`),
         type === "sell",
       ],
     );

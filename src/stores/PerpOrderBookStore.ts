@@ -28,7 +28,7 @@ export class PerpOrderBookStore {
   allBuyOrders: PerpMarketOrder[] = [];
   allSellOrders: PerpMarketOrder[] = [];
 
-  decimalGroup = 3;
+  decimalGroup = 2;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
 
   isOrderBookLoading = true;

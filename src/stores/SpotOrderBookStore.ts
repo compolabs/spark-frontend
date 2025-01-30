@@ -66,6 +66,16 @@ export class SpotOrderBookStore {
       },
       { fireImmediately: true },
     );
+
+    reaction(
+      () => [this.rootStore.marketStore.market, this.rootStore.initialized],
+      ([market, initialized]) => {
+        if (!initialized || !market) return;
+        this.decimalGroup = this.rootStore.marketStore.market?.baseToken.precision ?? 4;
+        this.subscribeTrades();
+      },
+      { fireImmediately: true },
+    );
   }
 
   private _sortOrders(orders: SpotMarketOrder[], reverse: boolean): SpotMarketOrder[] {

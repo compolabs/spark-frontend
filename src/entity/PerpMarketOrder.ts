@@ -65,7 +65,7 @@ export class PerpMarketOrder {
     this.initialAmount = new BN(order.baseSizeI64);
     this.initialQuoteAmount = this.getQuoteAmount(this.initialAmount, this.price);
 
-    this.currentAmount = new BN(order.baseSizeI64);
+    this.currentAmount = new BN(order.baseSize);
     this.currentQuoteAmount = this.getQuoteAmount(this.currentAmount, this.price);
 
     this.filledAmount = this.getFilledAmount(this.initialAmount, this.currentAmount);
@@ -77,7 +77,7 @@ export class PerpMarketOrder {
   }
 
   get priceUnits(): BN {
-    return BN.formatUnits(this.price, this.quoteToken.decimals);
+    return BN.formatUnits(this.price, this.baseToken.decimals);
   }
 
   get initialAmountUnits(): BN {
@@ -85,7 +85,7 @@ export class PerpMarketOrder {
   }
 
   get currentAmountUnits(): BN {
-    return BN.formatUnits(this.currentAmount, this.baseToken.decimals);
+    return BN.formatUnits(this.currentAmount.abs(), this.baseToken.decimals);
   }
 
   get filledAmountUnits(): BN {
@@ -97,7 +97,9 @@ export class PerpMarketOrder {
   }
 
   get currentQuoteAmountUnits(): BN {
-    return BN.formatUnits(this.baseSize.multipliedBy(this.price), this.quoteToken.decimals);
+    return BN.formatUnits(this.price ?? 0, this.baseToken?.decimals).multipliedBy(
+      BN.formatUnits(new BN(this.baseSize), this.baseToken?.decimals),
+    );
   }
 
   get filledQuoteAmountUnits(): BN {
