@@ -103,17 +103,6 @@
       "contractId": "0xe4e4844f78e2e470b590d0c76ffc9f4422a87317377813a181a02c60a60bc774"
     },
     {
-      "marketName": "FUELUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
-      "baseAssetDecimals": 9,
-      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1542,
-      "contractId": "0x81e83f73530c262b0dbf5414649a875c48a48144de3c08ff68cb9d54b36f2eaa"
-    },
-    {
       "marketName": "ezETHUSDC",
       "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
       "baseAssetId": "0x91b3559edb2619cde8ffb2aa7b3c3be97efd794ea46700db7092abeee62281b0",
