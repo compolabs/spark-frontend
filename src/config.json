@@ -1,5 +1,5 @@
 {
-  "version": "1.7.4",
+  "version": "1.7.5",
   "isMainnet": true,
   "contractVer": 1539,
   "tokens": [
@@ -66,6 +66,22 @@
       "assetId": "0xa38a5a8beeb08d95744bc7f58528073f4052b254def59eba20c99c202b5acaa3",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
       "precision": 3
+    },
+    {
+      "name": "PSYCHO",
+      "symbol": "PSYCHO",
+      "decimals": 9,
+      "assetId": "0x86fa05e9fef64f76fa61c03f5906c87a03cb9148120b6171910566173d36fc9e",
+      "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "precision": 9
+    },
+    {
+      "name": "USDF",
+      "symbol": "USDF",
+      "decimals": 9,
+      "assetId": "0x33a6d90877f12c7954cca6d65587c25e9214c7bed2231c188981c7114c1bdb78",
+      "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "precision": 9
     }
   ],
   "markets": [
@@ -145,6 +161,28 @@
       "priceDecimals": 9,
       "version": 1542,
       "contractId": "0x0bef6eb3018d901818978175feccf650b65dee8e3a8f5b59e138bcf1cf1d0db9"
+    },
+    {
+      "marketName": "PSYCHOUSDC",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0x86fa05e9fef64f76fa61c03f5906c87a03cb9148120b6171910566173d36fc9e",
+      "baseAssetDecimals": 9,
+      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+      "quoteAssetDecimals": 6,
+      "priceDecimals": 9,
+      "version": 1542,
+      "contractId": "0x2eece85eb7c8ec5fd95e639fd6bb7e9dd7103a99d7321521848da246ecef5270"
+    },
+    {
+      "marketName": "USDFUSDC",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0x33a6d90877f12c7954cca6d65587c25e9214c7bed2231c188981c7114c1bdb78",
+      "baseAssetDecimals": 9,
+      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+      "quoteAssetDecimals": 6,
+      "priceDecimals": 9,
+      "version": 1542,
+      "contractId": "0x59020aadb448c59b48136a3cef110f1ddd2865000146514924f19b83f061ceba"
     }
   ],
   "indexers": {
@@ -173,6 +211,18 @@
       "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
     },
     "0x0bef6eb3018d901818978175feccf650b65dee8e3a8f5b59e138bcf1cf1d0db9": {
+      "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
+    "0x2eece85eb7c8ec5fd95e639fd6bb7e9dd7103a99d7321521848da246ecef5270": {
+      "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
+    "0x59020aadb448c59b48136a3cef110f1ddd2865000146514924f19b83f061ceba": {
+      "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
+    "0x979ea6b1e15c1ec8e79eb76b587af89dd2620b383082e9b2c16049b78e97e4e8": {
       "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
       "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
     },

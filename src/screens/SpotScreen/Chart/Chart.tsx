@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
@@ -8,6 +8,8 @@ import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
+import { useStores } from "@stores";
+
 import TradingViewChartAdvance from "@screens/SpotScreen/Chart/TradingViewAdvanceWidget";
 import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget";
 
@@ -16,11 +18,21 @@ const TABS = [
   { title: "ADVANCED CHART", disabled: false },
 ];
 
+const DISABLED_SIMPLE_CHARTS = new Set(["PSYCHO-USDC", "USDF-USDC"]);
+
 const Chart: React.FC = observer(() => {
+  const { tradeStore } = useStores();
+
   const [activeChart, setActiveChart] = useState(0);
-  const handleSelect = (active: number) => {
-    setActiveChart(active);
-  };
+
+  const isSymbolDisabled = useMemo(
+    () => DISABLED_SIMPLE_CHARTS.has(tradeStore.market?.symbol ?? ""),
+    [tradeStore.market],
+  );
+
+  useEffect(() => {
+    setActiveChart(isSymbolDisabled ? 1 : 0);
+  }, [isSymbolDisabled]);
 
   return (
     <Root>
@@ -32,7 +44,7 @@ const Chart: React.FC = observer(() => {
               active={activeChart === index}
               disabled={disabled}
               type={TEXT_TYPES.BUTTON_SECONDARY}
-              onClick={() => !disabled && handleSelect(index)}
+              onClick={() => !disabled && setActiveChart(index)}
             >
               {title}
             </Tab>
