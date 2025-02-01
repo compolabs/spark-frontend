@@ -151,7 +151,13 @@ class SpotOrderBookStore {
           "ActiveBuyOrder" in data ? data.ActiveBuyOrder : data.ActiveSellOrder,
           market!.quoteToken.assetId,
         );
-        updateOrders(orders);
+
+        const orderWithoutBadOrder = orders.filter(
+          (o) =>
+            o.id.toLowerCase() !== "0xb140a6bf39601d69d0fedacb61ecce95cb65eaa05856583cb1a9af926acbd5bd".toLowerCase(),
+        );
+
+        updateOrders(orderWithoutBadOrder);
       },
     });
 

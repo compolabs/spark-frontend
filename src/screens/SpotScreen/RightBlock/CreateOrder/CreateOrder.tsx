@@ -106,16 +106,17 @@ const CreateOrder: React.FC = observer(() => {
 
   const fee = getRealFee(tradeStore.market, tradeStore.matcherFee, tradeStore.exchangeFee, vm.mode === ORDER_MODE.SELL);
 
-  const isFuelMarket = tradeStore.market?.symbol === "FUEL-USDC";
+  // TODO: Implement better solution to hide markets
+  // const isFuelMarket = tradeStore.market?.symbol === "FUEL-USDC";
 
   const renderButton = () => {
-    if (isFuelMarket) {
-      return (
-        <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Temporarily suspended</Text>
-        </CreateOrderButton>
-      );
-    }
+    // if (isFuelMarket) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Temporarily suspended</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
 
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
     const minimalOrder = tradeStore.minimalOrder;
@@ -416,7 +417,7 @@ const CreateOrder: React.FC = observer(() => {
           {renderInstruction()}
           {renderOrderDetails()}
         </ParamsContainer>
-        {isFuelMarket && (
+        {/* {isFuelMarket && (
           <WarningContainer gap="8px" column>
             <Text color={theme.colors.favorite} type={TEXT_TYPES.SUPPORTING}>
               The market is temporarily stopped. Orders do not match.
@@ -425,7 +426,7 @@ const CreateOrder: React.FC = observer(() => {
               Withdrawals are working as usual.
             </Text>
           </WarningContainer>
-        )}
+        )} */}
         <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
           {renderButton()}
         </ConnectWalletButton>
