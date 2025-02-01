@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react-lite";
@@ -47,6 +48,7 @@ const CreateOrder: React.FC = observer(() => {
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
   const media = useMedia();
+  const theme = useTheme();
 
   const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
 
@@ -104,7 +106,17 @@ const CreateOrder: React.FC = observer(() => {
 
   const fee = getRealFee(tradeStore.market, tradeStore.matcherFee, tradeStore.exchangeFee, vm.mode === ORDER_MODE.SELL);
 
+  const isFuelMarket = tradeStore.market?.symbol === "FUEL-USDC";
+
   const renderButton = () => {
+    if (isFuelMarket) {
+      return (
+        <CreateOrderButton disabled>
+          <Text type={TEXT_TYPES.BUTTON}>Temporarily suspended</Text>
+        </CreateOrderButton>
+      );
+    }
+
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
     const minimalOrder = tradeStore.minimalOrder;
     const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
@@ -404,6 +416,16 @@ const CreateOrder: React.FC = observer(() => {
           {renderInstruction()}
           {renderOrderDetails()}
         </ParamsContainer>
+        {isFuelMarket && (
+          <WarningContainer gap="8px" column>
+            <Text color={theme.colors.favorite} type={TEXT_TYPES.SUPPORTING}>
+              The market is temporarily stopped. Orders do not match.
+            </Text>
+            <Text color={theme.colors.favorite} type={TEXT_TYPES.SUPPORTING}>
+              Withdrawals are working as usual.
+            </Text>
+          </WarningContainer>
+        )}
         <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
           {renderButton()}
         </ConnectWalletButton>
@@ -415,6 +437,12 @@ const CreateOrder: React.FC = observer(() => {
 });
 
 export default CreateOrder;
+
+const WarningContainer = styled(SmartFlex)`
+  padding: 8px;
+  background-color: ${({ theme }) => `${theme.colors.favorite}10`};
+  border-radius: 8px;
+`;
 
 const Root = styled(SmartFlex)`
   padding: 12px;
