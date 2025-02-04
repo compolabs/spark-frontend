@@ -5,12 +5,12 @@ import { observer } from "mobx-react";
 import { Column } from "@components/Flex";
 import { DashboardPoints } from "@components/Points/DashboardPoints";
 import { SmartFlex } from "@components/SmartFlex";
+import StatusBar from "@components/StatusBar";
 import { media } from "@themes/breakpoints";
 
 import AssetsDashboard from "@screens/Dashboard/AssetsDashboard";
 import InfoDataGraph from "@screens/Dashboard/InfoDataGraph";
 import BottomTables from "@screens/SpotScreen/BottomTables";
-import StatusBar from "@screens/SpotScreen/StatusBar";
 
 import { DashboardFilter } from "./DashboardFilter";
 import { MarketDataSection } from "./MarketDataSection";

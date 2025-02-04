@@ -3,18 +3,18 @@ import { makeAutoObservable, reaction } from "mobx";
 
 import { GetLeaderboardQueryParams, TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { FiltersProps } from "@stores/DashboardStore.ts";
+import { FiltersProps } from "@stores/DashboardStore";
 
 import { filters } from "@screens/Dashboard/const";
 
-import { CONFIG } from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 
 import RootStore from "./RootStore";
 
 const config = {
-  url: CONFIG.APP.sentioUrl,
+  url: CONFIG.APP.links.sentioUrl,
   apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
 };
 
@@ -30,7 +30,7 @@ export const PAGINATION_PER_PAGE: PaginationProps[] = [
   { title: "100", key: 100 },
 ];
 
-class LeaderboardStore {
+export class LeaderboardStore {
   initialized = false;
   activeUserStat = 0;
   activeTime = 0;
@@ -70,7 +70,7 @@ class LeaderboardStore {
       currentTimestamp: Math.floor(new Date().getTime() / 1000),
       interval: this.activeFilter.value * 3600,
     };
-    bcNetwork.setSentioConfig(config);
+    bcNetwork.setSpotSentioConfig(config);
 
     const data = await bcNetwork.getLeaderboard(params);
     const mainData = data?.result?.rows ?? [];
@@ -154,5 +154,3 @@ class LeaderboardStore {
     return Math.floor(date.setHours(date.getHours() - range) / 1000);
   };
 }
-
-export default LeaderboardStore;

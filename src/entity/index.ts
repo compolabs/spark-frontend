@@ -1,4 +1,6 @@
+export * from "./BaseMarket";
 export * from "./PerpMarket";
+export * from "./PerpMarketOrder";
 export * from "./PerpMarketTrade";
 export * from "./PerpOrder";
 export * from "./PerpPosition";

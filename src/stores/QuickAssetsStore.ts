@@ -1,12 +1,12 @@
 import { makeAutoObservable } from "mobx";
 
-import RootStore from "@stores/RootStore";
+import RootStore from "./RootStore";
 
 interface ISerializedQuickAssetsStore {
   quickAssets?: boolean;
 }
 
-class QuickAssetsStore {
+export class QuickAssetsStore {
   private readonly rootStore: RootStore;
 
   constructor(rootStore: RootStore, initState?: ISerializedQuickAssetsStore) {
@@ -27,5 +27,3 @@ class QuickAssetsStore {
     quickAssets: this.openQuickAssets,
   });
 }
-
-export default QuickAssetsStore;

@@ -22,7 +22,7 @@ import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED, ROUTES } from "@constants";
 import BN from "@utils/BN";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
 
-import { Token } from "@entity";
+import { SpotMarket, Token } from "@entity";
 
 import SwapButtonSkeletonWrapper from "../../components/Skeletons/SwapButtonSkeletonWrapper";
 import SwapSkeletonWrapper from "../../components/Skeletons/SwapSkeletonWrapper";
@@ -34,7 +34,7 @@ import { TokenSelect } from "./TokenSelect";
 const INITIAL_SLIPPAGE = 1;
 
 export const SwapScreen: React.FC = observer(() => {
-  const { swapStore, balanceStore, tradeStore, spotOrderBookStore, mixPanelStore, accountStore } = useStores();
+  const { swapStore, balanceStore, marketStore, spotOrderBookStore, mixPanelStore, accountStore } = useStores();
   const { isConnected } = useWallet();
   const theme = useTheme();
   const media = useMedia();
@@ -50,7 +50,7 @@ export const SwapScreen: React.FC = observer(() => {
   const [isLoading, setIsloading] = useState(false);
   const [onPress, setOnPress] = useState(false);
   const tokens = swapStore.fetchNewTokens();
-  const markets = tradeStore.spotMarkets;
+  const markets = marketStore.markets.filter((m) => SpotMarket.isInstance(m));
   const buyTokenOptions = useMemo(() => {
     return markets
       .filter(
@@ -168,7 +168,7 @@ export const SwapScreen: React.FC = observer(() => {
     swapStore.setReceiveAmount("0");
     const marketId = swapStore.getMarketPair(pair, paris[0]);
     if (!marketId) return;
-    tradeStore.selectActiveMarket(marketId.symbol);
+    marketStore.selectActiveMarket(marketId.symbol);
     balanceStore.update();
   };
 

@@ -1,59 +1,91 @@
 import { autorun, makeAutoObservable } from "mobx";
 
-import AccountStore, { ISerializedAccountStore } from "@stores/AccountStore";
-import DashboardStore from "@stores/DashboardStore";
-import FaucetStore from "@stores/FaucetStore";
-import LeaderboardStore from "@stores/LeaderboardStore.ts";
-import MixPanelStore from "@stores/MixPanelStore";
-import NotificationStore from "@stores/NotificationStore";
-import QuickAssetsStore from "@stores/QuickAssetsStore";
-import SettingsStore, { ISerializedSettingStore } from "@stores/SettingsStore";
-import TradeStore, { ISerializedTradeStore } from "@stores/TradeStore";
-
 import { saveState } from "@utils/localStorage";
 
+import { AccountStore, ISerializedAccountStore } from "./AccountStore";
 import { BalanceStore } from "./BalanceStore";
+import { DashboardStore } from "./DashboardStore";
+import { FaucetStore } from "./FaucetStore";
+import { LeaderboardStore } from "./LeaderboardStore";
+import { ISerializedMarketStore, MarketStore } from "./MarketStore";
+import { MixPanelStore } from "./MixPanelStore";
 import { ModalStore } from "./ModalStore";
-import OracleStore from "./OracleStore";
-import SpotOrderBookStore from "./SpotOrderBookStore";
-import SwapStore from "./SwapStore";
+import { NotificationStore } from "./NotificationStore";
+import { OracleStore } from "./OracleStore";
+import { PerpCreateOrderStore } from "./PerpCreateOrderStore";
+import { PerpMarketInfoStore } from "./PerpMarketInfoStore";
+import { PerpOrderBookStore } from "./PerpOrderBookStore";
+import { PerpTableStore } from "./PerpTableStore";
+import { QuickAssetsStore } from "./QuickAssetsStore";
+import { ISerializedSettingStore, SettingsStore } from "./SettingsStore";
+import { SpotCreateOrderStore } from "./SpotCreateOrderStore";
+import { SpotMarketInfoStore } from "./SpotMarketInfoStore";
+import { SpotOrderBookStore } from "./SpotOrderBookStore";
+import { SpotTableStore } from "./SpotTableStore";
+import { SwapStore } from "./SwapStore";
 
 export interface ISerializedRootStore {
   accountStore?: ISerializedAccountStore;
-  tradeStore?: ISerializedTradeStore;
+  marketStore?: ISerializedMarketStore;
   settingStore?: ISerializedSettingStore;
 }
 
 export default class RootStore {
   static instance?: RootStore;
+
+  // Utility Stores
   accountStore: AccountStore;
   oracleStore: OracleStore;
-  faucetStore: FaucetStore;
+  marketStore: MarketStore;
   settingsStore: SettingsStore;
   notificationStore: NotificationStore;
-  tradeStore: TradeStore;
   balanceStore: BalanceStore;
   modalStore: ModalStore;
-  swapStore: SwapStore;
   mixPanelStore: MixPanelStore;
   quickAssetsStore: QuickAssetsStore;
+
+  swapStore: SwapStore;
+  faucetStore: FaucetStore;
+
+  // Spot Stores
+  spotCreateOrderStore: SpotCreateOrderStore;
+  spotMarketInfoStore: SpotMarketInfoStore;
   spotOrderBookStore: SpotOrderBookStore;
+  spotTableStore: SpotTableStore;
+
+  // Prep Stores
+  perpCreateOrderStore: PerpCreateOrderStore;
+  perpMarketInfoStore: PerpMarketInfoStore;
+  perpOrderBookStore: PerpOrderBookStore;
+  perpTableStore: PerpTableStore;
+
   dashboardStore: DashboardStore;
   leaderboardStore: LeaderboardStore;
 
   private constructor(initState?: ISerializedRootStore) {
-    this.notificationStore = new NotificationStore(this);
     this.accountStore = new AccountStore(this, initState?.accountStore);
     this.oracleStore = new OracleStore(this);
-    this.faucetStore = new FaucetStore(this);
+    this.marketStore = new MarketStore(this, initState?.marketStore);
     this.settingsStore = new SettingsStore(this, initState?.settingStore);
-    this.tradeStore = new TradeStore(this, initState?.tradeStore);
+    this.notificationStore = new NotificationStore(this);
     this.balanceStore = new BalanceStore(this);
     this.modalStore = new ModalStore(this);
-    this.swapStore = new SwapStore(this);
     this.mixPanelStore = new MixPanelStore(this);
     this.quickAssetsStore = new QuickAssetsStore(this);
+
+    this.faucetStore = new FaucetStore(this);
+    this.swapStore = new SwapStore(this);
+
+    this.spotCreateOrderStore = new SpotCreateOrderStore(this);
+    this.spotMarketInfoStore = new SpotMarketInfoStore(this);
     this.spotOrderBookStore = new SpotOrderBookStore(this);
+    this.spotTableStore = new SpotTableStore(this);
+    this.perpTableStore = new PerpTableStore(this);
+
+    this.perpCreateOrderStore = new PerpCreateOrderStore(this);
+    this.perpMarketInfoStore = new PerpMarketInfoStore(this);
+    this.perpOrderBookStore = new PerpOrderBookStore(this);
+
     this.dashboardStore = new DashboardStore(this);
     this.leaderboardStore = new LeaderboardStore(this);
 
@@ -76,12 +108,12 @@ export default class RootStore {
   };
 
   get initialized() {
-    return this.accountStore.initialized && this.tradeStore.initialized;
+    return this.accountStore.initialized && this.marketStore.initialized;
   }
 
   serialize = (): ISerializedRootStore => ({
     accountStore: this.accountStore.serialize(),
-    tradeStore: this.tradeStore.serialize(),
     settingStore: this.settingsStore.serialize(),
+    marketStore: this.marketStore.serialize(),
   });
 }

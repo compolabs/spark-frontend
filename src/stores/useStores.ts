@@ -1,6 +1,6 @@
 import React from "react";
 
-import RootStore from "@stores/RootStore";
+import RootStore from "./RootStore";
 
 export const storesContext = React.createContext<RootStore | null>(null);
 

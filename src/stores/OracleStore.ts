@@ -1,12 +1,12 @@
 import { HermesClient } from "@pythnetwork/hermes-client";
 import { makeAutoObservable } from "mobx";
 
-import RootStore from "@stores/RootStore";
-
 import BN from "@utils/BN";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
 import { FuelNetwork } from "@blockchain";
+
+import RootStore from "./RootStore";
 
 const PYTH_URL = "https://hermes.pyth.network";
 
@@ -14,7 +14,7 @@ const zeroFeedId = "0x0000000000000000000000000000000000000000000000000000000000
 
 const UPDATE_INTERVAL = 15_000;
 
-class OracleStore {
+export class OracleStore {
   private readonly rootStore: RootStore;
 
   priceServiceConnection: HermesClient;
@@ -35,8 +35,8 @@ class OracleStore {
   }
 
   get tokenIndexPrice(): BN {
-    const { market } = this.rootStore.tradeStore;
-    const token = market?.baseToken;
+    const { marketStore } = this.rootStore;
+    const token = marketStore.market?.baseToken;
 
     if (!token) return BN.ZERO;
 
@@ -84,5 +84,3 @@ class OracleStore {
 
   private setInitialized = (l: boolean) => (this.initialized = l);
 }
-
-export default OracleStore;

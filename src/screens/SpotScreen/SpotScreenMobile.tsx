@@ -2,24 +2,25 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Chart from "@components/Chart";
+import MarketStatisticsBar from "@components/MarketHeader";
 import MenuOverlay from "@components/MenuOverlay";
 import { SmartFlex } from "@components/SmartFlex";
+import StatusBar from "@components/StatusBar/StatusBar";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
 import BottomTables from "@screens/SpotScreen/BottomTables";
-import Chart from "@screens/SpotScreen/Chart";
-import MarketStatisticsBar from "@screens/SpotScreen/MarketStatisticsBar";
-import StatusBar from "@screens/SpotScreen/StatusBar/StatusBar";
 
-import { SpotOrderBook } from "./OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
+import MarketSelection from "../../components/MarketSelection";
+import MarketStatistics from "../../components/MarketStatistics";
+
+import { SpotOrderBook } from "./OrderbookAndTrades/SpotOrderBook/SpotOrderBook";
 import CreateOrder from "./RightBlock/CreateOrder";
-import MarketSelection from "./RightBlock/MarketSelection";
-import MarketStatistics from "./MarketStatistics";
 
 const SpotScreenMobile: React.FC = observer(() => {
-  const { tradeStore } = useStores();
+  const { marketStore } = useStores();
   const [isChartOpen, setIsChartOpen] = useState(false);
 
   const handleToggleChart = () => {
@@ -59,7 +60,7 @@ const SpotScreenMobile: React.FC = observer(() => {
       <MarketStatisticsBar isChartOpen={isChartOpen} onSwitchClick={handleToggleChart} />
       {renderContent()}
       <BottomTables />
-      <MenuOverlay isOpen={tradeStore.marketSelectionOpened} offsetTop={50} top={40}>
+      <MenuOverlay isOpen={marketStore.marketSelectionOpened} offsetTop={50} top={40}>
         <MarketSelection />
       </MenuOverlay>
       <StatusBar />

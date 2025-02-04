@@ -39,7 +39,8 @@ export default defineConfig({
   ],
   // It should help resolve issues with linking the SDK
   //
-  // optimizeDeps: {
-  //   exclude: ["@compolabs/spark-orderbook-ts-sdk"],
-  // },
+  optimizeDeps: {
+    // exclude: ["@compolabs/spark-orderbook-ts-sdk"],
+    // exclude: ["@compolabs/spark-perpetual-ts-sdk"],
+  },
 });

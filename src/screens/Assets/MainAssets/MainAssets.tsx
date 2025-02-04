@@ -53,7 +53,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
   );
   const handleWithdraw = async () => {
     setIsLoading(true);
-    await balanceStore.withdrawBalanceAll();
+    await balanceStore.withdrawSpotBalanceAll();
     setIsLoading(false);
   };
 

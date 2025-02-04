@@ -1,4 +1,4 @@
-import { autorun, makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 import { AssetType, GetActiveOrdersParams, LimitType, Order, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
@@ -10,11 +10,11 @@ import { handleWalletErrors } from "@utils/handleWalletErrors";
 import { parseNumberWithCommas } from "@utils/swapUtils";
 
 import { FuelNetwork } from "@blockchain";
-import { SpotMarketOrder, Token } from "@entity";
+import { SpotMarket, SpotMarketOrder, Token } from "@entity";
 
 import RootStore from "./RootStore";
 
-class SwapStore {
+export class SwapStore {
   tokens: Token[];
   sellToken: Token;
   buyToken: Token;
@@ -36,38 +36,44 @@ class SwapStore {
     this.buyTokenPrice = this.getPrice(this.buyToken);
     this.sellTokenPrice = this.getPrice(this.sellToken);
 
-    autorun(async () => {
-      await this.initialize();
-    });
+    // autorun(async () => {
+    //   await this.initialize();
+    // });
 
-    reaction(
-      () => [this.payAmount, this.receiveAmount],
-      () => {
-        const { tradeStore } = this.rootStore;
-
-        tradeStore.fetchTradeFeeDebounce(
-          BN.parseUnits(
-            this.isBuy() ? this.payAmount : this.receiveAmount,
-            this.isBuy() ? this.sellToken.decimals : this.buyToken.decimals,
-          ).toString(),
-        );
-      },
-    );
+    // reaction(
+    //   () => [this.payAmount, this.receiveAmount],
+    //   () => {
+    //     const { spotMarketInfoStore } = this.rootStore;
+    //
+    //     spotMarketInfoStore.fetchTradeFeeDebounce(
+    //       BN.parseUnits(
+    //         this.isBuy() ? this.payAmount : this.receiveAmount,
+    //         this.isBuy() ? this.sellToken.decimals : this.buyToken.decimals,
+    //       ).toString(),
+    //     );
+    //   },
+    // );
   }
 
   async initialize() {
-    await this.rootStore.balanceStore.initialize();
+    // await this.rootStore.balanceStore.initialize();
     this.updateTokens();
   }
 
   isBuy = () => {
-    const { tradeStore } = this.rootStore;
-    return tradeStore.market?.baseToken?.assetId === this.buyToken.assetId;
+    const { marketStore } = this.rootStore;
+    return marketStore.market?.baseToken?.assetId === this.buyToken.assetId;
   };
 
+  get spotMarkets() {
+    const { marketStore } = this.rootStore;
+
+    return marketStore.markets.filter((m) => SpotMarket.isInstance(m));
+  }
+
   getTokenPair = (assetId: string) => {
-    const { tradeStore } = this.rootStore;
-    const markets = tradeStore.spotMarkets;
+    const { marketStore } = this.rootStore;
+    const markets = marketStore.markets.filter((m) => SpotMarket.isInstance(m));
     const tokens = this.fetchNewTokens();
     return markets
       .map((market) => {
@@ -87,8 +93,7 @@ class SwapStore {
   }
 
   getMarketPair = (baseAsset: Token, quoteToken: Token) => {
-    const { tradeStore } = this.rootStore;
-    return tradeStore.spotMarkets.find(
+    return this.spotMarkets.find(
       (el) =>
         (el.baseToken.assetId === baseAsset.assetId && el.quoteToken.assetId === quoteToken.assetId) ||
         (el.baseToken.assetId === quoteToken.assetId && el.quoteToken.assetId === baseAsset.assetId),
@@ -107,36 +112,25 @@ class SwapStore {
   fetchNewTokens(): Token[] {
     const bcNetwork = FuelNetwork.getInstance();
 
-    return bcNetwork!.getTokenList().map((v) => {
-      const token = bcNetwork!.getTokenByAssetId(v.assetId);
-      return {
-        name: token.name,
-        symbol: token.symbol,
-        logo: token.logo,
-        priceFeed: token.priceFeed,
-        assetId: token.assetId,
-        decimals: token.decimals,
-        precision: token.precision,
-      };
-    });
+    return bcNetwork!.getTokenList();
   }
 
   swapTokens = async ({ slippage }: { slippage: number }): Promise<boolean> => {
-    const { notificationStore, tradeStore } = this.rootStore;
+    const { notificationStore, marketStore } = this.rootStore;
 
-    if (!tradeStore.market) return false;
+    if (!marketStore.market) return false;
 
-    const { baseToken, quoteToken } = tradeStore.market;
+    const { baseToken, quoteToken } = marketStore.market;
     const isBuy = baseToken?.assetId === this.buyToken.assetId;
     const bcNetwork = FuelNetwork.getInstance();
     const params: GetActiveOrdersParams = {
       limit: 50, // or more if needed
-      market: [tradeStore.market.contractAddress],
+      market: [marketStore.market.contractAddress],
       asset: baseToken?.assetId,
       orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     };
 
-    const activeOrders = await bcNetwork!.fetchSpotActiveOrders(params);
+    const activeOrders = await bcNetwork!.spotFetchActiveOrders(params);
 
     let orders: SpotMarketOrder[] = [];
 
@@ -155,7 +149,7 @@ class SwapStore {
     // TODO: check if there is enough price sum to fulfill the order
     const formattedAmount = BN.parseUnits(this.payAmount, this.sellToken.decimals).toString();
     const formattedVolume = BN.parseUnits(this.receiveAmount, this.buyToken.decimals).toString();
-    // const depositAmountWithFee = tradeStore.exchangeFee.plus(this.rootStore.tradeStore.matcherFee);
+    // const depositAmountWithFee = spotMarketInfoStore.exchangeFee.plus(spotMarketInfoStore.matcherFee);
     const depositAmountWithFee = BN.ZERO.plus(BN.ZERO); // TODO: Fix it
 
     const pair = this.getMarketPair(this.buyToken, this.sellToken);
@@ -198,8 +192,8 @@ class SwapStore {
     ).toSignificant(2);
 
     try {
-      const marketContracts = CONFIG.MARKETS.map((el) => el.contractId);
-      const tx = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
+      const marketContracts = CONFIG.SPOT.MARKETS.map((el) => el.contractId);
+      const tx = await bcNetwork.spotFulfillOrderManyWithDeposit(order, marketContracts);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_SWAP)(
           amountFormatted,
@@ -258,5 +252,3 @@ class SwapStore {
     this.receiveAmount = value;
   }
 }
-
-export default SwapStore;

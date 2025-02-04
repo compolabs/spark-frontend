@@ -9,31 +9,31 @@ import BN from "../utils/BN";
 
 import { Token } from "./Token";
 
-interface PerpOrderParams {
+export interface PerpOrderParams {
   id: string;
   baseSize: BN;
-  baseTokenAddress: string;
+  baseToken: string;
   orderPrice: BN;
   trader: string;
 }
 
 export class PerpOrder {
   readonly baseToken: Token;
+  readonly quoteToken: Token | undefined;
   readonly id: string;
   readonly baseSize: BN;
   readonly orderPrice: BN;
   readonly trader: string;
+  readonly price: BN | undefined;
 
   constructor(params: PerpOrderParams) {
     const bcNetwork = FuelNetwork.getInstance();
-
-    this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
-
+    this.baseToken = bcNetwork.getTokenByAssetId(params.baseToken);
     this.id = params.id;
     this.baseSize = params.baseSize;
     this.orderPrice = params.orderPrice;
     this.trader = params.trader;
-
+    console.log("getValue");
     makeAutoObservable(this);
   }
 

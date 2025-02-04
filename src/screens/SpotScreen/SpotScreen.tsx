@@ -6,30 +6,18 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { CreateOrderVMProvider } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
-
 import { ROUTES } from "@constants";
 
 import SpotScreenDesktop from "./SpotScreenDesktop";
 import SpotScreenMobile from "./SpotScreenMobile";
 
-const SpotScreenImpl: React.FC = observer(() => {
-  const { tradeStore } = useStores();
+const SpotScreen: React.FC = observer(() => {
+  const { marketStore, mixPanelStore, accountStore } = useStores();
+  const { marketId } = useParams<{ marketId: string }>();
   const media = useMedia();
 
   useEffect(() => {
-    document.title = `V12 | ${tradeStore.marketSymbol}`;
-  }, [tradeStore.marketSymbol]);
-
-  return media.mobile ? <SpotScreenMobile /> : <SpotScreenDesktop />;
-});
-
-const SpotScreen: React.FC = observer(() => {
-  const { tradeStore, mixPanelStore, accountStore } = useStores();
-  const { marketId } = useParams<{ marketId: string }>();
-
-  useEffect(() => {
-    tradeStore.selectActiveMarket(marketId);
+    marketStore.selectActiveMarket(marketId);
   }, [marketId]);
 
   useEffect(() => {
@@ -39,12 +27,11 @@ const SpotScreen: React.FC = observer(() => {
     });
   }, []);
 
-  return (
-    // SpotScreenImpl оборачивается в CreateOrderSpotVMProvider чтобы при нажатии на ордер в OrderbookAndTradesInterface устанавливать значение в RightBlock
-    <CreateOrderVMProvider>
-      <SpotScreenImpl />
-    </CreateOrderVMProvider>
-  );
+  useEffect(() => {
+    document.title = `V12 | ${marketStore.marketSymbol}`;
+  }, [marketStore.marketSymbol]);
+
+  return media.mobile ? <SpotScreenMobile /> : <SpotScreenDesktop />;
 });
 
 export default SpotScreen;
