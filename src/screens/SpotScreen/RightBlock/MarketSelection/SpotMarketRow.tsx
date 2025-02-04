@@ -56,7 +56,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
         <MarketTitle market={market} />
       </SmartFlex>
       <SmartFlexSize alignSelf="flex-end" justifyContent="flex-end">
-        <Text color="primary" type={TEXT_TYPES.H} nowrap>
+        <Text color="primary" type={TEXT_TYPES.BODY} nowrap>
           ${spotOrderBookStore.marketPriceByContractId(market.contractAddress)}
         </Text>
       </SmartFlexSize>

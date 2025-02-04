@@ -9,6 +9,8 @@ import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
+import PythIcon from "@assets/icons/pyth.svg?react";
+
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
@@ -31,7 +33,7 @@ const MarketStatistics: React.FC = observer(() => {
   const low24h = toCurrency(Number(tradeStore.spotMarketInfo.low).toFixed(precision));
 
   const spotStatsArr = [
-    { title: "Oracle price", value: indexPrice },
+    { title: "Oracle price", value: indexPrice, icon: <PythIcon height={10} width={10} /> },
     { title: "24h volume", value: volume24h },
     { title: "24h High", value: high24h },
     { title: "24h Low", value: low24h },
@@ -50,7 +52,10 @@ const MarketStatistics: React.FC = observer(() => {
           {activeDataArr.map((data) => (
             <SmartFlex key={data.title} gap="2px" column>
               <Text>{data.title}</Text>
-              <Text primary>{data.value}</Text>
+              <SmartFlexStyled>
+                <Text primary>{data.value}</Text>
+                {data?.icon}
+              </SmartFlexStyled>
             </SmartFlex>
           ))}
         </MobileStatsContent>
@@ -68,15 +73,20 @@ const MarketStatistics: React.FC = observer(() => {
             </Text>
           </Column>
           <DesktopRow>
-            {activeDataArr.map(({ title, value }) => (
+            {activeDataArr.map(({ title, value, icon }) => (
               <React.Fragment key={title}>
                 <SizedBox height={30} style={{ background: theme.colors.bgPrimary, margin: "0 8px" }} width={1} />
                 <Column>
                   <Text type={TEXT_TYPES.SUPPORTING}>{title}</Text>
                   <SizedBox height={4} />
-                  <Text type={TEXT_TYPES.BODY} primary>
-                    {value}
-                  </Text>
+                  <SmartFlex>
+                    <SmartFlexStyled>
+                      <Text type={TEXT_TYPES.BODY} primary>
+                        {value}
+                      </Text>
+                      {icon}
+                    </SmartFlexStyled>
+                  </SmartFlex>
                 </Column>
               </React.Fragment>
             ))}
@@ -122,4 +132,10 @@ const MobileStatsContent = styled(SmartFlex)`
   grid-template-areas:
     ". ."
     ". .";
+`;
+
+const SmartFlexStyled = styled(SmartFlex)`
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
 `;
