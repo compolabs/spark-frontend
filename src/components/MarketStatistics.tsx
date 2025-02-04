@@ -39,8 +39,11 @@ const MarketStatistics: React.FC = observer(() => {
     spotMarketInfoStore.marketInfo.low.toSignificant(marketStore.market?.baseToken.precision ?? 2),
   );
 
+  const marketPrice = spotOrderBookStore.marketPrice;
+
   const spotMarketData = [
-    { title: "Price", value: indexPrice },
+    { title: "Price", value: marketPrice },
+    { title: "Index Price", value: indexPrice },
     { title: "24h volume", value: volume24h },
     { title: "24h High", value: high24h },
     { title: "24h Low", value: low24h },

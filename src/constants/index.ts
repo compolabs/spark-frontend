@@ -1,6 +1,15 @@
 import { Config } from "react-popper-tooltip";
-import { BakoSafeConnector, FueletWalletConnector, FuelWalletConnector } from "@fuels/connectors";
+import {
+  BakoSafeConnector,
+  FueletWalletConnector,
+  FuelWalletConnector,
+  SolanaConnector,
+  WalletConnectConnector,
+} from "@fuels/connectors";
 
+// import { InjectedParameters } from "@wagmi/core";
+// import { WalletConnectConnector } from "@wagmi/core/connectors/walletConnect";
+// import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import tableLargeSize from "@assets/icons/tableLargeSize.svg";
 import tableMediumSize from "@assets/icons/tableMediumSize.svg";
 import tableSizeExtraSmall from "@assets/icons/tableSizeExtraSmall.svg";
@@ -44,7 +53,7 @@ export const DEFAULT_MARKET = "BTC-USDC";
 
 export const MINIMAL_ETH_REQUIRED = 25000; // 0.000025
 
-// const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
+const WC_PROJECT_ID = "cf4ad9eca02fdf75b8c6ef0b687ddd16";
 
 // const METADATA = {
 //   name: "V12",
@@ -58,7 +67,13 @@ export const FUEL_CONFIG = {
   //   devMode: import.meta.env.DEV,
   //   wcProjectId: WC_PROJECT_ID,
   // }),
-  connectors: [new FuelWalletConnector(), new FueletWalletConnector(), new BakoSafeConnector()],
+  connectors: [
+    new FuelWalletConnector(),
+    new FueletWalletConnector(),
+    new BakoSafeConnector(),
+    new WalletConnectConnector({ projectId: WC_PROJECT_ID }),
+    new SolanaConnector({ projectId: WC_PROJECT_ID }),
+  ],
 };
 
 export const MAX_TABLE_HEIGHT = {

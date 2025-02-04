@@ -32,7 +32,7 @@ import { getRealFee } from "@utils/getRealFee";
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 export const ORDER_OPTIONS = [
-  // { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
+  { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
   { title: "Limit", key: ORDER_TYPE.Limit, timeInForce: LimitType.GTC },
   // { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
@@ -116,7 +116,18 @@ const CreateOrder: React.FC = observer(() => {
     spotCreateOrderStore.isSell,
   );
 
+  // TODO: Implement better solution to hide markets
+  // const isFuelMarket = tradeStore.market?.symbol === "FUEL-USDC";
+
   const renderButton = () => {
+    // if (isFuelMarket) {
+    //   return (
+    //     <CreateOrderButton disabled>
+    //       <Text type={TEXT_TYPES.BUTTON}>Temporarily suspended</Text>
+    //     </CreateOrderButton>
+    //   );
+    // }
+
     const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
     const minimalOrder = spotMarketInfoStore.minimalOrder;
     const formatMinimalAmount = BN.formatUnits(minimalOrder.minOrder.toString(), DEFAULT_DECIMALS).toString();
@@ -436,6 +447,16 @@ const CreateOrder: React.FC = observer(() => {
           {renderInstruction()}
           {renderOrderDetails()}
         </ParamsContainer>
+        {/* {isFuelMarket && (
+          <WarningContainer gap="8px" column>
+            <Text color={theme.colors.favorite} type={TEXT_TYPES.SUPPORTING}>
+              The market is temporarily stopped. Orders do not match.
+            </Text>
+            <Text color={theme.colors.favorite} type={TEXT_TYPES.SUPPORTING}>
+              Withdrawals are working as usual.
+            </Text>
+          </WarningContainer>
+        )} */}
         <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
           {renderButton()}
         </ConnectWalletButton>

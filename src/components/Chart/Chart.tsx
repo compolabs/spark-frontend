@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
@@ -10,16 +10,28 @@ import Tab from "@components/Tab";
 import { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
+import { useStores } from "@stores";
+
 const TABS = [
   { title: "SIMPLE CHART", disabled: false },
   { title: "ADVANCED CHART", disabled: false },
 ];
 
+const DISABLED_SIMPLE_CHARTS = new Set(["PSYCHO-USDC", "USDF-USDC"]);
+
 const Chart: React.FC = observer(() => {
+  const { marketStore } = useStores();
+
   const [activeChart, setActiveChart] = useState(0);
-  const handleSelect = (active: number) => {
-    setActiveChart(active);
-  };
+
+  const isSymbolDisabled = useMemo(
+    () => DISABLED_SIMPLE_CHARTS.has(marketStore.market?.symbol ?? ""),
+    [marketStore.market],
+  );
+
+  useEffect(() => {
+    setActiveChart(isSymbolDisabled ? 1 : 0);
+  }, [isSymbolDisabled]);
 
   return (
     <Root>
@@ -31,7 +43,7 @@ const Chart: React.FC = observer(() => {
               active={activeChart === index}
               disabled={disabled}
               type={TEXT_TYPES.BUTTON_SECONDARY}
-              onClick={() => !disabled && handleSelect(index)}
+              onClick={() => !disabled && setActiveChart(index)}
             >
               {title}
             </Tab>

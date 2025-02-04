@@ -23,7 +23,7 @@ interface Props {
 }
 
 const MarketRow: React.FC<Props> = observer(({ market, showLeverage = false, showPriceChange = false }) => {
-  const { marketStore, mixPanelStore, accountStore } = useStores();
+  const { marketStore, mixPanelStore, accountStore, spotOrderBookStore } = useStores();
   const navigate = useNavigate();
 
   const isFavorite = marketStore.favMarkets.includes(market.symbol);
@@ -85,7 +85,7 @@ const MarketRow: React.FC<Props> = observer(({ market, showLeverage = false, sho
         )}
         <SmartFlex alignSelf="flex-end">
           <Text color="primary" type={TEXT_TYPES.H} nowrap>
-            $ {market.priceUnits.toFormat(2)}
+            $ {spotOrderBookStore.marketPriceByContractId(market.contractAddress)}
           </Text>
         </SmartFlex>
       </SmartFlex>

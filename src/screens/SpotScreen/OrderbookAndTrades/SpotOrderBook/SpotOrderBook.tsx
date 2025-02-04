@@ -134,7 +134,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     };
   };
   const orderBookResult: OrderBookData = orderBook();
-
+  // spotOrderBookStore.buyOrders.map(el => console.log('formatPrice', el.formatPrice))
   return (
     <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root>

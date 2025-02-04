@@ -10,6 +10,7 @@ import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTrades/SpotOr
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
+import { CONFIG, Market } from "@utils/getConfig.ts";
 import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 
@@ -17,6 +18,10 @@ import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
+
+type ExchangeRates = {
+  [pair: string]: string;
+};
 
 export class SpotOrderBookStore {
   private readonly rootStore: RootStore;
@@ -38,6 +43,7 @@ export class SpotOrderBookStore {
 
   ohlcvData: OhlcvData[] = [];
   historgramData: HistogramData[] = [];
+  marketPrices: ExchangeRates = {};
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -45,6 +51,14 @@ export class SpotOrderBookStore {
 
     const { initialized, marketStore } = this.rootStore;
 
+    setTimeout(() => {
+      CONFIG.SPOT.MARKETS.map(async (el: Market) => {
+        const buy = await this.fetchOrderBook(el, OrderType.Buy);
+        const sell = await this.fetchOrderBook(el, OrderType.Sell);
+        const price = new BN(buy.priceUnits).plus(sell.priceUnits).div(2).toSignificant(2);
+        this.marketPrices = { ...this.marketPrices, [el.contractId]: price };
+      });
+    }, 1000);
     reaction(
       () => [initialized, marketStore.market],
       ([initialized]) => {
@@ -141,6 +155,28 @@ export class SpotOrderBookStore {
     this.subscribeToSellOrders(bcNetwork, params);
   };
 
+  async fetchOrderBook(market: Market, orderType: OrderType) {
+    const bcNetwork = FuelNetwork.getInstance();
+    const params: GetActiveOrdersParams = {
+      limit: 1,
+      market: [market.contractId],
+      asset: market.baseAssetId ?? "",
+      orderType: orderType,
+    };
+    const activeOrders = await bcNetwork.spotFetchActiveOrders(params);
+    if ("ActiveSellOrder" in activeOrders.data) {
+      return new SpotMarketOrder({
+        ...activeOrders.data.ActiveSellOrder[0],
+        quoteAssetId: market.quoteAssetId,
+      });
+    } else {
+      return new SpotMarketOrder({
+        ...activeOrders.data.ActiveBuyOrder[0],
+        quoteAssetId: market.quoteAssetId,
+      });
+    }
+  }
+
   private subscribeToOrders(
     orderType: OrderType,
     subscription: Subscription | null,
@@ -168,7 +204,11 @@ export class SpotOrderBookStore {
             }),
         );
 
-        updateOrders(orders);
+        const orderWithoutBadOrder = orders.filter(
+          (o) =>
+            o.id.toLowerCase() !== "0xb140a6bf39601d69d0fedacb61ecce95cb65eaa05856583cb1a9af926acbd5bd".toLowerCase(),
+        );
+        updateOrders(orderWithoutBadOrder);
       },
     });
 
@@ -233,6 +273,15 @@ export class SpotOrderBookStore {
 
   get spreadPercent(): string {
     return BN.ratioOf(this.spread, this.getMaxBuyPrice).toFormat(2);
+  }
+
+  get marketPrice(): string {
+    const { marketStore } = this.rootStore;
+    return this.marketPrices[marketStore.market?.contractAddress ?? ""];
+  }
+
+  marketPriceByContractId(contractAddress: string): string {
+    return this.marketPrices[contractAddress];
   }
 
   subscribeTrades = () => {

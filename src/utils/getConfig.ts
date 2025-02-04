@@ -4,6 +4,7 @@ import TOKEN_LOGOS from "@constants/tokenLogos";
 
 import { Token } from "@entity";
 
+import configProdJSON from "@src/config.json";
 import configDevJSON from "@src/config-dev.json";
 
 export interface Market {
@@ -18,28 +19,12 @@ export interface Market {
   contractId: string;
 }
 
-// function getConfigByBranch(branchName: Undefinable<string>) {
-//   if (branchName === "main") {
-//     return configProdJSON;
-//   }
-
-//   if (branchName?.includes("stage/")) {
-//     return configDevJSON;
-//   }
-
-//   return configDevJSON;
-// }
-
 function createConfig() {
-  const CURRENT_CONFIG_VER = "2.0.0";
-  // const configJSON = getConfigByBranch(import.meta.env.VITE_BRANCH_NAME);
-  const configJSON = configDevJSON;
-
+  const CURRENT_CONFIG_VER = import.meta.env.DEV ? "2.0.0" : "2.0.0";
+  const configJSON = import.meta.env.DEV ? configDevJSON : configProdJSON;
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
   console.warn("V12 CONFIG", configJSON);
-  console.log("Contract Spot Ver.", configJSON.spot.contractVer);
-  console.log("Contract Perp Ver.", configJSON.perp.contractVer);
 
   const tokens = configJSON.tokens.map(({ name, symbol, decimals, assetId, priceFeed, precision, collateral }) => {
     return new Token({

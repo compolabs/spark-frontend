@@ -1,8 +1,8 @@
-import { EvmPriceServiceConnection, Price, PriceFeed } from "@pythnetwork/pyth-evm-js";
+import { HermesClient } from "@pythnetwork/hermes-client";
 import { makeAutoObservable } from "mobx";
-import { Nullable } from "tsdef";
 
 import BN from "@utils/BN";
+import { IntervalUpdater } from "@utils/IntervalUpdater";
 
 import { FuelNetwork } from "@blockchain";
 
@@ -10,28 +10,28 @@ import RootStore from "./RootStore";
 
 const PYTH_URL = "https://hermes.pyth.network";
 
+const zeroFeedId = "0x0000000000000000000000000000000000000000000000000000000000000000";
+
+const UPDATE_INTERVAL = 15_000;
+
 export class OracleStore {
   private readonly rootStore: RootStore;
 
-  priceServiceConnection: EvmPriceServiceConnection;
-  prices: Nullable<Record<string, Price>> = null;
+  priceServiceConnection: HermesClient;
+  prices: Record<string, string> = {};
   initialized: boolean = false;
+
+  private priceUpdater: IntervalUpdater;
 
   constructor(rootStore: RootStore) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
 
-    this.priceServiceConnection = new EvmPriceServiceConnection(PYTH_URL, {
-      logger: {
-        error: console.error,
-        warn: console.warn,
-        info: () => undefined,
-        debug: () => undefined,
-        trace: () => undefined,
-      },
-    });
+    this.priceServiceConnection = new HermesClient(PYTH_URL, {});
 
     this.initAndGetPythPrices().then(() => this.setInitialized(true));
+
+    this.priceUpdater = new IntervalUpdater(this.initAndGetPythPrices, UPDATE_INTERVAL);
   }
 
   get tokenIndexPrice(): BN {
@@ -50,41 +50,37 @@ export class OracleStore {
 
     const priceIds = bcNetwork!
       .getTokenList()
-      .filter((t) => t.priceFeed)
+      .filter((t) => t.priceFeed.toLowerCase() !== zeroFeedId.toLowerCase())
       .map((t) => t.priceFeed);
 
-    const res = await this.priceServiceConnection.getLatestPriceFeeds(priceIds);
+    const response = await this.priceServiceConnection.getLatestPriceUpdates(priceIds, { parsed: true });
 
-    const initPrices = res?.reduce((acc, priceFeed) => {
-      const price = priceFeed.getPriceUnchecked();
-      return { ...acc, [`0x${priceFeed.id}`]: price };
-    }, {} as any);
+    const lastPriceUpdates = response.parsed ?? [];
+
+    const initPrices = lastPriceUpdates.reduce(
+      (acc, priceFeed) => {
+        return { ...acc, [`0x${priceFeed.id}`]: priceFeed.price.price };
+      },
+      {} as Record<string, string>,
+    );
+
     this.setPrices(initPrices);
-
-    await this.priceServiceConnection.subscribePriceFeedUpdates(priceIds, (priceFeed: PriceFeed) => {
-      const price = priceFeed.getPriceUnchecked();
-      this.setPrices({ ...this.prices, [`0x${priceFeed.id}`]: price });
-    });
   };
 
   getTokenIndexPrice = (priceFeed: string): BN => {
     if (!this.prices) return BN.ZERO;
 
-    const feed = this.prices[priceFeed];
+    const price = this.prices[priceFeed];
 
-    if (!feed?.price) return BN.ZERO;
+    if (!price) return BN.ZERO;
 
-    const price = new BN(feed.price);
+    const priceBN = new BN(price);
 
     // Нам нужно докидывать 1 decimal, потому что decimals разный в api и у нас
-    return BN.parseUnits(price, 1);
+    return BN.parseUnits(priceBN, 1);
   };
 
-  getPriceFeedUpdateData = async (feedIds: string | string[]): Promise<string[]> => {
-    return this.priceServiceConnection.getPriceFeedsUpdateData([feedIds].flat());
-  };
-
-  private setPrices = (v: Record<string, Price>) => (this.prices = v);
+  private setPrices = (v: Record<string, string>) => (this.prices = v);
 
   private setInitialized = (l: boolean) => (this.initialized = l);
 }

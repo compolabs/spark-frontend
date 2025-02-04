@@ -1,5 +1,5 @@
 {
-  "version": "1.7.4",
+  "version": "2.0.0",
   "isMainnet": true,
   "contractVer": 1539,
   "tokens": [
@@ -9,7 +9,8 @@
       "decimals": 6,
       "assetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
       "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
-      "precision": 2
+      "precision": 2,
+      "collateral": false
     },
     {
       "name": "Ethereum",
@@ -17,7 +18,8 @@
       "decimals": 9,
       "assetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-      "precision": 3
+      "precision": 3,
+      "collateral": false
     },
     {
       "name": "USDT",
@@ -25,7 +27,8 @@
       "decimals": 6,
       "assetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
       "priceFeed": "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b",
-      "precision": 2
+      "precision": 2,
+      "collateral": false
     },
     {
       "name": "FUEL",
@@ -33,7 +36,8 @@
       "decimals": 9,
       "assetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
       "priceFeed": "0x8a757d54e5d34c7ff1aea8502a2d968686027a304d00418092aaf7e60ed98d95",
-      "precision": 5
+      "precision": 5,
+      "collateral": false
     },
     {
       "name": "ezETH",
@@ -41,7 +45,8 @@
       "decimals": 9,
       "assetId": "0x91b3559edb2619cde8ffb2aa7b3c3be97efd794ea46700db7092abeee62281b0",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-      "precision": 3
+      "precision": 3,
+      "collateral": false
     },
     {
       "name": "pzETH",
@@ -49,7 +54,8 @@
       "decimals": 9,
       "assetId": "0x1493d4ec82124de8f9b625682de69dcccda79e882b89a55a8c737b12de67bd68",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-      "precision": 3
+      "precision": 3,
+      "collateral": false
     },
     {
       "name": "TRUMP",
@@ -57,7 +63,8 @@
       "decimals": 9,
       "assetId": "0xa168394dda72a436becdbd920e7cdea302b49f7b1160ed13c5102ebf185f3bf4",
       "priceFeed": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
-      "precision": 9
+      "precision": 9,
+      "collateral": false
     },
     {
       "name": "WETH",
@@ -65,88 +72,178 @@
       "decimals": 9,
       "assetId": "0xa38a5a8beeb08d95744bc7f58528073f4052b254def59eba20c99c202b5acaa3",
       "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-      "precision": 3
+      "precision": 3,
+      "collateral": false
+    },
+    {
+      "name": "PSYCHO",
+      "symbol": "PSYCHO",
+      "decimals": 9,
+      "assetId": "0x86fa05e9fef64f76fa61c03f5906c87a03cb9148120b6171910566173d36fc9e",
+      "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "precision": 9,
+      "collateral": false
+    },
+    {
+      "name": "USDF",
+      "symbol": "USDF",
+      "decimals": 9,
+      "assetId": "0x33a6d90877f12c7954cca6d65587c25e9214c7bed2231c188981c7114c1bdb78",
+      "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "precision": 9,
+      "collateral": false
     }
   ],
-  "markets": [
-    {
-      "marketName": "ETHUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
-      "baseAssetDecimals": 9,
-      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1541,
-      "contractId": "0xfe2c524ad8e088f33d232a45dbea43e792861640b71aa1814b30506bf8430ee5"
+  "spot": {
+    "contractVer": 1539,
+    "markets": [
+      {
+        "marketName": "ETHUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+        "baseAssetDecimals": 9,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1541,
+        "contractId": "0xfe2c524ad8e088f33d232a45dbea43e792861640b71aa1814b30506bf8430ee5"
+      },
+      {
+        "marketName": "USDCUSDT",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "baseAssetDecimals": 6,
+        "quoteAssetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352"
+      },
+      {
+        "marketName": "USDTUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
+        "baseAssetDecimals": 6,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0xe4e4844f78e2e470b590d0c76ffc9f4422a87317377813a181a02c60a60bc774"
+      },
+      {
+        "marketName": "FUELUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
+        "baseAssetDecimals": 9,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0x81e83f73530c262b0dbf5414649a875c48a48144de3c08ff68cb9d54b36f2eaa"
+      },
+      {
+        "marketName": "ezETHUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0x91b3559edb2619cde8ffb2aa7b3c3be97efd794ea46700db7092abeee62281b0",
+        "baseAssetDecimals": 9,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0xe4f64c6a9facdce0c055ecade9379c8f425411ec3f9523a472d14ce8a4fbce38"
+      },
+      {
+        "marketName": "pzETHUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0x1493d4ec82124de8f9b625682de69dcccda79e882b89a55a8c737b12de67bd68",
+        "baseAssetDecimals": 9,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0x12f52412e0ef50d4e38e1d03fd80d0a88fbaa7253e47f0cc48ba4e3049bd9ce4"
+      },
+      {
+        "marketName": "WETHUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0xa38a5a8beeb08d95744bc7f58528073f4052b254def59eba20c99c202b5acaa3",
+        "baseAssetDecimals": 9,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0x0bef6eb3018d901818978175feccf650b65dee8e3a8f5b59e138bcf1cf1d0db9"
+      },
+      {
+        "marketName": "PSYCHOUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0x86fa05e9fef64f76fa61c03f5906c87a03cb9148120b6171910566173d36fc9e",
+        "baseAssetDecimals": 9,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0x2eece85eb7c8ec5fd95e639fd6bb7e9dd7103a99d7321521848da246ecef5270"
+      },
+      {
+        "marketName": "USDFUSDC",
+        "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+        "baseAssetId": "0x33a6d90877f12c7954cca6d65587c25e9214c7bed2231c188981c7114c1bdb78",
+        "baseAssetDecimals": 9,
+        "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1542,
+        "contractId": "0x59020aadb448c59b48136a3cef110f1ddd2865000146514924f19b83f061ceba"
+      }
+    ],
+    "indexers": {
+      "0xfe2c524ad8e088f33d232a45dbea43e792861640b71aa1814b30506bf8430ee5": {
+        "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+        "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+      },
+      "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352": {
+        "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+        "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+      },
+      "0x81e83f73530c262b0dbf5414649a875c48a48144de3c08ff68cb9d54b36f2eaa": {
+        "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+        "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+      }
     },
-    {
-      "marketName": "USDCUSDT",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
-      "baseAssetDecimals": 6,
-      "quoteAssetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1542,
-      "contractId": "0xdafe498b31f24ea5577055e86bf77e96bcba2c39a7ae47abaa819c303a45a352"
-    },
-    {
-      "marketName": "USDTUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
-      "baseAssetDecimals": 6,
-      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1542,
-      "contractId": "0xe4e4844f78e2e470b590d0c76ffc9f4422a87317377813a181a02c60a60bc774"
-    },
-    {
-      "marketName": "FUELUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
-      "baseAssetDecimals": 9,
-      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1542,
-      "contractId": "0x81e83f73530c262b0dbf5414649a875c48a48144de3c08ff68cb9d54b36f2eaa"
-    },
-    {
-      "marketName": "ezETHUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0x91b3559edb2619cde8ffb2aa7b3c3be97efd794ea46700db7092abeee62281b0",
-      "baseAssetDecimals": 9,
-      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1542,
-      "contractId": "0xe4f64c6a9facdce0c055ecade9379c8f425411ec3f9523a472d14ce8a4fbce38"
-    },
-    {
-      "marketName": "pzETHUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0x1493d4ec82124de8f9b625682de69dcccda79e882b89a55a8c737b12de67bd68",
-      "baseAssetDecimals": 9,
-      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1542,
-      "contractId": "0x12f52412e0ef50d4e38e1d03fd80d0a88fbaa7253e47f0cc48ba4e3049bd9ce4"
-    },
-    {
-      "marketName": "WETHUSDC",
-      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
-      "baseAssetId": "0xa38a5a8beeb08d95744bc7f58528073f4052b254def59eba20c99c202b5acaa3",
-      "baseAssetDecimals": 9,
-      "quoteAssetId": "0x286c479da40dc953bddc3bb4c453b608bba2e0ac483b077bd475174115395e6b",
-      "quoteAssetDecimals": 6,
-      "priceDecimals": 9,
-      "version": 1542,
-      "contractId": "0x0bef6eb3018d901818978175feccf650b65dee8e3a8f5b59e138bcf1cf1d0db9"
+    "contracts": {
+      "registry": "0xbb91b7f9d31ee562b24e35d756ce20913f9752600582f51008c63b2d3792926b",
+      "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509"
     }
-  ],
+  },
+  "perp": {
+    "contractVer": 0,
+    "markets": [
+      {
+        "marketName": "BTCUSDC",
+        "owner": "0xf47e0ef744ac8c993550e03d17f1c4844494553a12cac11ab8c568c8999fdbbf",
+        "baseAssetId": "0x0dc8cdbe2798cb45ebc99180afc0bc514ffb505a80f122004378955c1d23892c",
+        "baseAssetDecimals": 8,
+        "quoteAssetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
+        "quoteAssetDecimals": 6,
+        "priceDecimals": 9,
+        "version": 1539,
+        "contractId": "0x812aa6cb0828d3d1b069d0e2c1e4eab49c62841dc9eb71043ac71105c382e3b6"
+      }
+    ],
+    "indexers": {
+      "0x812aa6cb0828d3d1b069d0e2c1e4eab49c62841dc9eb71043ac71105c382e3b6": {
+        "httpUrl": "https://indexer.hyperindex.xyz/3e409fa/v1/graphql",
+        "wsUrl": "wss://indexer.hyperindex.xyz/3e409fa/v1/graphql"
+      }
+    },
+    "contracts": {
+      "clearingHouse": "0x812aa6cb0828d3d1b069d0e2c1e4eab49c62841dc9eb71043ac71105c382e3b6",
+      "vault": "0x996c3cb59e0ec48ccc1b3053debf165e778c4127b24fe90432d63deca772d07e",
+      "multiAsset": "0xdc527289bdef8ec452f350c9b2d36d464a9ebed88eb389615e512a78e26e3509",
+      "pyth": "0x1c86fdd9e0e7bc0d2ae1bf6817ef4834ffa7247655701ee1b031b52a24c523da"
+    }
+  },
   "indexers": {
     "0xfe2c524ad8e088f33d232a45dbea43e792861640b71aa1814b30506bf8430ee5": {
       "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
@@ -176,6 +273,18 @@
       "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
       "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
     },
+    "0x2eece85eb7c8ec5fd95e639fd6bb7e9dd7103a99d7321521848da246ecef5270": {
+      "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
+    "0x59020aadb448c59b48136a3cef110f1ddd2865000146514924f19b83f061ceba": {
+      "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
+    "0x979ea6b1e15c1ec8e79eb76b587af89dd2620b383082e9b2c16049b78e97e4e8": {
+      "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
     "0x4391b39d9165917faffb9dcc69d19b6952a6ebf02db593747cf2f5d8298d28c7": {
       "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
       "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
@@ -189,7 +298,9 @@
     "registry": "0xbb91b7f9d31ee562b24e35d756ce20913f9752600582f51008c63b2d3792926b",
     "multiAsset": ""
   },
-  "networkUrl": "https://mainnet.fuel.network/v1/graphql",
-  "explorerUrl": "https://app.fuel.network",
-  "sentioUrl": "https://app.sentio.xyz/api/v1/analytics/zhpv96/spark-processor/sql/execute"
+  "links": {
+    "networkUrl": "https://mainnet.fuel.network/v1/graphql",
+    "explorerUrl": "https://app.fuel.network",
+    "sentioUrl": "https://app.sentio.xyz/api/v1/analytics/zhpv96/spark-processor/sql/execute"
+  }
 }

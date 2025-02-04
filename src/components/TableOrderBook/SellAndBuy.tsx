@@ -43,7 +43,7 @@ const SellAndBuy = ({ firstData, secondData, config }: HistoryOrderBookProps) =>
 
   const generateRow = (data: DataArray[]) =>
     data.map((trade, index) => (
-      <Row key={"trade" + trade[index]}>
+      <Row key={"trade" + index}>
         <Text color={trade[3] ? theme.colors.redLight : theme.colors.greenLight} type={TEXT_TYPES.BODY}>
           {trade[0]}
         </Text>
