@@ -11,6 +11,7 @@ import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterfa
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
+import { CONFIG, Market } from "@utils/getConfig.ts";
 import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 
@@ -18,6 +19,10 @@ import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
+
+type ExchangeRates = {
+  [pair: string]: string;
+};
 
 class SpotOrderBookStore {
   private readonly rootStore: RootStore;
@@ -39,10 +44,15 @@ class SpotOrderBookStore {
 
   ohlcvData: OhlcvData[] = [];
   historgramData: HistogramData[] = [];
+  marketPrices: ExchangeRates = {};
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+
+    setInterval(() => {
+      this.makeOrderPrices();
+    }, 30000);
 
     reaction(
       () => [rootStore.initialized, rootStore.tradeStore.market],
@@ -50,6 +60,7 @@ class SpotOrderBookStore {
         if (!initialized) return;
         this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? 4;
         this.updateOrderBook();
+        this.makeOrderPrices();
       },
       { fireImmediately: true },
     );
@@ -78,6 +89,39 @@ class SpotOrderBookStore {
   private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
     const groupedOrders = groupOrders(orders, this.decimalGroup);
     return this._sortOrders(groupedOrders.slice(), reverse);
+  }
+
+  private makeOrderPrices() {
+    const bcNetwork = FuelNetwork.getInstance();
+    CONFIG.MARKETS.forEach(async (el: Market) => {
+      const buy = await this.fetchOrderBook(el, OrderType.Buy);
+      const sell = await this.fetchOrderBook(el, OrderType.Sell);
+      const decimals = bcNetwork.getTokenByAssetId(el.baseAssetId)?.precision ?? 2;
+      const price = new BN(buy.priceUnits).plus(sell.priceUnits).div(2).toSignificant(decimals);
+      this.marketPrices = { ...this.marketPrices, [el.contractId]: price };
+    });
+  }
+
+  private async fetchOrderBook(market: Market, orderType: OrderType) {
+    const bcNetwork = FuelNetwork.getInstance();
+    const params: GetActiveOrdersParams = {
+      limit: 1,
+      market: [market.contractId],
+      asset: market.baseAssetId ?? "",
+      orderType: orderType,
+    };
+    const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
+    if ("ActiveSellOrder" in activeOrders.data) {
+      return new SpotMarketOrder({
+        ...activeOrders.data.ActiveSellOrder[0],
+        quoteAssetId: market.quoteAssetId,
+      });
+    } else {
+      return new SpotMarketOrder({
+        ...activeOrders.data.ActiveBuyOrder[0],
+        quoteAssetId: market.quoteAssetId,
+      });
+    }
   }
 
   get buyOrders(): SpotMarketOrder[] {
@@ -222,6 +266,15 @@ class SpotOrderBookStore {
 
   get spreadPercent(): string {
     return BN.ratioOf(this.spread, this.getMaxBuyPrice).toFormat(2);
+  }
+
+  get marketPrice(): string {
+    const { tradeStore } = this.rootStore;
+    return this.marketPrices[tradeStore.market?.contractAddress ?? ""];
+  }
+
+  marketPriceByContractId(contractAddress: string): string {
+    return this.marketPrices[contractAddress];
   }
 
   subscribeTrades = () => {
