@@ -27,26 +27,27 @@ const MarketStatistics: React.FC = observer(() => {
   const volumeInDollars = tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn);
 
   const precision = tradeStore.market?.baseToken.precision ?? 2;
-  const indexPrice = tradeStore.market?.priceUnits.toFormat(tradeStore.market?.baseToken.precision);
+  const oraclePrice = tradeStore.market?.priceUnits.toFormat(tradeStore.market?.baseToken.precision);
+  const indexPrice = toCurrency(Number(indexPriceBn).toFixed(precision));
   const volume24h = toCurrency(Number(volumeInDollars).toFixed(precision));
   const high24h = toCurrency(Number(tradeStore.spotMarketInfo.high).toFixed(precision));
   const low24h = toCurrency(Number(tradeStore.spotMarketInfo.low).toFixed(precision));
 
   const spotStatsArr = [
-    { title: "Oracle price", value: indexPrice, icon: <PythIcon height={10} width={10} /> },
+    { title: "Oracle price", value: oraclePrice, icon: <PythIcon height={10} width={10} /> },
     { title: "24h volume", value: volume24h },
     { title: "24h High", value: high24h },
     { title: "24h Low", value: low24h },
   ];
 
   const activeDataArr = spotStatsArr;
-  const marketPrice = spotOrderBookStore.marketPriceByContractId(tradeStore.market?.contractAddress ?? "");
+  // const marketPrice = spotOrderBookStore.marketPriceByContractId(tradeStore.market?.contractAddress ?? "");
 
   const renderMobile = () => {
     return (
       <MobileRoot>
         <Text color={theme.colors.greenLight} type={TEXT_TYPES.H}>
-          {marketPrice}
+          {indexPrice}
         </Text>
         <MobileStatsContent gap="12px" justifySelf="flex-end">
           {activeDataArr.map((data) => (
@@ -69,7 +70,7 @@ const MarketStatistics: React.FC = observer(() => {
         <PriceRow alignItems="center">
           <Column alignItems="flex-end">
             <Text type={TEXT_TYPES.H} primary>
-              ${marketPrice}
+              {indexPrice}
             </Text>
           </Column>
           <DesktopRow>
