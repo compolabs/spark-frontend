@@ -183,6 +183,39 @@
       "priceDecimals": 9,
       "version": 1542,
       "contractId": "0x59020aadb448c59b48136a3cef110f1ddd2865000146514924f19b83f061ceba"
+    },
+    {
+      "marketName": "USDTETH",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0xa0265fb5c32f6e8db3197af3c7eb05c48ae373605b8165b6f4a51c5b0ba4812e",
+      "baseAssetDecimals": 6,
+      "quoteAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+      "quoteAssetDecimals": 9,
+      "priceDecimals": 9,
+      "version": 1542,
+      "contractId": "0x979ea6b1e15c1ec8e79eb76b587af89dd2620b383082e9b2c16049b78e97e4e8"
+    },
+    {
+      "marketName": "FUELETH",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0x1d5d97005e41cae2187a895fd8eab0506111e0e2f3331cd3912c15c24e3c1d82",
+      "baseAssetDecimals": 9,
+      "quoteAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+      "quoteAssetDecimals": 9,
+      "priceDecimals": 9,
+      "version": 1542,
+      "contractId": "0x4391b39d9165917faffb9dcc69d19b6952a6ebf02db593747cf2f5d8298d28c7"
+    },
+    {
+      "marketName": "TRUMPETH",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0xa168394dda72a436becdbd920e7cdea302b49f7b1160ed13c5102ebf185f3bf4",
+      "baseAssetDecimals": 9,
+      "quoteAssetId": "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07",
+      "quoteAssetDecimals": 9,
+      "priceDecimals": 9,
+      "version": 1542,
+      "contractId": "0x272bc2c2d065e8ca22f0473e328f403bb1ba2e85d71f5fa51dcb83393714ff01"
     }
   ],
   "indexers": {

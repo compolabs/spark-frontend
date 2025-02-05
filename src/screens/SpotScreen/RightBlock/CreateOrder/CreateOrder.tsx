@@ -1,5 +1,4 @@
 import React from "react";
-import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react-lite";
@@ -48,7 +47,6 @@ const CreateOrder: React.FC = observer(() => {
   const vm = useCreateOrderVM();
   const market = tradeStore.market;
   const media = useMedia();
-  const theme = useTheme();
 
   const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
 
