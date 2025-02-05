@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from "react";
+import React, { HTMLAttributes, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -9,6 +9,7 @@ import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import Tooltip from "@components/Tooltip.tsx";
 import { media } from "@themes/breakpoints";
 
 import sellAndBuyIcon from "@assets/icons/buyAndSellOrderBookIcon.svg";
@@ -53,6 +54,8 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const market = tradeStore.market;
 
   const [isSettingsOpen, openSettings, closeSettings] = useFlag();
+  const [isVisibleLastPrice, setIsVisibleLastPrice] = useState(false);
+  const [isVisibleMidPrice, setIsVisibleMidPrice] = useState(false);
 
   const isOrderBookEmpty =
     spotOrderBookStore.allBuyOrders.length === 0 && spotOrderBookStore.allSellOrders.length === 0;
@@ -82,18 +85,51 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   };
 
   const renderPrices = () => {
-    const oraclePrice = tradeStore.market?.priceUnits.toFormat(tradeStore.market?.baseToken.precision);
+    const buyOrder = [...spotOrderBookStore.buyOrders].reverse()[0];
+    const sellOrder = [...spotOrderBookStore.sellOrders].reverse()[0];
+    const price = BN.formatUnits(
+      new BN(buyOrder?.price).plus(sellOrder?.price).div(2),
+      tradeStore.market?.baseToken.decimals,
+    ).toFixed(tradeStore.market?.baseToken.precision ?? 2);
     const precision = tradeStore.market?.baseToken.precision ?? 2;
     const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
     const indexPrice = Number(indexPriceBn).toFixed(precision);
     return (
       <PricesContainer>
-        <Text type={TEXT_TYPES.BODY} primary>
-          {indexPrice}
-        </Text>
-        <Text type={TEXT_TYPES.BODY} secondary>
-          {oraclePrice}
-        </Text>
+        <Tooltip
+          config={{
+            placement: "bottom-start",
+            trigger: "hover",
+            visible: isVisibleLastPrice,
+            onVisibleChange: setIsVisibleLastPrice,
+          }}
+          content={
+            <SmartFlex gap="20px" padding="8px" column>
+              <Text>The latest Fill Price for the market</Text>
+            </SmartFlex>
+          }
+        >
+          <Text type={TEXT_TYPES.BODY} primary>
+            {indexPrice}
+          </Text>
+        </Tooltip>
+        <Tooltip
+          config={{
+            placement: "bottom-start",
+            trigger: "hover",
+            visible: isVisibleMidPrice,
+            onVisibleChange: setIsVisibleMidPrice,
+          }}
+          content={
+            <SmartFlex gap="20px" padding="8px" column>
+              <Text>Mid Price</Text>
+            </SmartFlex>
+          }
+        >
+          <Text type={TEXT_TYPES.BODY} secondary>
+            {price}
+          </Text>
+        </Tooltip>
       </PricesContainer>
     );
   };
@@ -107,7 +143,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     return (
       <SpreadContainer>
         <Text type={TEXT_TYPES.SUPPORTING}>Spread</Text>
-        <Text color={theme.colors.greenLight}>{`(${percent}%) `}</Text>
+        <Text color={theme.colors.greenLight}>{`${percent}% `}</Text>
       </SpreadContainer>
     );
   };
@@ -156,7 +192,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root>
         <SettingsContainer>
-          <StyledSelectDecimal
+          <StyledSelect
             options={SPOT_DECIMAL_OPTIONS.map((v, index) => ({
               title: new BN(10).pow(-v).toString(),
               key: index.toString(),
@@ -319,10 +355,6 @@ const StyledSelect = styled(Select<string>)`
   height: 40px;
 `;
 
-const StyledSelectDecimal = styled(StyledSelect)`
-  width: 100px;
-`;
-
 const PricesContainer = styled(SmartFlex)`
   height: 28px;
   width: 100%;
@@ -415,12 +447,11 @@ const Container = styled(OrderbookContainer)<{
 
 const SpreadContainer = styled(SmartFlex)`
   flex-direction: column;
-  padding-left: 12px;
   height: 100%;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: center;
   gap: 5px;
-  width: 100%;
+  width: auto;
 `;
 
 const ProgressBar = styled.span<{ type: "buy" | "sell"; fulfillPercent?: number }>`

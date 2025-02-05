@@ -36,6 +36,7 @@ export const DOCS_LINK = "https://docs.sprk.fi";
 export const FUEL_LINK = "https://fuel.network";
 export const DISCORD_LINK = "https://t.co/EfXHTEhXHc";
 
+export const PYTH_LINK = "https://www.pyth.network/";
 export const EVENTS = {
   OpenSideAssets: "openSideAssets",
 };

@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
+import StatusBar from "src/screens/SpotScreen/StatusBar";
 
 import { Column } from "@components/Flex";
 
 import { LeaderboardFilter } from "@screens/Leaderboard/LeaderboardFilter";
 import { LeaderboardTable } from "@screens/Leaderboard/LeaderboardTable/LeaderboardTable";
-import StatusBar from "@screens/SpotScreen/StatusBar";
 
 const Leaderboard = observer(() => {
   return (

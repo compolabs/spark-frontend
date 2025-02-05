@@ -81,7 +81,7 @@
       "decimals": 9,
       "assetId": "0x33a6d90877f12c7954cca6d65587c25e9214c7bed2231c188981c7114c1bdb78",
       "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000",
-      "precision": 9
+      "precision": 2
     }
   ],
   "markets": [

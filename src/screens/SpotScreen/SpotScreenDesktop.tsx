@@ -10,7 +10,7 @@ import { useStores } from "@stores";
 import BottomTables from "@screens/SpotScreen/BottomTables";
 import Chart from "@screens/SpotScreen/Chart";
 import MarketStatisticsBar from "@screens/SpotScreen/MarketStatisticsBar";
-import StatusBar from "@screens/SpotScreen/StatusBar/StatusBar";
+import StatusBar from "@screens/SpotScreen/StatusBar";
 
 import OrderbookAndTradesInterface from "./OrderbookAndTradesInterface/OrderbookAndTradesInterface";
 import MarketSelection from "./RightBlock/MarketSelection";
