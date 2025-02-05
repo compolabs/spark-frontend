@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -9,7 +9,7 @@ import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import Tooltip from "@components/Tooltip.tsx";
+import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
 
 import sellAndBuyIcon from "@assets/icons/buyAndSellOrderBookIcon.svg";
@@ -54,8 +54,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const market = tradeStore.market;
 
   const [isSettingsOpen, openSettings, closeSettings] = useFlag();
-  const [isVisibleLastPrice, setIsVisibleLastPrice] = useState(false);
-  const [isVisibleMidPrice, setIsVisibleMidPrice] = useState(false);
 
   const isOrderBookEmpty =
     spotOrderBookStore.allBuyOrders.length === 0 && spotOrderBookStore.allSellOrders.length === 0;
@@ -87,10 +85,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const renderPrices = () => {
     const buyOrder = [...spotOrderBookStore.buyOrders].reverse()[0];
     const sellOrder = [...spotOrderBookStore.sellOrders].reverse()[0];
-    const price = BN.formatUnits(
-      new BN(buyOrder?.price).plus(sellOrder?.price).div(2),
-      tradeStore.market?.baseToken.decimals,
-    ).toFixed(tradeStore.market?.baseToken.precision ?? 2);
+    const price = BN.formatUnits(new BN(buyOrder?.price).plus(sellOrder?.price).div(2), DEFAULT_DECIMALS).toFixed(
+      tradeStore.market?.baseToken.precision ?? 2,
+    );
     const precision = tradeStore.market?.baseToken.precision ?? 2;
     const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
     const indexPrice = Number(indexPriceBn).toFixed(precision);
@@ -100,8 +97,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
           config={{
             placement: "bottom-start",
             trigger: "hover",
-            visible: isVisibleLastPrice,
-            onVisibleChange: setIsVisibleLastPrice,
           }}
           content={
             <SmartFlex gap="20px" padding="8px" column>
@@ -117,8 +112,6 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
           config={{
             placement: "bottom-start",
             trigger: "hover",
-            visible: isVisibleMidPrice,
-            onVisibleChange: setIsVisibleMidPrice,
           }}
           content={
             <SmartFlex gap="20px" padding="8px" column>

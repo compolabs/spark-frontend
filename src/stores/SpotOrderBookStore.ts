@@ -12,9 +12,10 @@ import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterfa
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
-import { CONFIG, Market } from "@utils/getConfig.ts";
+import { CONFIG, Market } from "@utils/getConfig";
 import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
+import { IntervalUpdater } from "@utils/IntervalUpdater.ts";
 
 import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder, SpotMarketTrade } from "@entity";
@@ -51,9 +52,7 @@ class SpotOrderBookStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
-    setInterval(() => {
-      this.makeOrderPrices();
-    }, 5000);
+    new IntervalUpdater(this.makeOrderPrices, 5000);
 
     reaction(
       () => [rootStore.initialized, rootStore.tradeStore.market],
@@ -92,16 +91,18 @@ class SpotOrderBookStore {
     return this._sortOrders(groupedOrders.slice(), reverse);
   }
 
-  private makeOrderPrices() {
+  private async makeOrderPrices() {
     const bcNetwork = FuelNetwork.getInstance();
-    CONFIG.MARKETS.forEach(async (el: Market) => {
+    let _marketPrices = {};
+    CONFIG.MARKETS.map(async (el: Market) => {
       const lastTrade = await this.fetchOrderBook(el);
       const precision = bcNetwork.getTokenByAssetId(el.baseAssetId)?.precision ?? 2;
       const nonFormated =
         lastTrade?.data?.TradeOrderEvent.length > 0 ? lastTrade?.data?.TradeOrderEvent[0].tradePrice : 0;
       const formatPrice = BN.formatUnits(nonFormated, DEFAULT_DECIMALS).toFormat(precision);
-      this.marketPrices = { ...this.marketPrices, [el.contractId]: formatPrice };
+      _marketPrices = { ...this.marketPrices, [el.contractId]: formatPrice };
     });
+    this.marketPrices = _marketPrices;
   }
 
   private async fetchOrderBook(market: Market) {

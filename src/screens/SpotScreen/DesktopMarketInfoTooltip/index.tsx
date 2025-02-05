@@ -1,3 +1,3 @@
-import DesktopMarketInfoTooltip from "./DesktopMarketInfoTooltip.tsx";
+import DesktopMarketInfoTooltip from "./DesktopMarketInfoTooltip";
 
 export default DesktopMarketInfoTooltip;

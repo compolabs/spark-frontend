@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
-import StatusBar from "src/screens/SpotScreen/StatusBar";
 
 import { Column } from "@components/Flex";
 import { DashboardPoints } from "@components/Points/DashboardPoints";
@@ -11,6 +10,7 @@ import { media } from "@themes/breakpoints";
 import AssetsDashboard from "@screens/Dashboard/AssetsDashboard";
 import InfoDataGraph from "@screens/Dashboard/InfoDataGraph";
 import BottomTables from "@screens/SpotScreen/BottomTables";
+import StatusBar from "@screens/SpotScreen/StatusBar";
 
 import { DashboardFilter } from "./DashboardFilter";
 import { MarketDataSection } from "./MarketDataSection";

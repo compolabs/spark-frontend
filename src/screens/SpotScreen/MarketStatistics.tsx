@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { Column, DesktopRow, Row } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import Tooltip from "@components/Tooltip.tsx";
+import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
 
 import PythIcon from "@assets/icons/pyth.svg?react";
@@ -15,7 +15,7 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
 import DesktopMarketInfoTooltip from "@screens/SpotScreen/DesktopMarketInfoTooltip";
-import { MarketInfoItem } from "@screens/SpotScreen/DesktopMarketInfoTooltip/DesktopMarketInfoTooltip.tsx";
+import { MarketInfoItem } from "@screens/SpotScreen/DesktopMarketInfoTooltip/DesktopMarketInfoTooltip";
 
 import { DEFAULT_DECIMALS, PYTH_LINK } from "@constants";
 import BN from "@utils/BN";
@@ -31,8 +31,8 @@ const MarketStatistics: React.FC = observer(() => {
   const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
   const volumeInDollars = tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn);
 
-  const precision = tradeStore.market?.baseToken.precision ?? 2;
-  const oraclePrice = tradeStore.market?.priceUnits.toFormat(tradeStore.market?.baseToken.precision);
+  const precision = 2;
+  const oraclePrice = tradeStore.market?.priceUnits.toFormat(precision);
   const indexPrice = toCurrency(Number(indexPriceBn).toFixed(precision));
   const volume24h = toCurrency(Number(volumeInDollars).toFixed(precision));
   const high24h = toCurrency(Number(tradeStore.spotMarketInfo.high).toFixed(precision));
