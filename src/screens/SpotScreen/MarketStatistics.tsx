@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -25,8 +25,6 @@ const MarketStatistics: React.FC = observer(() => {
   const { tradeStore, spotOrderBookStore } = useStores();
   const theme = useTheme();
   const media = useMedia();
-
-  const [isVisible, setIsVisible] = useState(false);
 
   const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
   const volumeInDollars = tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn);
@@ -109,8 +107,6 @@ const MarketStatistics: React.FC = observer(() => {
               config={{
                 placement: "bottom-start",
                 trigger: "hover",
-                visible: isVisible,
-                onVisibleChange: setIsVisible,
               }}
               content={
                 <TooltipContainer>
