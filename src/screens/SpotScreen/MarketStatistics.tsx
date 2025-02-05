@@ -29,12 +29,12 @@ const MarketStatistics: React.FC = observer(() => {
   const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
   const volumeInDollars = tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn);
 
-  const precision = 2;
+  const precision = tradeStore.market?.baseToken.precision ?? 2;
   const oraclePrice = tradeStore.market?.priceUnits.toFormat(precision);
   const indexPrice = toCurrency(Number(indexPriceBn).toFixed(precision));
-  const volume24h = toCurrency(Number(volumeInDollars).toFixed(precision));
-  const high24h = toCurrency(Number(tradeStore.spotMarketInfo.high).toFixed(precision));
-  const low24h = toCurrency(Number(tradeStore.spotMarketInfo.low).toFixed(precision));
+  const volume24h = toCurrency(Number(volumeInDollars).toFixed(2));
+  const high24h = toCurrency(Number(tradeStore.spotMarketInfo.high).toFixed(2));
+  const low24h = toCurrency(Number(tradeStore.spotMarketInfo.low).toFixed(2));
 
   const spotStatsArr: MarketInfoItem[] = [
     {
@@ -43,7 +43,7 @@ const MarketStatistics: React.FC = observer(() => {
       icon: <PythIcon height={10} width={10} />,
       tooltip: (
         <SmartFlex gap="20px" column>
-          <Text>The current Oracle Price of the selected assets ({tradeStore.market?.symbol})</Text>
+          <Text>The current Oracle Price of the selected assets ({tradeStore.market?.baseToken.symbol})</Text>
           <Text>
             Oracle provided by{" "}
             <LinkStyled
