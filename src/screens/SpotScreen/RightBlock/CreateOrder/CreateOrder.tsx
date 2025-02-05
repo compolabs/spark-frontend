@@ -437,11 +437,11 @@ const CreateOrder: React.FC = observer(() => {
 
 export default CreateOrder;
 
-const WarningContainer = styled(SmartFlex)`
-  padding: 8px;
-  background-color: ${({ theme }) => `${theme.colors.favorite}10`};
-  border-radius: 8px;
-`;
+// const WarningContainer = styled(SmartFlex)`
+//   padding: 8px;
+//   background-color: ${({ theme }) => `${theme.colors.favorite}10`};
+//   border-radius: 8px;
+// `;
 
 const Root = styled(SmartFlex)`
   padding: 12px;
