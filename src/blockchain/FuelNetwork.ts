@@ -237,4 +237,8 @@ export class FuelNetwork {
   getLeaderboard = async (...params: Parameters<typeof this.orderbookSdk.getLeaderboard>) => {
     return await this.orderbookSdk.getLeaderboard(...params);
   };
+
+  fetchLastTrade = async (...params: Parameters<typeof this.orderbookSdk.getLastTrades>) => {
+    return await this.orderbookSdk.getLastTrades(...params);
+  };
 }

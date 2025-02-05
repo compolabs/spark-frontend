@@ -20,6 +20,8 @@ import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
+import { GetOrdersParams } from "../../../spark-orderbook-ts-sdk";
+
 type ExchangeRates = {
   [pair: string]: string;
 };
@@ -52,7 +54,7 @@ class SpotOrderBookStore {
 
     setInterval(() => {
       this.makeOrderPrices();
-    }, 30000);
+    }, 5000);
 
     reaction(
       () => [rootStore.initialized, rootStore.tradeStore.market],
@@ -94,34 +96,41 @@ class SpotOrderBookStore {
   private makeOrderPrices() {
     const bcNetwork = FuelNetwork.getInstance();
     CONFIG.MARKETS.forEach(async (el: Market) => {
-      const buy = await this.fetchOrderBook(el, OrderType.Buy);
-      const sell = await this.fetchOrderBook(el, OrderType.Sell);
-      const decimals = bcNetwork.getTokenByAssetId(el.baseAssetId)?.precision ?? 2;
-      const price = new BN(buy.priceUnits).plus(sell.priceUnits).div(2).toSignificant(decimals);
-      this.marketPrices = { ...this.marketPrices, [el.contractId]: price };
+      const lastTrade = await this.fetchOrderBook(el);
+      const precision = bcNetwork.getTokenByAssetId(el.baseAssetId)?.precision ?? 2;
+      const nonFormated =
+        lastTrade?.data?.TradeOrderEvent.length > 0 ? lastTrade?.data?.TradeOrderEvent[0].tradePrice : 0;
+      const formatPrice = BN.formatUnits(nonFormated, DEFAULT_DECIMALS).toFormat(precision);
+      this.marketPrices = { ...this.marketPrices, [el.contractId]: formatPrice };
     });
   }
 
-  private async fetchOrderBook(market: Market, orderType: OrderType) {
+  private async fetchOrderBook(market: Market) {
     const bcNetwork = FuelNetwork.getInstance();
-    const params: GetActiveOrdersParams = {
+    // TODO: Когда спред будет нормальный, попросят этот расчет маркетного ордера (best ask + best bid) / 2
+    //   const params: GetActiveOrdersParams = {
+    //     limit: 1,
+    //     market: [market.contractId],
+    //     asset: market.baseAssetId ?? "",
+    //     orderType: orderType,
+    //   };
+    //   const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
+    //   if ("ActiveSellOrder" in activeOrders.data) {
+    //     return new SpotMarketOrder({
+    //       ...activeOrders.data.ActiveSellOrder[0],
+    //       quoteAssetId: market.quoteAssetId,
+    //     });
+    //   } else {
+    //     return new SpotMarketOrder({
+    //       ...activeOrders.data.ActiveBuyOrder[0],
+    //       quoteAssetId: market.quoteAssetId,
+    //     });
+    //   }
+    const params: GetOrdersParams = {
       limit: 1,
       market: [market.contractId],
-      asset: market.baseAssetId ?? "",
-      orderType: orderType,
     };
-    const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
-    if ("ActiveSellOrder" in activeOrders.data) {
-      return new SpotMarketOrder({
-        ...activeOrders.data.ActiveSellOrder[0],
-        quoteAssetId: market.quoteAssetId,
-      });
-    } else {
-      return new SpotMarketOrder({
-        ...activeOrders.data.ActiveBuyOrder[0],
-        quoteAssetId: market.quoteAssetId,
-      });
-    }
+    return await bcNetwork.fetchLastTrade(params);
   }
 
   get buyOrders(): SpotMarketOrder[] {
@@ -286,35 +295,38 @@ class SpotOrderBookStore {
     if (this.subscriptionToTradeOrderEvents) {
       this.subscriptionToTradeOrderEvents.unsubscribe();
     }
+    try {
+      this.subscriptionToTradeOrderEvents = bcNetwork
+        .subscribeSpotTradeOrderEvents({
+          limit: 500,
+          market: [market!.contractAddress],
+        })
+        .subscribe({
+          next: ({ data }) => {
+            if (!data) return;
+            const trades = data.TradeOrderEvent.map(
+              (trade) =>
+                new SpotMarketTrade({
+                  ...trade,
+                  baseAssetId: market!.baseToken.assetId,
+                  quoteAssetId: market!.quoteToken.assetId,
+                }),
+            );
 
-    this.subscriptionToTradeOrderEvents = bcNetwork
-      .subscribeSpotTradeOrderEvents({
-        limit: 500,
-        market: [market!.contractAddress],
-      })
-      .subscribe({
-        next: ({ data }) => {
-          if (!data) return;
-          const trades = data.TradeOrderEvent.map(
-            (trade) =>
-              new SpotMarketTrade({
-                ...trade,
-                baseAssetId: market!.baseToken.assetId,
-                quoteAssetId: market!.quoteToken.assetId,
-              }),
-          );
+            this.trades = trades;
 
-          this.trades = trades;
+            const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
+            this.ohlcvData = ohlcvData.ohlcvData;
+            this.historgramData = ohlcvData.historgramData;
 
-          const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
-          this.ohlcvData = ohlcvData.ohlcvData;
-          this.historgramData = ohlcvData.historgramData;
-
-          if (!this.isInitialLoadComplete) {
-            this.isInitialLoadComplete = true;
-          }
-        },
-      });
+            if (!this.isInitialLoadComplete) {
+              this.isInitialLoadComplete = true;
+            }
+          },
+        });
+    } catch (err) {
+      console.log("err", err);
+    }
   };
 
   get isTradesLoading() {
