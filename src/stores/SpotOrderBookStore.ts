@@ -3,6 +3,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { GetOrdersParams } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { RootStore } from "@stores";
 
@@ -19,8 +20,6 @@ import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
-
-import { GetOrdersParams } from "../../../spark-orderbook-ts-sdk";
 
 type ExchangeRates = {
   [pair: string]: string;
