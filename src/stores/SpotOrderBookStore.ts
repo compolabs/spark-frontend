@@ -94,14 +94,16 @@ class SpotOrderBookStore {
   private async makeOrderPrices() {
     const bcNetwork = FuelNetwork.getInstance();
     let _marketPrices = {};
-    CONFIG.MARKETS.map(async (el: Market) => {
+
+    for (const el of CONFIG.MARKETS) {
       const lastTrade = await this.fetchOrderBook(el);
       const precision = bcNetwork.getTokenByAssetId(el.baseAssetId)?.precision ?? 2;
       const nonFormated =
         lastTrade?.data?.TradeOrderEvent.length > 0 ? lastTrade?.data?.TradeOrderEvent[0].tradePrice : 0;
       const formatPrice = BN.formatUnits(nonFormated, DEFAULT_DECIMALS).toFormat(precision);
-      _marketPrices = { ...this.marketPrices, [el.contractId]: formatPrice };
-    });
+      _marketPrices = { ..._marketPrices, [el.contractId]: formatPrice };
+    }
+
     this.marketPrices = _marketPrices;
   }
 
@@ -283,6 +285,8 @@ class SpotOrderBookStore {
   }
 
   marketPriceByContractId(contractAddress: string): string {
+    console.log("1", this.marketPrices);
+    console.log("contractAddress", contractAddress);
     return this.marketPrices[contractAddress];
   }
 
