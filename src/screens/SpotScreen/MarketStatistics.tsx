@@ -43,7 +43,7 @@ const MarketStatistics: React.FC = observer(() => {
       icon: <PythIcon height={10} width={10} />,
       tooltip: (
         <SmartFlex gap="20px" column>
-          <Text>The current Oracle Price of the selected assets ({tradeStore.market?.symbol})</Text>
+          <Text>The current Oracle Price of the selected assets ({tradeStore.market?.baseToken.symbol})</Text>
           <Text>
             Oracle provided by{" "}
             <LinkStyled
