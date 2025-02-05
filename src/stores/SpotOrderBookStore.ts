@@ -3,6 +3,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
 import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { GetOrdersParams } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { RootStore } from "@stores";
 
@@ -11,13 +12,19 @@ import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterfa
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
+import { CONFIG, Market } from "@utils/getConfig";
 import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
+import { IntervalUpdater } from "@utils/IntervalUpdater.ts";
 
 import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
+
+type ExchangeRates = {
+  [pair: string]: string;
+};
 
 class SpotOrderBookStore {
   private readonly rootStore: RootStore;
@@ -39,10 +46,13 @@ class SpotOrderBookStore {
 
   ohlcvData: OhlcvData[] = [];
   historgramData: HistogramData[] = [];
+  marketPrices: ExchangeRates = {};
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+
+    new IntervalUpdater(this.makeOrderPrices, 5000);
 
     reaction(
       () => [rootStore.initialized, rootStore.tradeStore.market],
@@ -50,6 +60,7 @@ class SpotOrderBookStore {
         if (!initialized) return;
         this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? 4;
         this.updateOrderBook();
+        this.makeOrderPrices();
       },
       { fireImmediately: true },
     );
@@ -78,6 +89,50 @@ class SpotOrderBookStore {
   private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
     const groupedOrders = groupOrders(orders, this.decimalGroup);
     return this._sortOrders(groupedOrders.slice(), reverse);
+  }
+
+  private async makeOrderPrices() {
+    const bcNetwork = FuelNetwork.getInstance();
+    let _marketPrices = {};
+
+    for (const el of CONFIG.MARKETS) {
+      const lastTrade = await this.fetchOrderBook(el);
+      const precision = bcNetwork.getTokenByAssetId(el.baseAssetId)?.precision ?? 2;
+      const nonFormated =
+        lastTrade?.data?.TradeOrderEvent.length > 0 ? lastTrade?.data?.TradeOrderEvent[0].tradePrice : 0;
+      const formatPrice = BN.formatUnits(nonFormated, DEFAULT_DECIMALS).toFormat(precision);
+      _marketPrices = { ..._marketPrices, [el.contractId]: formatPrice };
+    }
+
+    this.marketPrices = _marketPrices;
+  }
+
+  private async fetchOrderBook(market: Market) {
+    const bcNetwork = FuelNetwork.getInstance();
+    // TODO: Когда спред будет нормальный, попросят этот расчет маркетного ордера (best ask + best bid) / 2
+    //   const params: GetActiveOrdersParams = {
+    //     limit: 1,
+    //     market: [market.contractId],
+    //     asset: market.baseAssetId ?? "",
+    //     orderType: orderType,
+    //   };
+    //   const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
+    //   if ("ActiveSellOrder" in activeOrders.data) {
+    //     return new SpotMarketOrder({
+    //       ...activeOrders.data.ActiveSellOrder[0],
+    //       quoteAssetId: market.quoteAssetId,
+    //     });
+    //   } else {
+    //     return new SpotMarketOrder({
+    //       ...activeOrders.data.ActiveBuyOrder[0],
+    //       quoteAssetId: market.quoteAssetId,
+    //     });
+    //   }
+    const params: GetOrdersParams = {
+      limit: 1,
+      market: [market.contractId],
+    };
+    return await bcNetwork.fetchLastTrade(params);
   }
 
   get buyOrders(): SpotMarketOrder[] {
@@ -224,6 +279,17 @@ class SpotOrderBookStore {
     return BN.ratioOf(this.spread, this.getMaxBuyPrice).toFormat(2);
   }
 
+  get marketPrice(): string {
+    const { tradeStore } = this.rootStore;
+    return this.marketPrices[tradeStore.market?.contractAddress ?? ""];
+  }
+
+  marketPriceByContractId(contractAddress: string): string {
+    console.log("1", this.marketPrices);
+    console.log("contractAddress", contractAddress);
+    return this.marketPrices[contractAddress];
+  }
+
   subscribeTrades = () => {
     const { tradeStore } = this.rootStore;
     const market = tradeStore.market;
@@ -233,35 +299,38 @@ class SpotOrderBookStore {
     if (this.subscriptionToTradeOrderEvents) {
       this.subscriptionToTradeOrderEvents.unsubscribe();
     }
+    try {
+      this.subscriptionToTradeOrderEvents = bcNetwork
+        .subscribeSpotTradeOrderEvents({
+          limit: 500,
+          market: [market!.contractAddress],
+        })
+        .subscribe({
+          next: ({ data }) => {
+            if (!data) return;
+            const trades = data.TradeOrderEvent.map(
+              (trade) =>
+                new SpotMarketTrade({
+                  ...trade,
+                  baseAssetId: market!.baseToken.assetId,
+                  quoteAssetId: market!.quoteToken.assetId,
+                }),
+            );
 
-    this.subscriptionToTradeOrderEvents = bcNetwork
-      .subscribeSpotTradeOrderEvents({
-        limit: 500,
-        market: [market!.contractAddress],
-      })
-      .subscribe({
-        next: ({ data }) => {
-          if (!data) return;
-          const trades = data.TradeOrderEvent.map(
-            (trade) =>
-              new SpotMarketTrade({
-                ...trade,
-                baseAssetId: market!.baseToken.assetId,
-                quoteAssetId: market!.quoteToken.assetId,
-              }),
-          );
+            this.trades = trades;
 
-          this.trades = trades;
+            const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
+            this.ohlcvData = ohlcvData.ohlcvData;
+            this.historgramData = ohlcvData.historgramData;
 
-          const ohlcvData = getOhlcvData(data.TradeOrderEvent, "1m");
-          this.ohlcvData = ohlcvData.ohlcvData;
-          this.historgramData = ohlcvData.historgramData;
-
-          if (!this.isInitialLoadComplete) {
-            this.isInitialLoadComplete = true;
-          }
-        },
-      });
+            if (!this.isInitialLoadComplete) {
+              this.isInitialLoadComplete = true;
+            }
+          },
+        });
+    } catch (err) {
+      console.log("err", err);
+    }
   };
 
   get isTradesLoading() {

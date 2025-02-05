@@ -7,7 +7,7 @@ import { FiltersProps } from "@stores/DashboardStore.ts";
 
 import { filters } from "@screens/Dashboard/const";
 
-import { CONFIG } from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 
