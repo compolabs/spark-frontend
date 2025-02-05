@@ -19,6 +19,8 @@ import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
+const DEFAULT_DECIMALS_GROUP = 4;
+
 class SpotOrderBookStore {
   private readonly rootStore: RootStore;
   private subscriptionToTradeOrderEvents: Nullable<Subscription> = null;
@@ -29,7 +31,7 @@ class SpotOrderBookStore {
   allBuyOrders: SpotMarketOrder[] = [];
   allSellOrders: SpotMarketOrder[] = [];
 
-  decimalGroup = 4;
+  decimalGroup = DEFAULT_DECIMALS_GROUP;
   orderFilter: SPOT_ORDER_FILTER = SPOT_ORDER_FILTER.SELL_AND_BUY;
 
   isOrderBookLoading = true;
@@ -48,7 +50,7 @@ class SpotOrderBookStore {
       () => [rootStore.initialized, rootStore.tradeStore.market],
       ([initialized]) => {
         if (!initialized) return;
-        this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? 4;
+        this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? DEFAULT_DECIMALS_GROUP;
         this.updateOrderBook();
       },
       { fireImmediately: true },
@@ -58,7 +60,7 @@ class SpotOrderBookStore {
       () => [this.rootStore.tradeStore.market, this.rootStore.initialized],
       ([market, initialized]) => {
         if (!initialized || !market) return;
-        this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? 4;
+        this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? DEFAULT_DECIMALS_GROUP;
         this.subscribeTrades();
       },
       { fireImmediately: true },

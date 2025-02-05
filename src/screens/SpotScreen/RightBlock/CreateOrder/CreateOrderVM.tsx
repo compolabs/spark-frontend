@@ -299,7 +299,6 @@ class CreateOrderVM {
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
     const depositAmountWithFee = fee.exchangeFee.plus(fee.matcherFee);
 
-    console.log(depositAmountWithFee.toString());
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
       amountFee: depositAmountWithFee.toString(),
@@ -460,7 +459,6 @@ class CreateOrderVM {
   };
 
   selectOrderbookOrder = async (order: SpotMarketOrder, mode: ORDER_MODE) => {
-    console.log("selectOrderbookOrder");
     const { settingsStore } = this.rootStore;
     settingsStore.setTimeInForce(LimitType.GTC);
     settingsStore.setOrderType(ORDER_TYPE.Limit);

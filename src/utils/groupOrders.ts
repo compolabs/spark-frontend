@@ -6,7 +6,7 @@ import BN from "./BN";
 
 const roundPrice = (price: BN, decimals: number): BN => {
   const factor = new BN(10).pow(decimals);
-  return new BN(price.dividedBy(factor).integerValue(BN.ROUND_HALF_UP).multipliedBy(factor));
+  return new BN(price.dividedBy(factor).integerValue(BN.ROUND_UP).multipliedBy(factor));
 };
 
 export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMarketOrder[] => {
