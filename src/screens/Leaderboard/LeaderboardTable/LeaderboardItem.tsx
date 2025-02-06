@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
@@ -16,6 +17,10 @@ import three from "@assets/images/3st.png";
 
 import { useStores } from "@stores";
 
+import { pnlTimeline } from "@screens/Dashboard/const.ts";
+
+import BN from "@utils/BN.ts";
+
 const generatePosition = (key: TraderVolumeResponse["id"]) => {
   if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;
   if (key === 2) return <img alt="2st" height={40} src={twoSt} width={40} />;
@@ -30,7 +35,8 @@ const generatePosition = (key: TraderVolumeResponse["id"]) => {
 };
 
 export const LeaderboardItem = observer(({ item }: { item: TraderVolumeResponse }) => {
-  const { notificationStore } = useStores();
+  const theme = useTheme();
+  const { notificationStore, leaderboardStore } = useStores();
   const shortAddress = useMemo(() => {
     return `${item.walletId.slice(0, 6)}...${item.walletId.slice(-4)}`;
   }, [item]);
@@ -40,21 +46,114 @@ export const LeaderboardItem = observer(({ item }: { item: TraderVolumeResponse 
     notificationStore.success({ text: "Address was copied!", address: item.walletId });
   };
 
+  const generatePnl = (wallet: string) => {
+    const findPnl = leaderboardStore.leaderboardPnl.find((el) => el.user === wallet);
+    const time = pnlTimeline[leaderboardStore.activeFilter.title as keyof typeof pnlTimeline];
+    const pnl = findPnl ? findPnl[time] : "0";
+
+    const formattedPnl = new BN(pnl).decimalPlaces(2, BN.ROUND_UP);
+    if (formattedPnl.isGreaterThan(0)) {
+      return (
+        <TextStyled color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+          +${formattedPnl.toString()}
+        </TextStyled>
+      );
+    } else if (formattedPnl.isLessThan(0)) {
+      return (
+        <TextStyled color={theme.colors.redLight} type={TEXT_TYPES.BODY}>
+          -${formattedPnl.abs().toString()}
+        </TextStyled>
+      );
+    }
+
+    return (
+      <TextStyled type={TEXT_TYPES.BODY} primary>
+        ${formattedPnl.toString()}
+      </TextStyled>
+    );
+  };
+
   return (
     <LeaderboardContainer>
-      <LeftContent>
-        {generatePosition(item.id)}
-        <SmartFlex center="y" gap="8px">
+      <SmartFlex style={{ marginRight: 12 }}>{generatePosition(item.id)}</SmartFlex>
+      <SmartFlex center="y" gap="8px" style={{ flex: 1 }}>
+        <AddressText type={TEXT_TYPES.BODY} primary>
+          {shortAddress}
+        </AddressText>
+        <CopyIconStyled src={copyIcon} onClick={handleAddressCopy} />
+      </SmartFlex>
+      {item.isYour && <SnackStyled>You</SnackStyled>}
+      <SmartFlex style={{ flex: 0.44 }}>{generatePnl(item.walletId)}</SmartFlex>
+      <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
+        ${item.traderVolume.toFixed(2)}
+      </TextStyled>
+    </LeaderboardContainer>
+  );
+});
+
+export const LeaderboardItemMobile = observer(({ item }: { item: TraderVolumeResponse }) => {
+  const theme = useTheme();
+  const { notificationStore, leaderboardStore } = useStores();
+  const shortAddress = useMemo(() => {
+    return `${item.walletId.slice(0, 6)}...${item.walletId.slice(-4)}`;
+  }, [item]);
+
+  const handleAddressCopy = () => {
+    copy(item.walletId);
+    notificationStore.success({ text: "Address was copied!", address: item.walletId });
+  };
+
+  const generatePnl = (wallet: string) => {
+    const findPnl = leaderboardStore.leaderboardPnl.find((el) => el.user === wallet);
+    const time = pnlTimeline[leaderboardStore.activeFilter.title as keyof typeof pnlTimeline];
+    const pnl = findPnl ? findPnl[time] : "0";
+
+    const formattedPnl = new BN(pnl).decimalPlaces(2, BN.ROUND_UP);
+    if (formattedPnl.isGreaterThan(0)) {
+      return (
+        <TextStyled color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+          +${formattedPnl.toString()}
+        </TextStyled>
+      );
+    } else if (formattedPnl.isLessThan(0)) {
+      return (
+        <TextStyled color={theme.colors.redLight} type={TEXT_TYPES.BODY}>
+          -${formattedPnl.abs().toString()}
+        </TextStyled>
+      );
+    }
+
+    return (
+      <TextStyled type={TEXT_TYPES.BODY} primary>
+        ${formattedPnl.toString()}
+      </TextStyled>
+    );
+  };
+
+  return (
+    <LeaderboardContainer>
+      <SmartFlex style={{ marginRight: 12 }}>{generatePosition(item.id)}</SmartFlex>
+      <SmartFlex center="y" gap="8px" style={{ flex: 1 }} column>
+        <SmartFlex>
           <AddressText type={TEXT_TYPES.BODY} primary>
             {shortAddress}
           </AddressText>
           <CopyIconStyled src={copyIcon} onClick={handleAddressCopy} />
+          {item.isYour && <SnackStyled>You</SnackStyled>}
         </SmartFlex>
-        {item.isYour && <SnackStyled>You</SnackStyled>}
-      </LeftContent>
-      <TextStyled type={TEXT_TYPES.BODY} primary>
-        ${item.traderVolume.toFixed(2)}
-      </TextStyled>
+        <SmartFlex justifyContent="space-between">
+          <AddressText type={TEXT_TYPES.BODY}>PnL (24h):</AddressText>
+          <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
+            {generatePnl(item.walletId)}
+          </TextStyled>
+        </SmartFlex>
+        <SmartFlex justifyContent="space-between">
+          <AddressText type={TEXT_TYPES.BODY}>Volume (24h):</AddressText>{" "}
+          <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
+            ${item.traderVolume.toFixed(2)}
+          </TextStyled>
+        </SmartFlex>
+      </SmartFlex>
     </LeaderboardContainer>
   );
 });
@@ -87,11 +186,6 @@ const LeaderboardContainer = styled(SmartFlex)`
   &:last-child {
     border-bottom: none;
   }
-`;
-
-const LeftContent = styled(SmartFlex)`
-  align-items: center;
-  gap: 12px;
 `;
 
 const PositionBox = styled(SmartFlex)`

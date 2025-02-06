@@ -7,45 +7,73 @@ import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 
+import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
+
+import { useMedia } from "@hooks/useMedia.ts";
 import { useStores } from "@stores";
 import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore.ts";
 
-import { LeaderboardItem } from "@screens/Leaderboard/LeaderboardTable/LeaderboardItem";
+import { LeaderboardItem, LeaderboardItemMobile } from "@screens/Leaderboard/LeaderboardTable/LeaderboardItem";
 
 export const LeaderboardTable = observer(() => {
   const { leaderboardStore } = useStores();
+  const media = useMedia();
 
   const header = [
     {
+      field: "place",
       name: "Place",
     },
     {
+      field: "wallet",
       name: "Wallet",
       flex: 1,
     },
     {
-      name: `Volume ${leaderboardStore.activeFilter.title}`,
+      field: "pnl",
+      name: `Pnl (${leaderboardStore.activeFilter.title})`,
+      flex: 0.4,
+      // onClick: () => leaderboardStore.makeSort("pnl"),
+    },
+    {
+      field: "volume",
+      name: `Volume (${leaderboardStore.activeFilter.title})`,
+      onClick: () => leaderboardStore.makeSort("volume"),
     },
   ];
 
   const data = leaderboardStore.leaderboard;
   const maxTotalCount = leaderboardStore.maxTotalCount;
-
   const onSelectOrderPerPage = (page: any) => {
     leaderboardStore.setOrderPerPage(page);
   };
 
+  const generateFilterIcon = (field: string) => {
+    if (field === leaderboardStore.sortLeaderboard.field) {
+      if (leaderboardStore.sortLeaderboard.side === "DESC") return <ArrowFilterIcon />;
+      else return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
+    }
+    return <></>;
+  };
   return (
     <LeaderboardTableContainer>
-      <HeaderTable>
-        {header.map((el) => (
-          <HeaderItem key={el.name} flex={el?.flex}>
-            {el.name}
-          </HeaderItem>
-        ))}
-      </HeaderTable>
+      {media.desktop && (
+        <HeaderTable>
+          {header.map((el) => (
+            <HeaderItem key={el.name} flex={el?.flex} onClick={el?.onClick}>
+              {el.name} {generateFilterIcon(el.field)}
+            </HeaderItem>
+          ))}
+        </HeaderTable>
+      )}
       {data.length > 0 ? (
-        data.map((el, key) => <LeaderboardItem key={`${el.id}-${key}`} item={el} />)
+        data.map((el, key) =>
+          media.mobile ? (
+            <LeaderboardItemMobile key={`${el.id}-${key}`} item={el} />
+          ) : (
+            <LeaderboardItem key={`${el.id}-${key}`} item={el} />
+          ),
+        )
       ) : (
         <NoData type={TEXT_TYPES.TEXT}>No Data</NoData>
       )}
@@ -92,8 +120,15 @@ const HeaderTable = styled(SmartFlex)`
   margin-top: 12px;
 `;
 
-const HeaderItem = styled(Text)<{ flex?: number }>`
+const HeaderItem = styled(Text)<{ flex?: number; onClick?: () => void }>`
   ${({ flex }) => flex && `flex: ${flex};`}
+  ${({ onClick }) =>
+    onClick &&
+    `
+    &:hover {
+       cursor: pointer;
+    }
+  `}
   margin-right: 15px;
   &:first-child {
     margin-left: 8px;
