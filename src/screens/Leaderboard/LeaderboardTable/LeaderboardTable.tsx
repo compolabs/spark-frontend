@@ -52,7 +52,7 @@ export const LeaderboardTable = observer(() => {
   const generateFilterIcon = (field: string) => {
     if (field === leaderboardStore.sortLeaderboard.field) {
       if (leaderboardStore.sortLeaderboard.side === "DESC") return <ArrowFilterIcon />;
-      else return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
+      return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
     }
     return <></>;
   };

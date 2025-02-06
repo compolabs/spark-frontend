@@ -47,28 +47,24 @@ export const LeaderboardItem = observer(({ item }: { item: TraderVolumeResponse 
   };
 
   const generatePnl = (wallet: string) => {
-    const findPnl = leaderboardStore.leaderboardPnl.find((el) => el.user === wallet);
-    const time = pnlTimeline[leaderboardStore.activeFilter.title as keyof typeof pnlTimeline];
-    const pnl = findPnl ? findPnl[time] : "0";
+    const pnlData = leaderboardStore.leaderboardPnl.find((el) => el.user === wallet);
+    const timeKey = pnlTimeline[leaderboardStore.activeFilter.title as keyof typeof pnlTimeline];
+    const pnl = pnlData ? pnlData[timeKey] : "0";
 
-    const formattedPnl = new BN(pnl).decimalPlaces(2, BN.ROUND_UP);
-    if (formattedPnl.isGreaterThan(0)) {
-      return (
-        <TextStyled color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
-          +${formattedPnl.toString()}
-        </TextStyled>
-      );
-    } else if (formattedPnl.isLessThan(0)) {
-      return (
-        <TextStyled color={theme.colors.redLight} type={TEXT_TYPES.BODY}>
-          -${formattedPnl.abs().toString()}
-        </TextStyled>
-      );
-    }
+    const bnPnl = new BN(pnl).decimalPlaces(2, BN.ROUND_UP);
+
+    const sign = bnPnl.isGreaterThan(0) ? "+" : "-";
+    const displayValue = bnPnl.abs().toString();
+
+    const color = bnPnl.isGreaterThan(0)
+      ? theme.colors.greenLight
+      : bnPnl.isLessThan(0)
+        ? theme.colors.redLight
+        : undefined;
 
     return (
-      <TextStyled type={TEXT_TYPES.BODY} primary>
-        ${formattedPnl.toString()}
+      <TextStyled color={color} primary={bnPnl.eq(BN.ZERO)} type={TEXT_TYPES.BODY}>
+        {`${sign}$${displayValue}`}
       </TextStyled>
     );
   };
