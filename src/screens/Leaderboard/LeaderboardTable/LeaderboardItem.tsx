@@ -74,8 +74,8 @@ export const LeaderboardItem = observer(({ item }: { item: TraderVolumeResponse 
   };
 
   return (
-    <LeaderboardContainer>
-      <SmartFlex style={{ marginRight: 12 }}>{generatePosition(item.id)}</SmartFlex>
+    <LeaderboardContainer gap="12px">
+      <SmartFlex gap="12px">{generatePosition(item.id)}</SmartFlex>
       <SmartFlex center="y" gap="8px" style={{ flex: 1 }}>
         <AddressText type={TEXT_TYPES.BODY} primary>
           {shortAddress}
@@ -131,8 +131,8 @@ export const LeaderboardItemMobile = observer(({ item }: { item: TraderVolumeRes
   };
 
   return (
-    <LeaderboardContainer>
-      <SmartFlex style={{ marginRight: 12 }}>{generatePosition(item.id)}</SmartFlex>
+    <LeaderboardContainer gap="12px">
+      <SmartFlex gap="12px">{generatePosition(item.id)}</SmartFlex>
       <SmartFlex center="y" gap="8px" style={{ flex: 1 }} column>
         <SmartFlex alignItems="center" gap="8px">
           <AddressText type={TEXT_TYPES.BODY} primary>
