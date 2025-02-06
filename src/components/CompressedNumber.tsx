@@ -40,7 +40,7 @@ export const CompressedNumber: React.FC<CompressedNumberProps> = ({ value, preci
     const match = withoutLastDigits.match(/^0+/);
     const leadingZeros = match ? match[0].length : 0;
 
-    if (leadingZeros > 4) {
+    if (leadingZeros >= 4) {
       return (
         <Tooltip
           config={{
