@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Loader from "@components/Loader.tsx";
 import { Pagination } from "@components/Pagination/Pagination";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
@@ -51,7 +52,7 @@ export const LeaderboardTable = observer(() => {
   const generateFilterIcon = (field: string) => {
     if (field === leaderboardStore.sortLeaderboard.field) {
       if (leaderboardStore.sortLeaderboard.side === "DESC") return <ArrowFilterIcon />;
-      else return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
+      return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
     }
     return <></>;
   };
@@ -60,11 +61,16 @@ export const LeaderboardTable = observer(() => {
       {media.desktop && (
         <HeaderTable>
           {header.map((el) => (
-            <HeaderItem key={el.name} flex={el?.flex} onClick={el?.onClick}>
+            <HeaderItem key={el.name} flex={el?.flex} isActive={!!el?.onClick}>
               {el.name} {generateFilterIcon(el.field)}
             </HeaderItem>
           ))}
         </HeaderTable>
+      )}
+      {leaderboardStore.isLoading && (
+        <LoaderContainer>
+          <Loader />
+        </LoaderContainer>
       )}
       {data.length > 0 ? (
         data.map((el, key) =>
@@ -112,6 +118,7 @@ const LeaderboardTableContainer = styled(SmartFlex)`
   width: 100%;
   flex-direction: column;
   min-height: 110px;
+  position: relative;
 `;
 
 const HeaderTable = styled(SmartFlex)`
@@ -120,10 +127,10 @@ const HeaderTable = styled(SmartFlex)`
   margin-top: 12px;
 `;
 
-const HeaderItem = styled(Text)<{ flex?: number; onClick?: () => void }>`
+const HeaderItem = styled(Text)<{ flex?: number; isActive?: boolean }>`
   ${({ flex }) => flex && `flex: ${flex};`}
-  ${({ onClick }) =>
-    onClick &&
+  ${({ isActive }) =>
+    isActive &&
     `
     &:hover {
        cursor: pointer;
@@ -146,4 +153,11 @@ const SelectStyled = styled(Select)`
   background: #171717;
   border: none;
   font-size: 14px;
+`;
+
+const LoaderContainer = styled(SmartFlex)`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  backdrop-filter: blur(10px);
 `;

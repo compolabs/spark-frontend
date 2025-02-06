@@ -55,6 +55,7 @@ class LeaderboardStore {
     field: "volume",
     side: "DESC",
   };
+  isLoading = false;
 
   userPoints: UserPoints = {
     points: BN.ZERO,
@@ -83,12 +84,14 @@ class LeaderboardStore {
     );
   }
 
-  private resolveFetch = () => {
+  private resolveFetch = async () => {
+    this.isLoading = true;
     if (this.sortLeaderboard.field === "volume") {
-      this.fetchSortedLeaderboard();
+      await this.fetchSortedLeaderboard();
     } else {
-      this.fetchSortedPnlLeaderboard();
+      await this.fetchSortedPnlLeaderboard();
     }
+    this.isLoading = false;
   };
 
   private fetchLeaderboard = async (wallets: string[]) => {
@@ -231,18 +234,13 @@ class LeaderboardStore {
   private findSideSort = (side: string) => {
     return side === "ASC" ? "DESC" : "ASC";
   };
+
   makeSort = (field: string) => {
-    const prop = {
-      field: this.sortLeaderboard.field,
-      side: "",
-    };
-    if (field === this.sortLeaderboard.field) {
-      prop.side = this.findSideSort(this.sortLeaderboard.side);
-    } else {
-      prop.field = field;
-      prop.side = "asc";
-    }
-    this.sortLeaderboard = prop;
+    this.sortLeaderboard =
+      field === this.sortLeaderboard.field
+        ? { field: this.sortLeaderboard.field, side: this.findSideSort(this.sortLeaderboard.side) }
+        : { field, side: "asc" };
+
     this.resolveFetch();
   };
 

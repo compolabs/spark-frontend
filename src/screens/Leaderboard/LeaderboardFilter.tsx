@@ -47,12 +47,17 @@ export const LeaderboardFilter = observer(() => {
               options={filters.map((value, index) => ({
                 title: value.title,
                 key: index.toString(),
+                value: value.value,
               }))}
               selected={String(active)}
               onSelect={(val, index) => {
-                const filter = filters.find((item) => item.title === val.title);
-                if (!filter) return;
-                handleClick(filter, index);
+                handleClick(
+                  {
+                    title: val.title as string,
+                    value: val.value as number,
+                  },
+                  index,
+                );
               }}
             />
           ) : (
