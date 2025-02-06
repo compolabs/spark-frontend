@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Loader from "@components/Loader.tsx";
+import Loader from "@components/Loader";
 import { Pagination } from "@components/Pagination/Pagination";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
@@ -10,9 +10,9 @@ import Text, { TEXT_TYPES } from "@components/Text";
 
 import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
 
-import { useMedia } from "@hooks/useMedia.ts";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
-import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore.ts";
+import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore";
 
 import { LeaderboardItem, LeaderboardItemMobile } from "@screens/Leaderboard/LeaderboardTable/LeaderboardItem";
 
@@ -61,7 +61,7 @@ export const LeaderboardTable = observer(() => {
       {media.desktop && (
         <HeaderTable>
           {header.map((el) => (
-            <HeaderItem key={el.name} flex={el?.flex} isActive={!!el?.onClick}>
+            <HeaderItem key={el.name} flex={el?.flex} isActive={!!el?.onClick} onClick={el?.onClick}>
               {el.name} {generateFilterIcon(el.field)}
             </HeaderItem>
           ))}

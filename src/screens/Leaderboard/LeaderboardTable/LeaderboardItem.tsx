@@ -17,9 +17,9 @@ import three from "@assets/images/3st.png";
 
 import { LeaderboardStore, useStores } from "@stores";
 
-import { pnlTimeline } from "@screens/Dashboard/const.ts";
+import { pnlTimeline } from "@screens/Dashboard/const";
 
-import BN from "@utils/BN.ts";
+import BN from "@utils/BN";
 
 const generatePosition = (key: TraderVolumeResponse["id"]) => {
   if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;
