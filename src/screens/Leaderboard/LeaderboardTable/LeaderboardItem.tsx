@@ -83,7 +83,7 @@ export const LeaderboardItem = observer(({ item }: { item: TraderVolumeResponse 
         <CopyIconStyled src={copyIcon} onClick={handleAddressCopy} />
       </SmartFlex>
       {item.isYour && <SnackStyled>You</SnackStyled>}
-      <SmartFlex style={{ flex: 0.42 }}>{generatePnl(item.walletId)}</SmartFlex>
+      <SmartFlex style={{ flex: 0.43 }}>{generatePnl(item.walletId)}</SmartFlex>
       <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
         ${item.traderVolume.toFixed(2)}
       </TextStyled>
