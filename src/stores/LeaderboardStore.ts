@@ -11,6 +11,8 @@ import { FiltersProps } from "@stores/DashboardStore";
 
 import { filters, pnlTimeline } from "@screens/Dashboard/const";
 
+import { DEFAULT_DECIMALS } from "@constants";
+import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
@@ -25,6 +27,11 @@ const config = {
 export interface PaginationProps {
   title: string;
   key: number;
+}
+
+interface UserPoints {
+  points: BN;
+  usd: BN;
 }
 
 export const PAGINATION_PER_PAGE: PaginationProps[] = [
@@ -50,6 +57,11 @@ class LeaderboardStore {
   };
   isLoading = false;
 
+  userPoints: UserPoints = {
+    points: BN.ZERO,
+    usd: BN.ZERO,
+  };
+
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
@@ -59,6 +71,7 @@ class LeaderboardStore {
       () => [this.activeFilter, accountStore.address, this.searchWallet, this.orderPerPage],
       () => {
         this.page = 1;
+        this.getUserPoints();
         this.resolveFetch();
       },
     );
@@ -170,6 +183,34 @@ class LeaderboardStore {
     return [meData];
   };
 
+  public getUserPoints = async () => {
+    const { accountStore, oracleStore } = this.rootStore;
+
+    if (!accountStore.address) return BN.ZERO;
+
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const fuelToken = CONFIG.TOKENS_BY_SYMBOL["FUEL"];
+    const fuelPrice = BN.formatUnits(oracleStore.getTokenIndexPrice(fuelToken.priceFeed), DEFAULT_DECIMALS);
+
+    try {
+      const response = await bcNetwork.fetchUserPoints({
+        userAddress: accountStore.address!,
+        fromTimestamp: 1736899200,
+        toTimestamp: 1739491200,
+      });
+
+      const points = new BN(response.result.rows[0].result);
+
+      this.userPoints = {
+        points,
+        usd: fuelPrice.multipliedBy(points),
+      };
+    } catch (error) {
+      console.error("Failed to get user points", error);
+    }
+  };
+
   public setActivePage = (page: number) => {
     this.page = page;
     this.resolveFetch();
@@ -195,12 +236,10 @@ class LeaderboardStore {
   };
 
   makeSort = (field: string) => {
-    console.log("ckick");
     this.sortLeaderboard =
       field === this.sortLeaderboard.field
         ? { field: this.sortLeaderboard.field, side: this.findSideSort(this.sortLeaderboard.side) }
         : { field, side: "asc" };
-    console.log("this.sortLeaderboard", this.sortLeaderboard);
     this.resolveFetch();
   };
 
@@ -213,6 +252,7 @@ class LeaderboardStore {
   init = async () => {
     this.initialized = true;
     const date = new Date();
+    this.getUserPoints();
     this.resolveFetch();
     this.activeTime = this.calculateTime(date, 24);
   };

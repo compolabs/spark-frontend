@@ -9,14 +9,17 @@ import { media } from "@themes/breakpoints";
 
 import InfoIcon from "@assets/icons/info.svg?react";
 
+import { useStores } from "@stores";
+
 import { POINTS_LINK } from "@constants";
 import TOKEN_LOGOS from "@constants/tokenLogos";
 
 const END_DATE = new Date("2025-03-01T19:00:00.000Z");
 
 export const DashboardPoints: React.FC = observer(() => {
-  const fuelAmount = 0;
-  const usdAmount = 0;
+  const { leaderboardStore } = useStores();
+
+  const { usd: usdAmount, points: fuelAmount } = leaderboardStore.userPoints;
 
   return (
     <SmartFlex gap="20px" margin="40px 0 0 0" width="100%" column>
@@ -45,7 +48,7 @@ export const DashboardPoints: React.FC = observer(() => {
             </Tooltip>
             <SmartFlex gap="8px">
               <Text type={TEXT_TYPES.H} primary>
-                ${usdAmount}
+                ${usdAmount.toSignificant(2)}
               </Text>
               <Text type={TEXT_TYPES.H} secondary>
                 |
@@ -53,7 +56,7 @@ export const DashboardPoints: React.FC = observer(() => {
               <SmartFlex gap="4px">
                 <img height="16px" src={TOKEN_LOGOS.FUEL} width="16px" />
                 <Text type={TEXT_TYPES.H} secondary>
-                  {fuelAmount} FUEL
+                  {fuelAmount.toSignificant(3)} FUEL
                 </Text>
               </SmartFlex>
             </SmartFlex>

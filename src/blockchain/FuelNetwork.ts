@@ -246,6 +246,10 @@ export class FuelNetwork {
     return await this.orderbookSdk.getLastTrades(...params);
   };
 
+  fetchUserPoints = async (...params: Parameters<typeof this.orderbookSdk.getUserPoints>) => {
+    return await this.orderbookSdk.getUserPoints(...params);
+  };
+
   fetchLeaderBoardPnl = async (...params: Parameters<typeof this.orderbookSdk.getLeaderboardPnl>) => {
     return await this.orderbookSdk.getLeaderboardPnl(...params);
   };

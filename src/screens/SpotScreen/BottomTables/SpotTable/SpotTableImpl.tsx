@@ -250,11 +250,21 @@ const SpotTableImpl: React.FC = observer(() => {
   };
 
   const renderTable = () => {
+    if (!accountStore.isConnected) {
+      return (
+        <TableContainer center column>
+          <Text type={TEXT_TYPES.H} primary>
+            Connect your wallet to see your open orders
+          </Text>
+        </TableContainer>
+      );
+    }
+
     if (!data.length) {
       return (
         <TableContainer center column>
           <Text type={TEXT_TYPES.H} primary>
-            You haven&apos;t made any trades so far
+            You have no open orders
           </Text>
           <Text type={TEXT_TYPES.BODY} secondary>
             Begin trading to view updates on your portfolio
