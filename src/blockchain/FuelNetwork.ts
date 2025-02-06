@@ -234,11 +234,23 @@ export class FuelNetwork {
     return await this.orderbookSdk.getTradeEvent(...params);
   };
 
+  getSortedLeaderboard = async (...params: Parameters<typeof this.orderbookSdk.getSortedLeaderboard>) => {
+    return await this.orderbookSdk.getSortedLeaderboard(...params);
+  };
+
   getLeaderboard = async (...params: Parameters<typeof this.orderbookSdk.getLeaderboard>) => {
     return await this.orderbookSdk.getLeaderboard(...params);
   };
 
   fetchLastTrade = async (...params: Parameters<typeof this.orderbookSdk.getLastTrades>) => {
     return await this.orderbookSdk.getLastTrades(...params);
+  };
+
+  fetchLeaderBoardPnl = async (...params: Parameters<typeof this.orderbookSdk.getLeaderboardPnl>) => {
+    return await this.orderbookSdk.getLeaderboardPnl(...params);
+  };
+
+  fetchSortedLeaderboardPnl = async (...params: Parameters<typeof this.orderbookSdk.getSortedLeaderboardPnl>) => {
+    return await this.orderbookSdk.getSortedLeaderboardPnl(...params);
   };
 }

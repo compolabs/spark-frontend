@@ -15,7 +15,7 @@ import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { CONFIG, Market } from "@utils/getConfig";
 import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
-import { IntervalUpdater } from "@utils/IntervalUpdater.ts";
+import { IntervalUpdater } from "@utils/IntervalUpdater";
 
 import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder, SpotMarketTrade } from "@entity";
