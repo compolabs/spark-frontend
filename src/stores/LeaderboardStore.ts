@@ -1,11 +1,15 @@
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 
-import { GetLeaderboardQueryParams, TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import {
+  GetSortedLeaderboardQueryParams,
+  LeaderboardPnlResponse,
+  TraderVolumeResponse,
+} from "@compolabs/spark-orderbook-ts-sdk";
 
 import { FiltersProps } from "@stores/DashboardStore.ts";
 
-import { filters } from "@screens/Dashboard/const";
+import { filters, pnlTimeline } from "@screens/Dashboard/const";
 
 import { CONFIG } from "@utils/getConfig";
 
@@ -37,8 +41,13 @@ class LeaderboardStore {
   page = 1;
   activeFilter = filters[0];
   leaderboard: TraderVolumeResponse[] = [];
+  leaderboardPnl: LeaderboardPnlResponse[] = [];
   searchWallet = "";
   orderPerPage: PaginationProps = PAGINATION_PER_PAGE[0];
+  sortLeaderboard = {
+    field: "volume",
+    side: "DESC",
+  };
 
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
@@ -49,7 +58,7 @@ class LeaderboardStore {
       () => [this.activeFilter, accountStore.address, this.searchWallet, this.orderPerPage],
       () => {
         this.page = 1;
-        this.fetchLeaderboard();
+        this.resolveFetch();
       },
     );
 
@@ -61,7 +70,53 @@ class LeaderboardStore {
     );
   }
 
-  private fetchLeaderboard = async () => {
+  private resolveFetch = () => {
+    if (this.sortLeaderboard.field === "volume") {
+      this.fetchSortedLeaderboard();
+    } else {
+      this.fetchSortedPnlLeaderboard();
+    }
+  };
+
+  private fetchLeaderboard = async (wallets: string[]) => {
+    return wallets;
+    // const bcNetwork = FuelNetwork.getInstance();
+    // const params = {
+    //   limit: this.orderPerPage.key,
+    //   page: this.page - 1,
+    //   search: this.searchWallet,
+    //   currentTimestamp: Math.floor(new Date().getTime() / 1000),
+    //   interval: this.activeFilter.value * 3600,
+    //   side: this.sortLeaderboard.side,
+    //   wallets: wallets,
+    // };
+    // const t = await bcNetwork.getLeaderboard(params);
+    // console.log("t", t);
+    // TODO: Сортировка по pnl
+  };
+
+  private fetchSortedPnlLeaderboard = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+    const params = {
+      limit: this.orderPerPage.key,
+      page: this.page - 1,
+      side: this.sortLeaderboard.side,
+      timeline: pnlTimeline[this.activeFilter.title as keyof typeof pnlTimeline],
+    };
+    const data = await bcNetwork.fetchSortedLeaderboardPnl(params);
+    const wallets = data?.result?.rows.map((el) => el.user);
+    this.fetchLeaderboard(wallets);
+    // this.leaderboardPnl = data?.result?.rows ?? [];
+  };
+
+  private fetchPnlLeaderboard = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+    const wallets = this.leaderboard.map((el) => el.walletId);
+    const data = await bcNetwork.fetchLeaderBoardPnl({ wallets });
+    this.leaderboardPnl = data?.result?.rows ?? [];
+  };
+
+  private fetchSortedLeaderboard = async () => {
     const bcNetwork = FuelNetwork.getInstance();
     const params = {
       limit: this.orderPerPage.key,
@@ -69,10 +124,11 @@ class LeaderboardStore {
       search: this.searchWallet,
       currentTimestamp: Math.floor(new Date().getTime() / 1000),
       interval: this.activeFilter.value * 3600,
+      side: this.sortLeaderboard.side,
     };
     bcNetwork.setSentioConfig(config);
 
-    const data = await bcNetwork.getLeaderboard(params);
+    const data = await bcNetwork.getSortedLeaderboard(params);
     const mainData = data?.result?.rows ?? [];
 
     let finalData = mainData;
@@ -84,15 +140,16 @@ class LeaderboardStore {
       }
     }
     this.leaderboard = finalData;
+    this.fetchPnlLeaderboard();
   };
 
-  private fetchMeLeaderboard = async (params: GetLeaderboardQueryParams) => {
+  private fetchMeLeaderboard = async (params: GetSortedLeaderboardQueryParams) => {
     const { accountStore } = this.rootStore;
     if (!accountStore.address) return [];
     const bcNetwork = FuelNetwork.getInstance();
     params.page = this.page - 1;
     params.search = accountStore.address;
-    const data = await bcNetwork.getLeaderboard(params);
+    const data = await bcNetwork.getSortedLeaderboard(params);
     let meData = data?.result?.rows[0] ?? null;
     const meDataMock: TraderVolumeResponse = {
       walletId: accountStore.address,
@@ -112,7 +169,7 @@ class LeaderboardStore {
 
   public setActivePage = (page: number) => {
     this.page = page;
-    this.fetchLeaderboard();
+    this.resolveFetch();
   };
 
   public setActiveFilter = (filter: FiltersProps) => {
@@ -123,11 +180,29 @@ class LeaderboardStore {
     this.orderPerPage = page;
   };
 
-  fetchLeaderboardDebounce = _.debounce(this.fetchLeaderboard, 250);
+  fetchLeaderboardDebounce = _.debounce(this.resolveFetch, 250);
 
   public setSearchWallet = (searchWallet: string) => {
     this.searchWallet = searchWallet;
     this.fetchLeaderboardDebounce();
+  };
+
+  private findSideSort = (side: string) => {
+    return side === "ASC" ? "DESC" : "ASC";
+  };
+  makeSort = (field: string) => {
+    const prop = {
+      field: this.sortLeaderboard.field,
+      side: "",
+    };
+    if (field === this.sortLeaderboard.field) {
+      prop.side = this.findSideSort(this.sortLeaderboard.side);
+    } else {
+      prop.field = field;
+      prop.side = "asc";
+    }
+    this.sortLeaderboard = prop;
+    this.resolveFetch();
   };
 
   get maxTotalCount() {
@@ -139,7 +214,7 @@ class LeaderboardStore {
   init = async () => {
     this.initialized = true;
     const date = new Date();
-    this.fetchLeaderboard();
+    this.resolveFetch();
     this.activeTime = this.calculateTime(date, 24);
   };
 
