@@ -61,7 +61,7 @@ export const LeaderboardTable = observer(() => {
       {media.desktop && (
         <HeaderTable>
           {header.map((el) => (
-            <HeaderItem key={el.name} flex={el?.flex} onClick={el?.onClick}>
+            <HeaderItem key={el.name} flex={el?.flex} isActive={!!el?.onClick}>
               {el.name} {generateFilterIcon(el.field)}
             </HeaderItem>
           ))}
@@ -127,10 +127,10 @@ const HeaderTable = styled(SmartFlex)`
   margin-top: 12px;
 `;
 
-const HeaderItem = styled(Text)<{ flex?: number; onClick?: () => void }>`
+const HeaderItem = styled(Text)<{ flex?: number; isActive?: boolean }>`
   ${({ flex }) => flex && `flex: ${flex};`}
-  ${({ onClick }) =>
-    onClick &&
+  ${({ isActive }) =>
+    isActive &&
     `
     &:hover {
        cursor: pointer;

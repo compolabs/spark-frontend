@@ -193,18 +193,13 @@ class LeaderboardStore {
   private findSideSort = (side: string) => {
     return side === "ASC" ? "DESC" : "ASC";
   };
+
   makeSort = (field: string) => {
-    const prop = {
-      field: this.sortLeaderboard.field,
-      side: "",
-    };
-    if (field === this.sortLeaderboard.field) {
-      prop.side = this.findSideSort(this.sortLeaderboard.side);
-    } else {
-      prop.field = field;
-      prop.side = "asc";
-    }
-    this.sortLeaderboard = prop;
+    this.sortLeaderboard =
+      field === this.sortLeaderboard.field
+        ? { field: this.sortLeaderboard.field, side: this.findSideSort(this.sortLeaderboard.side) }
+        : { field, side: "asc" };
+
     this.resolveFetch();
   };
 
