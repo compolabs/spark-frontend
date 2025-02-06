@@ -3,7 +3,7 @@ import { storesContext, useStores } from "@stores/useStores";
 import AccountStore from "./AccountStore";
 import DashboardStore from "./DashboardStore";
 import FaucetStore from "./FaucetStore";
-import LeaderboardStore from "./LeaderboardStore.ts";
+import LeaderboardStore from "./LeaderboardStore";
 import MixPanelStore from "./MixPanelStore";
 import NotificationStore from "./NotificationStore";
 // import SpotOrdersStore from "./SpotOrdersStore";

@@ -5,12 +5,12 @@ import { observer } from "mobx-react";
 import Button from "@components/Button";
 import { Column } from "@components/Flex";
 import SearchInput from "@components/SearchInput";
-import Select from "@components/Select.tsx";
+import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
-import { useMedia } from "@hooks/useMedia.ts";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { FiltersProps } from "@stores/DashboardStore";
 

@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
 
 import { useStores } from "@stores";
-import { MIXPANEL_EVENTS } from "@stores/MixPanelStore.ts";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { ROUTES } from "@constants";
 

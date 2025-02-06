@@ -7,7 +7,7 @@ import {
   TraderVolumeResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { FiltersProps } from "@stores/DashboardStore.ts";
+import { FiltersProps } from "@stores/DashboardStore";
 
 import { filters, pnlTimeline } from "@screens/Dashboard/const";
 
@@ -195,11 +195,12 @@ class LeaderboardStore {
   };
 
   makeSort = (field: string) => {
+    console.log("ckick");
     this.sortLeaderboard =
       field === this.sortLeaderboard.field
         ? { field: this.sortLeaderboard.field, side: this.findSideSort(this.sortLeaderboard.side) }
         : { field, side: "asc" };
-
+    console.log("this.sortLeaderboard", this.sortLeaderboard);
     this.resolveFetch();
   };
 
