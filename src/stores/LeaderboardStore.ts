@@ -1,12 +1,13 @@
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 
-import { GetLeaderboardQueryParams, TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, GetLeaderboardQueryParams, TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { FiltersProps } from "@stores/DashboardStore.ts";
 
 import { filters } from "@screens/Dashboard/const";
 
+import { DEFAULT_DECIMALS } from "@constants";
 import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
@@ -21,6 +22,11 @@ const config = {
 export interface PaginationProps {
   title: string;
   key: number;
+}
+
+interface UserPoints {
+  points: BN;
+  usd: BN;
 }
 
 export const PAGINATION_PER_PAGE: PaginationProps[] = [
@@ -40,6 +46,11 @@ class LeaderboardStore {
   searchWallet = "";
   orderPerPage: PaginationProps = PAGINATION_PER_PAGE[0];
 
+  userPoints: UserPoints = {
+    points: BN.ZERO,
+    usd: BN.ZERO,
+  };
+
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
@@ -50,6 +61,7 @@ class LeaderboardStore {
       () => {
         this.page = 1;
         this.fetchLeaderboard();
+        this.getUserPoints();
       },
     );
 
@@ -110,6 +122,34 @@ class LeaderboardStore {
     return [meData];
   };
 
+  public getUserPoints = async () => {
+    const { accountStore, oracleStore } = this.rootStore;
+
+    if (!accountStore.address) return BN.ZERO;
+
+    const bcNetwork = FuelNetwork.getInstance();
+
+    const fuelToken = CONFIG.TOKENS_BY_SYMBOL["FUEL"];
+    const fuelPrice = BN.formatUnits(oracleStore.getTokenIndexPrice(fuelToken.priceFeed), DEFAULT_DECIMALS);
+
+    try {
+      const response = await bcNetwork.fetchUserPoints({
+        userAddress: accountStore.address!,
+        fromTimestamp: 1736899200,
+        toTimestamp: 1739491200,
+      });
+
+      const points = new BN(response.result.rows[0].result);
+
+      this.userPoints = {
+        points,
+        usd: fuelPrice.multipliedBy(points),
+      };
+    } catch (error) {
+      console.error("Failed to get user points", error);
+    }
+  };
+
   public setActivePage = (page: number) => {
     this.page = page;
     this.fetchLeaderboard();
@@ -140,6 +180,7 @@ class LeaderboardStore {
     this.initialized = true;
     const date = new Date();
     this.fetchLeaderboard();
+    this.getUserPoints();
     this.activeTime = this.calculateTime(date, 24);
   };
 

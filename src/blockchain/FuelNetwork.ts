@@ -241,4 +241,8 @@ export class FuelNetwork {
   fetchLastTrade = async (...params: Parameters<typeof this.orderbookSdk.getLastTrades>) => {
     return await this.orderbookSdk.getLastTrades(...params);
   };
+
+  fetchUserPoints = async (...params: Parameters<typeof this.orderbookSdk.getUserPoints>) => {
+    return await this.orderbookSdk.getUserPoints(...params);
+  };
 }
