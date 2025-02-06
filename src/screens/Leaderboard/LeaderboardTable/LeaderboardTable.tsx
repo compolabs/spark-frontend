@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import Loader from "@components/Loader.tsx";
 import { Pagination } from "@components/Pagination/Pagination";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
@@ -66,6 +67,11 @@ export const LeaderboardTable = observer(() => {
           ))}
         </HeaderTable>
       )}
+      {leaderboardStore.isLoading && (
+        <LoaderContainer>
+          <Loader />
+        </LoaderContainer>
+      )}
       {data.length > 0 ? (
         data.map((el, key) =>
           media.mobile ? (
@@ -112,6 +118,7 @@ const LeaderboardTableContainer = styled(SmartFlex)`
   width: 100%;
   flex-direction: column;
   min-height: 110px;
+  position: relative;
 `;
 
 const HeaderTable = styled(SmartFlex)`
@@ -146,4 +153,11 @@ const SelectStyled = styled(Select)`
   background: #171717;
   border: none;
   font-size: 14px;
+`;
+
+const LoaderContainer = styled(SmartFlex)`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  backdrop-filter: blur(10px);
 `;

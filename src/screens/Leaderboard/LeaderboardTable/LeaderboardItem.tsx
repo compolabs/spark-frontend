@@ -81,8 +81,8 @@ export const LeaderboardItem = observer(({ item }: { item: TraderVolumeResponse 
           {shortAddress}
         </AddressText>
         <CopyIconStyled src={copyIcon} onClick={handleAddressCopy} />
+        {item.isYour && <SnackStyled>You</SnackStyled>}
       </SmartFlex>
-      {item.isYour && <SnackStyled>You</SnackStyled>}
       <SmartFlex style={{ flex: 0.44 }}>{generatePnl(item.walletId)}</SmartFlex>
       <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
         ${item.traderVolume.toFixed(2)}
@@ -134,7 +134,7 @@ export const LeaderboardItemMobile = observer(({ item }: { item: TraderVolumeRes
     <LeaderboardContainer>
       <SmartFlex style={{ marginRight: 12 }}>{generatePosition(item.id)}</SmartFlex>
       <SmartFlex center="y" gap="8px" style={{ flex: 1 }} column>
-        <SmartFlex>
+        <SmartFlex alignItems="center" gap="8px">
           <AddressText type={TEXT_TYPES.BODY} primary>
             {shortAddress}
           </AddressText>

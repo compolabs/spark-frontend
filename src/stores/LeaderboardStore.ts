@@ -48,6 +48,7 @@ class LeaderboardStore {
     field: "volume",
     side: "DESC",
   };
+  isLoading = false;
 
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
@@ -70,12 +71,14 @@ class LeaderboardStore {
     );
   }
 
-  private resolveFetch = () => {
+  private resolveFetch = async () => {
+    this.isLoading = true;
     if (this.sortLeaderboard.field === "volume") {
-      this.fetchSortedLeaderboard();
+      await this.fetchSortedLeaderboard();
     } else {
-      this.fetchSortedPnlLeaderboard();
+      await this.fetchSortedPnlLeaderboard();
     }
+    this.isLoading = false;
   };
 
   private fetchLeaderboard = async (wallets: string[]) => {
