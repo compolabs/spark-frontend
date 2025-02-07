@@ -91,12 +91,15 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const renderPrices = () => {
     const buyOrder = [...spotOrderBookStore.buyOrders].reverse()[0];
     const sellOrder = [...spotOrderBookStore.sellOrders].reverse()[0];
-    const price = BN.formatUnits(new BN(buyOrder?.price).plus(sellOrder?.price).div(2), DEFAULT_DECIMALS).toFixed(
-      tradeStore.market?.baseToken.precision ?? 2,
-    );
     const precision = tradeStore.market?.baseToken.precision ?? 2;
     const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
     const indexPrice = Number(indexPriceBn).toFixed(precision);
+
+    const midPriceBn = new BN(buyOrder?.price).plus(sellOrder?.price).div(2);
+    const price = BN.formatUnits(midPriceBn.isNaN() ? BN.ZERO : midPriceBn, DEFAULT_DECIMALS).toFixed(
+      tradeStore.market?.baseToken.precision ?? 2,
+    );
+
     return (
       <PricesContainer>
         <Tooltip
