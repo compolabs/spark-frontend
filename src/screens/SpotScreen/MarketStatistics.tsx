@@ -19,6 +19,7 @@ import { MarketInfoItem } from "@screens/SpotScreen/DesktopMarketInfoTooltip/Des
 
 import { DEFAULT_DECIMALS, PYTH_LINK } from "@constants";
 import BN from "@utils/BN";
+import { isStableSymbol } from "@utils/isStableSymbol";
 import { toCurrency } from "@utils/toCurrency";
 
 const MarketStatistics: React.FC = observer(() => {
@@ -27,13 +28,19 @@ const MarketStatistics: React.FC = observer(() => {
   const media = useMedia();
 
   const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
-  const volumeInDollars = tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn);
 
   const { baseToken, quoteToken } = tradeStore.market ?? {};
-  const precision = baseToken?.precision ?? 2;
+  const isStable = isStableSymbol(quoteToken?.symbol ?? "");
+
+  const precision = isStable ? 2 : (baseToken?.precision ?? 2);
+
+  const volume = isStable
+    ? tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn)
+    : tradeStore.spotMarketInfo.volume;
+
   const oraclePrice = tradeStore.market?.priceUnits.toFormat(precision);
   const indexPrice = toCurrency(indexPriceBn.toNumber().toFixed(precision), quoteToken?.symbol);
-  const volume24h = toCurrency(volumeInDollars.toNumber().toFixed(precision), quoteToken?.symbol);
+  const volume24h = toCurrency(volume.toNumber().toFixed(precision), quoteToken?.symbol);
   const high24h = toCurrency(tradeStore.spotMarketInfo.high.toNumber().toFixed(precision), quoteToken?.symbol);
   const low24h = toCurrency(tradeStore.spotMarketInfo.low.toNumber().toFixed(precision), quoteToken?.symbol);
 

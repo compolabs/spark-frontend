@@ -1,7 +1,7 @@
-const DOLLAR_SYMBOLS = new Set(["USDC", "USDT"]);
+import { isStableSymbol } from "./isStableSymbol";
 
 export const toCurrency = (value: string, currency?: string) => {
-  if (!currency || DOLLAR_SYMBOLS.has(currency)) return `$${value}`;
+  if (!currency || isStableSymbol(currency)) return `$${value}`;
 
   return `${value} ${currency}`;
 };
