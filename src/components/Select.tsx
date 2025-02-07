@@ -12,7 +12,8 @@ import Tooltip from "./Tooltip";
 
 interface IOption<T = string> {
   key: T;
-  title: string;
+  title: string | JSX.Element;
+  value?: string | number;
   disabled?: boolean;
 }
 

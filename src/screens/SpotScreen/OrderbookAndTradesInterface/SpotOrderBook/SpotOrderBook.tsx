@@ -2,7 +2,6 @@ import React, { HTMLAttributes, useMemo } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
-import numeral from "numeral";
 
 import { CompressedNumber } from "@components/CompressedNumber";
 import { Column, Row } from "@components/Flex";
@@ -10,6 +9,7 @@ import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
 
 import sellAndBuyIcon from "@assets/icons/buyAndSellOrderBookIcon.svg";
@@ -20,6 +20,7 @@ import useFlag from "@hooks/useFlag";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
+import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { hexToRgba } from "@utils/hexToRgb";
 
@@ -67,38 +68,81 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     if (media.mobile) {
       return <SettingIcon alt="filter" src={sellAndBuyIcon} onClick={openSettings} />;
     }
-
-    return Object.entries(SPOT_SETTINGS_ICONS).map(([_, value], index) => (
-      <SettingIcon
-        key={index}
-        alt="filter"
-        selected={spotOrderBookStore.orderFilter === index}
-        src={value}
-        onClick={() => spotOrderBookStore.setOrderFilter(index)}
+    return (
+      <StyledSelect
+        options={Object.entries(SPOT_SETTINGS_ICONS).map(([_, value], index) => ({
+          title: (
+            <SettingIcon
+              key={index}
+              alt="filter"
+              selected={spotOrderBookStore.orderFilter === index}
+              src={value}
+              onClick={() => spotOrderBookStore.setOrderFilter(index)}
+            />
+          ),
+          key: index.toString(),
+        }))}
+        selected={String(spotOrderBookStore.orderFilter ?? 0)}
+        onSelect={(val) => spotOrderBookStore.setOrderFilter(Number(val.key))}
       />
-    ));
+    );
+  };
+
+  const renderPrices = () => {
+    const buyOrder = [...spotOrderBookStore.buyOrders].reverse()[0];
+    const sellOrder = [...spotOrderBookStore.sellOrders].reverse()[0];
+    const price = BN.formatUnits(new BN(buyOrder?.price).plus(sellOrder?.price).div(2), DEFAULT_DECIMALS).toFixed(
+      tradeStore.market?.baseToken.precision ?? 2,
+    );
+    const precision = tradeStore.market?.baseToken.precision ?? 2;
+    const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
+    const indexPrice = Number(indexPriceBn).toFixed(precision);
+    return (
+      <PricesContainer>
+        <Tooltip
+          config={{
+            placement: "bottom-start",
+            trigger: "hover",
+          }}
+          content={
+            <SmartFlex gap="20px" padding="8px" column>
+              <Text>The latest Fill Price for the market</Text>
+            </SmartFlex>
+          }
+        >
+          <Text type={TEXT_TYPES.BODY} primary>
+            {indexPrice}
+          </Text>
+        </Tooltip>
+        <Tooltip
+          config={{
+            placement: "bottom-start",
+            trigger: "hover",
+          }}
+          content={
+            <SmartFlex gap="20px" padding="8px" column>
+              <Text>Mid Price</Text>
+            </SmartFlex>
+          }
+        >
+          <Text type={TEXT_TYPES.BODY} secondary>
+            {price}
+          </Text>
+        </Tooltip>
+      </PricesContainer>
+    );
   };
 
   const renderSpread = () => {
-    let price = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPrice : "-";
-    price = price === "-" ? price : numeral(price).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`);
     const percent = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPercent : "-";
     if (media.mobile) {
-      return (
-        <SpreadContainer>
-          <Text type={TEXT_TYPES.H} primary>
-            {price}
-          </Text>
-          <Text>{`(${percent}%)`}</Text>
-        </SpreadContainer>
-      );
+      return <></>;
     }
 
     return (
       <SpreadContainer>
-        <Text type={TEXT_TYPES.SUPPORTING}>SPREAD</Text>
-        <Text primary>{price}</Text>
-        <Text>{`(${percent}%) `}</Text>
+        <Text type={TEXT_TYPES.SUPPORTING}>Spread</Text>
+        <Text color={theme.colors.greenLight}>{`${percent}% `}</Text>
       </SpreadContainer>
     );
   };
@@ -160,6 +204,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
             onSelect={({ key }) => handleDecimalSelect(key)}
           />
           {renderSettingsIcons()}
+          {renderSpread()}
         </SettingsContainer>
         <OrderbookContainer>
           <OrderBookHeader>
@@ -185,7 +230,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
                 <SmartFlexOrder flexDirection="column-reverse">
                   {renderOrders(spotOrderBookStore.sellOrders, "sell")}
                 </SmartFlexOrder>
-                {renderSpread()}
+                {renderPrices()}
                 <SmartFlexOrder>{renderOrders(spotOrderBookStore.buyOrders, "buy")}</SmartFlexOrder>
               </OrderBookColumn>
             )}
@@ -284,7 +329,7 @@ const SettingsContainer = styled(Row)`
   align-items: center;
   width: 100%;
   padding: 0 12px;
-  gap: 8px;
+  gap: 0px;
 
   ${media.mobile} {
     order: 3;
@@ -309,8 +354,18 @@ const TextRightAlign = styled(Text)`
 `;
 
 const StyledSelect = styled(Select<string>)`
-  min-width: 84px;
+  min-width: 74px;
   height: 40px;
+`;
+
+const PricesContainer = styled(SmartFlex)`
+  height: 28px;
+  width: 100%;
+  background: ${({ theme }) => theme.colors.accentPrimary};
+  margin: 2px 0px;
+  padding: 0px 12px;
+  align-items: center;
+  gap: 8px;
 `;
 
 const OrderBookHeader = styled.div`
@@ -394,12 +449,12 @@ const Container = styled(OrderbookContainer)<{
 `;
 
 const SpreadContainer = styled(SmartFlex)`
-  padding-left: 12px;
-  height: 24px;
-  background: ${({ theme }) => theme.colors.bgPrimary};
-  align-items: center;
-  gap: 12px;
-  width: 100%;
+  flex-direction: column;
+  height: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  width: auto;
 `;
 
 const ProgressBar = styled.span<{ type: "buy" | "sell"; fulfillPercent?: number }>`

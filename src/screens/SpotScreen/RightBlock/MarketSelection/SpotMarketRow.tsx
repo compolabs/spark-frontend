@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
 
 import outlineStarIcon from "@assets/icons/star.svg";
 import filledStarIcon from "@assets/icons/yellowStar.svg";
@@ -22,7 +23,7 @@ interface IProps {
 }
 
 const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
-  const { tradeStore, mixPanelStore, accountStore } = useStores();
+  const { tradeStore, mixPanelStore, accountStore, spotOrderBookStore } = useStores();
   const navigate = useNavigate();
 
   const isFavorite = tradeStore.favMarkets.includes(market.symbol);
@@ -54,11 +55,11 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
         <Icon alt="Add to Favorite" src={isFavorite ? filledStarIcon : outlineStarIcon} onClick={handleFavoriteClick} />
         <MarketTitle market={market} />
       </SmartFlex>
-      {/* <SmartFlex alignSelf="flex-end" justifyContent="flex-end" width="100%">
-        <Text color="primary" type={TEXT_TYPES.H} nowrap>
-          $ {market.priceUnits.toFormat(market?.baseToken.precision)}
+      <SmartFlexSize alignSelf="flex-end" justifyContent="flex-end">
+        <Text color="primary" type={TEXT_TYPES.BODY} nowrap>
+          ${spotOrderBookStore.marketPriceByContractId(market.contractAddress)}
         </Text>
-      </SmartFlex> */}
+      </SmartFlexSize>
     </Root>
   );
 });
@@ -84,4 +85,8 @@ const Icon = styled.img`
   height: 16px;
   width: 16px;
   border-radius: 50%;
+`;
+
+const SmartFlexSize = styled(SmartFlex)`
+  flex: 1;
 `;
