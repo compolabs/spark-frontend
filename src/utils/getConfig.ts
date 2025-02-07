@@ -20,10 +20,8 @@ export interface Market {
 }
 
 function createConfig() {
-  // eslint-disable-next-line no-constant-condition
-  const CURRENT_CONFIG_VER = false ? "1.7.0" : "1.7.5";
-  // eslint-disable-next-line no-constant-condition
-  const configJSON = false ? configDevJSON : configProdJSON;
+  const CURRENT_CONFIG_VER = import.meta.env.DEV ? "1.7.0" : "1.7.5";
+  const configJSON = import.meta.env.DEV ? configDevJSON : configProdJSON;
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
   console.warn("V12 CONFIG", configJSON);
