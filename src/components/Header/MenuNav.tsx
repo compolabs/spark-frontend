@@ -10,6 +10,7 @@ import { Nullable } from "tsdef";
 import { breakpoints, breakpointsHeight, media } from "@themes/breakpoints";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
+import CupIcon from "@assets/icons/cup.svg?react";
 import DocsIcon from "@assets/icons/docs.svg?react";
 import GithubIcon from "@assets/social/github.svg?react";
 import XIcon from "@assets/social/x.svg?react";
@@ -42,6 +43,7 @@ type MenuItem = {
   dataOnboardingKey?: string;
   children?: MenuChildItem[];
   trackEvent?: MIXPANEL_EVENTS;
+  icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | null;
 };
 
 const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
@@ -73,6 +75,11 @@ const MENU_ITEMS: Array<MenuItem> = [
         {
           title: "LEADERBOARD",
           link: ROUTES.LEADERBOARD,
+        },
+        {
+          title: "COMPETITIONS",
+          link: ROUTES.COMPETITIONS,
+          icon: CupIcon,
         },
         {
           title: "BRIDGE",
@@ -206,7 +213,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     );
   };
 
-  const renderMenuItem = ({ title, accent, link, dataOnboardingKey, children, trackEvent }: MenuItem) => {
+  const renderMenuItem = ({ title, accent, link, dataOnboardingKey, children, trackEvent, icon: Icon }: MenuItem) => {
     const dataOnboardingDeviceKey = `${dataOnboardingKey}-${isMobile ? "mobile" : "desktop"}`;
     const isActive = Boolean(link && location.pathname.includes(link));
 
@@ -276,6 +283,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     return (
       <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleItemClick}>
         <Element isAccent={accent} isActive={isActive}>
+          <IconContainer>{Icon && <Icon height={24} width={24} />}</IconContainer>
           {titleComponent}
         </Element>
       </NavLink>

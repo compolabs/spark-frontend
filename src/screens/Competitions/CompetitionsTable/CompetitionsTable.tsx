@@ -2,21 +2,22 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Loader from "@components/Loader";
-import { Pagination } from "@components/Pagination/Pagination";
-import Select from "@components/Select";
-import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import { Column } from "@components/Flex.tsx";
+import Loader from "@components/Loader.tsx";
+import { Pagination } from "@components/Pagination/Pagination.tsx";
+import Select from "@components/Select.tsx";
+import { SmartFlex } from "@components/SmartFlex.tsx";
+import Text, { TEXT_TYPES } from "@components/Text.tsx";
 
 import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
 
-import { useMedia } from "@hooks/useMedia";
+import { useMedia } from "@hooks/useMedia.ts";
 import { useStores } from "@stores";
-import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore";
+import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore.ts";
 
 import { CompetitionsItem, LeaderboardItemMobile } from "@screens/Competitions/CompetitionsTable/CompetitionsItem.tsx";
 
-export const LeaderboardTable = observer(() => {
+export const CompetitionsTable = observer(() => {
   const { leaderboardStore } = useStores();
   const media = useMedia();
 
@@ -56,52 +57,60 @@ export const LeaderboardTable = observer(() => {
     }
     return <></>;
   };
+
   return (
-    <LeaderboardTableContainer>
-      {media.desktop && (
-        <HeaderTable>
-          {header.map((el) => (
-            <HeaderItem key={el.name} flex={el?.flex} isActive={!!el?.onClick} onClick={el?.onClick}>
-              {el.name} {generateFilterIcon(el.field)}
-            </HeaderItem>
-          ))}
-        </HeaderTable>
-      )}
-      {leaderboardStore.isLoading && (
-        <LoaderContainer>
-          <Loader />
-        </LoaderContainer>
-      )}
-      {data.length > 0 ? (
-        data.map((el, key) =>
-          media.mobile ? (
-            <LeaderboardItemMobile key={`${el.id}-${key}`} item={el} />
-          ) : (
-            <CompetitionsItem key={`${el.id}-${key}`} item={el} />
-          ),
-        )
-      ) : (
-        <NoData type={TEXT_TYPES.TEXT}>No Data</NoData>
-      )}
-      {maxTotalCount > 0 && (
-        <FooterTable>
-          <Pagination
-            currentPage={leaderboardStore.page}
-            lengthData={maxTotalCount}
-            limit={leaderboardStore.orderPerPage.key}
-            onChange={leaderboardStore.setActivePage}
-          />
-          <SmartFlex alignItems="center">
-            <Text type={TEXT_TYPES.BUTTON}>SHOW:</Text>
-            <SelectStyled
-              options={PAGINATION_PER_PAGE}
-              selected={leaderboardStore.orderPerPage.key}
-              onSelect={onSelectOrderPerPage}
+    <>
+      <CompetitionsTableHeader>
+        <TitleText type={TEXT_TYPES.H} primary>
+          COMPETITION LEADERBOARD
+        </TitleText>
+      </CompetitionsTableHeader>
+      <LeaderboardTableContainer>
+        {media.desktop && (
+          <HeaderTable>
+            {header.map((el) => (
+              <HeaderItem key={el.name} flex={el?.flex} isActive={!!el?.onClick} onClick={el?.onClick}>
+                {el.name} {generateFilterIcon(el.field)}
+              </HeaderItem>
+            ))}
+          </HeaderTable>
+        )}
+        {leaderboardStore.isLoading && (
+          <LoaderContainer>
+            <Loader />
+          </LoaderContainer>
+        )}
+        {data.length > 0 ? (
+          data.map((el, key) =>
+            media.mobile ? (
+              <LeaderboardItemMobile key={`${el.id}-${key}`} item={el} />
+            ) : (
+              <CompetitionsItem key={`${el.id}-${key}`} item={el} />
+            ),
+          )
+        ) : (
+          <NoData type={TEXT_TYPES.TEXT}>No Data</NoData>
+        )}
+        {maxTotalCount > 0 && (
+          <FooterTable>
+            <Pagination
+              currentPage={leaderboardStore.page}
+              lengthData={maxTotalCount}
+              limit={leaderboardStore.orderPerPage.key}
+              onChange={leaderboardStore.setActivePage}
             />
-          </SmartFlex>
-        </FooterTable>
-      )}
-    </LeaderboardTableContainer>
+            <SmartFlex alignItems="center">
+              <Text type={TEXT_TYPES.BUTTON}>SHOW:</Text>
+              <SelectStyled
+                options={PAGINATION_PER_PAGE}
+                selected={leaderboardStore.orderPerPage.key}
+                onSelect={onSelectOrderPerPage}
+              />
+            </SmartFlex>
+          </FooterTable>
+        )}
+      </LeaderboardTableContainer>
+    </>
   );
 });
 
@@ -109,8 +118,8 @@ const FooterTable = styled(SmartFlex)`
   justify-content: space-between;
   align-items: center;
 `;
+
 const LeaderboardTableContainer = styled(SmartFlex)`
-  margin-top: 12px;
   background: #171717;
   padding: 0px 8px;
   border: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
@@ -160,4 +169,17 @@ const LoaderContainer = styled(SmartFlex)`
   height: 100%;
   width: 100%;
   backdrop-filter: blur(10px);
+`;
+
+const CompetitionsTableHeader = styled(Column)`
+  width: 100%;
+  gap: 10px;
+  padding: 32px 0px 16px 0px;
+  margin: 0px auto;
+  justify-content: space-between;
+`;
+
+const TitleText = styled(Text)`
+  display: flex;
+  align-items: center;
 `;

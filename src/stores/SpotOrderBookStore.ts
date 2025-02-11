@@ -285,8 +285,6 @@ class SpotOrderBookStore {
   }
 
   marketPriceByContractId(contractAddress: string): string {
-    console.log("1", this.marketPrices);
-    console.log("contractAddress", contractAddress);
     return this.marketPrices[contractAddress];
   }
 

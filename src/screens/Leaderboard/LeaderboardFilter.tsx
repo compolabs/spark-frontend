@@ -2,19 +2,19 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Button from "@components/Button";
-import { Column } from "@components/Flex";
-import SearchInput from "@components/SearchInput";
-import Select from "@components/Select";
-import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
-import { media } from "@themes/breakpoints";
+import Button from "@components/Button.tsx";
+import { Column } from "@components/Flex.tsx";
+import SearchInput from "@components/SearchInput.tsx";
+import Select from "@components/Select.tsx";
+import { SmartFlex } from "@components/SmartFlex.tsx";
+import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import { media } from "@themes/breakpoints.ts";
 
-import { useMedia } from "@hooks/useMedia";
+import { useMedia } from "@hooks/useMedia.ts";
 import { useStores } from "@stores";
-import { FiltersProps } from "@stores/DashboardStore";
+import { FiltersProps } from "@stores/DashboardStore.ts";
 
-import { filters } from "./const";
+import { filters } from "../Competitions/const.ts";
 
 export const LeaderboardFilter = observer(() => {
   const [active, setActive] = useState(0);

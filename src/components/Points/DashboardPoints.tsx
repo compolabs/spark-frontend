@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
+import { CountdownTimer } from "@components/CountdownTimer.tsx";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import Tooltip from "@components/Tooltip";
@@ -95,51 +96,6 @@ export const DashboardPoints: React.FC = observer(() => {
   );
 });
 
-interface CountdownTimerProps {
-  targetTime: number;
-}
-
-const getTimeLeft = (diffInMilliseconds: number): string => {
-  const minutes = Math.floor((diffInMilliseconds / 1000 / 60) % 60);
-  const hours = Math.floor((diffInMilliseconds / 1000 / 60 / 60) % 24);
-  const days = Math.floor(diffInMilliseconds / 1000 / 60 / 60 / 24);
-
-  return `${days}d ${hours}h ${minutes}m`;
-};
-
-const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetTime }) => {
-  const [remainingTime, setRemainingTime] = useState("");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const diffInMilliseconds = targetTime - Date.now();
-
-      setRemainingTime(getTimeLeft(diffInMilliseconds));
-
-      if (diffInMilliseconds <= 0) {
-        clearInterval(interval);
-        setRemainingTime("Completed");
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [targetTime]);
-
-  if (!remainingTime.length) {
-    return (
-      <TimerText type={TEXT_TYPES.H} primary>
-        -
-      </TimerText>
-    );
-  }
-
-  return (
-    <TimerText type={TEXT_TYPES.H} primary>
-      {remainingTime}
-    </TimerText>
-  );
-};
-
 const PointsContainer = styled(SmartFlex)`
   border: 1px solid ${({ theme }) => theme.colors.greenStrong};
   background-color: ${({ theme }) => theme.colors.greenWeek};
@@ -166,10 +122,6 @@ const InfoIconStyled = styled(InfoIcon)`
   & > path {
     fill: ${({ theme }) => theme.colors.textDisabled};
   }
-`;
-
-const TimerText = styled(Text)`
-  text-align: right;
 `;
 
 const Divider = styled(SmartFlex)`
