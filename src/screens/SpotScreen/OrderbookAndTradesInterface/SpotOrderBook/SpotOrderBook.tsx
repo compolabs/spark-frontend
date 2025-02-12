@@ -38,9 +38,7 @@ export enum SPOT_ORDER_FILTER {
 }
 
 const generateDecimalOptions = (decimals: number) => {
-  return Array.from({ length: decimals })
-    .map((_, index) => index)
-    .filter((_, index) => index % 2 === 0);
+  return Array.from({ length: decimals }).map((_, index) => index);
 };
 
 const SPOT_SETTINGS_ICONS = {
@@ -164,8 +162,8 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         ? ord.initialAmount.div(spotOrderBookStore.totalSell)
         : ord.initialQuoteAmount.div(spotOrderBookStore.totalBuy);
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
-    const newOrder = [...orders];
-    newOrder.reverse();
+    const newOrder = [...orders].reverse();
+
     return (
       <>
         {newOrder.map((o, index) => (
@@ -175,7 +173,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
               <CompressedNumber precision={spotOrderBookStore.decimalGroup} value={o.priceUnits} />
             </TextOverflow>
             <TextRightAlign primary>
-              <CompressedNumber precision={spotOrderBookStore.decimalGroup} value={o.currentAmountUnits} compact />
+              <CompressedNumber precision={4} value={o.currentAmountUnits} compact />
             </TextRightAlign>
             <TextRightAlign primary>
               <CompressedNumber precision={spotOrderBookStore.decimalGroup} value={o.currentQuoteAmountUnits} compact />

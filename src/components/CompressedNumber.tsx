@@ -35,7 +35,9 @@ export const CompressedNumber: React.FC<CompressedNumberProps> = ({ value, preci
 
   const [integerPart, fractionalPart = ""] = strValue.split(".");
 
-  if (integerPart === "0" && fractionalPart[0] === "0") {
+  const isIntegerZero = integerPart === "0";
+
+  if (isIntegerZero && fractionalPart[0] === "0") {
     const withoutLastDigits = fractionalPart.substring(0, fractionalPart.length - 2);
     const match = withoutLastDigits.match(/^0+/);
     const leadingZeros = match ? match[0].length : 0;
@@ -72,7 +74,7 @@ export const CompressedNumber: React.FC<CompressedNumberProps> = ({ value, preci
     }
   }
 
-  if (compact) {
+  if (compact && !isIntegerZero) {
     const absValue = new BN(strValue).abs();
     let formatted = absValue.toFixed(2, BN.ROUND_UP);
 
@@ -85,9 +87,9 @@ export const CompressedNumber: React.FC<CompressedNumberProps> = ({ value, preci
     return <span>{formatted}</span>;
   }
 
-  if (integerPart === "0" && (!fractionalPart || fractionalPart.length <= precision)) {
-    const value = new BN(strValue);
-    return <span>{value.toFixed(precision, BN.ROUND_UP)}</span>;
+  if (isIntegerZero) {
+    const valueBN = new BN(strValue);
+    return <span>{valueBN.toFixed(precision, BN.ROUND_UP)}</span>;
   }
 
   const value2 = new BN(strValue);

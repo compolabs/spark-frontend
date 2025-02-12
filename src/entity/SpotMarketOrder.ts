@@ -53,6 +53,8 @@ export class SpotMarketOrder {
 
     this.price = new BN(order.price);
 
+    console.log(order.price);
+
     this.market = order.market;
 
     this.initialAmount = new BN(order.initialAmount);
