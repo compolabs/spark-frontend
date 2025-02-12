@@ -25,7 +25,7 @@ const StatsAllTime = observer(() => {
       <StatsItem>
         <Text type={TEXT_TYPES.H}>All Time Trades</Text>
         <Text type={TEXT_TYPES.H} primary>
-          {toCurrency(new BN(stats?.total_trades).toSignificant(0))}
+          {new BN(stats?.total_trades).toSignificant(0)}
         </Text>
       </StatsItem>
     </AllTimeStatsContent>
