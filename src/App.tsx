@@ -18,6 +18,7 @@ import ConnectWalletDialog from "@screens/ConnectWallet";
 import Dashboard from "@screens/Dashboard";
 import Faucet from "@screens/Faucet";
 import SpotScreen from "@screens/SpotScreen";
+import Stats from "@screens/Stats/Stats";
 import { SwapScreen } from "@screens/SwapScreen";
 
 import { ROUTES } from "@constants";
@@ -49,6 +50,7 @@ const App: React.FC = observer(() => {
                 <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
                 <Route element={<Dashboard />} path={ROUTES.DASHBOARD} />
                 <Route element={<Leaderboard />} path={ROUTES.LEADERBOARD} />
+                <Route element={<Stats />} path={ROUTES.STATS} />
               </Routes>
               <SideManageAssets />
               {/*<PWAModal />*/}
