@@ -337,6 +337,7 @@ const CreateOrder: React.FC = observer(() => {
             {settingsStore.orderType === ORDER_TYPE.Limit && (
               <TokenInput
                 amount={vm.inputPrice}
+                assetId={quoteToken.assetId}
                 decimals={DEFAULT_DECIMALS}
                 disabled={isInputPriceDisabled}
                 displayDecimals={priceDisplayDecimals}
