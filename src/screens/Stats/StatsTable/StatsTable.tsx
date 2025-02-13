@@ -11,7 +11,7 @@ import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
-import { StatsItem } from "@screens/Stats/StatsTable/StatsItem";
+import { StatsItem, StatsItemMobile } from "@screens/Stats/StatsTable/StatsItem";
 
 export const StatsTable = observer(() => {
   const { leaderboardStore } = useStores();
@@ -74,7 +74,7 @@ export const StatsTable = observer(() => {
       {data.length > 0 ? (
         data.map((el, key) =>
           media.mobile ? (
-            <StatsItem key={`${el.market}-${key}`} item={el} />
+            <StatsItemMobile key={`${el.market}-${key}`} item={el} />
           ) : (
             <StatsItem key={`${el.market}-${key}`} item={el} />
           ),

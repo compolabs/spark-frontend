@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 
 import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import { media } from "@themes/breakpoints";
 
 interface CountdownTimerProps {
   targetTime: number;
@@ -50,4 +51,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetTime }) =>
 
 const TimerText = styled(Text)`
   text-align: right;
+  ${media.mobile} {
+    text-align: left;
+  }
 `;

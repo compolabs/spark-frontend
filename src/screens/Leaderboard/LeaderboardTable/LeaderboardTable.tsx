@@ -14,7 +14,7 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore";
 
-import { CompetitionsItem, LeaderboardItemMobile } from "@screens/Competitions/CompetitionsTable/CompetitionsItem.tsx";
+import { LeaderboardItem, LeaderboardItemMobile } from "@screens/Leaderboard/LeaderboardTable/LeaderboardItem";
 
 export const LeaderboardTable = observer(() => {
   const { leaderboardStore } = useStores();
@@ -77,7 +77,7 @@ export const LeaderboardTable = observer(() => {
           media.mobile ? (
             <LeaderboardItemMobile key={`${el.id}-${key}`} item={el} />
           ) : (
-            <CompetitionsItem key={`${el.id}-${key}`} item={el} />
+            <LeaderboardItem key={`${el.id}-${key}`} item={el} />
           ),
         )
       ) : (

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex.tsx";
 import { SmartFlex } from "@components/SmartFlex.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import Text from "@components/Text.tsx";
 import { media } from "@themes/breakpoints";
 
 import setting from "./setting.json";
@@ -39,21 +39,21 @@ export const HowToParticipate = observer(() => {
   return (
     <HowToParticipateContainer>
       <HowToParticipateHeader>
-        <TitleText type={TEXT_TYPES.H} primary>
-          HOW TO PARTICIPATE
-        </TitleText>
+        <TitleText primary>How to participate</TitleText>
       </HowToParticipateHeader>
       <StepsContainer>
-        {steps.map((el, index) => (
+        {steps.map((el) => (
           <SmartFlex key={el.title} gap="8px">
-            <PositionBox>{index + 1}</PositionBox>
             <StepsContent>
               <Text primary>{el.title}</Text>
-              {el.description}
             </StepsContent>
           </SmartFlex>
         ))}
       </StepsContainer>
+      <Text>
+        Prizes will be distributed directly to the winners&#39; wallets connected to their participating V12 account
+        shortly after the competition ends
+      </Text>
     </HowToParticipateContainer>
   );
 });
@@ -71,18 +71,18 @@ const HowToParticipateContainer = styled(SmartFlex)`
 const HowToParticipateHeader = styled(Column)`
   width: 100%;
   gap: 10px;
-  padding: 32px 0px 16px 0px;
+  padding: 0px 0px 16px 0px;
   margin: 0px auto;
   justify-content: space-between;
 `;
 
 const StepsContainer = styled(SmartFlex)`
   gap: 24px;
-  padding: 24px;
-  border: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
   width: 100%;
+  padding-bottom: 16px;
 
   ${media.mobile} {
+    gap: 8px;
     flex-direction: column;
   }
 `;
@@ -91,14 +91,9 @@ const StepsContent = styled(SmartFlex)`
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
-`;
-
-const PositionBox = styled(SmartFlex)`
-  width: 40px;
-  height: 40px;
   background: ${({ theme }) => theme.colors.accentPrimary};
-  border: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
+  padding: 16px 24px;
+  ${media.mobile} {
+    width: 100%;
+  }
 `;

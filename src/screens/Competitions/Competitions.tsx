@@ -6,19 +6,17 @@ import { Column } from "@components/Flex.tsx";
 
 import { CompetitionsInfo } from "@screens/Competitions/CompetitionsInfo.tsx";
 import { CompetitionsTable } from "@screens/Competitions/CompetitionsTable/CompetitionsTable.tsx";
-import { HowToParticipate } from "@screens/Competitions/HowToParticipate.tsx";
 import StatusBar from "@screens/SpotScreen/StatusBar";
 
 const Competitions = observer(() => {
   return (
-    <LeaderboardContainer>
+    <CompetitionsContainer>
       <CompetitionsContent>
         <CompetitionsInfo />
-        <HowToParticipate />
         <CompetitionsTable />
       </CompetitionsContent>
       <StatusBar />
-    </LeaderboardContainer>
+    </CompetitionsContainer>
   );
 });
 
@@ -28,7 +26,7 @@ const CompetitionsContent = styled(Column)`
   width: 100%;
 `;
 
-const LeaderboardContainer = styled(Column)`
+const CompetitionsContainer = styled(Column)`
   width: 90%;
   gap: 10px;
   height: 100%;

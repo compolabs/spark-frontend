@@ -11,16 +11,15 @@ import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { CountdownTimer } from "@components/CountdownTimer.tsx";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
-import Tooltip from "@components/Tooltip";
+import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import ArrowRightIcon from "@assets/icons/arrowRight.svg?react";
-import InfoIcon from "@assets/icons/info.svg?react";
 
 import { useStores } from "@stores";
 
-import { POINTS_LINK } from "@constants";
+import { HowToParticipate } from "@screens/Competitions/HowToParticipate.tsx";
+
 import TOKEN_LOGOS from "@constants/tokenLogos";
 import { CONFIG } from "@utils/getConfig.ts";
 
@@ -63,22 +62,13 @@ export const CompetitionsInfo = observer(() => {
         <LiveBox />
       </CompetitionsInfoHeader>
       <CompetitionsContainer>
-        <SmartFlex center="y" justifyContent="space-between" width="100%">
+        <CompetitionsTitle>
           <SmartFlex gap="8px" column>
-            <Tooltip
-              content={
-                <SmartFlex gap="4px" padding="8px" width="300px" column>
-                  <Text type={TEXT_TYPES.BODY} primary></Text>
-                </SmartFlex>
-              }
-            >
-              <SmartFlex center="y" gap="4px">
-                <Text type={TEXT_TYPES.BODY} primary>
-                  Prize Pool
-                </Text>
-                <InfoIconStyled />
-              </SmartFlex>
-            </Tooltip>
+            <SmartFlex center="y" gap="4px">
+              <Text type={TEXT_TYPES.BODY} secondary>
+                Prize Pool
+              </Text>
+            </SmartFlex>
             <SmartFlex gap="8px">
               <Text type={TEXT_TYPES.H} primary>
                 ${prizeToUsdc}
@@ -95,33 +85,16 @@ export const CompetitionsInfo = observer(() => {
             </SmartFlex>
           </SmartFlex>
           <SmartFlex gap="8px" column>
-            <Tooltip
-              content={
-                <SmartFlex gap="4px" padding="8px" width="300px" column>
-                  <Text type={TEXT_TYPES.BODY} primary></Text>
-                </SmartFlex>
-              }
-            >
-              <SmartFlex center="y" gap="4px">
-                <Text type={TEXT_TYPES.BODY} primary>
-                  Competition ends in
-                </Text>
-                <InfoIconStyled />
-              </SmartFlex>
-            </Tooltip>
+            <SmartFlex center="y" gap="4px">
+              <Text type={TEXT_TYPES.BODY} secondary>
+                Competition ends in
+              </Text>
+            </SmartFlex>
             <CountdownTimer targetTime={new Date(setting.endDate).getTime()} />
           </SmartFlex>
-        </SmartFlex>
+        </CompetitionsTitle>
         <Divider />
-        <InfoContainer>
-          <Text type={TEXT_TYPES.BODY} primary>
-            Prizes will be distributed directly to the winners&#39; wallets connected to their participating V12 account
-            shortly after the competition ends
-          </Text>
-          <ExternalLink href={POINTS_LINK} rel="noreferrer noopener" target="_blank">
-            Learn More →
-          </ExternalLink>
-        </InfoContainer>
+        <HowToParticipate />
       </CompetitionsContainer>
     </CompetitionsInfoContainer>
   );
@@ -133,11 +106,11 @@ const CompetitionsInfoContainer = styled(SmartFlex)`
   justify-content: space-between;
   flex-direction: column;
 `;
+
 const CompetitionsContainer = styled(SmartFlex)`
   border: 1px solid ${({ theme }) => theme.colors.accentPrimary};
-
   border-radius: 8px;
-
+  background: #171717;
   flex-direction: column;
   gap: 16px;
 
@@ -151,36 +124,20 @@ const CompetitionsContainer = styled(SmartFlex)`
   }
 `;
 
-const InfoIconStyled = styled(InfoIcon)`
-  width: 12px;
-  height: 12px;
-
-  & > path {
-    fill: ${({ theme }) => theme.colors.textDisabled};
-  }
-`;
-
 const Divider = styled(SmartFlex)`
   height: 1px;
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.greenMedium};
+  background-color: ${({ theme }) => theme.colors.strokeSecondary};
 `;
 
-const InfoContainer = styled(SmartFlex)`
+const CompetitionsTitle = styled(SmartFlex)`
+  width: 100%;
   justify-content: space-between;
-
   ${media.mobile} {
     flex-direction: column;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 20px;
   }
-`;
-
-const ExternalLink = styled.a`
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
-
-  color: ${({ theme }) => theme.colors.greenStrong};
-
-  cursor: pointer;
 `;
 
 const TitleText = styled(Text)`
@@ -206,6 +163,7 @@ const LiveLight = styled(SmartFlex)<{ isLive: boolean }>`
   gap: 4px;
   height: 32px;
   margin-left: 16px;
+  border-radius: 4px;
 `;
 
 const LiveCircle = styled(SmartFlex)<{ isLive: boolean }>`

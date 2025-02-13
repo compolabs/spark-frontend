@@ -2,12 +2,12 @@ import { Account, B256Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import SparkOrderBookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
-
 import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 
 import { Token } from "@entity";
+
+import SparkOrderBookSdk, { OrderType, WriteTransactionResponse } from "../../../spark-orderbook-ts-sdk";
 
 import { Balances, SpotMarketVolume } from "./types";
 import { WalletManager } from "./WalletManager";
@@ -264,5 +264,9 @@ export class FuelNetwork {
 
   fetchTotalStatsTableData = async (...params: Parameters<typeof this.orderbookSdk.getTotalStatsTableData>) => {
     return await this.orderbookSdk.getTotalStatsTableData(...params);
+  };
+
+  getCompetition = async (...params: Parameters<typeof this.orderbookSdk.getCompetition>) => {
+    return await this.orderbookSdk.getCompetition(...params);
   };
 }

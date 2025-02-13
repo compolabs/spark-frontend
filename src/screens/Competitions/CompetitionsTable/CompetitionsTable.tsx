@@ -2,9 +2,9 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { Column } from "@components/Flex.tsx";
 import Loader from "@components/Loader.tsx";
 import { Pagination } from "@components/Pagination/Pagination.tsx";
+import SearchInput from "@components/SearchInput.tsx";
 import Select from "@components/Select.tsx";
 import { SmartFlex } from "@components/SmartFlex.tsx";
 import Text, { TEXT_TYPES } from "@components/Text.tsx";
@@ -15,7 +15,7 @@ import { useMedia } from "@hooks/useMedia.ts";
 import { useStores } from "@stores";
 import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore.ts";
 
-import { CompetitionsItem, LeaderboardItemMobile } from "@screens/Competitions/CompetitionsTable/CompetitionsItem.tsx";
+import { CompetitionsItem, CompetitionsItemMobile } from "@screens/Competitions/CompetitionsTable/CompetitionsItem.tsx";
 
 export const CompetitionsTable = observer(() => {
   const { leaderboardStore } = useStores();
@@ -33,26 +33,25 @@ export const CompetitionsTable = observer(() => {
     },
     {
       field: "pnl",
-      name: `Pnl (${leaderboardStore.activeFilter.title})`,
+      name: `Pnl`,
       flex: 0.4,
-      // onClick: () => leaderboardStore.makeSort("pnl"),
+      onClick: () => leaderboardStore.makeCompetitions("pnl"),
     },
     {
       field: "volume",
-      name: `Volume (${leaderboardStore.activeFilter.title})`,
-      onClick: () => leaderboardStore.makeSort("volume"),
+      name: `Volume`,
     },
   ];
 
-  const data = leaderboardStore.leaderboard;
+  const data = leaderboardStore.competitionData;
   const maxTotalCount = leaderboardStore.maxTotalCount;
   const onSelectOrderPerPage = (page: any) => {
     leaderboardStore.setOrderPerPage(page);
   };
 
   const generateFilterIcon = (field: string) => {
-    if (field === leaderboardStore.sortLeaderboard.field) {
-      if (leaderboardStore.sortLeaderboard.side === "DESC") return <ArrowFilterIcon />;
+    if (field === leaderboardStore.sortCompetitions.field) {
+      if (leaderboardStore.sortCompetitions.side === "DESC") return <ArrowFilterIcon />;
       return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
     }
     return <></>;
@@ -62,8 +61,13 @@ export const CompetitionsTable = observer(() => {
     <>
       <CompetitionsTableHeader>
         <TitleText type={TEXT_TYPES.H} primary>
-          COMPETITION LEADERBOARD
+          Competition Leaderboard
         </TitleText>
+        <SearchInput
+          placeholder="Wallet Address"
+          value={leaderboardStore.searchWallet}
+          onChange={leaderboardStore.setSearchWallet}
+        />
       </CompetitionsTableHeader>
       <LeaderboardTableContainer>
         {media.desktop && (
@@ -83,9 +87,9 @@ export const CompetitionsTable = observer(() => {
         {data.length > 0 ? (
           data.map((el, key) =>
             media.mobile ? (
-              <LeaderboardItemMobile key={`${el.id}-${key}`} item={el} />
+              <CompetitionsItemMobile key={`${el.user}-${key}`} item={el} />
             ) : (
-              <CompetitionsItem key={`${el.id}-${key}`} item={el} />
+              <CompetitionsItem key={`${el.user}-${key}`} item={el} />
             ),
           )
         ) : (
@@ -171,7 +175,7 @@ const LoaderContainer = styled(SmartFlex)`
   backdrop-filter: blur(10px);
 `;
 
-const CompetitionsTableHeader = styled(Column)`
+const CompetitionsTableHeader = styled(SmartFlex)`
   width: 100%;
   gap: 10px;
   padding: 32px 0px 16px 0px;

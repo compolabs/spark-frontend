@@ -10,7 +10,6 @@ import { Nullable } from "tsdef";
 import { breakpoints, breakpointsHeight, media } from "@themes/breakpoints";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
-import CupIcon from "@assets/icons/cup.svg?react";
 import DocsIcon from "@assets/icons/docs.svg?react";
 import GithubIcon from "@assets/social/github.svg?react";
 import XIcon from "@assets/social/x.svg?react";
@@ -77,9 +76,9 @@ const MENU_ITEMS: Array<MenuItem> = [
           link: ROUTES.LEADERBOARD,
         },
         {
-          title: "COMPETITIONS",
+          title: "🏆 COMPETITIONS",
           link: ROUTES.COMPETITIONS,
-          icon: CupIcon,
+          // icon: CupIcon,
         },
         {
           title: "STATS",
