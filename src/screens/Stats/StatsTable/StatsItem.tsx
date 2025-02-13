@@ -52,7 +52,7 @@ export const StatsItem = observer(({ item }: { item: GetTotalStatsTableData }) =
     const spotMarket = new SpotMarket(activeMarket.baseAssetId, activeMarket.quoteAssetId, activeMarket.contractId);
     return <MarketSymbol market={spotMarket} />;
   };
-  const priceChangePercent = (Number(item.last_price) / Number(item.price_24h_ago) - 1).toString();
+  const priceChangePercent = ((Number(item.last_price) / Number(item.price_24h_ago) - 1) * 100).toString();
 
   return (
     <LeaderboardContainer gap="12px">
