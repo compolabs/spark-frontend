@@ -257,4 +257,12 @@ export class FuelNetwork {
   fetchSortedLeaderboardPnl = async (...params: Parameters<typeof this.orderbookSdk.getSortedLeaderboardPnl>) => {
     return await this.orderbookSdk.getSortedLeaderboardPnl(...params);
   };
+
+  fetchTotalState = async () => {
+    return await this.orderbookSdk.getTotalStats();
+  };
+
+  fetchTotalStatsTableData = async (...params: Parameters<typeof this.orderbookSdk.getTotalStatsTableData>) => {
+    return await this.orderbookSdk.getTotalStatsTableData(...params);
+  };
 }

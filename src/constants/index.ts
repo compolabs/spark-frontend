@@ -17,6 +17,7 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   LEADERBOARD: "/leaderboard",
   COMPETITIONS: "/competitions",
+  STATS: "/stats",
 };
 
 export const BRIDGE_LINK = "https://app.fuel.network/bridge";

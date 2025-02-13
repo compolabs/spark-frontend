@@ -82,6 +82,10 @@ const MENU_ITEMS: Array<MenuItem> = [
           icon: CupIcon,
         },
         {
+          title: "STATS",
+          link: ROUTES.STATS,
+        },
+        {
           title: "BRIDGE",
           trackEvent: MIXPANEL_EVENTS.CLICK_MORE_FUEL,
           children: [
