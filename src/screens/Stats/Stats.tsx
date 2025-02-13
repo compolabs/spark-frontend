@@ -2,11 +2,11 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { Column } from "@components/Flex.tsx";
+import { Column } from "@components/Flex";
 
 import StatusBar from "@screens/SpotScreen/StatusBar";
-import StatsAllTime from "@screens/Stats/StatsAllTime.tsx";
-import { StatsTable } from "@screens/Stats/StatsTable/StatsTable.tsx";
+import StatsAllTime from "@screens/Stats/StatsAllTime";
+import { StatsTable } from "@screens/Stats/StatsTable/StatsTable";
 
 const Stats = observer(() => {
   return (

@@ -14,7 +14,7 @@ import copyIcon from "@assets/icons/copy.svg";
 
 import { LeaderboardStore, useStores } from "@stores";
 
-import { MarketSymbol } from "@screens/Stats/StatsTable/MarketSymbol.tsx";
+import { MarketSymbol } from "@screens/Stats/StatsTable/MarketSymbol";
 
 import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig.ts";

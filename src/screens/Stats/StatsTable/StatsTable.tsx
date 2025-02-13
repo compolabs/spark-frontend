@@ -11,7 +11,7 @@ import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
-import { StatsItem } from "@screens/Stats/StatsTable/StatsItem.tsx";
+import { StatsItem } from "@screens/Stats/StatsTable/StatsItem";
 
 export const StatsTable = observer(() => {
   const { leaderboardStore } = useStores();
