@@ -14,10 +14,10 @@
   },
   "engines": {
     "node": ">=20.11.0",
-    "pnpm": ">=9.7.0"
+    "pnpm": ">=10.3.0"
   },
   "dependencies": {
-    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.17.tgz",
+    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.20.tgz",
     "@compolabs/tradingview-chart": "^1.0.21",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -107,5 +107,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.3.0+sha512.ee592eda8815a8a293c206bb0917c4bb0ff274c50def7cbc17be05ec641fc2d1b02490ce660061356bd0d126a4d7eb2ec8830e6959fb8a447571c631d5a2442d"
 }
