@@ -33,6 +33,8 @@ export const CompressedNumber: React.FC<CompressedNumberProps> = ({ value, preci
     return typeof value === "number" ? value.toString() : value;
   }, [value]);
 
+  const valueBN = new BN(strValue);
+
   const [integerPart, fractionalPart = ""] = strValue.split(".");
 
   const isIntegerZero = integerPart === "0";
@@ -44,18 +46,7 @@ export const CompressedNumber: React.FC<CompressedNumberProps> = ({ value, preci
 
     if (leadingZeros >= 4) {
       return (
-        <Tooltip
-          config={{
-            placement: "right-start",
-            trigger: "hover",
-          }}
-          containerStyles={{ width: "fit-content" }}
-          content={
-            <SmartFlex padding="4px">
-              <Text type={TEXT_TYPES.SUPPORTING_NUMBERS}>{strValue}</Text>
-            </SmartFlex>
-          }
-        >
+        <TinyTooltip tooltipValue={valueBN.toFormat()}>
           <span>
             {integerPart}.0
             <span
@@ -69,13 +60,13 @@ export const CompressedNumber: React.FC<CompressedNumberProps> = ({ value, preci
             </span>
             {fractionalPart.substring(leadingZeros, leadingZeros + 2)}
           </span>
-        </Tooltip>
+        </TinyTooltip>
       );
     }
   }
 
   if (compact && !isIntegerZero) {
-    const absValue = new BN(strValue).abs();
+    const absValue = valueBN.abs();
     let formatted = absValue.toFixed(2, BN.ROUND_UP);
 
     for (const unit of defaultUnits) {
@@ -84,14 +75,48 @@ export const CompressedNumber: React.FC<CompressedNumberProps> = ({ value, preci
         break;
       }
     }
-    return <span>{formatted}</span>;
+    return (
+      <TinyTooltip tooltipValue={valueBN.toFormat()}>
+        <span>{formatted}</span>
+      </TinyTooltip>
+    );
   }
 
   if (isIntegerZero) {
-    const valueBN = new BN(strValue);
-    return <span>{valueBN.toFixed(precision, BN.ROUND_UP)}</span>;
+    return (
+      <TinyTooltip tooltipValue={valueBN.toFormat()}>
+        <span>{valueBN.toFixed(precision, BN.ROUND_UP)}</span>
+      </TinyTooltip>
+    );
   }
 
-  const value2 = new BN(strValue);
-  return <span>{value2.toFixed(2, BN.ROUND_UP)}</span>;
+  return (
+    <TinyTooltip tooltipValue={valueBN.toFormat()}>
+      <span>{valueBN.toFixed(2, BN.ROUND_UP)}</span>
+    </TinyTooltip>
+  );
+};
+
+interface TinyTooltipProps {
+  tooltipValue: string;
+  children: React.ReactNode;
+}
+
+const TinyTooltip: React.FC<TinyTooltipProps> = ({ tooltipValue, children }) => {
+  return (
+    <Tooltip
+      config={{
+        placement: "right-start",
+        trigger: "hover",
+      }}
+      containerStyles={{ width: "fit-content" }}
+      content={
+        <SmartFlex padding="4px">
+          <Text type={TEXT_TYPES.SUPPORTING_NUMBERS}>{tooltipValue}</Text>
+        </SmartFlex>
+      }
+    >
+      {children}
+    </Tooltip>
+  );
 };
