@@ -3,6 +3,7 @@ import { makeAutoObservable, reaction } from "mobx";
 
 import {
   GetSortedLeaderboardQueryParams,
+  GetTotalStatsTableData,
   LeaderboardPnlResponse,
   TraderVolumeResponse,
 } from "@compolabs/spark-orderbook-ts-sdk";
@@ -55,6 +56,10 @@ class LeaderboardStore {
     field: "volume",
     side: "DESC",
   };
+  sortStats = {
+    field: "volume",
+    side: "DESC",
+  };
   isLoading = false;
 
   userPoints: UserPoints = {
@@ -62,6 +67,11 @@ class LeaderboardStore {
     usd: BN.ZERO,
   };
 
+  allTimeStats = {
+    total_volume: "",
+    total_trades: "",
+  };
+  totalStatsTableData: GetTotalStatsTableData[] = [];
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
@@ -91,6 +101,20 @@ class LeaderboardStore {
     } else {
       await this.fetchSortedPnlLeaderboard();
     }
+    this.isLoading = false;
+  };
+
+  private fetchTotalState = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+    const data = await bcNetwork.fetchTotalState();
+    this.allTimeStats = data.result.rows[0];
+  };
+
+  private fetchTotalStatsTableData = async () => {
+    this.isLoading = true;
+    const bcNetwork = FuelNetwork.getInstance();
+    const data = await bcNetwork.fetchTotalStatsTableData({ side: this.sortStats.side });
+    this.totalStatsTableData = data.result.rows;
     this.isLoading = false;
   };
 
@@ -243,6 +267,14 @@ class LeaderboardStore {
     this.resolveFetch();
   };
 
+  makeSortStat = (field: string) => {
+    this.sortStats =
+      field === this.sortStats.field
+        ? { field: this.sortStats.field, side: this.findSideSort(this.sortStats.side) }
+        : { field, side: "asc" };
+    this.fetchTotalStatsTableData();
+  };
+
   get maxTotalCount() {
     return this.leaderboard.reduce((max, item) => {
       return item?.totalCount > max ? item.totalCount : max;
@@ -254,6 +286,8 @@ class LeaderboardStore {
     const date = new Date();
     this.getUserPoints();
     this.resolveFetch();
+    this.fetchTotalState();
+    this.fetchTotalStatsTableData();
     this.activeTime = this.calculateTime(date, 24);
   };
 

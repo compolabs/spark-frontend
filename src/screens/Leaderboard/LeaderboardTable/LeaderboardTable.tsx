@@ -112,7 +112,7 @@ const FooterTable = styled(SmartFlex)`
 const LeaderboardTableContainer = styled(SmartFlex)`
   margin-top: 12px;
   background: #171717;
-  padding: 0px 8px;
+  padding: 0 8px;
   border: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
   border-radius: 8px;
   width: 100%;

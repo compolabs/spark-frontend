@@ -75,6 +75,10 @@ const MENU_ITEMS: Array<MenuItem> = [
           link: ROUTES.LEADERBOARD,
         },
         {
+          title: "STATS",
+          link: ROUTES.STATS,
+        },
+        {
           title: "BRIDGE",
           trackEvent: MIXPANEL_EVENTS.CLICK_MORE_FUEL,
           children: [
