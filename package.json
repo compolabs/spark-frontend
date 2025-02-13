@@ -14,10 +14,10 @@
   },
   "engines": {
     "node": ">=20.11.0",
-    "pnpm": ">=9.7.0"
+    "pnpm": ">=10.3.0"
   },
   "dependencies": {
-    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.19.tgz",
+    "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.20.tgz",
     "@compolabs/tradingview-chart": "^1.0.21",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -32,8 +32,6 @@
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@unleash/proxy-client-react": "^4.4.0",
-    "@wagmi/connectors": "5.0.26",
-    "@wagmi/core": "2.12.2",
     "bignumber.js": "^9.1.2",
     "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.10",
@@ -47,7 +45,6 @@
     "mobx-react": "^9.1.0",
     "mobx-react-lite": "^4.0.7",
     "normalize.css": "^8.0.1",
-    "numeral": "^2.0.6",
     "prettier": "^3.2.1",
     "rc-dialog": "^9.3.4",
     "rc-slider": "^10.5.0",
@@ -107,5 +104,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.3.0+sha512.ee592eda8815a8a293c206bb0917c4bb0ff274c50def7cbc17be05ec641fc2d1b02490ce660061356bd0d126a4d7eb2ec8830e6959fb8a447571c631d5a2442d"
 }

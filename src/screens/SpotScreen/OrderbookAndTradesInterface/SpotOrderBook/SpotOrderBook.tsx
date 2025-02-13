@@ -1,9 +1,9 @@
-import React, { HTMLAttributes } from "react";
+import React, { HTMLAttributes, useMemo } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
-import numeral from "numeral";
 
+import { CompressedNumber } from "@components/CompressedNumber";
 import { Column, Row } from "@components/Flex";
 import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
@@ -37,7 +37,9 @@ export enum SPOT_ORDER_FILTER {
   BUY = 2,
 }
 
-const SPOT_DECIMAL_OPTIONS = [0, 1, 2, 3];
+const generateDecimalOptions = (decimals: number) => {
+  return Array.from({ length: decimals }).map((_, index) => index);
+};
 
 const SPOT_SETTINGS_ICONS = {
   [SPOT_ORDER_FILTER.SELL_AND_BUY]: sellAndBuyIcon,
@@ -57,6 +59,8 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
 
   const isOrderBookEmpty =
     spotOrderBookStore.allBuyOrders.length === 0 && spotOrderBookStore.allSellOrders.length === 0;
+
+  const decimalOptions = useMemo(() => generateDecimalOptions(market?.baseToken.precision ?? 4), []);
 
   const renderSettingsIcons = () => {
     if (media.mobile) {
@@ -85,12 +89,15 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const renderPrices = () => {
     const buyOrder = [...spotOrderBookStore.buyOrders].reverse()[0];
     const sellOrder = [...spotOrderBookStore.sellOrders].reverse()[0];
-    const price = BN.formatUnits(new BN(buyOrder?.price).plus(sellOrder?.price).div(2), DEFAULT_DECIMALS).toFixed(
-      tradeStore.market?.baseToken.precision ?? 2,
-    );
     const precision = tradeStore.market?.baseToken.precision ?? 2;
     const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
     const indexPrice = Number(indexPriceBn).toFixed(precision);
+
+    const midPriceBn = new BN(buyOrder?.price).plus(sellOrder?.price).div(2);
+    const price = BN.formatUnits(midPriceBn.isNaN() ? BN.ZERO : midPriceBn, DEFAULT_DECIMALS).toFixed(
+      tradeStore.market?.baseToken.precision ?? 2,
+    );
+
     return (
       <PricesContainer>
         <Tooltip
@@ -141,10 +148,10 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
     );
   };
 
-  const indexOfDecimal = SPOT_DECIMAL_OPTIONS.indexOf(spotOrderBookStore.decimalGroup);
+  const indexOfDecimal = decimalOptions.indexOf(spotOrderBookStore.decimalGroup);
 
   const handleDecimalSelect = (index: string) => {
-    const value = SPOT_DECIMAL_OPTIONS[Number(index)];
+    const value = decimalOptions[Number(index)];
     spotOrderBookStore.setDecimalGroup(value);
   };
 
@@ -155,17 +162,21 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         ? ord.initialAmount.div(spotOrderBookStore.totalSell)
         : ord.initialQuoteAmount.div(spotOrderBookStore.totalBuy);
     const color = type === "sell" ? theme.colors.redLight : theme.colors.greenLight;
-    const newOrder = [...orders];
-    newOrder.reverse();
+    const newOrder = [...orders].reverse();
+
     return (
       <>
         {newOrder.map((o, index) => (
           <OrderRow key={index + "order"} type={type} onClick={() => orderSpotVm.selectOrderbookOrder(o, orderMode)}>
             <VolumeBar type={type} volumePercent={volumePercent(o).times(100).toNumber()} />
-            <TextOverflow color={color}>{o.priceUnits.toFormat(spotOrderBookStore.decimalGroup)}</TextOverflow>
-            <TextRightAlign primary>{numeral(o.currentAmountUnits).format(`0.${"0".repeat(4)}a`)}</TextRightAlign>
+            <TextOverflow color={color}>
+              <CompressedNumber precision={spotOrderBookStore.decimalGroup} value={o.priceUnits} />
+            </TextOverflow>
             <TextRightAlign primary>
-              {numeral(o.currentQuoteAmountUnits).format(`0.${"0".repeat(spotOrderBookStore.decimalGroup)}a`)}
+              <CompressedNumber precision={4} value={o.currentAmountUnits} compact />
+            </TextRightAlign>
+            <TextRightAlign primary>
+              <CompressedNumber precision={spotOrderBookStore.decimalGroup} value={o.currentQuoteAmountUnits} compact />
             </TextRightAlign>
           </OrderRow>
         ))}
@@ -186,7 +197,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       <Root>
         <SettingsContainer>
           <StyledSelect
-            options={SPOT_DECIMAL_OPTIONS.map((v, index) => ({
+            options={decimalOptions.map((v, index) => ({
               title: new BN(10).pow(-v).toString(),
               key: index.toString(),
             }))}
@@ -227,7 +238,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
           </Container>
 
           <SpotOrderSettingsSheet
-            decimals={SPOT_DECIMAL_OPTIONS}
+            decimals={decimalOptions}
             filterIcons={Object.entries(SPOT_SETTINGS_ICONS).map(([_, value]) => value)}
             isOpen={isSettingsOpen}
             selectedDecimal={String(indexOfDecimal)}
