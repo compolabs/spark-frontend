@@ -14,7 +14,7 @@
   },
   "engines": {
     "node": ">=20.11.0",
-    "pnpm": ">=9.7.0"
+    "pnpm": ">=10.3.0"
   },
   "dependencies": {
     "@compolabs/spark-orderbook-ts-sdk": "https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.20.tgz",
