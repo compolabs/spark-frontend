@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@compolabs/spark-orderbook-ts-sdk':
-        specifier: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.18.tgz
-        version: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.18.tgz(@types/react@18.3.13)(fuels@0.97.2(vitest@2.0.5(@types/node@20.17.9)(terser@5.36.0)))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.20.tgz
+        version: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.20.tgz(@types/react@18.3.13)(fuels@0.97.2(vitest@2.0.5(@types/node@20.17.9)(terser@5.36.0)))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@compolabs/tradingview-chart':
         specifier: ^1.0.21
         version: 1.0.21
@@ -991,9 +991,9 @@ packages:
   '@coinbase/wallet-sdk@4.0.4':
     resolution: {integrity: sha512-74c040CRnGhfRjr3ArnkAgud86erIqdkPHNt5HR1k9u97uTIZCJww9eGYT67Qf7gHPpGS/xW8Be1D4dvRm63FA==}
 
-  '@compolabs/spark-orderbook-ts-sdk@https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.18.tgz':
-    resolution: {tarball: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.18.tgz}
-    version: 1.14.18
+  '@compolabs/spark-orderbook-ts-sdk@https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.20.tgz':
+    resolution: {tarball: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.20.tgz}
+    version: 1.14.20
     engines: {node: '>=18'}
     peerDependencies:
       fuels: '>=0.97.1'
@@ -5160,6 +5160,7 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -8235,7 +8236,7 @@ snapshots:
       preact: 10.25.1
       sha.js: 2.4.11
 
-  '@compolabs/spark-orderbook-ts-sdk@https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.18.tgz(@types/react@18.3.13)(fuels@0.97.2(vitest@2.0.5(@types/node@20.17.9)(terser@5.36.0)))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@compolabs/spark-orderbook-ts-sdk@https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.14.20.tgz(@types/react@18.3.13)(fuels@0.97.2(vitest@2.0.5(@types/node@20.17.9)(terser@5.36.0)))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@apollo/client': 3.12.11(@types/react@18.3.13)(graphql-ws@5.16.2(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios: 1.7.9
@@ -10846,7 +10847,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       tslib: 1.14.1
-      uint8arrays: 3.1.0
+      uint8arrays: 3.1.1
 
   '@walletconnect/safe-json@1.0.0': {}
 
@@ -11234,7 +11235,7 @@ snapshots:
 
   '@walletconnect/window-metadata@1.0.0':
     dependencies:
-      '@walletconnect/window-getters': 1.0.0
+      '@walletconnect/window-getters': 1.0.1
 
   '@walletconnect/window-metadata@1.0.1':
     dependencies:
