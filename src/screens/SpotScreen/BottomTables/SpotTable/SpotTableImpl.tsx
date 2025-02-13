@@ -67,7 +67,7 @@ const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: The
   }),
   orderColumnHelper.accessor("formatPrice", {
     header: "Price",
-    cell: (props) => toCurrency(props.getValue()),
+    cell: (props) => toCurrency(props.getValue(), props.row.original.quoteToken.symbol),
   }),
   orderColumnHelper.accessor("id", {
     header: "",
@@ -115,7 +115,7 @@ const HISTORY_COLUMNS = (theme: Theme) => [
   }),
   tradeColumnHelper.accessor("formatPrice", {
     header: "Price",
-    cell: (props) => toCurrency(props.getValue()),
+    cell: (props) => toCurrency(props.getValue(), props.row.original.quoteToken.symbol),
   }),
 ];
 
@@ -182,7 +182,7 @@ const SpotTableImpl: React.FC = observer(() => {
           </CancelButton>
           <SmartFlex alignItems="flex-end" gap="2px" column>
             <Text type={TEXT_TYPES.SUPPORTING}>Price:</Text>
-            <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice)}</Text>
+            <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice, ord.quoteToken.symbol)}</Text>
           </SmartFlex>
         </MobileTableRowColumn>
       </MobileTableOrderRow>
@@ -227,7 +227,7 @@ const SpotTableImpl: React.FC = observer(() => {
         <MobileTableRowColumn>
           <SmartFlex alignItems="flex-end" gap="2px" column>
             <Text type={TEXT_TYPES.SUPPORTING}>Price:</Text>
-            <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice)}</Text>
+            <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice, ord.quoteToken.symbol)}</Text>
           </SmartFlex>
         </MobileTableRowColumn>
       </MobileTableOrderRow>

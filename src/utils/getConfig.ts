@@ -5,7 +5,6 @@ import TOKEN_LOGOS from "@constants/tokenLogos";
 import { Token } from "@entity";
 
 import configProdJSON from "@src/config.json";
-import configDevJSON from "@src/config-dev.json";
 
 export interface Market {
   marketName: string;
@@ -20,8 +19,8 @@ export interface Market {
 }
 
 function createConfig() {
-  const CURRENT_CONFIG_VER = import.meta.env.DEV ? "1.7.0" : "1.7.5";
-  const configJSON = import.meta.env.DEV ? configDevJSON : configProdJSON;
+  const CURRENT_CONFIG_VER = "1.7.5";
+  const configJSON = configProdJSON;
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
   console.warn("V12 CONFIG", configJSON);

@@ -337,6 +337,7 @@ const CreateOrder: React.FC = observer(() => {
             {settingsStore.orderType === ORDER_TYPE.Limit && (
               <TokenInput
                 amount={vm.inputPrice}
+                assetId={quoteToken.assetId}
                 decimals={DEFAULT_DECIMALS}
                 disabled={isInputPriceDisabled}
                 displayDecimals={priceDisplayDecimals}
@@ -428,7 +429,6 @@ const CreateOrder: React.FC = observer(() => {
         <ConnectWalletButton connectText="Connect wallet to trade" targetKey="create_order_connect_btn">
           {renderButton()}
         </ConnectWalletButton>
-
         <OrderTypeSheet isOpen={isOrderTooltipOpen} onClose={closeOrderTooltip} />
       </Root>
     </CreateOrderSkeletonWrapper>
@@ -436,6 +436,12 @@ const CreateOrder: React.FC = observer(() => {
 });
 
 export default CreateOrder;
+
+// const WarningContainer = styled(SmartFlex)`
+//   padding: 8px;
+//   background-color: ${({ theme }) => `${theme.colors.favorite}10`};
+//   border-radius: 8px;
+// `;
 
 const Root = styled(SmartFlex)`
   padding: 12px;
