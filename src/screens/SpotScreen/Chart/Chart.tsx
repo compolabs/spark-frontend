@@ -18,7 +18,7 @@ const TABS = [
   { title: "ADVANCED CHART", disabled: false },
 ];
 
-const DISABLED_SIMPLE_CHARTS = new Set(["PSYCHO-USDC", "USDF-USDC"]);
+const DISABLED_SIMPLE_CHARTS = new Set(["PSYCHO-USDC", "USDF-USDC", "USDT-ETH", "FUEL-ETH"]);
 
 const Chart: React.FC = observer(() => {
   const { tradeStore } = useStores();
@@ -34,6 +34,12 @@ const Chart: React.FC = observer(() => {
     setActiveChart(isSymbolDisabled ? 1 : 0);
   }, [isSymbolDisabled]);
 
+  const handleTabClick = (index: number, isTabDisabled: boolean) => {
+    if (isSymbolDisabled || isTabDisabled) return;
+
+    setActiveChart(index);
+  };
+
   return (
     <Root>
       <HeaderTradingView>
@@ -44,7 +50,7 @@ const Chart: React.FC = observer(() => {
               active={activeChart === index}
               disabled={disabled}
               type={TEXT_TYPES.BUTTON_SECONDARY}
-              onClick={() => !disabled && setActiveChart(index)}
+              onClick={() => handleTabClick(index, disabled)}
             >
               {title}
             </Tab>
