@@ -11,9 +11,6 @@ import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import copyIcon from "@assets/icons/copy.svg";
-import oneSt from "@assets/images/1st.png";
-import twoSt from "@assets/images/2st.png";
-import three from "@assets/images/3st.png";
 
 import { LeaderboardStore, useStores } from "@stores";
 
@@ -24,19 +21,6 @@ import { CONFIG } from "@utils/getConfig.ts";
 import { toCurrency } from "@utils/toCurrency.ts";
 
 import { SpotMarket } from "@entity";
-
-const generatePosition = (key: TraderVolumeResponse["id"]) => {
-  if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;
-  if (key === 2) return <img alt="2st" height={40} src={twoSt} width={40} />;
-  if (key === 3) return <img alt="3st" height={40} src={three} width={40} />;
-  return (
-    <PositionBox>
-      <Text type={TEXT_TYPES.H} primary>
-        {key}
-      </Text>
-    </PositionBox>
-  );
-};
 
 const generatePnl = (value: string, leaderboardStore: LeaderboardStore, theme: Theme) => {
   const bnPnl = new BN(value).decimalPlaces(2, BN.ROUND_UP);
@@ -53,7 +37,7 @@ const generatePnl = (value: string, leaderboardStore: LeaderboardStore, theme: T
 
   return (
     <TextStyled color={color} primary={bnPnl.eq(BN.ZERO)} type={TEXT_TYPES.BODY}>
-      {`${sign}$${displayValue}`}
+      {`${sign}${displayValue}%`}
     </TextStyled>
   );
 };
@@ -68,6 +52,10 @@ export const StatsItem = observer(({ item }: { item: GetTotalStatsTableData }) =
     const spotMarket = new SpotMarket(activeMarket.baseAssetId, activeMarket.quoteAssetId, activeMarket.contractId);
     return <MarketSymbol market={spotMarket} />;
   };
+  const priceChangePercent = (
+    ((Number(item.last_price) - Number(item.price_24h_ago)) / Number(item.price_24h_ago)) *
+    100
+  ).toString();
 
   return (
     <LeaderboardContainer gap="12px">
@@ -76,7 +64,7 @@ export const StatsItem = observer(({ item }: { item: GetTotalStatsTableData }) =
         {toCurrency(new BN(item.last_price).toSignificant(2))}
       </Text>
       <Text type={TEXT_TYPES.BUTTON} primary>
-        {generatePnl(item.price_change_24h, leaderboardStore, theme)}
+        {generatePnl(priceChangePercent, leaderboardStore, theme)}
       </Text>
       <Text type={TEXT_TYPES.BUTTON} primary>
         {toCurrency(new BN(item.total_volume_24h).toSignificant(2))}
@@ -84,22 +72,11 @@ export const StatsItem = observer(({ item }: { item: GetTotalStatsTableData }) =
       <Text type={TEXT_TYPES.BUTTON} primary>
         {toCurrency(new BN(item.total_volume_7d).toSignificant(2))}
       </Text>
-      {/*<SmartFlex center="y" gap="8px" style={{ flex: 1 }}>*/}
-      {/*  <AddressText type={TEXT_TYPES.BODY} primary>*/}
-      {/*    33*/}
-      {/*  </AddressText>*/}
-      {/*  <CopyIconStyled src={copyIcon} onClick={() => {}} />*/}
-      {/*  /!*{item.isYour && <SnackStyled>You</SnackStyled>}*!/*/}
-      {/*</SmartFlex>*/}
-      {/*<SmartFlex style={{ flex: 0.42 }}>333</SmartFlex>*/}
-      {/*<TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>*/}
-      {/*  /!*${item.traderVolume.toFixed(2)}*!/*/}
-      {/*</TextStyled>*/}
     </LeaderboardContainer>
   );
 });
 
-export const LeaderboardItemMobile = observer(({ item }: { item: TraderVolumeResponse }) => {
+export const StatsItemMobile = observer(({ item }: { item: TraderVolumeResponse }) => {
   const { notificationStore } = useStores();
   const shortAddress = useMemo(() => {
     return `${item.walletId.slice(0, 6)}...${item.walletId.slice(-4)}`;
@@ -112,7 +89,7 @@ export const LeaderboardItemMobile = observer(({ item }: { item: TraderVolumeRes
 
   return (
     <LeaderboardContainer gap="12px">
-      <SmartFlex gap="12px">{generatePosition(item.id)}</SmartFlex>
+      <SmartFlex gap="12px">{item.id}</SmartFlex>
       <SmartFlex center="y" gap="8px" style={{ flex: 1 }} column>
         <SmartFlex alignItems="center" gap="8px">
           <AddressText type={TEXT_TYPES.BODY} primary>
@@ -172,15 +149,6 @@ const LeaderboardContainer = styled(SmartFlex)`
   ${SmartFlex} {
     flex: 1;
   }
-`;
-
-const PositionBox = styled(SmartFlex)`
-  width: 40px;
-  height: 40px;
-  background: ${({ theme }) => theme.colors.accentPrimary};
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
 `;
 
 const SnackStyled = styled.span`

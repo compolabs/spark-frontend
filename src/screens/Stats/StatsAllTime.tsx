@@ -40,7 +40,6 @@ const AllTimeStatsContent = styled(SmartFlex)`
   height: 132px;
   width: 100%;
   margin: 32px 0;
-  padding: 40px 0;
   align-items: center;
   border: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
 `;
@@ -50,6 +49,7 @@ const StatsItem = styled(SmartFlex)`
   justify-content: center;
   align-items: center;
   width: 50%;
+  height: 130px;
   gap: 8px;
   &:first-child {
     border-right: 1px solid ${({ theme }) => theme.colors.strokeSecondary};

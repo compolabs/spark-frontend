@@ -122,6 +122,7 @@ const HeaderItem = styled(Text)<{ flex?: number; isActive?: boolean }>`
 
 const NoData = styled(Text)`
   margin-top: 30px;
+  margin-bottom: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
