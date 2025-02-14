@@ -199,24 +199,31 @@ class SpotOrderBookStore {
     const { tradeStore } = this.rootStore;
     const market = tradeStore.market;
 
-    const newSubscription = bcNetwork.subscribeSpotActiveOrders({ ...params, orderType }).subscribe({
-      next: ({ data }) => {
-        this.isOrderBookLoading = false;
-        if (!data) return;
+    const newSubscription = bcNetwork
+      .subscribeSpotActiveOrders(
+        { ...params, orderType },
+        {
+          orderType: orderType === OrderType.Buy ? "desc" : "asc",
+        },
+      )
+      .subscribe({
+        next: ({ data }) => {
+          this.isOrderBookLoading = false;
+          if (!data) return;
 
-        const orders = formatSpotMarketOrders(
-          "ActiveBuyOrder" in data ? data.ActiveBuyOrder : data.ActiveSellOrder,
-          market!.quoteToken.assetId,
-        );
+          const orders = formatSpotMarketOrders(
+            "ActiveBuyOrder" in data ? data.ActiveBuyOrder : data.ActiveSellOrder,
+            market!.quoteToken.assetId,
+          );
 
-        const orderWithoutBadOrder = orders.filter(
-          (o) =>
-            o.id.toLowerCase() !== "0xb140a6bf39601d69d0fedacb61ecce95cb65eaa05856583cb1a9af926acbd5bd".toLowerCase(),
-        );
+          const orderWithoutBadOrder = orders.filter(
+            (o) =>
+              o.id.toLowerCase() !== "0xb140a6bf39601d69d0fedacb61ecce95cb65eaa05856583cb1a9af926acbd5bd".toLowerCase(),
+          );
 
-        updateOrders(orderWithoutBadOrder);
-      },
-    });
+          updateOrders(orderWithoutBadOrder);
+        },
+      });
 
     if (orderType === OrderType.Buy) {
       this.buySubscription = newSubscription;

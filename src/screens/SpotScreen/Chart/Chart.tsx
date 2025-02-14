@@ -10,7 +10,7 @@ import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import TradingViewChartAdvance from "@screens/SpotScreen/Chart/TradingViewAdvanceWidget";
+import TradingViewChartAdvanced from "@screens/SpotScreen/Chart/TradingViewAdvancedWidget";
 import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget";
 
 const TABS = [
@@ -57,7 +57,7 @@ const Chart: React.FC = observer(() => {
           ))}
         </TabContainer>
       </HeaderTradingView>
-      {activeChart === 1 ? <TradingViewChartAdvance /> : <TradingViewWidget />}
+      {activeChart === 1 ? <TradingViewChartAdvanced /> : <TradingViewWidget />}
     </Root>
   );
 });

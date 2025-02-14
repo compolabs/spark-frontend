@@ -166,11 +166,14 @@ class SpotTableVM {
     }
 
     this.subscriptionToOpenOrders = bcNetwork
-      .subscribeSpotOrders({
-        ...this.tableFilters,
-        user: accountStore.address!,
-        status: ["Active"],
-      })
+      .subscribeSpotOrders(
+        {
+          ...this.tableFilters,
+          user: accountStore.address!,
+          status: ["Active"],
+        },
+        { timestamp: "desc" },
+      )
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
@@ -192,12 +195,16 @@ class SpotTableVM {
     if (this.subscriptionToHistoryOrders) {
       this.subscriptionToHistoryOrders.unsubscribe();
     }
+
     this.subscriptionToHistoryOrders = bcNetwork
-      .subscribeSpotOrders({
-        ...this.tableFilters,
-        user: accountStore.address!,
-        status: ["Closed", "Canceled"],
-      })
+      .subscribeSpotOrders(
+        {
+          ...this.tableFilters,
+          user: accountStore.address!,
+          status: ["Closed", "Canceled"],
+        },
+        { timestamp: "desc" },
+      )
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
@@ -247,11 +254,13 @@ class SpotTableVM {
   private setUserOrdersStats = (stats: UserInfo) => (this.userOrdersStats = stats);
 
   setOffset = (currentPage: number) => {
-    if (currentPage === 0) {
+    const page = currentPage - 1;
+
+    if (page === 0) {
       this.offset = 0;
       return;
     }
 
-    this.offset = (currentPage - 1) * this.limit;
+    this.offset = page * this.limit;
   };
 }
