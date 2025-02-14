@@ -3,10 +3,14 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
+
+import { toCurrency } from "@utils/toCurrency.ts";
 
 import setting from "./setting.json";
 
@@ -22,7 +26,7 @@ export const HowToParticipate = observer(() => {
       ),
     },
     {
-      title: "Minimum Trading Volume",
+      title: `Minimum ${toCurrency(new BN(setting.minimumTradingVolume).toSignificant(2))} Trading Volume`,
       description: <Text primary>{setting.minimumTradingVolume}</Text>,
     },
     {
