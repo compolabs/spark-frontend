@@ -13,12 +13,18 @@ import { useStores } from "@stores";
 import TradingViewChartAdvanced from "@screens/SpotScreen/Chart/TradingViewAdvancedWidget";
 import TradingViewWidget from "@screens/SpotScreen/Chart/TradingViewWidget";
 
-const TABS = [
-  { title: "SIMPLE CHART", disabled: false },
-  { title: "ADVANCED CHART", disabled: false },
-];
-
 const DISABLED_SIMPLE_CHARTS = new Set(["PSYCHO-USDC", "USDF-USDC", "USDT-ETH", "FUEL-ETH"]);
+
+const TABS = [
+  {
+    isSimple: true,
+    title: "SIMPLE CHART",
+  },
+  {
+    isSimple: false,
+    title: "ADVANCED CHART",
+  },
+];
 
 const Chart: React.FC = observer(() => {
   const { tradeStore } = useStores();
@@ -34,8 +40,8 @@ const Chart: React.FC = observer(() => {
     setActiveChart(isSymbolDisabled ? 1 : 0);
   }, [isSymbolDisabled]);
 
-  const handleTabClick = (index: number, isTabDisabled: boolean) => {
-    if (isSymbolDisabled || isTabDisabled) return;
+  const handleTabClick = (index: number) => {
+    if (isSymbolDisabled) return;
 
     setActiveChart(index);
   };
@@ -44,17 +50,19 @@ const Chart: React.FC = observer(() => {
     <Root>
       <HeaderTradingView>
         <TabContainer>
-          {TABS.map(({ title, disabled }, index) => (
-            <Tab
-              key={title + index}
-              active={activeChart === index}
-              disabled={disabled}
-              type={TEXT_TYPES.BUTTON_SECONDARY}
-              onClick={() => handleTabClick(index, disabled)}
-            >
-              {title}
-            </Tab>
-          ))}
+          {TABS.map(({ title, isSimple }, index) => {
+            return (
+              <Tab
+                key={title + index}
+                active={activeChart === index}
+                disabled={isSymbolDisabled && isSimple}
+                type={TEXT_TYPES.BUTTON_SECONDARY}
+                onClick={() => handleTabClick(index)}
+              >
+                {title}
+              </Tab>
+            );
+          })}
         </TabContainer>
       </HeaderTradingView>
       {activeChart === 1 ? <TradingViewChartAdvanced /> : <TradingViewWidget />}
