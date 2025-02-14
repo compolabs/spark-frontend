@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 interface CountdownTimerProps {

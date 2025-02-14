@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 
 import { GetTotalStatsTableData } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { Column } from "@components/Flex.tsx";
+import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
@@ -13,8 +13,8 @@ import { media } from "@themes/breakpoints";
 import { MarketSymbol } from "@screens/Stats/StatsTable/MarketSymbol";
 
 import BN from "@utils/BN";
-import { CONFIG } from "@utils/getConfig.ts";
-import { toCurrency } from "@utils/toCurrency.ts";
+import { CONFIG } from "@utils/getConfig";
+import { toCurrency } from "@utils/toCurrency";
 
 import { SpotMarket } from "@entity";
 

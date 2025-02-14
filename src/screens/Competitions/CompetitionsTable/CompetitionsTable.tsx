@@ -2,20 +2,20 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Loader from "@components/Loader.tsx";
-import { Pagination } from "@components/Pagination/Pagination.tsx";
-import SearchInput from "@components/SearchInput.tsx";
-import Select from "@components/Select.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
+import Loader from "@components/Loader";
+import { Pagination } from "@components/Pagination/Pagination";
+import SearchInput from "@components/SearchInput";
+import Select from "@components/Select";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
 
 import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
 
-import { useMedia } from "@hooks/useMedia.ts";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
-import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore.ts";
+import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore";
 
-import { CompetitionsItem, CompetitionsItemMobile } from "@screens/Competitions/CompetitionsTable/CompetitionsItem.tsx";
+import { CompetitionsItem, CompetitionsItemMobile } from "@screens/Competitions/CompetitionsTable/CompetitionsItem";
 
 export const CompetitionsTable = observer(({ live }: { live: string }) => {
   const { leaderboardStore } = useStores();

@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { CountdownTimer } from "@components/CountdownTimer.tsx";
+import { CountdownTimer } from "@components/CountdownTimer";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
@@ -19,10 +19,10 @@ import ArrowRightIcon from "@assets/icons/arrowRight.svg?react";
 
 import { useStores } from "@stores";
 
-import { HowToParticipate } from "@screens/Competitions/HowToParticipate.tsx";
+import { HowToParticipate } from "@screens/Competitions/HowToParticipate";
 
 import TOKEN_LOGOS from "@constants/tokenLogos";
-import { CONFIG } from "@utils/getConfig.ts";
+import { CONFIG } from "@utils/getConfig";
 
 import setting from "./setting.json";
 

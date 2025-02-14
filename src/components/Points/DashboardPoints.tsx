@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import { CountdownTimer } from "@components/CountdownTimer.tsx";
+import { CountdownTimer } from "@components/CountdownTimer";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
 import Tooltip from "@components/Tooltip";

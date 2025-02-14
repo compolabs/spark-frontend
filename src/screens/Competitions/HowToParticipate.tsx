@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { Column } from "@components/Flex.tsx";
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Text from "@components/Text.tsx";
+import { Column } from "@components/Flex";
+import { SmartFlex } from "@components/SmartFlex";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import setting from "./setting.json";

@@ -4,12 +4,12 @@ import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
-import { media } from "@themes/breakpoints.ts";
+import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import BN from "@utils/BN.ts";
-import { toCurrency } from "@utils/toCurrency.ts";
+import BN from "@utils/BN";
+import { toCurrency } from "@utils/toCurrency";
 
 const StatsAllTime = observer(() => {
   const { leaderboardStore } = useStores();

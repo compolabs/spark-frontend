@@ -3,10 +3,10 @@ import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import { observer } from "mobx-react";
 
-import { Column } from "@components/Flex.tsx";
+import { Column } from "@components/Flex";
 
-import { CompetitionsInfo } from "@screens/Competitions/CompetitionsInfo.tsx";
-import { CompetitionsTable } from "@screens/Competitions/CompetitionsTable/CompetitionsTable.tsx";
+import { CompetitionsInfo } from "@screens/Competitions/CompetitionsInfo";
+import { CompetitionsTable } from "@screens/Competitions/CompetitionsTable/CompetitionsTable";
 import setting from "@screens/Competitions/setting.json";
 import StatusBar from "@screens/SpotScreen/StatusBar";
 

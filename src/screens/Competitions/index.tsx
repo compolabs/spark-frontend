@@ -1,3 +1,3 @@
-import Competitions from "./Competitions.tsx";
+import Competitions from "./Competitions";
 
 export default Competitions;

@@ -6,9 +6,9 @@ import { observer } from "mobx-react";
 
 import { GetCompetitionResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
-import { SmartFlex } from "@components/SmartFlex.tsx";
-import Text, { TEXT_TYPES } from "@components/Text.tsx";
-import { media } from "@themes/breakpoints.ts";
+import { SmartFlex } from "@components/SmartFlex";
+import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
 
 import copyIcon from "@assets/icons/copy.svg";
 import oneSt from "@assets/images/1st.png";
@@ -18,8 +18,8 @@ import three from "@assets/images/3st.png";
 import { useStores } from "@stores";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN.ts";
-import { CONFIG } from "@utils/getConfig.ts";
+import BN from "@utils/BN";
+import { CONFIG } from "@utils/getConfig";
 
 const generatePosition = (key: number) => {
   if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;
