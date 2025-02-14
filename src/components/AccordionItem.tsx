@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { AccordionItem as RawAccordionItem } from "@szhsin/react-accordion";
-import { AccordionItemProps } from "@szhsin/react-accordion/types/components/AccordionItem";
+import { AccordionItemProps } from "@szhsin/react-accordion";
 
 import { media } from "@themes/breakpoints";
 

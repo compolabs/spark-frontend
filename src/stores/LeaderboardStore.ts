@@ -2,6 +2,7 @@ import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 
 import {
+  GetCompetitionResponse,
   GetSortedLeaderboardQueryParams,
   GetTotalStatsTableData,
   LeaderboardPnlResponse,
@@ -56,6 +57,10 @@ class LeaderboardStore {
     field: "volume",
     side: "DESC",
   };
+  sortCompetitions = {
+    field: "pnl",
+    side: "DESC",
+  };
   sortStats = {
     field: "volume",
     side: "DESC",
@@ -72,6 +77,7 @@ class LeaderboardStore {
     total_trades: "",
   };
   totalStatsTableData: GetTotalStatsTableData[] = [];
+  competitionData: GetCompetitionResponse[] = [];
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
@@ -179,6 +185,7 @@ class LeaderboardStore {
         finalData = [...dataMe, ...mainData];
       }
     }
+
     this.leaderboard = finalData;
     this.fetchPnlLeaderboard();
   };
@@ -205,6 +212,19 @@ class LeaderboardStore {
     }
 
     return [meData];
+  };
+
+  private fetchCompetition = async () => {
+    this.isLoading = true;
+    const bcNetwork = FuelNetwork.getInstance();
+    const data = await bcNetwork.getCompetition({
+      side: this.sortCompetitions.side,
+      limit: 10,
+      page: this.page - 1,
+      search: this.searchWallet,
+    });
+    this.competitionData = data?.result?.rows ?? [];
+    this.isLoading = false;
   };
 
   public getUserPoints = async () => {
@@ -264,6 +284,7 @@ class LeaderboardStore {
   public setActivePage = (page: number) => {
     this.page = page;
     this.resolveFetch();
+    this.fetchCompetition();
   };
 
   public setActiveFilter = (filter: FiltersProps) => {
@@ -275,10 +296,12 @@ class LeaderboardStore {
   };
 
   fetchLeaderboardDebounce = _.debounce(this.resolveFetch, 250);
+  fetchCompetitionDebounce = _.debounce(this.fetchCompetition, 250);
 
   public setSearchWallet = (searchWallet: string) => {
     this.searchWallet = searchWallet;
     this.fetchLeaderboardDebounce();
+    this.fetchCompetitionDebounce();
   };
 
   private findSideSort = (side: string) => {
@@ -301,6 +324,14 @@ class LeaderboardStore {
     this.fetchTotalStatsTableData();
   };
 
+  makeCompetitions = (field: string) => {
+    this.sortCompetitions =
+      field === this.sortCompetitions.field
+        ? { field: this.sortCompetitions.field, side: this.findSideSort(this.sortCompetitions.side) }
+        : { field, side: "asc" };
+    this.fetchCompetition();
+  };
+
   get maxTotalCount() {
     return this.leaderboard.reduce((max, item) => {
       return item?.totalCount > max ? item.totalCount : max;
@@ -314,6 +345,7 @@ class LeaderboardStore {
     this.resolveFetch();
     this.fetchTotalState();
     this.fetchTotalStatsTableData();
+    this.fetchCompetition();
     this.activeTime = this.calculateTime(date, 24);
   };
 

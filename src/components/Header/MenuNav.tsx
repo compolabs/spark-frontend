@@ -42,6 +42,7 @@ type MenuItem = {
   dataOnboardingKey?: string;
   children?: MenuChildItem[];
   trackEvent?: MIXPANEL_EVENTS;
+  icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | null;
 };
 
 const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
@@ -73,6 +74,11 @@ const MENU_ITEMS: Array<MenuItem> = [
         {
           title: "LEADERBOARD",
           link: ROUTES.LEADERBOARD,
+        },
+        {
+          title: "🏆 COMPETITIONS",
+          link: ROUTES.COMPETITIONS,
+          // icon: CupIcon,
         },
         {
           title: "STATS",
@@ -210,7 +216,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     );
   };
 
-  const renderMenuItem = ({ title, accent, link, dataOnboardingKey, children, trackEvent }: MenuItem) => {
+  const renderMenuItem = ({ title, accent, link, dataOnboardingKey, children, trackEvent, icon: Icon }: MenuItem) => {
     const dataOnboardingDeviceKey = `${dataOnboardingKey}-${isMobile ? "mobile" : "desktop"}`;
     const isActive = Boolean(link && location.pathname.includes(link));
 
@@ -280,6 +286,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     return (
       <NavLink key={title} data-onboarding={dataOnboardingDeviceKey} to={link} onClick={handleItemClick}>
         <Element isAccent={accent} isActive={isActive}>
+          <IconContainer>{Icon && <Icon height={24} width={24} />}</IconContainer>
           {titleComponent}
         </Element>
       </NavLink>
