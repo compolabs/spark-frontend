@@ -19,9 +19,7 @@ import { toCurrency } from "@utils/toCurrency.ts";
 import { SpotMarket } from "@entity";
 
 const generatePnl = (value: string, theme: Theme) => {
-  console.log("v", value);
   const bnPnl = new BN(value).decimalPlaces(2, BN.ROUND_UP);
-  console.log("bnPnl", bnPnl.toString());
   const isPositive = bnPnl.isGreaterThan(0);
   const isNegative = bnPnl.isLessThan(0);
   const sign = isPositive ? "+" : isNegative ? "-" : "";

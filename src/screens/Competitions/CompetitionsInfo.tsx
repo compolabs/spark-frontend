@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/en";
 
 dayjs.locale("en");
+import { useTheme } from "@emotion/react";
 import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
@@ -25,8 +26,11 @@ import { CONFIG } from "@utils/getConfig.ts";
 
 import setting from "./setting.json";
 
-const LiveBox = () => {
-  const isLive = dayjs().isBefore(dayjs(setting.endDate));
+const LiveBox = ({ live }: { live: string }) => {
+  const theme = useTheme();
+
+  const colorLive = live === "Pending" ? "#F2D336" : live === "Ended" ? theme.colors.greenLight : theme.colors.redLight;
+
   return (
     <SmartFlex alignItems="center" gap="8px">
       <TitleText type={TEXT_TYPES.H} primary>
@@ -39,15 +43,15 @@ const LiveBox = () => {
       <TitleText type={TEXT_TYPES.H} secondary>
         {dayjs(setting.endDate).format("h:mm A")}
       </TitleText>
-      <LiveLight isLive={isLive}>
-        <LiveCircle isLive={isLive} />
-        <Text primary>Live</Text>
+      <LiveLight colorLive={colorLive}>
+        <LiveCircle colorLive={colorLive} />
+        <Text primary>{live}</Text>
       </LiveLight>
     </SmartFlex>
   );
 };
 
-export const CompetitionsInfo = observer(() => {
+export const CompetitionsInfo = observer(({ live }: { live: string }) => {
   const { spotOrderBookStore } = useStores();
   const fuelMarket = CONFIG.MARKETS.find((m) => m.marketName === "FUELUSDC");
   const prizeToUsdc = new BN(spotOrderBookStore.marketPriceByContractId(fuelMarket?.contractId ?? ""))
@@ -59,7 +63,7 @@ export const CompetitionsInfo = observer(() => {
         <TitleText type={TEXT_TYPES.H} primary>
           TRADING COMPETITION
         </TitleText>
-        <LiveBox />
+        <LiveBox live={live} />
       </CompetitionsInfoHeader>
       <CompetitionsContainer>
         <CompetitionsTitle>
@@ -87,14 +91,20 @@ export const CompetitionsInfo = observer(() => {
           <SmartFlex gap="8px" column>
             <SmartFlex center="y" gap="4px">
               <Text type={TEXT_TYPES.BODY} secondary>
-                Competition ends in
+                {live === "Pending" && "Competition starts in"}
+                {live === "Live" && "Competition ends in"}
               </Text>
             </SmartFlex>
-            <CountdownTimer targetTime={new Date(setting.endDate).getTime()} />
+            {live === "Pending" && <CountdownTimer targetTime={new Date(setting.startDate).getTime()} />}
+            {live === "Live" && <CountdownTimer targetTime={new Date(setting.endDate).getTime()} />}
           </SmartFlex>
         </CompetitionsTitle>
-        <Divider />
-        <HowToParticipate />
+        {live !== "Ended" && (
+          <>
+            <Divider />
+            <HowToParticipate />
+          </>
+        )}
       </CompetitionsContainer>
     </CompetitionsInfoContainer>
   );
@@ -154,10 +164,10 @@ const CompetitionsInfoHeader = styled(SmartFlex)`
   }
 `;
 
-const LiveLight = styled(SmartFlex)<{ isLive: boolean }>`
+const LiveLight = styled(SmartFlex)<{ colorLive: string }>`
   padding: 4px 12px 4px 8px;
-  background: ${({ theme, isLive }) => (isLive ? theme.colors.greenDark : theme.colors.redDark)};
-  border: 1px solid ${({ theme, isLive }) => (isLive ? theme.colors.greenLight : theme.colors.redLight)};
+  // background: ${({ colorLive }) => colorLive};
+  border: 1px solid ${({ colorLive }) => colorLive};
   align-items: center;
   justify-content: space-between;
   gap: 4px;
@@ -166,9 +176,9 @@ const LiveLight = styled(SmartFlex)<{ isLive: boolean }>`
   border-radius: 4px;
 `;
 
-const LiveCircle = styled(SmartFlex)<{ isLive: boolean }>`
+const LiveCircle = styled(SmartFlex)<{ colorLive: string }>`
   width: 10px;
   height: 10px;
-  background: ${({ theme, isLive }) => (isLive ? theme.colors.greenLight : theme.colors.redLight)};
+  background: ${({ colorLive }) => colorLive};
   border-radius: 100%;
 `;

@@ -17,7 +17,7 @@ import { PAGINATION_PER_PAGE } from "@stores/LeaderboardStore.ts";
 
 import { CompetitionsItem, CompetitionsItemMobile } from "@screens/Competitions/CompetitionsTable/CompetitionsItem.tsx";
 
-export const CompetitionsTable = observer(() => {
+export const CompetitionsTable = observer(({ live }: { live: string }) => {
   const { leaderboardStore } = useStores();
   const media = useMedia();
 
@@ -56,7 +56,7 @@ export const CompetitionsTable = observer(() => {
     }
     return <></>;
   };
-
+  if (live === "Pending") return <></>;
   return (
     <>
       <CompetitionsTableHeader>

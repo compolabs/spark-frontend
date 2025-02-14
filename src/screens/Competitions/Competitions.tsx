@@ -1,19 +1,28 @@
 import React from "react";
 import styled from "@emotion/styled";
+import dayjs from "dayjs";
 import { observer } from "mobx-react";
 
 import { Column } from "@components/Flex.tsx";
 
 import { CompetitionsInfo } from "@screens/Competitions/CompetitionsInfo.tsx";
 import { CompetitionsTable } from "@screens/Competitions/CompetitionsTable/CompetitionsTable.tsx";
+import setting from "@screens/Competitions/setting.json";
 import StatusBar from "@screens/SpotScreen/StatusBar";
 
 const Competitions = observer(() => {
+  const now = dayjs();
+  const live = now.isBefore(dayjs(setting.startDate))
+    ? "Pending"
+    : now.isAfter(dayjs(setting.endDate))
+      ? "Ended"
+      : "Live";
+
   return (
     <CompetitionsContainer>
       <CompetitionsContent>
-        <CompetitionsInfo />
-        <CompetitionsTable />
+        <CompetitionsInfo live={live} />
+        <CompetitionsTable live={live} />
       </CompetitionsContent>
       <StatusBar />
     </CompetitionsContainer>
