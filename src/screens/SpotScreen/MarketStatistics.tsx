@@ -29,10 +29,8 @@ const MarketStatistics: React.FC = observer(() => {
 
   const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
 
-  const { baseToken, quoteToken } = tradeStore.market ?? {};
+  const { quoteToken, precision } = tradeStore.market ?? {};
   const isStable = isStableSymbol(quoteToken?.symbol ?? "");
-
-  const precision = isStable ? 2 : (baseToken?.precision ?? 2);
 
   const volume = isStable
     ? tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn)

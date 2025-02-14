@@ -7,6 +7,7 @@ import { Token } from "@entity";
 import configProdJSON from "@src/config.json";
 
 export interface Market {
+  isOpen: boolean;
   marketName: string;
   owner: string;
   baseAssetId: string;
@@ -16,17 +17,18 @@ export interface Market {
   priceDecimals: number;
   version: number;
   contractId: string;
+  precision: number;
 }
 
 function createConfig() {
-  const CURRENT_CONFIG_VER = "1.7.5";
+  const CURRENT_CONFIG_VER = "1.8.0";
   const configJSON = configProdJSON;
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
   console.warn("V12 CONFIG", configJSON);
   console.log("Contract Ver.", configJSON.contractVer);
 
-  const tokens = configJSON.tokens.map(({ name, symbol, decimals, assetId, priceFeed, precision }) => {
+  const tokens = configJSON.tokens.map(({ name, symbol, decimals, assetId, priceFeed }) => {
     return new Token({
       name,
       symbol,
@@ -34,21 +36,13 @@ function createConfig() {
       assetId,
       logo: TOKEN_LOGOS[symbol],
       priceFeed,
-      precision,
     });
   });
 
-  const markets = configJSON.markets as Market[];
+  const markets = configJSON.markets.filter((m) => m.isOpen) as Market[];
 
-  // TODO: Refactor this workaround that adds duplicate tokens without the 't' prefix.
-  const tokensBySymbol = tokens.reduce(
-    (acc, t) => {
-      acc[t.symbol] = t;
+  const tokensBySymbol = tokens.reduce((acc, t) => ({ ...acc, [t.symbol]: t }), {} as Record<string, Token>);
 
-      return acc;
-    },
-    {} as Record<string, Token>,
-  );
   const tokensByAssetId = tokens.reduce(
     (acc, t) => ({ ...acc, [t.assetId.toLowerCase()]: t }),
     {} as Record<string, Token>,

@@ -49,7 +49,8 @@ export const StatsItem = observer(({ item }: { item: GetTotalStatsTableData }) =
   const generateMarket = (market: string) => {
     const activeMarket = CONFIG.MARKETS.find((el) => el.contractId === market);
     if (!activeMarket) return <></>;
-    const spotMarket = new SpotMarket(activeMarket.baseAssetId, activeMarket.quoteAssetId, activeMarket.contractId);
+
+    const spotMarket = new SpotMarket(activeMarket);
     return <MarketSymbol market={spotMarket} />;
   };
   const priceChangePercent = ((Number(item.last_price) / Number(item.price_24h_ago) - 1) * 100).toString();

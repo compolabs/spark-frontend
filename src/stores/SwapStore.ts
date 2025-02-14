@@ -116,7 +116,6 @@ class SwapStore {
         priceFeed: token.priceFeed,
         assetId: token.assetId,
         decimals: token.decimals,
-        precision: token.precision,
       };
     });
   }

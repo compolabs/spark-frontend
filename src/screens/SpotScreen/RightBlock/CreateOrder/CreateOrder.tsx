@@ -39,8 +39,6 @@ export const ORDER_OPTIONS = [
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
 ];
 
-const VISIBLE_MARKET_DECIMALS = 2;
-
 const CreateOrder: React.FC = observer(() => {
   const { balanceStore, tradeStore, settingsStore, spotOrderBookStore, mixPanelStore } = useStores();
   const timeInForce = settingsStore.timeInForce;
@@ -51,8 +49,7 @@ const CreateOrder: React.FC = observer(() => {
   const dataOnboardingTradingKey = `trade-${media.mobile ? "mobile" : "desktop"}`;
 
   const isButtonDisabled = vm.isLoading || !vm.canProceed;
-  const isMarketOrderType = settingsStore.orderType === ORDER_TYPE.Market;
-  const priceDisplayDecimals = isMarketOrderType ? VISIBLE_MARKET_DECIMALS : DEFAULT_DECIMALS;
+  const priceDisplayDecimals = market?.precision ?? 0;
 
   const [isOrderTooltipOpen, openOrderTooltip, closeOrderTooltip] = useFlag();
 

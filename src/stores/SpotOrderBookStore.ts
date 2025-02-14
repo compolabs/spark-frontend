@@ -22,7 +22,7 @@ import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
 
-const DEFAULT_DECIMALS_GROUP = 4;
+const DEFAULT_DECIMALS_GROUP = 0;
 
 type ExchangeRates = {
   [pair: string]: string;
@@ -57,10 +57,17 @@ class SpotOrderBookStore {
     new IntervalUpdater(this.makeOrderPrices, 5000);
 
     reaction(
+      () => [rootStore.tradeStore.market],
+      ([market]) => {
+        this.decimalGroup = market?.precision ?? DEFAULT_DECIMALS_GROUP;
+      },
+      { fireImmediately: true },
+    );
+
+    reaction(
       () => [rootStore.initialized, rootStore.tradeStore.market],
       ([initialized]) => {
         if (!initialized) return;
-        this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? DEFAULT_DECIMALS_GROUP;
         this.updateOrderBook();
         this.makeOrderPrices();
       },
@@ -71,7 +78,6 @@ class SpotOrderBookStore {
       () => [this.rootStore.tradeStore.market, this.rootStore.initialized],
       ([market, initialized]) => {
         if (!initialized || !market) return;
-        this.decimalGroup = this.rootStore.tradeStore.market?.baseToken.precision ?? DEFAULT_DECIMALS_GROUP;
         this.subscribeTrades();
       },
       { fireImmediately: true },
@@ -88,18 +94,18 @@ class SpotOrderBookStore {
     });
   }
 
-  private _getOrders(orders: SpotMarketOrder[], reverse = false): SpotMarketOrder[] {
-    const groupedOrders = groupOrders(orders, this.decimalGroup);
-    return this._sortOrders(groupedOrders.slice(), reverse);
+  private _getOrders(orders: SpotMarketOrder[], isBuyOrders = false): SpotMarketOrder[] {
+    const roundingMode = isBuyOrders ? BN.ROUND_DOWN : BN.ROUND_UP;
+    const groupedOrders = groupOrders(orders, this.decimalGroup, roundingMode);
+    return this._sortOrders(groupedOrders.slice(), isBuyOrders);
   }
 
   private async makeOrderPrices() {
-    const bcNetwork = FuelNetwork.getInstance();
     let _marketPrices = {};
 
     for (const el of CONFIG.MARKETS) {
       const lastTrade = await this.fetchOrderBook(el);
-      const precision = bcNetwork.getTokenByAssetId(el.baseAssetId)?.precision ?? 2;
+      const precision = el.precision ?? 0;
       const nonFormated =
         lastTrade?.data?.TradeOrderEvent.length > 0 ? lastTrade?.data?.TradeOrderEvent[0].tradePrice : 0;
       const formatPrice = BN.formatUnits(nonFormated, DEFAULT_DECIMALS).toFormat(precision);

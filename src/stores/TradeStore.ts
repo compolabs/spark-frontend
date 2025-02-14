@@ -252,9 +252,7 @@ class TradeStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     try {
-      const markets = CONFIG.MARKETS.map(
-        (market) => new SpotMarket(market.baseAssetId, market.quoteAssetId, market.contractId),
-      );
+      const markets = CONFIG.MARKETS.map((market) => new SpotMarket(market));
 
       const market = markets[0];
       const indexerInfo = CONFIG.APP.indexers[market.contractAddress as keyof typeof CONFIG.APP.indexers];

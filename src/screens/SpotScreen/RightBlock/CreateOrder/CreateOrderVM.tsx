@@ -465,6 +465,8 @@ class CreateOrderVM {
     settingsStore.setTimeInForce(LimitType.GTC);
     settingsStore.setOrderType(ORDER_TYPE.Limit);
     this.setOrderMode(mode);
-    this.setInputPrice(order.price);
+    // setTimeout(() => {
+    //   this.setInputPrice(order.price);
+    // }, 50);
   };
 }

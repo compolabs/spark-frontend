@@ -38,7 +38,9 @@ export enum SPOT_ORDER_FILTER {
 }
 
 const generateDecimalOptions = (decimals: number) => {
-  return Array.from({ length: decimals }).map((_, index) => index);
+  return Array.from({ length: decimals + 1 })
+    .map((_, index) => index)
+    .reverse();
 };
 
 const SPOT_SETTINGS_ICONS = {
@@ -60,7 +62,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const isOrderBookEmpty =
     spotOrderBookStore.allBuyOrders.length === 0 && spotOrderBookStore.allSellOrders.length === 0;
 
-  const decimalOptions = useMemo(() => generateDecimalOptions(market?.baseToken.precision ?? 4), []);
+  const decimalOptions = useMemo(() => generateDecimalOptions(market?.precision ?? 0), []);
 
   const renderSettingsIcons = () => {
     if (media.mobile) {
@@ -89,13 +91,13 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const renderPrices = () => {
     const buyOrder = [...spotOrderBookStore.buyOrders].reverse()[0];
     const sellOrder = [...spotOrderBookStore.sellOrders].reverse()[0];
-    const precision = tradeStore.market?.baseToken.precision ?? 2;
+    const precision = tradeStore.market?.precision ?? 0;
     const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
     const indexPrice = Number(indexPriceBn).toFixed(precision);
 
     const midPriceBn = new BN(buyOrder?.price).plus(sellOrder?.price).div(2);
     const price = BN.formatUnits(midPriceBn.isNaN() ? BN.ZERO : midPriceBn, DEFAULT_DECIMALS).toFixed(
-      tradeStore.market?.baseToken.precision ?? 2,
+      tradeStore.market?.precision ?? 0,
     );
 
     return (
@@ -192,6 +194,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
       </Root>
     );
   }
+
   return (
     <OrderbookAndTradesSkeletonWrapper isReady={!spotOrderBookStore.isOrderBookLoading}>
       <Root>
