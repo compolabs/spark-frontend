@@ -17,9 +17,8 @@ import three from "@assets/images/3st.png";
 
 import { useStores } from "@stores";
 
-import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
-import { CONFIG } from "@utils/getConfig";
+import { toCurrency } from "@utils/toCurrency.ts";
 
 const generatePosition = (key: number) => {
   if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;
@@ -34,19 +33,8 @@ const generatePosition = (key: number) => {
   );
 };
 
-const findMarket = (market: string) => {
-  return CONFIG.MARKETS.find((el) => el.contractId === market);
-};
-
-const generatePnl = (pnls: string, theme: Theme) => {
-  const accumulatedPnl = JSON.parse(pnls).reduce((accumulator: number, el: any) => {
-    const market = findMarket(el.market);
-    if (!market) return accumulator;
-    const calculatePnl = el.pnlComp1 / Math.pow(10, market?.baseAssetDecimals) / Math.pow(10, DEFAULT_DECIMALS);
-    return accumulator + calculatePnl;
-  }, 0);
-
-  const bnPnl = new BN(accumulatedPnl).decimalPlaces(2, BN.ROUND_UP);
+const generatePnl = (pnl: string, theme: Theme) => {
+  const bnPnl = new BN(pnl).decimalPlaces(2, BN.ROUND_UP);
   const isPositive = bnPnl.isGreaterThan(0);
   const isNegative = bnPnl.isLessThan(0);
   const sign = isPositive ? "+" : isNegative ? "-" : "";
@@ -84,11 +72,10 @@ export const CompetitionsItem = observer(({ item }: { item: GetCompetitionRespon
           {shortAddress}
         </AddressText>
         <CopyIconStyled src={copyIcon} onClick={handleAddressCopy} />
-        {/*{item.isYour && <SnackStyled>You</SnackStyled>}*/}
       </SmartFlex>
-      <SmartFlex style={{ flex: 0.42 }}>{generatePnl(item.data, theme)}</SmartFlex>
+      <SmartFlex style={{ flex: 0.37 }}>{generatePnl(item.total_pnlComp1, theme)}</SmartFlex>
       <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
-        ${item.total_quoteAmount}
+        {toCurrency(parseFloat(item.total_volume).toFixed(2))}
       </TextStyled>
     </CompetitionsContainer>
   );
@@ -115,18 +102,17 @@ export const CompetitionsItemMobile = observer(({ item }: { item: GetCompetition
             {shortAddress}
           </AddressText>
           <CopyIconStyled src={copyIcon} onClick={handleAddressCopy} />
-          {/*{item.isYour && <SnackStyled>You</SnackStyled>}*/}
         </SmartFlex>
         <SmartFlex justifyContent="space-between">
           <AddressText type={TEXT_TYPES.BODY}>PnL:</AddressText>
           <TextStyled style={{ textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
-            {generatePnl(item.data, theme)}
+            {generatePnl(item.total_pnlComp1, theme)}
           </TextStyled>
         </SmartFlex>
         <SmartFlex justifyContent="space-between">
           <AddressText type={TEXT_TYPES.BODY}>Volume:</AddressText>{" "}
           <TextStyled style={{ textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
-            ${item.total_quoteAmount}
+            {toCurrency(parseFloat(item.total_volume).toFixed(2))}
           </TextStyled>
         </SmartFlex>
       </SmartFlex>

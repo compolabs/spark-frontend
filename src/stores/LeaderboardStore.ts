@@ -152,7 +152,6 @@ class LeaderboardStore {
     const data = await bcNetwork.fetchSortedLeaderboardPnl(params);
     const wallets = data?.result?.rows.map((el) => el.user);
     this.fetchLeaderboard(wallets);
-    // this.leaderboardPnl = data?.result?.rows ?? [];
   };
 
   private fetchPnlLeaderboard = async () => {
