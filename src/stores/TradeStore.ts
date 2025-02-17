@@ -182,7 +182,7 @@ class TradeStore {
       market: [this.market.contractAddress],
     });
 
-    const volume = BN.formatUnits(info.volume, this.market.quoteToken.decimals);
+    const volume = BN.formatUnits(info.volume, this.market.baseToken.decimals);
     const low = BN.formatUnits(info.low, DEFAULT_DECIMALS);
     const high = BN.formatUnits(info.high, DEFAULT_DECIMALS);
 
