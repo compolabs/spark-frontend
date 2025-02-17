@@ -29,7 +29,7 @@ import setting from "./setting.json";
 const LiveBox = ({ live }: { live: string }) => {
   const theme = useTheme();
 
-  const colorLive = live === "Pending" ? "#F2D336" : live === "Ended" ? theme.colors.greenLight : theme.colors.redLight;
+  const colorLive = live === "Pending" ? "#F2D336" : live === "Ended" ? theme.colors.redLight : theme.colors.greenLight;
 
   return (
     <SmartFlex alignItems="center" gap="8px">
