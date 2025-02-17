@@ -36,21 +36,31 @@ export interface ShowAction {
   typeModal: ModalEnums;
 }
 const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
-  const [selectAsset, setAssets] = useState<IAssetBlock["token"]>();
+  const { quickAssetsStore, balanceStore } = useStores();
+
+  const [activeAsset, setActiveAsset] = useState<IAssetBlock["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsLoading] = useState(false);
-  const { quickAssetsStore, balanceStore } = useStores();
+
+  const isInputError = BN.formatUnits(amount.toString(), activeAsset?.asset.decimals ?? DEFAULT_DECIMALS).gt(
+    activeAsset?.contractBalance ?? 0,
+  );
+
+  const isConfirmDisabled = isInputError || isLoading || !activeAsset || !amount.toNumber();
+
+  const balanceList = balanceStore.formattedBalanceInfoList;
+
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
     quickAssetsStore.setQuickAssets(false);
   };
 
   const handleClick = async () => {
-    if (!selectAsset || !amount) return;
+    if (!activeAsset || !amount) return;
     setIsLoading(true);
     const response = await balanceStore.withdrawBalance(
-      selectAsset.asset.assetId,
-      BN.parseUnits(BN.formatUnits(amount, selectAsset.asset.decimals), selectAsset.asset.decimals).toString(),
+      activeAsset.asset.assetId,
+      BN.parseUnits(BN.formatUnits(amount, activeAsset.asset.decimals), activeAsset.asset.decimals).toString(), // wtf
     );
     setIsLoading(false);
     if (response) {
@@ -59,15 +69,10 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
     }
   };
 
-  const balanceList = balanceStore.formattedBalanceInfoList;
-
   useEffect(() => {
-    setAssets(balanceList[0]);
+    setActiveAsset(balanceList[0]);
   }, []);
 
-  const isInputError = new BN(BN.formatUnits(amount.toString(), DEFAULT_DECIMALS)).gt(
-    selectAsset?.contractBalance ?? 0,
-  );
   return (
     <>
       <SmartFlex alignItems="center" justifyContent="space-between">
@@ -84,38 +89,30 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
           <SelectAssetsInput
             amount={amount}
             dataAssets={balanceList}
-            decimals={selectAsset?.asset?.decimals}
-            selected={selectAsset?.assetId}
+            decimals={activeAsset?.asset?.decimals}
+            selected={activeAsset?.assetId}
             showBalance="contractBalance"
-            onChangeValue={(el) => {
-              setAmount(el);
-            }}
-            onSelect={(el) => {
-              setAssets(el);
-            }}
+            onChangeValue={setAmount}
+            onSelect={setActiveAsset}
           />
-          {selectAsset && (
+          {activeAsset && (
             <SmartFlex gap="2px" column>
               <BalanceBlock
                 icon={<DataBase />}
                 nameWallet="Deposited"
                 showBalance="contractBalance"
-                token={selectAsset}
+                token={activeAsset}
               />
               <BalanceBlock
                 icon={<WalletIcon />}
                 nameWallet="Wallet balance"
                 showBalance="walletBalance"
-                token={selectAsset}
+                token={activeAsset}
               />
             </SmartFlex>
           )}
         </SmartFlex>
-        <ButtonConfirm
-          disabled={isInputError || isLoading || !selectAsset || !amount.toNumber()}
-          fitContent
-          onClick={handleClick}
-        >
+        <ButtonConfirm disabled={isConfirmDisabled} fitContent onClick={handleClick}>
           {isLoading ? <Spinner height={14} /> : "Confirm"}
         </ButtonConfirm>
       </SmartFlexContainer>

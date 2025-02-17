@@ -94,7 +94,8 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
               <>
                 {balancesInfoList.map((el) => {
                   const balance = new BN(el.contractBalance).isGreaterThan(BN.ZERO);
-                  if (!balance) return <></>;
+                  if (!balance) return;
+
                   return (
                     <AssetItem key={el.assetId}>
                       <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />

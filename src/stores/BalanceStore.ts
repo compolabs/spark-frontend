@@ -7,7 +7,6 @@ import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { CONFIG } from "@utils/getConfig";
-import { getTokenType } from "@utils/getTokenType";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
@@ -205,18 +204,8 @@ export class BalanceStore {
     const bcNetwork = FuelNetwork.getInstance();
 
     const token = bcNetwork.getTokenByAssetId(assetId);
-    const type = getTokenType(markets, assetId);
 
     const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
-
-    if (!type) {
-      handleWalletErrors(
-        notificationStore,
-        new Error(`Token with assetId "${assetId}" could not be identified as base or quote in the provided markets.`),
-        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amountFormatted, token.symbol),
-      );
-      return false;
-    }
 
     if (bcNetwork?.getIsExternalWallet()) {
       notificationStore.info({
@@ -225,11 +214,7 @@ export class BalanceStore {
     }
 
     try {
-      const tx = await bcNetwork?.withdrawSpotBalance(
-        type,
-        markets.map((m) => m.contractId),
-        amount,
-      );
+      const tx = await bcNetwork?.withdrawSpotAssets(assetId, markets, amount);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
@@ -253,10 +238,8 @@ export class BalanceStore {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
-    const markets = CONFIG.MARKETS.map((el) => el.contractId);
-
     try {
-      await bcNetwork?.withdrawSpotBalanceAll(markets);
+      await bcNetwork?.withdrawSpotAllAssets(CONFIG.MARKETS);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS)(),
         hash: "",

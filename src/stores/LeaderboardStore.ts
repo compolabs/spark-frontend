@@ -137,7 +137,6 @@ class LeaderboardStore {
     //   wallets: wallets,
     // };
     // const t = await bcNetwork.getLeaderboard(params);
-    // console.log("t", t);
     // TODO: Сортировка по pnl
   };
 

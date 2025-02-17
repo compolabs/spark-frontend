@@ -139,7 +139,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   const renderSpread = () => {
     const percent = spotOrderBookStore.isSpreadValid ? spotOrderBookStore.spreadPercent : "-";
     if (media.mobile) {
-      return <></>;
+      return;
     }
 
     return (

@@ -54,7 +54,7 @@ export const LeaderboardTable = observer(() => {
       if (leaderboardStore.sortLeaderboard.side === "DESC") return <ArrowFilterIcon />;
       return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
     }
-    return <></>;
+    return;
   };
   return (
     <LeaderboardTableContainer>

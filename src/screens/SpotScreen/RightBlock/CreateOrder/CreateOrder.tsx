@@ -182,10 +182,12 @@ const CreateOrder: React.FC = observer(() => {
   };
 
   const renderInstruction = () => {
-    if (settingsStore.orderType === ORDER_TYPE.Market) return <></>;
+    if (settingsStore.orderType === ORDER_TYPE.Market) return;
+
     const handleChangeTimeInForce = (e: any) => {
       settingsStore.setTimeInForce(e);
     };
+
     return (
       <Accordion transitionTimeout={400} transition>
         <AccordionItem

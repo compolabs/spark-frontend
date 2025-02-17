@@ -41,7 +41,7 @@ const DesktopMarketInfoTooltip: React.FC<DesktopMarketInfoTooltipProps> = observ
               <Text type={TEXT_TYPES.BODY} primary>
                 {marketData.value}
               </Text>
-              {marketData?.icon ?? <></>}
+              {marketData?.icon}
             </SmartFlexStyled>
           </SmartFlex>
         </Column>
