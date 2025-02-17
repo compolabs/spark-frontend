@@ -267,8 +267,7 @@ class LeaderboardStore {
         toTimestamp: 1739491200,
         excluded,
       });
-
-      const points = new BN(response.result.rows[0].result);
+      const points = new BN(response.result.rows[0].points);
 
       this.userPoints = {
         points,
