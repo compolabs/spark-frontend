@@ -53,7 +53,7 @@ export const StatsTable = observer(() => {
       if (leaderboardStore.sortStats.side === "DESC") return <ArrowFilterIcon />;
       return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
     }
-    return <></>;
+    return;
   };
   return (
     <StatsTableContainer>

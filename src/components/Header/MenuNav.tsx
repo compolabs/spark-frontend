@@ -253,7 +253,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
             onClick={handleDropdownToggle}
           >
             {titleComponent}
-            <ArrowIconStyled isOpen={isDropdownOpen} />
+            <ArrowIconStyled open={isDropdownOpen} />
           </Element>
           <AnimatePresence mode="wait">
             {isDropdownOpen && (
@@ -296,10 +296,10 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
   return MENU_ITEMS.map(renderMenuItem);
 });
 
-const ArrowIconStyled = styled(ArrowIcon)<{ isOpen?: boolean }>`
+const ArrowIconStyled = styled(ArrowIcon)<{ open: boolean }>`
   width: 12px;
   height: 12px;
-  transform: ${({ isOpen }) => (isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+  transform: ${({ open }) => (open ? "rotate(180deg)" : "rotate(0deg)")};
   transition: transform 250ms ease;
 
   ${media.mobile} {

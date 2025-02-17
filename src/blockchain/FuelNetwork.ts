@@ -134,13 +134,13 @@ export class FuelNetwork {
     return this.orderbookSdk.mintToken(...params);
   };
 
-  withdrawSpotBalance = async (
+  withdrawSpotAssets = async (
     ...params: Parameters<typeof this.orderbookSdk.withdrawAssets>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.withdrawAssets(...params);
   };
 
-  withdrawSpotBalanceAll = async (...params: Parameters<typeof this.orderbookSdk.withdrawAllAssets>): Promise<void> => {
+  withdrawSpotAllAssets = async (...params: Parameters<typeof this.orderbookSdk.withdrawAllAssets>): Promise<void> => {
     await this.orderbookSdk.withdrawAllAssets(...params);
   };
 

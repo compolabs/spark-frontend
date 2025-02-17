@@ -40,8 +40,10 @@ const generatePnl = (value: string, theme: Theme) => {
 
 const generateMarket = (market: string) => {
   const activeMarket = CONFIG.MARKETS.find((el) => el.contractId === market);
-  if (!activeMarket) return <></>;
+  if (!activeMarket) return;
+
   const spotMarket = new SpotMarket(activeMarket);
+
   return <MarketSymbol market={spotMarket} />;
 };
 

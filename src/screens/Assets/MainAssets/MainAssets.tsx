@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -14,7 +14,6 @@ import { media } from "@themes/breakpoints";
 
 import closeThin from "@assets/icons/closeThin.svg";
 import DepositAssets from "@assets/icons/depositAssets.svg?react";
-import Spinner from "@assets/icons/spinner.svg?react";
 
 import useFlag from "@hooks/useFlag";
 import { useWallet } from "@hooks/useWallet";
@@ -34,7 +33,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
   const { balanceStore, quickAssetsStore, mixPanelStore } = useStores();
   const { isConnected } = useWallet();
   const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
 
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
@@ -52,11 +51,12 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
     },
     { balance: BN.ZERO, contractBalance: BN.ZERO, walletBalance: BN.ZERO },
   );
-  const handleWithdraw = async () => {
-    setIsLoading(true);
-    await balanceStore.withdrawBalanceAll();
-    setIsLoading(false);
-  };
+
+  // const handleWithdraw = async () => {
+  //   setIsLoading(true);
+  //   await balanceStore.withdrawBalanceAll();
+  //   setIsLoading(false);
+  // };
 
   const closeAssets = () => {
     quickAssetsStore.setCurrentStep(0);
@@ -94,7 +94,8 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
               <>
                 {balancesInfoList.map((el) => {
                   const balance = new BN(el.contractBalance).isGreaterThan(BN.ZERO);
-                  if (!balance) return <></>;
+                  if (!balance) return;
+
                   return (
                     <AssetItem key={el.assetId}>
                       <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
@@ -138,23 +139,23 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
       )}
       <BottomColumn justifyContent="space-between">
         {!isConnected && (
-          <SizedBoxStyled width={150}>
-            <Text type={TEXT_TYPES.BUTTON}>Connect wallet to see your assets and trade</Text>
-          </SizedBoxStyled>
-        )}
-        {!isConnected && (
-          <Button green onClick={() => openConnectDialog()}>
-            Connect wallet
-          </Button>
+          <>
+            <SizedBoxStyled width={150}>
+              <Text type={TEXT_TYPES.BUTTON}>Connect wallet to see your assets and trade</Text>
+            </SizedBoxStyled>
+            <Button green onClick={() => openConnectDialog()}>
+              Connect wallet
+            </Button>
+          </>
         )}
         {accumulateBalance.contractBalance.isPositive() && (
           <SmartFlexBlock>
             <ButtonConfirm fitContent onClick={() => setStep(1)}>
               Withdraw
             </ButtonConfirm>
-            <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdraw}>
+            {/* <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdraw}>
               {isLoading ? <Spinner height={14} /> : "Withdraw All"}
-            </ButtonConfirm>
+            </ButtonConfirm> */}
           </SmartFlexBlock>
         )}
       </BottomColumn>

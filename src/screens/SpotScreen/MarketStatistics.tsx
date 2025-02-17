@@ -19,7 +19,6 @@ import { MarketInfoItem } from "@screens/SpotScreen/DesktopMarketInfoTooltip/Des
 
 import { DEFAULT_DECIMALS, PYTH_LINK } from "@constants";
 import BN from "@utils/BN";
-import { isStableSymbol } from "@utils/isStableSymbol";
 import { toCurrency } from "@utils/toCurrency";
 
 const MarketStatistics: React.FC = observer(() => {
@@ -30,11 +29,8 @@ const MarketStatistics: React.FC = observer(() => {
   const indexPriceBn = BN.formatUnits(spotOrderBookStore.lastTradePrice, DEFAULT_DECIMALS);
 
   const { quoteToken, precision } = tradeStore.market ?? {};
-  const isStable = isStableSymbol(quoteToken?.symbol ?? "");
 
-  const volume = isStable
-    ? tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn)
-    : tradeStore.spotMarketInfo.volume;
+  const volume = tradeStore.spotMarketInfo.volume.multipliedBy(indexPriceBn);
 
   const oraclePrice = tradeStore.market?.priceUnits.toFormat(precision);
   const indexPrice = toCurrency(indexPriceBn.toNumber().toFixed(precision), quoteToken?.symbol);

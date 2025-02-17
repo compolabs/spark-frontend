@@ -54,9 +54,11 @@ export const CompetitionsTable = observer(({ live }: { live: string }) => {
       if (leaderboardStore.sortCompetitions.side === "DESC") return <ArrowFilterIcon />;
       return <ArrowFilterIcon style={{ transform: "rotate(180deg)" }} />;
     }
-    return <></>;
+    return;
   };
-  if (live === "Pending") return <></>;
+
+  if (live === "Pending") return;
+
   return (
     <>
       <CompetitionsTableHeader>
