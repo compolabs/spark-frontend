@@ -33,8 +33,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1(axios@1.7.9)
       '@szhsin/react-accordion':
-        specifier: ^1.3.0
-        version: 1.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.4.0
+        version: 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^5.40.1
         version: 5.62.2(react@18.3.1)
@@ -2491,8 +2491,8 @@ packages:
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
 
-  '@szhsin/react-accordion@1.3.0':
-    resolution: {integrity: sha512-25hZ+ewTrb1XkELt5xjFLzCyavBXmTtHi32BJLvPogeOZ5AnkddrnQCE5xClcbxx/h6W7zREtAzbbDaWvWEeNg==}
+  '@szhsin/react-accordion@1.4.0':
+    resolution: {integrity: sha512-8wMTtyTIwP2BUVt+g5PgIs64bBP+NJte/T2wP8JKl4GW7leSo27a+jjqktWXzPEpRr5BM/FyGR2hVzLXX3bZBA==}
     peerDependencies:
       react: ^16.14 || ^17.0 || ^18.0 || ^19.0
       react-dom: ^16.14 || ^17.0 || ^18.0 || ^19.0
@@ -10113,7 +10113,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@szhsin/react-accordion@1.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@szhsin/react-accordion@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)

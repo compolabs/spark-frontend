@@ -4,11 +4,12 @@ import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
 
-import BN from "@utils/BN.ts";
-import { toCurrency } from "@utils/toCurrency.ts";
+import BN from "@utils/BN";
+import { toCurrency } from "@utils/toCurrency";
 
 const StatsAllTime = observer(() => {
   const { leaderboardStore } = useStores();
@@ -42,6 +43,10 @@ const AllTimeStatsContent = styled(SmartFlex)`
   margin: 32px 0;
   align-items: center;
   border: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
+  ${media.mobile} {
+    flex-direction: column;
+    height: 260px;
+  }
 `;
 
 const StatsItem = styled(SmartFlex)`
@@ -53,5 +58,12 @@ const StatsItem = styled(SmartFlex)`
   gap: 8px;
   &:first-child {
     border-right: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
+  }
+  ${media.mobile} {
+    width: 100%;
+    &:first-child {
+      border-right: none;
+      border-bottom: 1px solid ${({ theme }) => theme.colors.strokeSecondary};
+    }
   }
 `;

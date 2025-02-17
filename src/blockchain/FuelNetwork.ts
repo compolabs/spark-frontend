@@ -265,4 +265,8 @@ export class FuelNetwork {
   fetchTotalStatsTableData = async (...params: Parameters<typeof this.orderbookSdk.getTotalStatsTableData>) => {
     return await this.orderbookSdk.getTotalStatsTableData(...params);
   };
+
+  getCompetition = async (...params: Parameters<typeof this.orderbookSdk.getCompetition>) => {
+    return await this.orderbookSdk.getCompetition(...params);
+  };
 }

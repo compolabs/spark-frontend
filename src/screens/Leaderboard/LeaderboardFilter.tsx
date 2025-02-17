@@ -14,7 +14,7 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { FiltersProps } from "@stores/DashboardStore";
 
-import { filters } from "./const";
+import { filters } from "../Competitions/const";
 
 export const LeaderboardFilter = observer(() => {
   const [active, setActive] = useState(0);

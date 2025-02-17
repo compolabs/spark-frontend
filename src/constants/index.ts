@@ -16,6 +16,7 @@ export const ROUTES = {
   SWAP: "/swap",
   DASHBOARD: "/dashboard",
   LEADERBOARD: "/leaderboard",
+  COMPETITIONS: "/competitions",
   STATS: "/stats",
 };
 

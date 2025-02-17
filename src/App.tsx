@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
+import Competitions from "src/screens/Competitions";
 import Leaderboard from "src/screens/Leaderboard";
 
 import { Column } from "@components/Flex";
@@ -25,6 +26,7 @@ import { ROUTES } from "@constants";
 
 import { FeatureToggleProvider, IntercomProvider, UnderConstructionProvider } from "@src/providers";
 import { DiscordProvider } from "@src/providers/DiscordProvider";
+
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore } = useStores();
 
@@ -50,6 +52,7 @@ const App: React.FC = observer(() => {
                 <Route element={<Navigate to={`${ROUTES.SPOT}/${tradeStore.marketSymbol}`} />} path={ROUTES.ROOT} />
                 <Route element={<Dashboard />} path={ROUTES.DASHBOARD} />
                 <Route element={<Leaderboard />} path={ROUTES.LEADERBOARD} />
+                <Route element={<Competitions />} path={ROUTES.COMPETITIONS} />
                 <Route element={<Stats />} path={ROUTES.STATS} />
               </Routes>
               <SideManageAssets />
