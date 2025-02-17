@@ -1,18 +1,24 @@
+import BigNumber from "bignumber.js";
+
 import { DEFAULT_DECIMALS } from "@constants";
 
 import { SpotMarketOrder } from "@entity";
 
 import BN from "./BN";
 
-const roundPrice = (price: BN, decimals: number): BN => {
+const roundPrice = (price: BN, decimals: number, rm: BigNumber.RoundingMode): BN => {
   const factor = new BN(10).pow(decimals);
-  return new BN(price.dividedBy(factor).integerValue(BN.ROUND_UP).multipliedBy(factor));
+  return new BN(price.dividedBy(factor).integerValue(rm).multipliedBy(factor));
 };
 
-export const groupOrders = (orders: SpotMarketOrder[], decimals: number): SpotMarketOrder[] => {
+export const groupOrders = (
+  orders: SpotMarketOrder[],
+  decimals: number,
+  rm: BigNumber.RoundingMode,
+): SpotMarketOrder[] => {
   const groupedOrders: { [key: string]: SpotMarketOrder } = {};
   orders.forEach((order) => {
-    const roundedPrice = roundPrice(order.price, DEFAULT_DECIMALS - decimals);
+    const roundedPrice = roundPrice(order.price, DEFAULT_DECIMALS - decimals, rm);
     const price = roundedPrice.toString();
 
     if (!groupedOrders[price]) {

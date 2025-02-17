@@ -394,7 +394,9 @@ class CreateOrderVM {
       orderType: isBuy ? OrderType.Sell : OrderType.Buy,
     };
 
-    const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
+    const activeOrders = await bcNetwork.fetchSpotActiveOrders(params, {
+      orderType: isBuy ? "desc" : "asc",
+    });
 
     let orders: SpotMarketOrder[] = [];
 
@@ -463,6 +465,8 @@ class CreateOrderVM {
     settingsStore.setTimeInForce(LimitType.GTC);
     settingsStore.setOrderType(ORDER_TYPE.Limit);
     this.setOrderMode(mode);
-    this.setInputPrice(order.price);
+    // setTimeout(() => {
+    //   this.setInputPrice(order.price);
+    // }, 50);
   };
 }

@@ -54,7 +54,7 @@ const getLanguageFromURL = (): LanguageCode | null => {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, " ")) as LanguageCode);
 };
 
-const TradingViewChartAdvance = observer(() => {
+const TradingViewChartAdvanced = observer(() => {
   const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
   // const isUnderConstruction = false;
 
@@ -131,4 +131,4 @@ const TradingViewChartAdvance = observer(() => {
   return <div ref={chartContainerRef} className="TVChartContainer" />;
 });
 
-export default TradingViewChartAdvance;
+export default TradingViewChartAdvanced;

@@ -10,6 +10,7 @@ import AssetBlock from "@components/SelectAssets/AssetBlock";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES } from "@components/Text";
+import { media } from "@themes/breakpoints";
 
 import closeThin from "@assets/icons/closeThin.svg";
 import DepositAssets from "@assets/icons/depositAssets.svg?react";
@@ -105,13 +106,14 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             )
           ) : (
             <>
-              {balancesInfoList.slice(0, 3).map((el) => (
-                <AssetItem key={el.assetId}>
-                  <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
-                </AssetItem>
-              ))}
+              <BoxShadow>
+                {balancesInfoList.slice(0, 3).map((el) => (
+                  <AssetItem key={el.assetId}>
+                    <AssetBlock options={{ showBalance: "contractBalance" }} token={el} />
+                  </AssetItem>
+                ))}
+              </BoxShadow>
               {renderOverallContent({ isConnected, balance: accumulateBalance.contractBalance })}
-              <BoxShadow />
             </>
           )}
         </WalletBlock>
@@ -208,12 +210,22 @@ const AssetsContainer = styled(SmartFlex)`
 `;
 
 const BoxShadow = styled(SmartFlex)`
-  height: 220px;
-  width: calc(100% + 40px);
-  position: absolute;
-  left: -20px;
-  top: 50px;
-  background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
+  position: relative;
+  flex-direction: column;
+  gap: 8px;
+
+  &:after {
+    content: "";
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
+
+    ${media.mobile} {
+      background: linear-gradient(to bottom, transparent 0px, rgba(0, 0, 0, 0) 10%, rgba(20, 20, 20, 1) 100%);
+    }
+  }
 `;
 
 const DepositedAssets = styled(SmartFlex)`

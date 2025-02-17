@@ -103,7 +103,7 @@ export const SwapScreen: React.FC = observer(() => {
       ? spotOrderBookStore.buyOrders[0].price
       : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1].price;
     const receiveAmount = BN.parseUnits(new BN(newPayAmount).dividedBy(price), DEFAULT_DECIMALS);
-    swapStore.setReceiveAmount(receiveAmount.toFixed(swapStore.buyToken.precision));
+    swapStore.setReceiveAmount(receiveAmount.toFixed(swapStore.buyToken.decimals));
   };
 
   const onReceivedTokensChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,13 +121,13 @@ export const SwapScreen: React.FC = observer(() => {
       ? spotOrderBookStore.buyOrders[0].price
       : spotOrderBookStore.sellOrders[spotOrderBookStore.sellOrders.length - 1].price;
     const payAmount = BN.parseUnits(new BN(newReceiveAmount).dividedBy(price), DEFAULT_DECIMALS);
-    swapStore.setPayAmount(payAmount.toFixed(swapStore.sellToken.precision));
+    swapStore.setPayAmount(payAmount.toFixed(swapStore.sellToken.decimals));
   };
 
   const fillPayAmount = () => {
     setOnPress(true);
     const balance = generateBalanceData([swapStore.sellToken])[0].balance;
-    const newPayAmount = parseNumberWithCommas(balance.toString()).toFixed(swapStore.sellToken.precision);
+    const newPayAmount = parseNumberWithCommas(balance.toString()).toFixed(swapStore.sellToken.decimals);
 
     swapStore.setPayAmount(newPayAmount);
 

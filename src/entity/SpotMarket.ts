@@ -2,6 +2,7 @@ import { makeAutoObservable } from "mobx";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
+import { Market } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 
@@ -11,16 +12,18 @@ export class SpotMarket {
   readonly baseToken: Token;
   readonly quoteToken: Token;
   readonly contractAddress: string;
+  readonly precision: number;
 
   price: BN = BN.ZERO;
   setPrice = (price: BN) => (this.price = price);
 
-  constructor(baseToken: string, quoteToken: string, contractAddress: string) {
+  constructor(market: Market) {
     const bcNetwork = FuelNetwork.getInstance();
 
-    this.baseToken = bcNetwork.getTokenByAssetId(baseToken);
-    this.quoteToken = bcNetwork.getTokenByAssetId(quoteToken);
-    this.contractAddress = contractAddress;
+    this.baseToken = bcNetwork.getTokenByAssetId(market.baseAssetId);
+    this.quoteToken = bcNetwork.getTokenByAssetId(market.quoteAssetId);
+    this.contractAddress = market.contractId;
+    this.precision = market.precision;
 
     makeAutoObservable(this);
   }
