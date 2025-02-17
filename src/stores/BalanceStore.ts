@@ -207,11 +207,13 @@ export class BalanceStore {
     const token = bcNetwork.getTokenByAssetId(assetId);
     const type = getTokenType(markets, assetId);
 
+    const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
+
     if (!type) {
       handleWalletErrors(
         notificationStore,
         new Error(`Token with assetId "${assetId}" could not be identified as base or quote in the provided markets.`),
-        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amount, token.symbol),
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amountFormatted, token.symbol),
       );
       return false;
     }
@@ -229,7 +231,7 @@ export class BalanceStore {
         amount,
       );
       notificationStore.success({
-        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amount, token.symbol),
+        text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
       });
       return true;
@@ -237,7 +239,7 @@ export class BalanceStore {
       handleWalletErrors(
         notificationStore,
         error,
-        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amount, token.symbol),
+        getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED)(amountFormatted, token.symbol),
       );
       return false;
     }
