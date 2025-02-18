@@ -19,6 +19,8 @@ import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 
+import setting from "../screens/Competitions/setting.json";
+
 import RootStore from "./RootStore";
 
 const config = {
@@ -220,6 +222,8 @@ class LeaderboardStore {
       limit: 10,
       page: this.page - 1,
       search: this.searchWallet,
+      startTime: setting.startDate,
+      endTime: setting.endDate,
     });
     this.competitionData = data?.result?.rows ?? [];
     this.isLoading = false;
