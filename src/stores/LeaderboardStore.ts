@@ -19,6 +19,8 @@ import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
 
+import setting from "../screens/Competitions/setting.json";
+
 import RootStore from "./RootStore";
 
 const config = {
@@ -220,6 +222,8 @@ class LeaderboardStore {
       limit: 10,
       page: this.page - 1,
       search: this.searchWallet,
+      startTime: setting.startDate,
+      endTime: setting.endDate,
     });
     this.competitionData = data?.result?.rows ?? [];
     this.isLoading = false;
@@ -262,11 +266,13 @@ class LeaderboardStore {
 
     try {
       const response = await bcNetwork.fetchUserPoints({
-        userAddress: accountStore.address!,
+        userAddress: "0x1ff753d4a2c999edbfd3a98f5e3a629a0c4589d984d36fb561e1c6bfb87254a4",
         fromTimestamp: 1736899200,
         toTimestamp: 1739491200,
         excluded,
       });
+      console.log("response", response);
+
       const points = new BN(response.result.rows[0].points);
 
       this.userPoints = {
