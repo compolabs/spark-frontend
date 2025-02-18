@@ -224,6 +224,7 @@ class LeaderboardStore {
       search: this.searchWallet,
       startTime: setting.startDate,
       endTime: setting.endDate,
+      minimumTradingVolume: setting.minimumTradingVolume,
     });
     this.competitionData = data?.result?.rows ?? [];
     this.isLoading = false;
