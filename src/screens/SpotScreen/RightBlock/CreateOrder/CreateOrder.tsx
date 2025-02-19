@@ -352,31 +352,30 @@ const CreateOrder: React.FC = observer(() => {
               amount={vm.inputAmount}
               assetId={baseToken.assetId}
               decimals={baseToken.decimals}
-              error={vm.isSell || settingsStore.orderType === ORDER_TYPE.Market ? vm.isInputError : undefined}
+              error={vm.isSell ? vm.isInputError : undefined}
               errorMessage={`Not enough ${baseToken.symbol}`}
               label="Order size"
               setAmount={vm.setInputAmount}
               onBlur={vm.setActiveInput}
               onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Amount)}
             />
-            {settingsStore.orderType === ORDER_TYPE.Limit && (
-              <InputContainerWithMaxButton>
-                <StyledMaxButton fitContent onClick={vm.onMaxClick}>
-                  MAX
-                </StyledMaxButton>
-                <SizedBox height={14} />
-                <TokenInput
-                  amount={vm.inputTotal}
-                  assetId={quoteToken.assetId}
-                  decimals={quoteToken.decimals}
-                  error={vm.isSell ? undefined : vm.isInputError}
-                  errorMessage={`Not enough ${quoteToken.symbol}`}
-                  setAmount={vm.setInputTotal}
-                  onBlur={vm.setActiveInput}
-                  onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
-                />
-              </InputContainerWithMaxButton>
-            )}
+
+            <InputContainerWithMaxButton>
+              <StyledMaxButton fitContent onClick={vm.onMaxClick}>
+                MAX
+              </StyledMaxButton>
+              <SizedBox height={14} />
+              <TokenInput
+                amount={vm.inputTotal}
+                assetId={quoteToken.assetId}
+                decimals={quoteToken.decimals}
+                error={vm.isSell ? undefined : vm.isInputError}
+                errorMessage={`Not enough ${quoteToken.symbol}`}
+                setAmount={vm.setInputTotal}
+                onBlur={vm.setActiveInput}
+                onFocus={() => vm.setActiveInput(ACTIVE_INPUT.Total)}
+              />
+            </InputContainerWithMaxButton>
           </InputContainerWithError>
           <SmartFlex column>
             <SliderContainer>
