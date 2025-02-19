@@ -37,6 +37,7 @@ jobs:
         run: |
           touch .env
           echo VITE_FEATURE_TOGGLE_CLIENT_KEY=${{ vars.VITE_FEATURE_TOGGLE_CLIENT_KEY }} >> .env
+          echo VITE_DATAFEED_URL=${{ vars.VITE_DATAFEED_URL }} >> .env
       - name: Configure npm authentication for GitHub Registry
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
