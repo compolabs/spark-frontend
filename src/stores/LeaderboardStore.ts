@@ -222,8 +222,8 @@ class LeaderboardStore {
       limit: 10,
       page: this.page - 1,
       search: this.searchWallet,
-      startTime: setting.startDate,
-      endTime: setting.endDate,
+      startTime: new BN(setting.startDate).div(1000).toNumber(),
+      endTime: new BN(setting.endDate).div(1000).toNumber(),
       minimumTradingVolume: setting.minimumTradingVolume,
     });
     this.competitionData = data?.result?.rows ?? [];
