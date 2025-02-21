@@ -48,8 +48,8 @@ export const MarketDataSection: React.FC = observer(() => {
     updatedStats[0].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
     updatedStats[1].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
 
-    updatedStats[0].value = `$${sumStatsUser?.value?.toFixed(4)}`;
-    updatedStats[1].value = `$${sumStatsTrading?.toFixed(4) ?? "0.0000"}`;
+    updatedStats[0].value = `$${sumStatsUser?.value?.toFixed(2)}`;
+    updatedStats[1].value = `$${sumStatsTrading?.toFixed(2) ?? "0.00"}`;
     const calculateChange = (data: DataPoint[]) => {
       if (data.length === 0) {
         return {

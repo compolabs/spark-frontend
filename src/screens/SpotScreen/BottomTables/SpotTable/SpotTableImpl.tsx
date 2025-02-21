@@ -243,6 +243,7 @@ const SpotTableImpl: React.FC = observer(() => {
   };
 
   const tabToData = [vm.userOrders, vm.userOrdersHistory];
+  console.log("tabToData", tabToData[1]);
   const data = tabToData[tabIndex];
   const handleChangePagination = (e: number) => {
     vm.setOffset(e);

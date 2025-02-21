@@ -36,6 +36,8 @@ class DashboardStore {
   activeTime = 0;
   activeFilter = filters[0];
 
+  intervalId: NodeJS.Timeout | undefined;
+
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
@@ -46,6 +48,12 @@ class DashboardStore {
       () => {
         this.fetchUserScoreSnapshot();
         this.fetchTradeEvent();
+        if (this.intervalId) clearInterval(this.intervalId);
+
+        this.intervalId = setInterval(() => {
+          this.fetchUserScoreSnapshot();
+          this.fetchTradeEvent();
+        }, 10000);
       },
     );
 
