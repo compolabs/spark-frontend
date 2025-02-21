@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFlag } from "@unleash/proxy-client-react";
 import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
@@ -55,9 +54,6 @@ const getLanguageFromURL = (): LanguageCode | null => {
 };
 
 const TradingViewChartAdvanced = observer(() => {
-  const isUnderConstruction = useFlag("Trading_view_advance_stagging_");
-  // const isUnderConstruction = false;
-
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
   const { tradeStore, mixPanelStore, accountStore } = useStores();
   const bcNetwork = FuelNetwork.getInstance();
@@ -65,7 +61,7 @@ const TradingViewChartAdvanced = observer(() => {
   const defaultProps: Omit<ChartContainerProps, "container"> = {
     symbol: tradeStore.market?.symbol.replace("-", ""),
     interval: "D" as ResolutionString,
-    datafeedUrl: isUnderConstruction ? "https://spark-candles.v12.trade" : "https://spark-candles.v12.trade", // После переезда 2 домен не сделали, если не появиться, можно убрать и удалить фича-флаг
+    datafeedUrl: import.meta.env.VITE_DATAFEED_URL,
     libraryPath: "/charting_library/",
     chartsStorageUrl: "https://saveload.tradingview.com",
     chartsStorageApiVersion: "1.1",
