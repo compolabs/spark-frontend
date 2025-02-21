@@ -321,15 +321,21 @@ class CreateOrderVM {
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
     };
 
-    // const marketContractsByType = isBuy
-    //   ? CONFIG.MARKETS.filter((m) => m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase())
-    //   : CONFIG.MARKETS.filter((m) => m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase());
+    const availableMarkets = CONFIG.MARKETS.filter((m) => {
+      // For a buy operation, we look for markets where either the quote or base asset matches our QUOTE token.
+      if (isBuy) {
+        return (
+          m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase() ||
+          m.baseAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase()
+        );
+      }
 
-    const availableMarkets = CONFIG.MARKETS.filter(
-      (m) =>
+      // For a sell operation, we look for markets where either the quote or base asset matches our BASE token.
+      return (
         m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
-        m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase(),
-    );
+        m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase()
+      );
+    });
 
     const compactMarkets: CompactMarketInfo[] = availableMarkets.map((m) => ({
       contractId: m.contractId,
