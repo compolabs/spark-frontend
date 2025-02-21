@@ -6,6 +6,7 @@ import { filters } from "@screens/Dashboard/const";
 import { TradeEvent } from "@screens/Dashboard/InfoDataGraph";
 
 import { CONFIG } from "@utils/getConfig";
+import { IntervalUpdater } from "@utils/IntervalUpdater";
 
 import { FuelNetwork } from "@blockchain";
 
@@ -36,7 +37,7 @@ class DashboardStore {
   activeTime = 0;
   activeFilter = filters[0];
 
-  intervalId: NodeJS.Timeout | undefined;
+  intervalId: IntervalUpdater | undefined;
 
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
@@ -48,11 +49,11 @@ class DashboardStore {
       () => {
         this.fetchUserScoreSnapshot();
         this.fetchTradeEvent();
-        if (this.intervalId) clearInterval(this.intervalId);
+        if (this.intervalId) stop();
 
-        this.intervalId = setInterval(() => {
-          this.fetchUserScoreSnapshot();
-          this.fetchTradeEvent();
+        this.intervalId = new IntervalUpdater(async () => {
+          await this.fetchUserScoreSnapshot();
+          await this.fetchTradeEvent();
         }, 10000);
       },
     );
