@@ -39,14 +39,14 @@ class DashboardStore {
   activeTime = 0;
   activeFilter = filters[0];
 
-  private userScoreSnapshotUpdater: IntervalUpdater;
+  private syncDashboardDataUpdater: IntervalUpdater;
 
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
     this.init();
 
-    this.userScoreSnapshotUpdater = new IntervalUpdater(this.syncDashboardData, UPDATE_INTERVAL);
+    this.syncDashboardDataUpdater = new IntervalUpdater(this.syncDashboardData, UPDATE_INTERVAL);
 
     reaction(
       () => [this.activeTime, accountStore.address],
@@ -62,7 +62,7 @@ class DashboardStore {
       },
     );
 
-    this.userScoreSnapshotUpdater.run();
+    this.syncDashboardDataUpdater.run();
   }
 
   init = async () => {
