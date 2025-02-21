@@ -287,12 +287,11 @@ class CreateOrderVM {
     const fee = getRealFee(tradeStore.market, tradeStore.matcherFee, tradeStore.exchangeFee, isSell);
     const totalFee = fee.exchangeFee.plus(fee.matcherFee);
 
-    return balanceStore.getTotalBalance(tradeStore.market.quoteToken.assetId).minus(totalFee);
+    const balance = balanceStore.getTotalBalance(tradeStore.market.quoteToken.assetId);
 
-    // if (isSell) {
-    //   return balanceStore.getTotalBalance(tradeStore.market.baseToken.assetId);
-    // }
-    // return balanceStore.getTotalBalance(tradeStore.market.quoteToken.assetId)
+    if (balance.eq(BN.ZERO)) return BN.ZERO;
+
+    return balanceStore.getTotalBalance(tradeStore.market.quoteToken.assetId).minus(totalFee);
   };
 
   createOrder = async () => {
