@@ -5,6 +5,7 @@ import { Undefinable } from "tsdef";
 
 import {
   AssetType,
+  CompactMarketInfo,
   CreateOrderWithDepositParams,
   FulfillOrderManyWithDepositParams,
   GetActiveOrdersParams,
@@ -143,15 +144,9 @@ class CreateOrderVM {
   }
 
   get isSpotInputError(): boolean {
-    const {
-      tradeStore: { market },
-      balanceStore,
-    } = this.rootStore;
-
     const amount = this.isSell ? this.inputAmount : this.inputTotal;
-    const token = this.isSell ? market!.baseToken : market!.quoteToken;
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = this.getTotalBalanceWithFee();
 
     return totalBalance ? amount.gt(totalBalance) : false;
   }
@@ -175,13 +170,12 @@ class CreateOrderVM {
   };
 
   private onSpotMaxClick = () => {
-    const { tradeStore, mixPanelStore, balanceStore } = this.rootStore;
+    const { tradeStore, mixPanelStore } = this.rootStore;
 
     if (!tradeStore.market) return;
 
-    const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
+    const totalBalance = this.getTotalBalanceWithFee();
 
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
     if (this.isSell) {
       this.setInputAmount(totalBalance);
       return;
@@ -257,13 +251,11 @@ class CreateOrderVM {
   }
 
   private updatePercent(): void {
-    const { tradeStore, balanceStore } = this.rootStore;
+    const { tradeStore } = this.rootStore;
 
     if (!tradeStore.market) return;
 
-    const token = this.isSell ? tradeStore.market.baseToken : tradeStore.market.quoteToken;
-
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = this.getTotalBalanceWithFee();
 
     if (totalBalance.isZero()) {
       this.inputPercent = BN.ZERO;
@@ -280,6 +272,27 @@ class CreateOrderVM {
   setInputPriceThrottle = _.throttle(this.setInputPrice, PRICE_UPDATE_THROTTLE_INTERVAL);
 
   setInputPercent = (value: number | number[]) => (this.inputPercent = new BN(value.toString()));
+
+  getTotalBalanceWithFee = () => {
+    const { tradeStore, balanceStore } = this.rootStore;
+
+    if (!tradeStore.market) return BN.ZERO;
+
+    const isSell = this.mode === ORDER_MODE.SELL;
+
+    if (isSell) {
+      return balanceStore.getTotalBalance(tradeStore.market.baseToken.assetId);
+    }
+
+    const fee = getRealFee(tradeStore.market, tradeStore.matcherFee, tradeStore.exchangeFee, isSell);
+    const totalFee = fee.exchangeFee.plus(fee.matcherFee);
+
+    const balance = balanceStore.getTotalBalance(tradeStore.market.quoteToken.assetId);
+
+    if (balance.eq(BN.ZERO)) return BN.ZERO;
+
+    return balanceStore.getTotalBalance(tradeStore.market.quoteToken.assetId).minus(totalFee);
+  };
 
   createOrder = async () => {
     const { tradeStore, notificationStore, balanceStore, mixPanelStore, settingsStore, accountStore } = this.rootStore;
@@ -307,11 +320,27 @@ class CreateOrderVM {
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
     };
 
-    const marketContractsByType = isBuy
-      ? CONFIG.MARKETS.filter((m) => m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase())
-      : CONFIG.MARKETS.filter((m) => m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase());
+    const availableMarkets = CONFIG.MARKETS.filter((m) => {
+      // For a buy operation, we look for markets where either the quote or base asset matches our QUOTE token.
+      if (isBuy) {
+        return (
+          m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase() ||
+          m.baseAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase()
+        );
+      }
 
-    const marketContracts = marketContractsByType.map((m) => m.contractId);
+      // For a sell operation, we look for markets where either the quote or base asset matches our BASE token.
+      return (
+        m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
+        m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase()
+      );
+    });
+
+    const compactMarkets: CompactMarketInfo[] = availableMarkets.map((m) => ({
+      contractId: m.contractId,
+      quoteAssetId: m.quoteAssetId,
+      baseAssetId: m.baseAssetId,
+    }));
 
     if (bcNetwork.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
@@ -321,9 +350,9 @@ class CreateOrderVM {
       let hash: Undefinable<string> = "";
 
       if (timeInForce === LimitType.GTC) {
-        hash = await this.createGTCOrder(type, deposit, marketContracts);
+        hash = await this.createGTCOrder(type, deposit, compactMarkets);
       } else {
-        hash = await this.createMarketOrLimitOrder(type, market, deposit, marketContracts);
+        hash = await this.createMarketOrLimitOrder(type, market, deposit, compactMarkets);
       }
 
       const token = isBuy ? market.baseToken : market.quoteToken;
@@ -361,7 +390,7 @@ class CreateOrderVM {
   private createGTCOrder = async (
     type: OrderType,
     deposit: DepositInfo,
-    marketContracts: string[],
+    markets: CompactMarketInfo[],
   ): Promise<string> => {
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -372,7 +401,7 @@ class CreateOrderVM {
       ...deposit,
     };
 
-    const data = await bcNetwork.createSpotOrderWithDeposit(order, marketContracts);
+    const data = await bcNetwork.createSpotOrderWithDeposit(order, markets);
     return data.transactionId;
   };
 
@@ -380,7 +409,7 @@ class CreateOrderVM {
     type: OrderType,
     market: SpotMarket,
     deposit: DepositInfo,
-    marketContracts: string[],
+    markets: CompactMarketInfo[],
   ): Promise<string> => {
     const { settingsStore, tradeStore } = this.rootStore;
     const bcNetwork = FuelNetwork.getInstance();
@@ -456,7 +485,7 @@ class CreateOrderVM {
       orders: orderList.map((el) => el.id),
       slippage: slippage,
     };
-    const data = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
+    const data = await bcNetwork.fulfillOrderManyWithDeposit(order, markets);
     return data.transactionId;
   };
 
