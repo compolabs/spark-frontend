@@ -104,7 +104,7 @@ export class SpotMarketOrder {
   }
 
   get formatInitialAmount() {
-    return this.initialAmountUnits.toSignificant(2);
+    return this.initialAmountUnits.toSignificant(this.quoteToken.decimals);
   }
 
   get formatCurrentAmount() {

@@ -6,6 +6,7 @@ import { filters } from "@screens/Dashboard/const";
 import { TradeEvent } from "@screens/Dashboard/InfoDataGraph";
 
 import { CONFIG } from "@utils/getConfig";
+import { IntervalUpdater } from "@utils/IntervalUpdater";
 
 import { FuelNetwork } from "@blockchain";
 
@@ -28,6 +29,8 @@ export interface DataPoint {
   value: number;
 }
 
+const UPDATE_INTERVAL = 10000; // 10 sec
+
 class DashboardStore {
   initialized = false;
   rowSnapshots: RowSnapshot[] = [];
@@ -36,16 +39,19 @@ class DashboardStore {
   activeTime = 0;
   activeFilter = filters[0];
 
+  private syncDashboardDataUpdater: IntervalUpdater;
+
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
     this.init();
 
+    this.syncDashboardDataUpdater = new IntervalUpdater(this.syncDashboardData, UPDATE_INTERVAL);
+
     reaction(
       () => [this.activeTime, accountStore.address],
       () => {
-        this.fetchUserScoreSnapshot();
-        this.fetchTradeEvent();
+        this.syncDashboardData();
       },
     );
 
@@ -55,6 +61,8 @@ class DashboardStore {
         if (!accountStore.isConnected) this.disconnect();
       },
     );
+
+    this.syncDashboardDataUpdater.run();
   }
 
   init = async () => {
@@ -71,6 +79,11 @@ class DashboardStore {
     this.activeUserStat = 0;
     this.activeTime = 0;
     this.activeFilter = filters[0];
+  };
+
+  private syncDashboardData = async () => {
+    await this.fetchUserScoreSnapshot();
+    await this.fetchTradeEvent();
   };
 
   getChartDataPortfolio = () => {
