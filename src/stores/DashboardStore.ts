@@ -29,6 +29,8 @@ export interface DataPoint {
   value: number;
 }
 
+const UPDATE_INTERVAL = 10000; // 10 sec
+
 class DashboardStore {
   initialized = false;
   rowSnapshots: RowSnapshot[] = [];
@@ -37,24 +39,22 @@ class DashboardStore {
   activeTime = 0;
   activeFilter = filters[0];
 
-  intervalId: IntervalUpdater | undefined;
+  private userScoreSnapshotUpdater: IntervalUpdater;
+  private tradeEventUpdater: IntervalUpdater;
 
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
     this.init();
 
+    this.userScoreSnapshotUpdater = new IntervalUpdater(this.fetchUserScoreSnapshot, UPDATE_INTERVAL);
+    this.tradeEventUpdater = new IntervalUpdater(this.fetchTradeEvent, UPDATE_INTERVAL);
+
     reaction(
       () => [this.activeTime, accountStore.address],
       () => {
         this.fetchUserScoreSnapshot();
         this.fetchTradeEvent();
-        if (this.intervalId) stop();
-
-        this.intervalId = new IntervalUpdater(async () => {
-          await this.fetchUserScoreSnapshot();
-          await this.fetchTradeEvent();
-        }, 10000);
       },
     );
 
@@ -64,6 +64,9 @@ class DashboardStore {
         if (!accountStore.isConnected) this.disconnect();
       },
     );
+
+    this.userScoreSnapshotUpdater.run();
+    this.tradeEventUpdater.run();
   }
 
   init = async () => {
