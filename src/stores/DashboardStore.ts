@@ -40,21 +40,18 @@ class DashboardStore {
   activeFilter = filters[0];
 
   private userScoreSnapshotUpdater: IntervalUpdater;
-  private tradeEventUpdater: IntervalUpdater;
 
   constructor(private rootStore: RootStore) {
     const { accountStore } = this.rootStore;
     makeAutoObservable(this);
     this.init();
 
-    this.userScoreSnapshotUpdater = new IntervalUpdater(this.fetchUserScoreSnapshot, UPDATE_INTERVAL);
-    this.tradeEventUpdater = new IntervalUpdater(this.fetchTradeEvent, UPDATE_INTERVAL);
+    this.userScoreSnapshotUpdater = new IntervalUpdater(this.syncDashboardData, UPDATE_INTERVAL);
 
     reaction(
       () => [this.activeTime, accountStore.address],
       () => {
-        this.fetchUserScoreSnapshot();
-        this.fetchTradeEvent();
+        this.syncDashboardData();
       },
     );
 
@@ -66,7 +63,6 @@ class DashboardStore {
     );
 
     this.userScoreSnapshotUpdater.run();
-    this.tradeEventUpdater.run();
   }
 
   init = async () => {
@@ -83,6 +79,11 @@ class DashboardStore {
     this.activeUserStat = 0;
     this.activeTime = 0;
     this.activeFilter = filters[0];
+  };
+
+  private syncDashboardData = async () => {
+    await this.fetchUserScoreSnapshot();
+    await this.fetchTradeEvent();
   };
 
   getChartDataPortfolio = () => {
