@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@compolabs/spark-orderbook-ts-sdk':
-        specifier: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.15.10.tgz
-        version: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.15.10.tgz(@types/react@18.3.18)(fuels@0.97.2(vitest@2.0.5(@types/node@22.13.4)))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 1.15.9-fix
+        version: 1.15.9-fix(@types/react@18.3.18)(fuels@0.97.2(vitest@2.0.5(@types/node@22.13.4)))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@compolabs/tradingview-chart':
         specifier: ^1.0.21
         version: 1.0.21
@@ -910,9 +910,8 @@ packages:
   '@coinbase/wallet-sdk@4.3.0':
     resolution: {integrity: sha512-T3+SNmiCw4HzDm4we9wCHCxlP0pqCiwKe4sOwPH3YAK2KSKjxPRydKu6UQJrdONFVLG7ujXvbd/6ZqmvJb8rkw==}
 
-  '@compolabs/spark-orderbook-ts-sdk@https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.15.10.tgz':
-    resolution: {tarball: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.15.10.tgz}
-    version: 1.15.10
+  '@compolabs/spark-orderbook-ts-sdk@1.15.9-fix':
+    resolution: {integrity: sha512-1/jIn1L8/0yfBIbG6bvtwpnLbR4wilkcmdzUTqU2AY6fmb0kVNTGHP30j7VVKnDRgwq800TGi8s6Tf0AaSN5TQ==, tarball: https://npm.pkg.github.com/download/@compolabs/spark-orderbook-ts-sdk/1.15.9-fix/de6131ae38b58f25b425eac0d8b161b24e389446}
     engines: {node: '>=18'}
     peerDependencies:
       fuels: '>=0.97.1'
@@ -7202,7 +7201,7 @@ snapshots:
       eventemitter3: 5.0.1
       preact: 10.26.0
 
-  '@compolabs/spark-orderbook-ts-sdk@https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.15.10.tgz(@types/react@18.3.18)(fuels@0.97.2(vitest@2.0.5(@types/node@22.13.4)))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@compolabs/spark-orderbook-ts-sdk@1.15.9-fix(@types/react@18.3.18)(fuels@0.97.2(vitest@2.0.5(@types/node@22.13.4)))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@apollo/client': 3.13.1(@types/react@18.3.18)(graphql-ws@5.16.2(graphql@16.10.0))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios: 1.7.9
