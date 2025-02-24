@@ -15,7 +15,7 @@ import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
 import Slider from "@components/Slider";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import TokenInput from "@components/TokenInput";
 import { media } from "@themes/breakpoints";
 
@@ -108,7 +108,7 @@ const CreateOrder: React.FC = observer(() => {
     // if (isFuelMarket) {
     //   return (
     //     <CreateOrderButton disabled>
-    //       <Text type={TEXT_TYPES.BUTTON}>Temporarily suspended</Text>
+    //       <Text type="BUTTON">Temporarily suspended</Text>
     //     </CreateOrderButton>
     //   );
     // }
@@ -121,7 +121,7 @@ const CreateOrder: React.FC = observer(() => {
     if (!isButtonDisabled && tradeStore.isFeeLoading) {
       return (
         <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Loading...</Text>
+          <Text type="BUTTON">Loading...</Text>
         </CreateOrderButton>
       );
     }
@@ -129,7 +129,7 @@ const CreateOrder: React.FC = observer(() => {
     if (!isButtonDisabled && !tradeStore.getIsEnoughtMoneyForFee(vm.isSell)) {
       return (
         <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Insufficient {quoteToken.symbol} for fee</Text>
+          <Text type="BUTTON">Insufficient {quoteToken.symbol} for fee</Text>
         </CreateOrderButton>
       );
     }
@@ -137,7 +137,7 @@ const CreateOrder: React.FC = observer(() => {
     if (!isButtonDisabled && !isEnoughGas) {
       return (
         <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Insufficient ETH for gas</Text>
+          <Text type="BUTTON">Insufficient ETH for gas</Text>
         </CreateOrderButton>
       );
     }
@@ -145,7 +145,7 @@ const CreateOrder: React.FC = observer(() => {
     if (vm.inputAmount.lt(minimalOrder.minOrder)) {
       return (
         <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Minimum amount {formatMinimalAmount}</Text>
+          <Text type="BUTTON">Minimum amount {formatMinimalAmount}</Text>
         </CreateOrderButton>
       );
     }
@@ -153,7 +153,7 @@ const CreateOrder: React.FC = observer(() => {
     if (vm.inputPrice.lt(minimalOrder.minPrice)) {
       return (
         <CreateOrderButton disabled>
-          <Text type={TEXT_TYPES.BUTTON}>Minimum price {formatMinimalPrice}</Text>
+          <Text type="BUTTON">Minimum price {formatMinimalPrice}</Text>
         </CreateOrderButton>
       );
     }
@@ -166,7 +166,7 @@ const CreateOrder: React.FC = observer(() => {
         red={vm.isSell}
         onClick={createOrder}
       >
-        <Text primary={!isButtonDisabled} type={TEXT_TYPES.BUTTON}>
+        <Text primary={!isButtonDisabled} type="BUTTON">
           {vm.isLoading ? "Loading..." : vm.isSell ? `Sell ${baseToken.symbol}` : `Buy ${baseToken.symbol}`}
         </Text>
       </CreateOrderButton>
@@ -193,7 +193,7 @@ const CreateOrder: React.FC = observer(() => {
         <AccordionItem
           header={
             <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
-              <Text type={TEXT_TYPES.BUTTON_SECONDARY} nowrap primary>
+              <Text type="BUTTON_SECONDARY" nowrap primary>
                 Instruction
               </Text>
               <Row alignItems="center" justifyContent="flex-end">
@@ -247,7 +247,7 @@ const CreateOrder: React.FC = observer(() => {
         <AccordionItem
           header={
             <Row alignItems="center" justifyContent="space-between" mainAxisSize="stretch">
-              <Text type={TEXT_TYPES.BUTTON_SECONDARY} nowrap primary>
+              <Text type="BUTTON_SECONDARY" nowrap primary>
                 Order Details
               </Text>
               <Row alignItems="center" justifyContent="flex-end">
@@ -312,12 +312,12 @@ const CreateOrder: React.FC = observer(() => {
       <Root column>
         <ButtonGroup>
           <Button active={!vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.BUY)}>
-            <Text primary={!vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
+            <Text primary={!vm.isSell} type="BUTTON_SECONDARY">
               buy
             </Text>
           </Button>
           <Button active={vm.isSell} onClick={() => vm.setOrderMode(ORDER_MODE.SELL)}>
-            <Text primary={vm.isSell} type={TEXT_TYPES.BUTTON_SECONDARY}>
+            <Text primary={vm.isSell} type="BUTTON_SECONDARY">
               sell
             </Text>
           </Button>
@@ -389,17 +389,17 @@ const CreateOrder: React.FC = observer(() => {
               />
             </SliderContainer>
             <Row alignItems="center" justifyContent="space-between">
-              <Text type={TEXT_TYPES.SUPPORTING}>Available</Text>
+              <Text type="SUPPORTING">Available</Text>
               <Row alignItems="center" mainAxisSize="fit-content">
-                <Text type={TEXT_TYPES.BODY} primary>
+                <Text type="BODY" primary>
                   {getAvailableAmount()}
                 </Text>
-                <Text type={TEXT_TYPES.SUPPORTING}>&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
+                <Text type="SUPPORTING">&nbsp;{vm.isSell ? baseToken.symbol : quoteToken.symbol}</Text>
               </Row>
             </Row>
             {settingsStore.orderType === ORDER_TYPE.Market && (
               <Row alignItems="center" justifyContent="space-between" style={{ marginTop: 10 }}>
-                <Text type={TEXT_TYPES.SUPPORTING}>Slippage</Text>
+                <Text type="SUPPORTING">Slippage</Text>
                 <TokenInput
                   amount={vm.slippage}
                   decimals={0}
@@ -416,10 +416,10 @@ const CreateOrder: React.FC = observer(() => {
         </ParamsContainer>
         {/* {isFuelMarket && (
           <WarningContainer gap="8px" column>
-            <Text color={theme.colors.favorite} type={TEXT_TYPES.SUPPORTING}>
+            <Text color={theme.colors.favorite} type="SUPPORTING">
               The market is temporarily stopped. Orders do not match.
             </Text>
-            <Text color={theme.colors.favorite} type={TEXT_TYPES.SUPPORTING}>
+            <Text color={theme.colors.favorite} type="SUPPORTING">
               Withdrawals are working as usual.
             </Text>
           </WarningContainer>

@@ -38,6 +38,8 @@ const colors = {
   fillBackground: "#000000",
 
   blueVioletMedium: "#1A6FF9",
+
+  textIconPrimary: "#FFFFFF",
 };
 
 export default colors;

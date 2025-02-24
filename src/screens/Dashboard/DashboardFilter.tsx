@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Button from "@components/Button";
 import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
@@ -31,7 +31,7 @@ export const DashboardFilter = observer(() => {
   return (
     <DashboardTitleContainer>
       <DashboardFilterContainer>
-        <TitleText type={TEXT_TYPES.H} primary>
+        <TitleText type="H" primary>
           {title}
         </TitleText>
         <SmartFlex gap="5px">
@@ -42,7 +42,7 @@ export const DashboardFilter = observer(() => {
           ))}
         </SmartFlex>
       </DashboardFilterContainer>
-      {/* <TitleTextBalance type={TEXT_TYPES.H} primary>
+      {/* <TitleTextBalance type="H" primary>
         {`$${sumStatsUser?.value.toFixed(4) ?? 0}`}
       </TitleTextBalance> */}
       {!isInfoDashboardPerHours && <DashboardInfo />}

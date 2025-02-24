@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
@@ -33,7 +33,7 @@ const Faucet: React.FC<IProps> = observer(() => {
 
   return (
     <Root>
-      <Title type={TEXT_TYPES.H} primary>
+      <Title type="H" primary>
         Faucet for Fuel Network
       </Title>
       <SizedBox height={16} />

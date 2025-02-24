@@ -7,7 +7,7 @@ import AssetBlock from "@components/SelectAssets/AssetBlock";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
 
@@ -71,8 +71,8 @@ export const TokenSelect: React.FC<TokenSelectProps> = ({
               <SearchInput placeholder=" " value={searchValue} variant="transparent" onChange={handleChangeSearch} />
             </Container>
             <OptionsHeader>
-              <Text type={TEXT_TYPES.BUTTON}>Asset</Text>
-              <Text type={TEXT_TYPES.BUTTON}>Wallet Balance</Text>
+              <Text type="BUTTON">Asset</Text>
+              <Text type="BUTTON">Wallet Balance</Text>
             </OptionsHeader>
             {filteredItem.length > 0 ? (
               filteredItem.map((v, index) => {
@@ -178,7 +178,7 @@ const Root = styled.div<{
   gap: 8px;
   background: ${({ theme, type }) => (type === "rounded" ? "#1F1F1F" : theme.colors.bgPrimary)};
   border: 1px solid ${({ focused, theme }) => (focused ? theme.colors.borderAccent : theme.colors.borderSecondary)};
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
   color: ${({ theme, disabled }) => (!disabled ? theme.colors.textPrimary : theme.colors.textDisabled)};
   cursor: ${({ disabled }) => (!disabled ? "pointer" : "not-allowed")};
   align-items: center;
@@ -224,5 +224,5 @@ export const Option = styled.div<{
     border-radius: 0px 0px 10px 10px;
   }
 
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]};
+  ${TEXT_TYPES_MAP.BUTTON_SECONDARY};
 `;

@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 export interface ButtonProps {
@@ -21,7 +21,7 @@ const Button = styled.button<ButtonProps>`
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON]}
+  ${TEXT_TYPES_MAP.BUTTON}
   height: 40px;
   padding: 0 16px;
   border-radius: 32px;
@@ -173,7 +173,7 @@ export const ButtonGroup = styled.div`
       height: 32px;
     }
 
-    ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]}
+    ${TEXT_TYPES_MAP.BUTTON_SECONDARY}
     :hover {
       background: ${({ theme }) => theme.colors.borderPrimary};
     }

@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Competitions from "src/screens/Competitions";
 import Leaderboard from "src/screens/Leaderboard";
 
+import ConnectWalletDialog from "@components/ConnectWalletDialog";
 import { Column } from "@components/Flex";
 import Header from "@components/Header";
 import { HeaderPoints } from "@components/Points/HeaderPoints";
@@ -15,7 +16,6 @@ import { useStores } from "@stores";
 import { MODAL_TYPE } from "@stores/ModalStore";
 
 import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets";
-import ConnectWalletDialog from "@screens/ConnectWallet";
 import Dashboard from "@screens/Dashboard";
 import Faucet from "@screens/Faucet";
 import SpotScreen from "@screens/SpotScreen";

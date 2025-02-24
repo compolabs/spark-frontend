@@ -3,7 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import ArrowUpIcon from "@assets/icons/arrowUp.svg?react";
@@ -40,12 +40,12 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
   return (
     <Root>
       <InfoLine onClick={() => setShowDetails(!showDetails)}>
-        <Text type={TEXT_TYPES.SUPPORTING}>
+        <Text type="SUPPORTING">
           1 {swapStore.sellToken.symbol} = <SpanStyled>{new BN(exchangeRate).toSignificant(6)}</SpanStyled>{" "}
           {swapStore.buyToken.symbol}
         </Text>
 
-        <Text color={theme.colors.greenLight} type={TEXT_TYPES.SUPPORTING}>
+        <Text color={theme.colors.greenLight} type="SUPPORTING">
           <SmartFlex alignItems="center">
             <LightningIcon />
             Total fee
@@ -57,21 +57,21 @@ export const InfoBlock: React.FC<InfoBlockProps> = ({ slippage, updateSlippage }
       {showDetails && (
         <>
           <InfoLine>
-            <Text type={TEXT_TYPES.SUPPORTING}>Exchange fee</Text>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+            <Text type="SUPPORTING">Exchange fee</Text>
+            <Text color={theme.colors.textPrimary} type="BODY">
               <Text primary>{exchangeFee.toSignificant(2)}$</Text>
             </Text>
           </InfoLine>
           <InfoLine>
-            <Text type={TEXT_TYPES.SUPPORTING}>Matcher fee</Text>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+            <Text type="SUPPORTING">Matcher fee</Text>
+            <Text color={theme.colors.textPrimary} type="BODY">
               <Text primary>{matcherFee.toSignificant(2)}$</Text>
             </Text>
           </InfoLine>
           <InfoLine>
-            <Text type={TEXT_TYPES.SUPPORTING}>Slippage tolerance</Text>
+            <Text type="SUPPORTING">Slippage tolerance</Text>
             <LeftBlock>
-              <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+              <Text color={theme.colors.textPrimary} type="BODY">
                 {slippage}%
               </Text>
               <Icon onClick={() => setSlippageSettingOpen(!isSlippageSettingOpen)} />
@@ -118,7 +118,7 @@ const SnackStyled = styled.span`
   padding: 2px 6px;
   margin-left: 11px;
   margin-right: 8px;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
 `;
 
 const InfoLine = styled(Text)`

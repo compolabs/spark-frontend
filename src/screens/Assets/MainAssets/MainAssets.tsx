@@ -9,18 +9,16 @@ import { Column } from "@components/Flex";
 import AssetBlock from "@components/SelectAssets/AssetBlock";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import closeThin from "@assets/icons/closeThin.svg";
 import DepositAssets from "@assets/icons/depositAssets.svg?react";
 
-import useFlag from "@hooks/useFlag";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
-
-import ConnectWalletDialog from "@screens/ConnectWallet";
+import { MODAL_TYPE } from "@stores/ModalStore";
 
 import { BRIDGE_LINK } from "@constants";
 import BN from "@utils/BN";
@@ -30,9 +28,8 @@ interface MainAssetsProps {
 }
 
 const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
-  const { balanceStore, quickAssetsStore, mixPanelStore } = useStores();
+  const { balanceStore, quickAssetsStore, mixPanelStore, modalStore } = useStores();
   const { isConnected } = useWallet();
-  const [isConnectDialogVisible, openConnectDialog, closeConnectDialog] = useFlag();
   // const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
 
@@ -66,7 +63,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
   const renderOverallContent = ({ isConnected, balance }: { isConnected: boolean; balance: BN }) => {
     return (
       <OverallBlock justifyContent="space-between">
-        <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+        <Text color={theme.colors.textPrimary} type="BUTTON">
           Overall
         </Text>
         <Text color={theme.colors.greenLight}>${new BN(isConnected ? balance : BN.ZERO).toSignificant(2)}</Text>
@@ -76,11 +73,10 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
 
   return (
     <AssetsContainer justifyContent="space-between" column>
-      {isConnectDialogVisible && <ConnectWalletDialog visible={isConnectDialogVisible} onClose={closeConnectDialog} />}
       <SmartFlex alignItems="center" justifyContent="space-between" column>
         <HeaderBlock alignItems="center" gap="10px" justifyContent="space-between">
           <TextTitle
-            type={TEXT_TYPES.TEXT_BIG}
+            type="TEXT_BIG"
             primary
             onClick={() => mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_ASSETS, { page_name: location.pathname })}
           >
@@ -122,7 +118,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
       {!hasPositiveBalance && isConnected && (
         <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
           <DepositAssets />
-          <TextTitleDeposit type={TEXT_TYPES.TEXT_BIG}>
+          <TextTitleDeposit type="TEXT_BIG">
             It looks like you don’t have assets in V12. Tap the{" "}
             <LinkStyled
               to="#"
@@ -141,9 +137,9 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
         {!isConnected && (
           <>
             <SizedBoxStyled width={150}>
-              <Text type={TEXT_TYPES.BUTTON}>Connect wallet to see your assets and trade</Text>
+              <Text type="BUTTON">Connect wallet to see your assets and trade</Text>
             </SizedBoxStyled>
-            <Button green onClick={() => openConnectDialog()}>
+            <Button green onClick={() => modalStore.open(MODAL_TYPE.CONNECT_MODAL)}>
               Connect wallet
             </Button>
           </>

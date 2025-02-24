@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
@@ -18,14 +18,14 @@ const StatsAllTime = observer(() => {
   return (
     <AllTimeStatsContent>
       <StatsItem>
-        <Text type={TEXT_TYPES.H}>All Time Volume</Text>
-        <Text type={TEXT_TYPES.H} primary>
+        <Text type="H">All Time Volume</Text>
+        <Text type="H" primary>
           {toCurrency(new BN(stats?.total_volume).toSignificant(0))}
         </Text>{" "}
       </StatsItem>
       <StatsItem>
-        <Text type={TEXT_TYPES.H}>All Time Trades</Text>
-        <Text type={TEXT_TYPES.H} primary>
+        <Text type="H">All Time Trades</Text>
+        <Text type="H" primary>
           {new BN(stats?.total_trades).toSignificant(0)}
         </Text>
       </StatsItem>

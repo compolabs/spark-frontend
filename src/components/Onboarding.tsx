@@ -10,7 +10,7 @@ import { IMedia, useMedia } from "@hooks/useMedia";
 
 import Button from "./Button";
 import { SmartFlex } from "./SmartFlex";
-import Text, { TEXT_TYPES } from "./Text";
+import Text from "./Text";
 
 export interface Step {
   desktopKey: string;
@@ -156,7 +156,7 @@ export const Onboarding: React.FC<Props> = ({ steps, onComplete }) => {
             <Icon />
           </IconContainer>
         )}
-        <TitleText type={TEXT_TYPES.BUTTON}>{currentStep.desc}</TitleText>
+        <TitleText type="BUTTON">{currentStep.desc}</TitleText>
         <ButtonStyled text onClick={handleNextStep}>
           {nextButtonText}
         </ButtonStyled>

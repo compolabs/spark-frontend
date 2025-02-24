@@ -7,7 +7,7 @@ import { Row } from "@components/Flex";
 import SearchInput from "@components/SearchInput";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useMedia } from "@hooks/useMedia";
@@ -66,8 +66,8 @@ const MarketSelection: React.FC<IProps> = observer(() => {
         </SearchContainer>
 
         <SmartFlex justifyContent="space-between" margin="24px 0 12px 0" padding="0 12px">
-          <Text type={TEXT_TYPES.BODY}>MARKET</Text>
-          <Text type={TEXT_TYPES.BODY}>LAST PRICE</Text>
+          <Text type="BODY">MARKET</Text>
+          <Text type="BODY">LAST PRICE</Text>
         </SmartFlex>
         <Divider />
         <MarketList>{renderSpotMarketList()}</MarketList>

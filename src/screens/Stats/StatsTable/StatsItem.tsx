@@ -7,7 +7,7 @@ import { GetTotalStatsTableData } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { MarketSymbol } from "@screens/Stats/StatsTable/MarketSymbol";
@@ -32,7 +32,7 @@ const generatePnl = (value: string, theme: Theme) => {
       : undefined;
 
   return (
-    <TextStyled color={color} primary={bnPnl.eq(BN.ZERO)} type={TEXT_TYPES.BODY}>
+    <TextStyled color={color} primary={bnPnl.eq(BN.ZERO)} type="BODY">
       {`${sign}${displayValue}%`}
     </TextStyled>
   );
@@ -57,16 +57,16 @@ export const StatsItem = observer(({ item }: { item: GetTotalStatsTableData }) =
   return (
     <StatsContainer gap="12px">
       <SmartFlex>{generateMarket(item.market)}</SmartFlex>
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {toCurrency(new BN(item.last_price).toSignificant(2))}
       </Text>
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {generatePnl(priceChangePercent(item), theme)}
       </Text>
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {toCurrency(new BN(item.total_volume_24h).toSignificant(2))}
       </Text>
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {toCurrency(new BN(item.total_volume_7d).toSignificant(2))}
       </Text>
     </StatsContainer>
@@ -84,13 +84,13 @@ export const StatsItemMobile = observer(({ item }: { item: GetTotalStatsTableDat
         <SmartFlex width="100%">
           <ColumnStats>
             <Text secondary>Price</Text>
-            <Text type={TEXT_TYPES.BUTTON} primary>
+            <Text type="BUTTON" primary>
               {toCurrency(new BN(item.last_price).toSignificant(2))}
             </Text>
           </ColumnStats>
           <ColumnStats>
             <Text secondary>24h Change</Text>
-            <Text type={TEXT_TYPES.BUTTON} primary>
+            <Text type="BUTTON" primary>
               {generatePnl(priceChangePercent(item), theme)}
             </Text>
           </ColumnStats>
@@ -98,13 +98,13 @@ export const StatsItemMobile = observer(({ item }: { item: GetTotalStatsTableDat
         <SmartFlex width="100%">
           <ColumnStats>
             <Text secondary>24h Volume</Text>
-            <Text type={TEXT_TYPES.BUTTON} primary>
+            <Text type="BUTTON" primary>
               {toCurrency(new BN(item.total_volume_24h).toSignificant(2))}
             </Text>
           </ColumnStats>
           <ColumnStats>
             <Text secondary>7d Volume</Text>
-            <Text type={TEXT_TYPES.BUTTON} primary>
+            <Text type="BUTTON" primary>
               {toCurrency(new BN(item.total_volume_7d).toSignificant(2))}
             </Text>
           </ColumnStats>

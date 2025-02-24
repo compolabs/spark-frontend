@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import arrowLeft from "@assets/icons/arrowLeft.svg";
@@ -73,7 +73,7 @@ const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchC
         <SmartFlex gap="8px" center>
           {renderLeftIcons()}
           <SmartFlex gap="4px" center>
-            <StyledText type={TEXT_TYPES.H} primary>
+            <StyledText type="H" primary>
               {tradeStore.market?.symbol}
             </StyledText>
             <StyledArrow alt="arrow" src={arrowUp} />

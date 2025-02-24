@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
@@ -7,11 +6,15 @@ import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 import Button from "@components/Button";
 import { Checkbox } from "@components/Checkbox";
 import { Dialog } from "@components/Dialog";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
+
+import CloseIcon from "@assets/icons/close.svg?react";
 
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
+
+import { SmartFlex } from "./SmartFlex";
 
 type IProps = Omit<IDialogPropTypes, "onClose"> & {
   onClose: () => void;
@@ -20,7 +23,6 @@ type IProps = Omit<IDialogPropTypes, "onClose"> & {
 
 const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) => {
   const { settingsStore, mixPanelStore } = useStores();
-  const theme = useTheme();
   const { connect } = useWallet();
   const [isUserAgreedWithTerms, setIsUserAgreedWithTerms] = useState(settingsStore.isUserAgreedWithTerms ?? false);
 
@@ -36,13 +38,14 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
     openWalletConnectUI();
   };
 
-  const renderAgreement = () => (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const renderAgreementOld = () => (
     <>
       <AgreementContainer className="better-scroll">{AGREEMENT_TEXT}</AgreementContainer>
       <ButtonContainer>
         <CheckboxContainer>
           <Checkbox checked={isUserAgreedWithTerms} onChange={() => setIsUserAgreedWithTerms(!isUserAgreedWithTerms)}>
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+            <Text type="BUTTON_SECONDARY" primary>
               I have read, understand and accept these terms
             </Text>
           </Checkbox>
@@ -52,6 +55,21 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
         </Button>
       </ButtonContainer>
     </>
+  );
+
+  const renderHeader = () => (
+    <HeaderContainer>
+      <Text>Terms of use</Text>
+      <CloseIconStyled />
+    </HeaderContainer>
+  );
+
+  const renderAgreement = () => (
+    <SmartFlex>
+      <SmartFlex>
+        <Text></Text>
+      </SmartFlex>
+    </SmartFlex>
   );
 
   const renderContent = () => {
@@ -65,19 +83,7 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
   if (!visible) return;
 
   return (
-    <Dialog
-      title={
-        <HeaderContainer>
-          <ArrowContainer>
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
-              Terms and conditions
-            </Text>
-          </ArrowContainer>
-        </HeaderContainer>
-      }
-      visible={visible}
-      onClose={onClose}
-    >
+    <Dialog title={renderHeader()} visible={visible} onClose={onClose}>
       <Root>{renderContent()}</Root>
     </Dialog>
   );
@@ -85,22 +91,25 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
 
 export default ConnectWalletDialog;
 
-const HeaderContainer = styled.div`
-  display: flex;
+const HeaderContainer = styled(SmartFlex)`
   justify-content: space-between;
-  padding: 32px 24px 0 24px;
+  padding: 24px;
 `;
 
-const Root = styled.div`
-  display: flex;
+const CloseIconStyled = styled(CloseIcon)`
+  width: 14px;
+  height: 14px;
+  color: white;
+`;
+
+const Root = styled(SmartFlex)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding-bottom: 24px;
 `;
 
-const AgreementContainer = styled.div`
-  display: flex;
+const AgreementContainer = styled(SmartFlex)`
   flex-direction: column;
   overflow: scroll;
   height: 330px;
@@ -109,28 +118,21 @@ const AgreementContainer = styled.div`
   gap: 14px;
 `;
 
-const CheckboxContainer = styled.div`
-  display: flex;
+const CheckboxContainer = styled(SmartFlex)`
   align-items: center;
   cursor: pointer;
 `;
 
-const ButtonContainer = styled.div`
-  display: flex;
+const ButtonContainer = styled(SmartFlex)`
   flex-direction: column;
   gap: 24px;
   padding: 8px 24px;
   width: 100%;
 `;
 
-const ArrowContainer = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
 const AGREEMENT_TEXT = (
   <>
-    <Text type={TEXT_TYPES.BODY} secondary>
+    <Text type="BODY" secondary>
       This website-hosted user interface (this &quot;Interface&quot;) is an open source frontend software portal to the
       V12 protocol, a decentralized and community-driven collection of blockchain-enabled smart contracts and tools (the
       &quot;V12 Protocol&quot;). This Interface and the V12 Protocol are made available by the V12 Holding Foundation,
@@ -139,7 +141,7 @@ const AGREEMENT_TEXT = (
       or third party, there are a number of third party web and mobile user-interfaces that allow for interaction with
       the V12 Protocol.
     </Text>
-    <Text type={TEXT_TYPES.BODY} secondary>
+    <Text type="BODY" secondary>
       THIS INTERFACE AND THE V12 PROTOCOL ARE PROVIDED &quot;AS IS&quot;, AT YOUR OWN RISK, AND WITHOUT WARRANTIES OF
       ANY KIND. The V12 Holding Foundation does not provide, own, or control the V12 Protocol or any transactions
       conducted on the protocol or via related smart contracts. By using or accessing this Interface or the V12 Protocol
@@ -149,14 +151,14 @@ const AGREEMENT_TEXT = (
       direct, indirect, incidental, special, exemplary, punitive or consequential damages, or loss of profits, digital
       assets, tokens, or anything else of value.
     </Text>
-    <Text type={TEXT_TYPES.BODY} secondary>
+    <Text type="BODY" secondary>
       The V12 Protocol is not available to residents of Belarus, the Central African Republic, The Democratic Republic
       of Congo, the Democratic People&apos;s Republic of Korea, the Crimea, Donetsk People&apos;s Republic, and Luhansk
       People&apos;s Republic regions of Ukraine, Cuba, Iran, Libya, Somalia, Sudan, South Sudan, Syria, the USA, Yemen,
       Zimbabwe and any other jurisdiction in which accessing or using the V12 Protocol is prohibited (the
       &quot;Prohibited Jurisdictions&quot;).
     </Text>
-    <Text type={TEXT_TYPES.BODY} secondary>
+    <Text type="BODY" secondary>
       By using or accessing this Interface, the V12 Protocol, or related smart contracts, you represent that you are not
       located in, incorporated or established in, or a citizen or resident of the Prohibited Jurisdictions. You also
       represent that you are not subject to sanctions or otherwise designated on any list of prohibited or restricted

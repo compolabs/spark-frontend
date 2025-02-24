@@ -16,7 +16,7 @@ import { useStores } from "@stores";
 import Button from "./Button";
 import { Onboarding, Step } from "./Onboarding";
 import { SmartFlex } from "./SmartFlex";
-import Text, { TEXT_TYPES } from "./Text";
+import Text from "./Text";
 
 enum SPLASH_SCREEN_TYPE {
   SWAP,
@@ -110,14 +110,14 @@ export const SplashScreen: React.FC = observer(() => {
           <SelectModeContainer>
             <TitleContainer>
               <SmartFlex gap="8px" center>
-                <DescriptionStyled type={TEXT_TYPES.SUPPORTING}>Hey, and welcome to</DescriptionStyled>
+                <DescriptionStyled type="SUPPORTING">Hey, and welcome to</DescriptionStyled>
                 <LogoIcon />
               </SmartFlex>
-              <TitleStyled type={TEXT_TYPES.H_TEXT}>Select trading mode to begin</TitleStyled>
+              <TitleStyled type="H_TEXT">Select trading mode to begin</TitleStyled>
             </TitleContainer>
             <ModeContainer>{SPLASH_SCREEN_INFO.map(renderModeButton)}</ModeContainer>
             <StyledButton green onClick={() => handleGoClick()}>
-              <ButtonText type={TEXT_TYPES.TEXT_BIG} primary>
+              <ButtonText type="TEXT_BIG" primary>
                 Let&apos;s go!
               </ButtonText>
             </StyledButton>

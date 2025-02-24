@@ -3,26 +3,132 @@ import styled from "@emotion/styled";
 
 /*
     Fonts:
-
     JetBrains Mono 500  = assets/fonts/JetBrainsMono-Medium.ttf
     JetBrains Mono 400  = assets/fonts/JetBrainsMono-Regular.ttf
     Space Grotesk  500  = assets/fonts/SpaceGrotesk-Medium.ttf
     Space Grotesk  400  = assets/fonts/SpaceGrotesk-Regular.ttf
 */
 
-export enum TEXT_TYPES {
-  H = 2,
-  BODY = 3,
-  BUTTON = 4,
-  BUTTON_SECONDARY = 5,
-  SUPPORTING = 6,
-  SUPPORTING_NUMBERS = 7,
-  H_NUMBERS = 8,
-  H_TEXT = 9,
-  BUTTON_BIG = 10,
-  TEXT_BIG = 11,
-  TEXT = 12,
-}
+// Desktop (base)
+const H = `
+  font-family: "JetBrains Mono";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+`;
+
+const BODY = `
+  font-family: "JetBrains Mono";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0.24px;
+`;
+
+const BUTTON = `
+  font-family: "Space Grotesk";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+`;
+
+const BUTTON_SECONDARY = `
+  font-family: "Space Grotesk";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  text-transform: uppercase;
+`;
+
+const SUPPORTING = `
+  font-family: "Space Grotesk";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 12px;
+  letter-spacing: 0.24px;
+`;
+
+const SUPPORTING_NUMBERS = `
+  font-family: "JetBrains Mono";
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 11px;
+  letter-spacing: 0.22px;
+`;
+
+// Desktop (+added)
+const H_NUMBERS = `
+  font-family: "JetBrains Mono";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: 0.48px;
+`;
+
+const H_TEXT = `
+  font-family: "Space Grotesk";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px;
+`;
+
+const BUTTON_BIG = `
+  font-family: "Space Grotesk";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+`;
+
+const TEXT_BIG = `
+  font-family: "Space Grotesk";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+`;
+
+const TEXT = `
+  font-family: "Space Grotesk";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+`;
+
+const CP_Header_18_Medium = `
+  font-family: Chakra Petch;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 3%;
+  text-align: center;
+`;
+
+export const TEXT_TYPES_MAP = {
+  H,
+  BODY,
+  BUTTON,
+  BUTTON_SECONDARY,
+  SUPPORTING,
+  SUPPORTING_NUMBERS,
+  H_NUMBERS,
+  H_TEXT,
+  BUTTON_BIG,
+  TEXT_BIG,
+  TEXT,
+  CP_Header_18_Medium,
+};
+
+type TEXT_TYPES = keyof typeof TEXT_TYPES_MAP;
 
 interface IProps {
   type?: TEXT_TYPES;
@@ -35,115 +141,6 @@ interface IProps {
   greenLight?: boolean;
   attention?: boolean;
 }
-
-// Desktop (base)
-export const h = `
-  font-family: "JetBrains Mono";
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 18px;
-`;
-
-export const body = `
-  font-family: "JetBrains Mono";
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 14px;
-  letter-spacing: 0.24px;
-`;
-
-export const button = `
-  font-family: "Space Grotesk";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 16px;
-`;
-
-export const buttonSecondary = `
-  font-family: "Space Grotesk";
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 16px;
-  text-transform: uppercase;
-`;
-
-export const supportingText = `
-  font-family: "Space Grotesk";
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 12px;
-  letter-spacing: 0.24px;
-`;
-
-export const supportingNumbers = `
-  font-family: "JetBrains Mono";
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 11px;
-  letter-spacing: 0.22px;
-`;
-
-// Desktop (+added)
-export const hNumbers = `
-  font-family: "JetBrains Mono";
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 32px;
-  letter-spacing: 0.48px;
-`;
-
-export const hText = `
-  font-family: "Space Grotesk";
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 32px;
-`;
-
-export const buttonBig = `
-  font-family: "Space Grotesk";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-`;
-
-export const textBig = `
-  font-family: "Space Grotesk";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 24px;
-`;
-
-export const text = `
-  font-family: "Space Grotesk";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 16px;
-`;
-
-export const TEXT_TYPES_MAP = {
-  [TEXT_TYPES.H]: h,
-  [TEXT_TYPES.BODY]: body,
-  [TEXT_TYPES.BUTTON]: button,
-  [TEXT_TYPES.BUTTON_SECONDARY]: buttonSecondary,
-  [TEXT_TYPES.SUPPORTING]: supportingText,
-  [TEXT_TYPES.SUPPORTING_NUMBERS]: supportingNumbers,
-  [TEXT_TYPES.H_NUMBERS]: hNumbers,
-  [TEXT_TYPES.H_TEXT]: hText,
-  [TEXT_TYPES.BUTTON_BIG]: buttonBig,
-  [TEXT_TYPES.TEXT_BIG]: textBig,
-  [TEXT_TYPES.TEXT]: text,
-};
 
 const Text = styled.div<IProps>`
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "normal")};
@@ -176,7 +173,7 @@ const Text = styled.div<IProps>`
           `;
       }
     })()}
-  ${({ type }) => (type ? TEXT_TYPES_MAP[type] : TEXT_TYPES_MAP[TEXT_TYPES.BODY])}
+  ${({ type }) => (type ? TEXT_TYPES_MAP[type] : TEXT_TYPES_MAP.BODY)}
 	cursor: ${({ pointer }) => (pointer ? "pointer" : "inherit")}
 `;
 export default Text;

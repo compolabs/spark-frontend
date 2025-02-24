@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import Text, { TEXT_TYPES } from "./Text";
+import Text from "./Text";
 
 interface Props {
   label: string;
@@ -21,7 +21,7 @@ export const RadioButton: React.FC<Props> = ({ label, value, isSelected, onChang
     <Root key={value}>
       <StyledInput checked={isSelected} type="radio" value={value} onChange={handleClick} />
       <StyledRadio checked={isSelected} />
-      <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+      <Text color={theme.colors.textPrimary} type="BODY">
         {label}
       </Text>
     </Root>

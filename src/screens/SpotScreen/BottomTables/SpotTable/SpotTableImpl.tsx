@@ -8,7 +8,7 @@ import Chip from "@components/Chip";
 import { Pagination } from "@components/Pagination/Pagination";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useMedia } from "@hooks/useMedia";
@@ -152,11 +152,11 @@ const SpotTableImpl: React.FC = observer(() => {
     const orderData = vm.userOrders.map((ord, i) => (
       <MobileTableOrderRow key={i + "mobile-row"}>
         <MobileTableRowColumn>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
+          <Text color={theme.colors.textPrimary} type="BUTTON_SECONDARY">
             {ord.marketSymbol}
           </Text>
           <SmartFlex gap="2px" column>
-            <Text type={TEXT_TYPES.SUPPORTING}>Amount</Text>
+            <Text type="SUPPORTING">Amount</Text>
             <SmartFlex center="y" gap="4px">
               <Text color={theme.colors.textPrimary}>{ord.formatInitialAmount}</Text>
               <TokenBadge>
@@ -169,7 +169,7 @@ const SpotTableImpl: React.FC = observer(() => {
           <Text color={theme.colors.textPrimary}>Active</Text>
           <SmartFlex gap="2px" column>
             <SmartFlex center="y" gap="4px">
-              <Text type={TEXT_TYPES.SUPPORTING}>Side:</Text>
+              <Text type="SUPPORTING">Side:</Text>
               <TableText color={ord.orderType === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
                 {ord.orderType}
               </TableText>
@@ -181,7 +181,7 @@ const SpotTableImpl: React.FC = observer(() => {
             {vm.cancelingOrderId === ord.id ? "Loading..." : "Cancel"}
           </CancelButton>
           <SmartFlex alignItems="flex-end" gap="2px" column>
-            <Text type={TEXT_TYPES.SUPPORTING}>Price:</Text>
+            <Text type="SUPPORTING">Price:</Text>
             <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice, ord.quoteToken.symbol)}</Text>
           </SmartFlex>
         </MobileTableRowColumn>
@@ -191,11 +191,11 @@ const SpotTableImpl: React.FC = observer(() => {
     const orderHistoryData = vm.userOrdersHistory.map((ord, i) => (
       <MobileTableOrderRow key={i + "mobile-history-row"}>
         <MobileTableRowColumn>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
+          <Text color={theme.colors.textPrimary} type="BUTTON_SECONDARY">
             {ord.marketSymbol}
           </Text>
           <SmartFlex gap="2px" column>
-            <Text type={TEXT_TYPES.SUPPORTING}>Amount</Text>
+            <Text type="SUPPORTING">Amount</Text>
             <SmartFlex center="y" gap="4px">
               <Text color={theme.colors.textPrimary}>{ord.formatInitialAmount}</Text>
               <TokenBadge>
@@ -208,13 +208,13 @@ const SpotTableImpl: React.FC = observer(() => {
           <Text color={theme.colors.textPrimary}>Complete</Text>
           <SmartFlex gap="2px" column>
             <SmartFlex center="y" gap="4px">
-              <Text type={TEXT_TYPES.SUPPORTING}>Side:</Text>
+              <Text type="SUPPORTING">Side:</Text>
               <TableText color={ord.orderType === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
                 {ord.orderType}
               </TableText>
             </SmartFlex>
             <SmartFlex center="y" gap="4px">
-              <Text type={TEXT_TYPES.SUPPORTING}>Filled:</Text>
+              <Text type="SUPPORTING">Filled:</Text>
               <SmartFlex center="y" gap="4px">
                 <Text color={theme.colors.textPrimary}>{ord.formatCurrentAmount}</Text>
                 <TokenBadge>
@@ -226,7 +226,7 @@ const SpotTableImpl: React.FC = observer(() => {
         </MobileTableRowColumn>
         <MobileTableRowColumn>
           <SmartFlex alignItems="flex-end" gap="2px" column>
-            <Text type={TEXT_TYPES.SUPPORTING}>Price:</Text>
+            <Text type="SUPPORTING">Price:</Text>
             <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice, ord.quoteToken.symbol)}</Text>
           </SmartFlex>
         </MobileTableRowColumn>
@@ -253,7 +253,7 @@ const SpotTableImpl: React.FC = observer(() => {
     if (!accountStore.isConnected) {
       return (
         <TableContainer center column>
-          <Text type={TEXT_TYPES.H} primary>
+          <Text type="H" primary>
             Connect your wallet to see your open orders
           </Text>
         </TableContainer>
@@ -263,10 +263,10 @@ const SpotTableImpl: React.FC = observer(() => {
     if (!data.length) {
       return (
         <TableContainer center column>
-          <Text type={TEXT_TYPES.H} primary>
+          <Text type="H" primary>
             You have no open orders
           </Text>
-          <Text type={TEXT_TYPES.BODY} secondary>
+          <Text type="BODY" secondary>
             Begin trading to view updates on your portfolio
           </Text>
         </TableContainer>

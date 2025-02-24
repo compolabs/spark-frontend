@@ -14,7 +14,7 @@ import BN from "@utils/BN";
 
 import { Token } from "@entity";
 
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
+import Text, { TEXT_TYPES_MAP } from "../Text";
 
 export interface AssetBlockData {
   asset: Token;
@@ -107,13 +107,13 @@ const SelectAssetsInput = ({
           />
         </SmartFlexInput>
         {isInputError && (
-          <Text color={theme.colors.attention} type={TEXT_TYPES.BUTTON}>
+          <Text color={theme.colors.attention} type="BUTTON">
             Not enough {selectedOption.asset.symbol}
           </Text>
         )}
       </SmartFlex>
       <SmartFlex alignItems="center" justifyContent="space-between">
-        <PriceText color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+        <PriceText color={theme.colors.greenLight} type="BODY">
           ${BN.formatUnits(new BN(selectedOption?.price ?? 0).multipliedBy(amount), decimals).toFormat(2)}
         </PriceText>
         <SmartFlex gap="5px">
@@ -186,7 +186,7 @@ const SmartFlexInput = styled(SmartFlex)<{
 
 const TransparentInput = styled(BigNumberInput)`
   color: white;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.H_TEXT]};
+  ${TEXT_TYPES_MAP.H_TEXT};
   background: transparent;
   border: none;
   width: 80%;

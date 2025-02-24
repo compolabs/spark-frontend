@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import { useStores } from "@stores";
 
@@ -41,18 +41,18 @@ const AssetBlock: React.FC<IAssetBlock> = observer(
         <SmartFlex alignItems="center" gap="10px">
           <TokenIcon src={token.asset.logo} />
           <div>
-            <Text type={type === "rounded" ? TEXT_TYPES.H : TEXT_TYPES.BUTTON} primary>
+            <Text type={type === "rounded" ? "H" : "BUTTON"} primary>
               {token.asset.symbol}
             </Text>
-            {isShowBalance && <Text type={TEXT_TYPES.BODY}>{token.asset.name}</Text>}
+            {isShowBalance && <Text type="BODY">{token.asset.name}</Text>}
           </div>
         </SmartFlex>
         {isShowBalance && (
           <div>
-            <Text style={{ textAlign: "right" }} type={TEXT_TYPES.TEXT} primary>
+            <Text style={{ textAlign: "right" }} type="TEXT" primary>
               {new BN(token[showBalance]).toSignificant(token.asset.decimals)}
             </Text>
-            <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type={TEXT_TYPES.BODY}>
+            <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type="BODY">
               ${price.multipliedBy(token[showBalance]).toSignificant(2)}
             </Text>
           </div>

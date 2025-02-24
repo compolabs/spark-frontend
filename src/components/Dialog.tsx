@@ -6,10 +6,13 @@ import { useOnClickOutside } from "@hooks/useOnClickOutside";
 
 export const Dialog: React.FC<DialogProps> = observer(({ children, ...rest }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
+
   const handleCloseDialog = useCallback(() => {
     rest.onClose !== undefined && rest.onClose(null as any);
   }, [rest.onClose]);
+
   useOnClickOutside(dialogRef, handleCloseDialog);
+
   return (
     <RcDialog animation="zoom" closeIcon={rest.onClose ? rest.closeIcon : <div />} maskAnimation="fade" {...rest}>
       <div ref={dialogRef}>{children}</div>

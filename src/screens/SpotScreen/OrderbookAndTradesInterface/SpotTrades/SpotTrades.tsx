@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { Column } from "@components/Flex";
 import Loader from "@components/Loader";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
@@ -24,28 +24,28 @@ export const SpotTrades: React.FC = observer(() => {
   if (isOrderBookEmpty)
     return (
       <Root alignItems="center" justifyContent="center" mainAxisSize="stretch">
-        <Text type={TEXT_TYPES.SUPPORTING}>No trades yet</Text>
+        <Text type="SUPPORTING">No trades yet</Text>
       </Root>
     );
 
   return (
     <Root>
       <Header>
-        <Text type={TEXT_TYPES.SUPPORTING}>Price</Text>
-        <TextRightAlign type={TEXT_TYPES.SUPPORTING}>Qty</TextRightAlign>
-        <TextRightAlign type={TEXT_TYPES.SUPPORTING}>Time</TextRightAlign>
+        <Text type="SUPPORTING">Price</Text>
+        <TextRightAlign type="SUPPORTING">Qty</TextRightAlign>
+        <TextRightAlign type="SUPPORTING">Time</TextRightAlign>
       </Header>
 
       <Container className="better-scroll">
         {spotOrderBookStore.trades.map((trade) => (
           <Row key={"trade" + trade.id}>
-            <Text color={trade.sellerIsMaker ? theme.colors.redLight : theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+            <Text color={trade.sellerIsMaker ? theme.colors.redLight : theme.colors.greenLight} type="BODY">
               {trade.formatPrice}
             </Text>
-            <TextRightAlign color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+            <TextRightAlign color={theme.colors.textPrimary} type="BODY">
               {trade.formatTradeAmount}
             </TextRightAlign>
-            <TextRightAlign color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+            <TextRightAlign color={theme.colors.textPrimary} type="BODY">
               {trade.timestamp.format("HH:mm:ss")}
             </TextRightAlign>
           </Row>

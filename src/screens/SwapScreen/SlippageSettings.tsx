@@ -3,7 +3,7 @@ import { useState } from "react";
 import styled from "@emotion/styled";
 
 import ModalSheet from "@components/ModalSheet";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import CloseIcon from "@assets/icons/close.svg?react";
@@ -55,7 +55,7 @@ export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, sav
     <ResolverDevice handleClose={onClose}>
       <Container>
         <Header>
-          <Text type={TEXT_TYPES.BUTTON} primary>
+          <Text type="BUTTON" primary>
             Sleepage tolerance, %
           </Text>
           <CloseIconStyled onClick={onClose} />
@@ -84,7 +84,7 @@ export const SlippageSettings: React.FC<SlippageSettingsProps> = ({ onClose, sav
             ))}
           </ButtonsContainer>
         </Content>
-        <Text type={TEXT_TYPES.TEXT}>
+        <Text type="TEXT">
           Maximum price slippage you’re willing to accept for your order to be executed, indicating the difference
           between expected and actual trade prices.
         </Text>
@@ -175,7 +175,7 @@ const SlippageInput = styled.input`
   padding: 11px 8px;
   border-radius: 4px;
   transition: all 0.2s;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
 
   &:focus,
   &:hover {
@@ -194,9 +194,9 @@ const ConfirmButton = styled.button`
   cursor: pointer;
   background-color: transparent;
   transition: all 0.2s ease;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON]}
+  ${TEXT_TYPES_MAP.BUTTON}
   ${media.mobile} {
-    ${TEXT_TYPES_MAP[TEXT_TYPES.TEXT]}
+    ${TEXT_TYPES_MAP.TEXT}
     height: 54px;
   }
 
@@ -223,7 +223,7 @@ const PercentButton = styled.div<{ selected: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.bgPrimary};
   border: 1px solid ${({ theme, selected }) => (selected ? theme.colors.borderAccent : theme.colors.borderSecondary)};
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
   color: ${({ theme }) => theme.colors.textSecondary};
   width: 40px;
   height: 40px;

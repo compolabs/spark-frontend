@@ -6,7 +6,7 @@ import Loader from "@components/Loader";
 import { Pagination } from "@components/Pagination/Pagination";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
 
@@ -81,7 +81,7 @@ export const LeaderboardTable = observer(() => {
           ),
         )
       ) : (
-        <NoData type={TEXT_TYPES.TEXT}>No Data</NoData>
+        <NoData type="TEXT">No Data</NoData>
       )}
       {maxTotalCount > 0 && (
         <FooterTable>
@@ -92,7 +92,7 @@ export const LeaderboardTable = observer(() => {
             onChange={leaderboardStore.setActivePage}
           />
           <SmartFlex alignItems="center">
-            <Text type={TEXT_TYPES.BUTTON}>SHOW:</Text>
+            <Text type="BUTTON">SHOW:</Text>
             <SelectStyled
               options={PAGINATION_PER_PAGE}
               selected={leaderboardStore.orderPerPage.key}

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import CloseIcon from "@assets/icons/close.svg?react";
@@ -16,7 +16,7 @@ export const DashboardInfo = observer(() => {
     <DashboardInfoContainer>
       <TextContainer>
         <InfoFillIcon />
-        <TextStyled type={TEXT_TYPES.SUPPORTING_NUMBERS} primary>
+        <TextStyled type="SUPPORTING_NUMBERS" primary>
           Updating information about your funds in the portfolio may take up to one hour
         </TextStyled>
       </TextContainer>

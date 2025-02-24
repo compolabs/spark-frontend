@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import DiscordIcon from "@assets/social/discord.svg?react";
 import GitHubIcon from "@assets/social/github.svg?react";
@@ -17,7 +17,7 @@ const StatusBar: React.FC = observer(() => {
 
   return (
     <StatusBarContainer isIOS={isIOS}>
-      <FooterText type={TEXT_TYPES.TEXT}>
+      <FooterText type="TEXT">
         Powered by&nbsp;<LinkStyled href={FUEL_LINK}>Fuel</LinkStyled>
       </FooterText>
       <SmartFlex gap="18px">

@@ -12,7 +12,7 @@ import { Column } from "@components/Flex";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import DepositAssets from "@assets/icons/depositAssets.svg?react";
 
@@ -182,7 +182,7 @@ const AssetsDashboard = observer(() => {
 
   return (
     <>
-      <TitleText type={TEXT_TYPES.H} primary>
+      <TitleText type="H" primary>
         Assets in V12
       </TitleText>
       <StyledTables>
@@ -200,7 +200,7 @@ const AssetsDashboard = observer(() => {
           <>
             <ColumnContainer>
               <DepositAssets />
-              <EmptyAsset type={TEXT_TYPES.TEXT_BIG}>
+              <EmptyAsset type="TEXT_BIG">
                 It looks like you don’t have assets in V12. Tap the{" "}
                 <LinkStyled
                   to="#"

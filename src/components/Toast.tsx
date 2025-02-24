@@ -12,7 +12,7 @@ import WarningIcon from "@assets/icons/warning.svg?react";
 import { getExplorerLinkByAddress, getExplorerLinkByHash } from "@utils/getExplorerLink";
 
 import { SmartFlex } from "./SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "./Text";
+import Text, { TEXT_TYPES_MAP } from "./Text";
 
 export interface NotificationProps {
   text: React.ReactNode;
@@ -39,7 +39,7 @@ const Toast: React.FC<Props> = ({ text, error, hash, address, toastProps }) => {
     <ErrorTextContainer>{error}</ErrorTextContainer>
   ) : link ? (
     <a href={link} rel="noreferrer noopener" target="_blank">
-      <Text type={TEXT_TYPES.BUTTON}>View on Explorer</Text>
+      <Text type="BUTTON">View on Explorer</Text>
     </a>
   ) : null;
 
@@ -47,7 +47,7 @@ const Toast: React.FC<Props> = ({ text, error, hash, address, toastProps }) => {
     <ToastContainer>
       <Icon />
       <Content>
-        <Text type={TEXT_TYPES.BUTTON} secondary>
+        <Text type="BUTTON" secondary>
           {text}
         </Text>
         {descElement}
@@ -88,7 +88,7 @@ const CloseIconStyled = styled(CloseIcon)`
 `;
 
 const ErrorTextContainer = styled(SmartFlex)`
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON]}
+  ${TEXT_TYPES_MAP.BUTTON}
 
   color: ${({ theme }) => theme.colors.textSecondary};
 
