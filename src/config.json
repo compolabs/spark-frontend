@@ -67,10 +67,17 @@
       "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000"
     },
     {
-      "name": "USDF",
-      "symbol": "USDF",
+      "name": "tETH",
+      "symbol": "tETH",
       "decimals": 9,
-      "assetId": "0x33a6d90877f12c7954cca6d65587c25e9214c7bed2231c188981c7114c1bdb78",
+      "assetId": "0xf169e13e98ae8908199148380684894458b7916f074b85ebad2aaad489ce0d54",
+      "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "name": "tUSDC",
+      "symbol": "tUSDC",
+      "decimals": 9,
+      "assetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
       "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000"
     }
   ],
@@ -230,6 +237,19 @@
       "version": 1542,
       "contractId": "0x272bc2c2d065e8ca22f0473e328f403bb1ba2e85d71f5fa51dcb83393714ff01",
       "precision": 0
+    },
+    {
+      "isOpen": false,
+      "marketName": "TETHTUSDC",
+      "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
+      "baseAssetId": "0xf169e13e98ae8908199148380684894458b7916f074b85ebad2aaad489ce0d54",
+      "baseAssetDecimals": 9,
+      "quoteAssetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
+      "quoteAssetDecimals": 9,
+      "priceDecimals": 9,
+      "version": 1542,
+      "contractId": "0x6eb7a35c43a8eae0a2aeaf8c68b7d2d1cc7d2481d97abb8f68e4fb3cbab86a2a",
+      "precision": 0
     }
   ],
   "indexers": {
@@ -280,6 +300,10 @@
     "0x272bc2c2d065e8ca22f0473e328f403bb1ba2e85d71f5fa51dcb83393714ff01": {
       "httpUrl": "https://indexer.hyperindex.xyz/67b693c/v1/graphql",
       "wsUrl": "wss://indexer.hyperindex.xyz/67b693c/v1/graphql"
+    },
+    "0x6eb7a35c43a8eae0a2aeaf8c68b7d2d1cc7d2481d97abb8f68e4fb3cbab86a2a": {
+      "httpUrl": "https://indexer.hyperindex.xyz/a243921/v1/graphql",
+      "wsUrl": "wss://indexer.hyperindex.xyz/a243921/v1/graphql"
     }
   },
   "contracts": {
