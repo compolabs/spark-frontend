@@ -8,14 +8,14 @@
       "symbol": "tETH",
       "decimals": 9,
       "assetId": "0xf169e13e98ae8908199148380684894458b7916f074b85ebad2aaad489ce0d54",
-      "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
     },
     {
       "name": "tUSDC",
       "symbol": "tUSDC",
       "decimals": 9,
       "assetId": "0x22dfb618b9fc621a7d53f0f599dd427fb5688e280062a8de8883a27819d3f276",
-      "priceFeed": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      "priceFeed": "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
     }
   ],
   "markets": [
