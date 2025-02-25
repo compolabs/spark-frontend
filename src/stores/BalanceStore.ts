@@ -65,7 +65,6 @@ export class BalanceStore {
       const balance = this.getWalletBalance(token.assetId);
       const contractBalance = this.getContractBalance(token.assetId);
       const totalBalance = balance.plus(contractBalance);
-
       return {
         assetId: token.assetId,
         asset: token,

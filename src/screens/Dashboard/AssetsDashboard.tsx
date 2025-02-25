@@ -31,6 +31,7 @@ const AssetsDashboard = observer(() => {
   const media = useMedia();
   const { balanceStore } = useStores();
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
+  console.log('balancesInfoList', balancesInfoList)
   const data = balancesInfoList
     .map((el) => ({
       asset: el.asset,
@@ -39,9 +40,6 @@ const AssetsDashboard = observer(() => {
       currentPrice: new BN(el.price).toSignificant(2),
     }))
     .filter((item) => new BN(item.value).isGreaterThan(BN.ZERO));
-  const allContractBalance = balancesInfoList.reduce((acc, el) => {
-    return acc.plus(el.contractBalance);
-  }, BN.ZERO);
   const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.contractBalance).isZero());
   const columns = [
     orderColumnHelper.accessor("asset", {
@@ -89,19 +87,7 @@ const AssetsDashboard = observer(() => {
     }),
     orderColumnHelper.accessor("amount", {
       header: () => {
-        return (
-          allContractBalance.isGreaterThan(BN.ZERO) && (
-            <ButtonConfirm
-              disabled={isLoading}
-              style={{
-                minWidth: "92px",
-              }}
-              onClick={handleWithdrawAll}
-            >
-              {isLoading ? "Loading..." : "Withdraw All"}
-            </ButtonConfirm>
-          )
-        );
+        return <></>;
       },
       id: "action",
       cell: (props) => {
@@ -156,11 +142,6 @@ const AssetsDashboard = observer(() => {
     return (
       <SmartFlex gap="4px" padding="8px" width="100%" column>
         {orderData}
-        {allContractBalance.isGreaterThan(BN.ZERO) && (
-          <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdrawAll}>
-            {isLoading ? "Loading..." : "Withdraw All"}
-          </ButtonConfirm>
-        )}
       </SmartFlex>
     );
   };
@@ -171,12 +152,6 @@ const AssetsDashboard = observer(() => {
       selectAsset.asset.assetId,
       BN.parseUnits(selectAsset.contractBalance, selectAsset.asset.decimals).toString(),
     );
-    setLoading(false);
-  };
-
-  const handleWithdrawAll = async () => {
-    setLoading(true);
-    await balanceStore.withdrawBalanceAll();
     setLoading(false);
   };
 
