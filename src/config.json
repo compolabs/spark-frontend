@@ -33,6 +33,7 @@
       "precision": 0
     }
   ],
+  "indexers": {
     "0x6eb7a35c43a8eae0a2aeaf8c68b7d2d1cc7d2481d97abb8f68e4fb3cbab86a2a": {
       "httpUrl": "https://indexer.hyperindex.xyz/a243921/v1/graphql",
       "wsUrl": "wss://indexer.hyperindex.xyz/a243921/v1/graphql"
