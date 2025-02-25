@@ -197,8 +197,13 @@ class SwapStore {
     ).toSignificant(2);
 
     try {
-      const marketContracts = CONFIG.MARKETS.map((el) => el.contractId);
-      const tx = await bcNetwork.fulfillOrderManyWithDeposit(order, marketContracts);
+      const markets = CONFIG.MARKETS.map((m) => ({
+        contractId: m.contractId,
+        quoteAssetId: m.quoteAssetId,
+        baseAssetId: m.baseAssetId,
+      }));
+
+      const tx = await bcNetwork.fulfillOrderManyWithDeposit(order, markets);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_SWAP)(
           amountFormatted,
