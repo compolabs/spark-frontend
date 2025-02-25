@@ -29,6 +29,7 @@ export const ARBITRUM_SEPOLIA_FAUCET = "https://faucet.quicknode.com/arbitrum/se
 export const FUEL_FAUCET = "https://faucet-testnet.fuel.network";
 export const TV_DATAFEED = "https://spark-tv-datafeed.spark-defi.com/api/v1";
 export const CHARTS_STORAGE = "https://tv-backend-v4.herokuapp.com/";
+export const WALLET_DOCS_LINK = "https://docs.v12.trade/trade/getting-started-as-a-trader/wallet-setup";
 
 export const DEFAULT_DECIMALS = 9;
 

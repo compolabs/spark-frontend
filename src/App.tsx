@@ -9,6 +9,7 @@ import ConnectWalletDialog from "@components/ConnectWalletDialog";
 import { Column } from "@components/Flex";
 import Header from "@components/Header";
 import { MobileAppStoreSheet } from "@components/Modal/MobileAppStoreSheet";
+import { Onboarding } from "@components/Onboarding";
 import { HeaderPoints } from "@components/Points/HeaderPoints";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
@@ -64,6 +65,7 @@ const App: React.FC = observer(() => {
               {/*<SplashScreen />*/}
               <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
               <MobileAppStoreSheet isOpen={isAppStoreSheetVisible} onClose={() => setIsAppStoreSheetVisible(false)} />
+              <Onboarding />
             </Root>
           </UnderConstructionProvider>
         </FeatureToggleProvider>

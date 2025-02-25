@@ -49,6 +49,8 @@ const colors = {
   textIconTertiary: "#595959",
 
   blueVioletStrong: "#AFD5FF",
+
+  fillAccentSecondary: "#303632",
 };
 
 export default colors;

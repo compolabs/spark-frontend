@@ -55,7 +55,7 @@ const Header: React.FC = observer(() => {
 
     return (
       <WalletContainer data-onboarding={dataOnboardingConnectKey} isVisible={!isMobileMenuOpen}>
-        <ConnectWalletButton targetKey="header_connect_btn" fitContent>
+        <ConnectWalletButton targetKey="header_connect_btn" data-connect-button fitContent>
           {walletButtonContent}
         </ConnectWalletButton>
       </WalletContainer>

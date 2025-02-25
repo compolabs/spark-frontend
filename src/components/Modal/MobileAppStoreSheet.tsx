@@ -68,7 +68,6 @@ const HeaderContainer = styled(SmartFlex)`
 const CloseIconStyled = styled(CloseIcon)`
   width: 14px;
   height: 14px;
-  color: white;
 
   path {
     fill: ${({ theme }) => theme.colors.textIconPrimary};
