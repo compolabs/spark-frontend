@@ -22,9 +22,10 @@ const ONBOARDING_STEPS: Step[] = [
     hideFooter: true,
     placement: "bottom",
     spotlightClicks: true,
+    spotlightPadding: 10,
     styles: {
       options: {
-        zIndex: 10000,
+        zIndex: 20000,
       },
     },
     target: "[data-connect-button]",
@@ -39,11 +40,11 @@ export const Onboarding: React.FC = () => {
   const [isRunning, setIsRunning] = useState(() => !settingsStore.isCompleteOnboardingProcess);
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    console.log(data);
-
     const { status } = data;
+
     if (status === STATUS.SKIPPED || status === STATUS.FINISHED) {
       setIsRunning(false);
+      settingsStore.setIsCompletedOnboardingProcess(true);
     }
   };
 
