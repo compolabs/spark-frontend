@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
 import Chip from "@components/Chip";
+import { Column } from "@components/Flex.tsx";
 import { Pagination } from "@components/Pagination/Pagination";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput.tsx";
 import { SmartFlex } from "@components/SmartFlex";
@@ -145,6 +146,16 @@ const BALANCE_COLUMNS = (theme: Theme, withdrawalBalance: (asset: AssetBlockData
       );
     },
   }),
+  balanceColumnHelper.accessor("inOrders", {
+    header: "Open orders",
+    cell: (props) => {
+      return (
+        <IconContainer gap="4px">
+          <Text primary>{props.getValue().toString()}</Text>
+        </IconContainer>
+      );
+    },
+  }),
   balanceColumnHelper.accessor("contract", {
     header: "Withdrawable",
     cell: (props) => {
@@ -196,7 +207,10 @@ const BALANCE_COLUMNS = (theme: Theme, withdrawalBalance: (asset: AssetBlockData
 const minNeedLengthPagination = 10;
 const startPage = 1;
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
-const SpotTableImpl: React.FC = observer(() => {
+export interface SpotTableImplProps {
+  isShowBalance?: boolean;
+}
+const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = true }) => {
   const { accountStore, settingsStore, balanceStore } = useStores();
   const [isLoading, setLoading] = useState(false);
   const vm = useSpotTableVMProvider();
@@ -220,10 +234,24 @@ const SpotTableImpl: React.FC = observer(() => {
   const historyOrdersCount = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
   const openOrdersCount = vm.userOrdersStats?.active ?? 0;
   const PAGINATION_LENGTH = [openOrdersCount, historyOrdersCount];
+  const balancesInfoList = balanceStore.formattedBalanceInfoList;
+
+  const balance = balancesInfoList
+    .map((el) => ({
+      asset: el.asset,
+      wallet: new BN(el.walletBalance),
+      balance: el.balance,
+      amount: el,
+      contract: new BN(el.contractBalance),
+      currentPrice: new BN(el.price).toSignificant(2),
+      decimals: el.decimals,
+    }))
+    .filter((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
+
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: openOrdersCount },
     { title: "HISTORY", disabled: false, rowCount: historyOrdersCount },
-    { title: "BALANCES", disabled: false, rowCount: historyOrdersCount },
+    ...(isShowBalance ? [{ title: "BALANCES", disabled: false, rowCount: balance.length }] : []),
   ];
 
   useEffect(() => {
@@ -321,7 +349,50 @@ const SpotTableImpl: React.FC = observer(() => {
       </MobileTableOrderRow>
     ));
 
-    const tabToData = [orderData, orderHistoryData];
+    const updatedBalancesData = updatedBalances.map((el) => (
+      <BalanceContainer key={el.asset.assetId}>
+        <BalanceHeader>
+          <IconContainer gap="4px">
+            <TokenIcon src={el.asset.logo} />
+            <Text primary>{el.asset.name}</Text>
+          </IconContainer>
+          {new BN(el.contract).isGreaterThan(0) && (
+            <WithdrawalButton
+              data-order-id={el.amount.assetId}
+              style={{
+                minWidth: "92px",
+              }}
+              onClick={() => {
+                withdrawalBalance(el.amount);
+              }}
+            >
+              {isLoading ? "Loading..." : "Withdraw"}
+            </WithdrawalButton>
+          )}
+        </BalanceHeader>
+        <BalanceRow>
+          <BalanceColumn>
+            <Text>Wallet</Text>
+            <Text primary>{el.balance.toString()}</Text>
+          </BalanceColumn>
+          <BalanceColumn>
+            <Text>Open orders</Text>
+            <Text primary>{el.inOrders.toString()}</Text>
+          </BalanceColumn>
+        </BalanceRow>
+        <BalanceRow>
+          <BalanceColumn>
+            <Text>Withdrawable</Text>
+            <Text primary>{el.contract.toString()}</Text>
+          </BalanceColumn>
+          <BalanceColumn>
+            <Text>Total amount</Text>
+            <Text primary>{el.balance.toString()}</Text>
+          </BalanceColumn>
+        </BalanceRow>
+      </BalanceContainer>
+    ));
+    const tabToData = [orderData, orderHistoryData, updatedBalancesData];
 
     return (
       <SmartFlex width="100%" column>
@@ -329,18 +400,31 @@ const SpotTableImpl: React.FC = observer(() => {
       </SmartFlex>
     );
   };
-  const balancesInfoList = balanceStore.formattedBalanceInfoList;
-  const balance = balancesInfoList
-    .map((el) => ({
-      asset: el.asset,
-      wallet: new BN(el.walletBalance),
-      balance: el.balance,
-      amount: el,
-      contract: new BN(el.contractBalance),
-      currentPrice: new BN(el.price).toSignificant(2),
-    }))
-    .filter((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
-  const tabToData = [vm.userOrders, vm.userOrdersHistory, balance];
+
+  const updatedBalances = balance.map((balanceItem) => {
+    let inOrders = new BN(0);
+    let balance = new BN(balanceItem.balance);
+
+    vm.userOrdersAll.forEach((order) => {
+      if (order.orderType === "Buy" && balanceItem.asset.symbol === order.quoteToken.symbol) {
+        inOrders = inOrders.plus(new BN(order.currentQuoteAmountUnits));
+        balance = balance.plus(order.currentQuoteAmountUnits);
+      }
+
+      if (order.orderType === "Sell" && balanceItem.asset.symbol === order.baseToken.symbol) {
+        inOrders = inOrders.plus(new BN(order.formatInitialAmount));
+        balance = balance.plus(order.formatInitialAmount);
+      }
+    });
+
+    return {
+      ...balanceItem,
+      balance: balance,
+      inOrders: inOrders.toString(),
+    };
+  });
+
+  const tabToData = [vm.userOrders, vm.userOrdersHistory, updatedBalances];
   const data = tabToData[tabIndex];
   const handleChangePagination = (e: number) => {
     vm.setOffset(e);
@@ -471,4 +555,28 @@ const IconContainer = styled(SmartFlex)`
 const WithdrawalButton = styled(Chip)`
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;
+`;
+
+const BalanceContainer = styled(SmartFlex)`
+  flex-direction: column;
+  padding: 12px;
+`;
+
+const BalanceHeader = styled(SmartFlex)`
+  width: 100%;
+  justify-content: space-between;
+  padding: 0px 0px 12px 0px;
+`;
+
+const BalanceRow = styled(SmartFlex)`
+  width: 100%;
+  padding: 4px 12px 12px 0px;
+
+  &:last-child {
+    border-bottom: 1px solid #9696963d;
+  }
+`;
+
+const BalanceColumn = styled(Column)`
+  width: 160px;
 `;

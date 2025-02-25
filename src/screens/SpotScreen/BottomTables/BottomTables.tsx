@@ -4,12 +4,14 @@ import { observer } from "mobx-react";
 
 import { media } from "@themes/breakpoints";
 
+import { SpotTableImplProps } from "@screens/SpotScreen/BottomTables/SpotTable/SpotTableImpl.tsx";
+
 import SpotTable from "./SpotTable";
 
-const BottomTables: React.FC = observer(() => {
+const BottomTables: React.FC<SpotTableImplProps> = observer(({ isShowBalance }) => {
   return (
     <StyledBottomTables>
-      <SpotTable />
+      <SpotTable isShowBalance={isShowBalance} />
     </StyledBottomTables>
   );
 });

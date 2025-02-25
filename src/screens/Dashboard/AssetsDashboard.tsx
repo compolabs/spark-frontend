@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
-import Button from "@components/Button";
 import Chip from "@components/Chip";
 import { Column } from "@components/Flex";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
@@ -31,7 +30,6 @@ const AssetsDashboard = observer(() => {
   const media = useMedia();
   const { balanceStore } = useStores();
   const balancesInfoList = balanceStore.formattedBalanceInfoList;
-  console.log('balancesInfoList', balancesInfoList)
   const data = balancesInfoList
     .map((el) => ({
       asset: el.asset,
@@ -279,11 +277,6 @@ const MobileTableRowColumn = styled(SmartFlex)`
 const RightText = styled(Text)`
   width: 100%;
   text-align: right;
-`;
-
-const ButtonConfirm = styled(Button)`
-  width: 100%;
-  min-width: 90px;
 `;
 
 const TextTitle = styled(Text)`
