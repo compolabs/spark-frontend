@@ -32,7 +32,7 @@ const globalModalStyles = (theme: Theme) => css`
     width: 100%;
     max-width: 414px;
     background: ${theme.colors.bgSecondary};
-    border-radius: 10px;
+    border: 1px solid ${theme.colors.strokeSecondary};
   }
 
   .rc-dialog-content {
@@ -81,16 +81,14 @@ const globalModalStyles = (theme: Theme) => css`
   }
 
   .react-modal-sheet-container {
-    border-radius: 20px 20px 0 0 !important;
-    background-color: ${theme.colors.bgSecondary} !important;
+    border-radius: 0 !important;
+
+    background-color: ${theme.colors.fillSurface} !important;
+    border: 1px solid ${theme.colors.strokePrimary} !important;
   }
 
   .react-modal-sheet-drag-indicator {
     background-color: ${theme.colors.iconSecondary} !important;
-  }
-
-  .react-modal-sheet-content {
-    // background-color: ${theme.colors.bgSecondary};
   }
   // END react-modal-sheet
 

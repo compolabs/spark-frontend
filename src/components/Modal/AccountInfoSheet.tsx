@@ -76,7 +76,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Sheet isOpen={isOpen} onClose={onClose}>
+    <Sheet isOpen={isOpen} header onClose={onClose}>
       <SmartFlex column>
         <TokenContainer center="y" gap="8px">
           <Icon alt="ETH" src={bcNetwork?.getTokenBySymbol("ETH").logo} />

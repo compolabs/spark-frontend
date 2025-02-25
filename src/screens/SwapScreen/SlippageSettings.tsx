@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import styled from "@emotion/styled";
 
-import ModalSheet from "@components/ModalSheet";
+import Sheet from "@components/Sheet";
 import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
@@ -27,16 +27,12 @@ interface ResolverDevice {
 
 const ResolverDevice = ({ children, handleClose }: ResolverDevice) => {
   const media = useMedia();
-  return (
-    <>
-      {media.mobile ? (
-        <ModalSheet isVisible={true} onClose={handleClose}>
-          {children}
-        </ModalSheet>
-      ) : (
-        <Overlay>{children}</Overlay>
-      )}
-    </>
+  return media.mobile ? (
+    <Sheet isOpen={true} onClose={handleClose}>
+      {children}
+    </Sheet>
+  ) : (
+    <Overlay>{children}</Overlay>
   );
 };
 

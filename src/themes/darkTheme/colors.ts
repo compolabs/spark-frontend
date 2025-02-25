@@ -40,6 +40,15 @@ const colors = {
   blueVioletMedium: "#1A6FF9",
 
   textIconPrimary: "#FFFFFF",
+  textIconSecondary: "#969696",
+
+  strokeAccent: "#EDF3FF",
+  strokePrimary: "#2E2E2E",
+
+  fillSurface: "#0E100F",
+  textIconTertiary: "#595959",
+
+  blueVioletStrong: "#AFD5FF",
 };
 
 export default colors;

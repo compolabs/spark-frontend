@@ -141,7 +141,7 @@ export const OrderTypeTooltip: React.FC = () => {
 
 export const OrderTypeSheet: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   return (
-    <Sheet isOpen={isOpen} onClose={onClose}>
+    <Sheet isOpen={isOpen} header onClose={onClose}>
       <SmartFlex margin="0 0 32px" center>
         <OrderType />
       </SmartFlex>

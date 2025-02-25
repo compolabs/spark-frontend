@@ -110,7 +110,30 @@ const CP_Header_18_Medium = `
   font-size: 18px;
   line-height: 24px;
   letter-spacing: 3%;
-  text-align: center;
+`;
+
+const CP_Button_14_Medium = `
+  font-family: Chakra Petch;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 2%;
+`;
+
+const CP_Body_16_Medium = `
+  font-family: Chakra Petch;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 2%;
+`;
+
+const CP_Support_10 = `
+  font-family: Chakra Petch;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 4%;
 `;
 
 export const TEXT_TYPES_MAP = {
@@ -126,12 +149,16 @@ export const TEXT_TYPES_MAP = {
   TEXT_BIG,
   TEXT,
   CP_Header_18_Medium,
+  CP_Button_14_Medium,
+  CP_Body_16_Medium,
+  CP_Support_10,
 };
 
 type TEXT_TYPES = keyof typeof TEXT_TYPES_MAP;
 
 interface IProps {
   type?: TEXT_TYPES;
+  uppercase?: boolean;
   primary?: boolean;
   secondary?: boolean;
   disabled?: boolean;
@@ -174,6 +201,7 @@ const Text = styled.div<IProps>`
       }
     })()}
   ${({ type }) => (type ? TEXT_TYPES_MAP[type] : TEXT_TYPES_MAP.BODY)}
-	cursor: ${({ pointer }) => (pointer ? "pointer" : "inherit")}
+  ${({ uppercase }) => uppercase && "text-transform: uppercase;"}
+  cursor: ${({ pointer }) => (pointer ? "pointer" : "inherit")}
 `;
 export default Text;

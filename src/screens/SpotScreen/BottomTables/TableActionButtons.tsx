@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 
 import { OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
+import { CheckboxOld } from "@components/CheckboxOld";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
@@ -16,8 +17,6 @@ import TableSizeSelectorIcon from "@assets/icons/tablesSizeSelector.svg?react";
 
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
-
-import { Checkbox } from "@src/components/Checkbox";
 
 import { useSpotTableVMProvider } from "./SpotTable/SpotTableVM";
 import { RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "./constants";
@@ -83,16 +82,22 @@ export const TableActionButtons: React.FC = observer(() => {
           <Text type="BODY" secondary>
             Side
           </Text>
-          <Checkbox checked={vm.filterIsBuyOrderTypeEnabled} onChange={() => vm.toggleFilterOrderType(OrderType.Buy)}>
+          <CheckboxOld
+            checked={vm.filterIsBuyOrderTypeEnabled}
+            onChange={() => vm.toggleFilterOrderType(OrderType.Buy)}
+          >
             <Text type="BUTTON_SECONDARY" primary>
               BUY
             </Text>
-          </Checkbox>
-          <Checkbox checked={vm.filterIsSellOrderTypeEnabled} onChange={() => vm.toggleFilterOrderType(OrderType.Sell)}>
+          </CheckboxOld>
+          <CheckboxOld
+            checked={vm.filterIsSellOrderTypeEnabled}
+            onChange={() => vm.toggleFilterOrderType(OrderType.Sell)}
+          >
             <Text type="BUTTON_SECONDARY" primary>
               SELL
             </Text>
-          </Checkbox>
+          </CheckboxOld>
         </SmartFlex>
       </SettingsTooltipContainer>
     );
