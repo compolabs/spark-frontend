@@ -349,8 +349,8 @@ class CreateOrderVM {
     try {
       let hash: Undefinable<string> = "";
 
-      if (timeInForce === LimitType.GTC) {
-        hash = await this.createGTCOrder(type, deposit, compactMarkets);
+      if (timeInForce === LimitType.GTC || timeInForce === LimitType.MKT) {
+        hash = await this.createGTCOrder(type, deposit, compactMarkets, timeInForce);
       } else {
         hash = await this.createMarketOrLimitOrder(type, market, deposit, compactMarkets);
       }
@@ -391,6 +391,7 @@ class CreateOrderVM {
     type: OrderType,
     deposit: DepositInfo,
     markets: CompactMarketInfo[],
+    timeInForce: LimitType,
   ): Promise<string> => {
     const bcNetwork = FuelNetwork.getInstance();
 
@@ -400,8 +401,7 @@ class CreateOrderVM {
       price: this.inputPrice.toString(),
       ...deposit,
     };
-
-    const data = await bcNetwork.createSpotOrderWithDeposit(order, markets);
+    const data = await bcNetwork.createSpotOrderWithDeposit(order, markets, timeInForce);
     return data.transactionId;
   };
 
