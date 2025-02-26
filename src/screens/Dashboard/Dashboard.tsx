@@ -25,7 +25,7 @@ const Dashboard = observer(() => {
           <MarketDataSection />
           <InfoDataGraph />
         </UserInfoData>
-        <BottomTables />
+        <BottomTables isShowBalance={false} />
       </DashboardColumn>
       <AssetsDashboard />
       <StatusBarStyled />

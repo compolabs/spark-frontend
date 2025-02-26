@@ -13,6 +13,7 @@ import { FiltersProps } from "@stores/DashboardStore";
 
 import { filters } from "@screens/Dashboard/const";
 import { DashboardInfo } from "@screens/Dashboard/DashboardInfo";
+
 export const DashboardFilter = observer(() => {
   const media = useMedia();
   const [active, setActive] = useState(0);
