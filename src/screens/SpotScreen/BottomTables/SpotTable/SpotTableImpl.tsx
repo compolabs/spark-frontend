@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
+import Button from "@components/Button.tsx";
 import Chip from "@components/Chip";
 import { Column } from "@components/Flex.tsx";
 import { Pagination } from "@components/Pagination/Pagination";
@@ -124,7 +125,11 @@ const HISTORY_COLUMNS = (theme: Theme) => [
   }),
 ];
 
-const BALANCE_COLUMNS = (theme: Theme, withdrawalBalance: (asset: AssetBlockData) => void, isLoading: boolean) => [
+const BALANCE_COLUMNS = (
+  theme: Theme,
+  withdrawalBalance: (asset: AssetBlockData) => void,
+  isLoading: string | null,
+) => [
   balanceColumnHelper.accessor("asset", {
     header: "Token",
     cell: (props) => {
@@ -183,21 +188,19 @@ const BALANCE_COLUMNS = (theme: Theme, withdrawalBalance: (asset: AssetBlockData
     id: "action",
     cell: (props) => {
       const value = props.getValue();
+      const isDisable = !new BN(value.contractBalance).isGreaterThan(0);
       return (
         <SmartFlex justifyContent="flex-end">
-          {new BN(value.contractBalance).isGreaterThan(0) && (
-            <WithdrawalButton
-              data-order-id={value.assetId}
-              style={{
-                minWidth: "92px",
-              }}
-              onClick={() => {
-                withdrawalBalance(value);
-              }}
-            >
-              {isLoading ? "Loading..." : "Withdraw"}
-            </WithdrawalButton>
-          )}
+          <WithdrawalButton
+            data-order-id={value.assetId}
+            disabled={isDisable}
+            fitContent
+            onClick={() => {
+              withdrawalBalance(value);
+            }}
+          >
+            {!!isLoading && isLoading === value.assetId ? "Loading..." : "Withdraw"}
+          </WithdrawalButton>
         </SmartFlex>
       );
     },
@@ -212,18 +215,19 @@ export interface SpotTableImplProps {
 }
 const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = true }) => {
   const { accountStore, settingsStore, balanceStore } = useStores();
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState<string | null>(null);
   const vm = useSpotTableVMProvider();
   const theme = useTheme();
   const media = useMedia();
   const [tabIndex, setTabIndex] = useState(0);
   const withdrawalBalance = async (selectAsset: AssetBlockData) => {
-    setLoading(true);
+    if (isLoading) return;
+    setLoading(selectAsset.assetId);
     await balanceStore.withdrawBalance(
       selectAsset.asset.assetId,
       BN.parseUnits(selectAsset.contractBalance, selectAsset.asset.decimals).toString(),
     );
-    setLoading(false);
+    setLoading(null);
   };
   const columns = [
     ORDER_COLUMNS(vm, theme),
@@ -408,12 +412,12 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
     vm.userOrdersAll.forEach((order) => {
       if (order.orderType === "Buy" && balanceItem.asset.symbol === order.quoteToken.symbol) {
         inOrders = inOrders.plus(new BN(order.currentQuoteAmountUnits));
-        balance = balance.plus(order.currentQuoteAmountUnits);
+        balance = balance.plus(new BN(order.currentQuoteAmountUnits ?? 0));
       }
 
       if (order.orderType === "Sell" && balanceItem.asset.symbol === order.baseToken.symbol) {
-        inOrders = inOrders.plus(new BN(order.formatInitialAmount));
-        balance = balance.plus(order.formatInitialAmount);
+        inOrders = inOrders.plus(new BN(order.initialAmountUnits));
+        balance = balance.plus(new BN(order.initialAmountUnits ?? 0));
       }
     });
 
@@ -423,6 +427,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
       inOrders: inOrders.toString(),
     };
   });
+  // console.log('balance', updatedBalances)
 
   const tabToData = [vm.userOrders, vm.userOrdersHistory, updatedBalances];
   const data = tabToData[tabIndex];
@@ -442,7 +447,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
       );
     }
 
-    if (!data.length) {
+    if (!data.length && tabIndex !== 3) {
       return (
         <TableContainer center column>
           <Text type={TEXT_TYPES.H} primary>
@@ -450,6 +455,14 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
           </Text>
           <Text type={TEXT_TYPES.BODY} secondary>
             Begin trading to view updates on your portfolio
+          </Text>
+        </TableContainer>
+      );
+    } else if (!data.length && tabIndex === 3) {
+      return (
+        <TableContainer center column>
+          <Text type={TEXT_TYPES.H} primary>
+            You have no balance
           </Text>
         </TableContainer>
       );
@@ -552,8 +565,13 @@ const IconContainer = styled(SmartFlex)`
   align-items: center;
 `;
 
-const WithdrawalButton = styled(Chip)`
+const WithdrawalButton = styled(Button)`
   cursor: pointer;
+  border-radius: 5px;
+  min-width: 92px;
+  height: 20px !important;
+  font-size: 12px;
+  padding: 0 4px !important;
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;
 `;
 
