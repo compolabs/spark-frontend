@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 
 import { media } from "@themes/breakpoints";
 
-import { SpotTableImplProps } from "@screens/SpotScreen/BottomTables/SpotTable/SpotTableImpl.tsx";
+import { SpotTableImplProps } from "@screens/SpotScreen/BottomTables/SpotTable/SpotTableImpl";
 
 import SpotTable from "./SpotTable";
 

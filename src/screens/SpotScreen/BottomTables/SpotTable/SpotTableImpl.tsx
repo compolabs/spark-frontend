@@ -6,11 +6,11 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
-import Button from "@components/Button.tsx";
+import Button from "@components/Button";
 import Chip from "@components/Chip";
-import { Column } from "@components/Flex.tsx";
+import { Column } from "@components/Flex";
 import { Pagination } from "@components/Pagination/Pagination";
-import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput.tsx";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text, { TEXT_TYPES } from "@components/Text";
@@ -30,7 +30,7 @@ import { useSpotTableVMProvider } from "./SpotTableVM";
 
 const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();
-const balanceColumnHelper = createColumnHelper<any>();
+const balanceColumnHelper = createColumnHelper<AssetBlockData>();
 
 const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: Theme) => [
   orderColumnHelper.accessor("timestamp", {
@@ -141,7 +141,7 @@ const BALANCE_COLUMNS = (
       );
     },
   }),
-  balanceColumnHelper.accessor("wallet", {
+  balanceColumnHelper.accessor("walletBalance", {
     header: "Wallet",
     cell: (props) => {
       return (
@@ -151,7 +151,7 @@ const BALANCE_COLUMNS = (
       );
     },
   }),
-  balanceColumnHelper.accessor("inOrders", {
+  balanceColumnHelper.accessor("orderBalance", {
     header: "Open orders",
     cell: (props) => {
       return (
@@ -161,7 +161,7 @@ const BALANCE_COLUMNS = (
       );
     },
   }),
-  balanceColumnHelper.accessor("contract", {
+  balanceColumnHelper.accessor("contractBalance", {
     header: "Withdrawable",
     cell: (props) => {
       return (
@@ -181,25 +181,25 @@ const BALANCE_COLUMNS = (
       );
     },
   }),
-  balanceColumnHelper.accessor("amount", {
+  balanceColumnHelper.accessor("contractBalance", {
     header: () => {
-      return <></>;
+      return;
     },
     id: "action",
     cell: (props) => {
       const value = props.getValue();
-      const isDisable = !new BN(value.contractBalance).isGreaterThan(0);
+      const isDisable = !new BN(value).isGreaterThan(0);
       return (
         <SmartFlex justifyContent="flex-end">
           <WithdrawalButton
-            data-order-id={value.assetId}
+            data-order-id={props.row.original.assetId}
             disabled={isDisable}
             fitContent
             onClick={() => {
-              withdrawalBalance(value);
+              withdrawalBalance(props.row.original);
             }}
           >
-            {!!isLoading && isLoading === value.assetId ? "Loading..." : "Withdraw"}
+            {!!isLoading && isLoading === props.row.original.assetId ? "Loading..." : "Withdraw"}
           </WithdrawalButton>
         </SmartFlex>
       );
@@ -238,24 +238,14 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
   const historyOrdersCount = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
   const openOrdersCount = vm.userOrdersStats?.active ?? 0;
   const PAGINATION_LENGTH = [openOrdersCount, historyOrdersCount];
-  const balancesInfoList = balanceStore.formattedBalanceInfoList;
-
-  const balance = balancesInfoList
-    .map((el) => ({
-      asset: el.asset,
-      wallet: new BN(el.walletBalance),
-      balance: el.balance,
-      amount: el,
-      contract: new BN(el.contractBalance),
-      currentPrice: new BN(el.price).toSignificant(2),
-      decimals: el.decimals,
-    }))
-    .filter((item) => new BN(item.balance).isGreaterThan(BN.ZERO));
+  const balancesInfoList = balanceStore.formattedBalanceInfoList.filter((item) =>
+    new BN(item.balance).isGreaterThan(BN.ZERO),
+  );
 
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: openOrdersCount },
     { title: "HISTORY", disabled: false, rowCount: historyOrdersCount },
-    ...(isShowBalance ? [{ title: "BALANCES", disabled: false, rowCount: balance.length }] : []),
+    ...(isShowBalance ? [{ title: "BALANCES", disabled: false, rowCount: balancesInfoList.length }] : []),
   ];
 
   useEffect(() => {
@@ -353,26 +343,23 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
       </MobileTableOrderRow>
     ));
 
-    const updatedBalancesData = updatedBalances.map((el) => (
+    const updatedBalancesData = balancesInfoList.map((el) => (
       <BalanceContainer key={el.asset.assetId}>
         <BalanceHeader>
           <IconContainer gap="4px">
             <TokenIcon src={el.asset.logo} />
             <Text primary>{el.asset.name}</Text>
           </IconContainer>
-          {new BN(el.contract).isGreaterThan(0) && (
-            <WithdrawalButton
-              data-order-id={el.amount.assetId}
-              style={{
-                minWidth: "92px",
-              }}
-              onClick={() => {
-                withdrawalBalance(el.amount);
-              }}
-            >
-              {isLoading ? "Loading..." : "Withdraw"}
-            </WithdrawalButton>
-          )}
+          <WithdrawalButton
+            data-order-id={el.assetId}
+            disabled={!new BN(el.contractBalance).isGreaterThan(0)}
+            fitContent
+            onClick={() => {
+              withdrawalBalance(el);
+            }}
+          >
+            {!!isLoading && isLoading === el.assetId ? "Loading..." : "Withdraw"}
+          </WithdrawalButton>
         </BalanceHeader>
         <BalanceRow>
           <BalanceColumn>
@@ -381,13 +368,13 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
           </BalanceColumn>
           <BalanceColumn>
             <Text>Open orders</Text>
-            <Text primary>{el.inOrders.toString()}</Text>
+            <Text primary>{el.orderBalance.toString()}</Text>
           </BalanceColumn>
         </BalanceRow>
         <BalanceRow>
           <BalanceColumn>
             <Text>Withdrawable</Text>
-            <Text primary>{el.contract.toString()}</Text>
+            <Text primary>{el.contractBalance.toString()}</Text>
           </BalanceColumn>
           <BalanceColumn>
             <Text>Total amount</Text>
@@ -405,31 +392,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
     );
   };
 
-  const updatedBalances = balance.map((balanceItem) => {
-    let inOrders = new BN(0);
-    let balance = new BN(balanceItem.balance);
-
-    vm.userOrdersAll.forEach((order) => {
-      if (order.orderType === "Buy" && balanceItem.asset.symbol === order.quoteToken.symbol) {
-        inOrders = inOrders.plus(new BN(order.currentQuoteAmountUnits));
-        balance = balance.plus(new BN(order.currentQuoteAmountUnits ?? 0));
-      }
-
-      if (order.orderType === "Sell" && balanceItem.asset.symbol === order.baseToken.symbol) {
-        inOrders = inOrders.plus(new BN(order.initialAmountUnits));
-        balance = balance.plus(new BN(order.initialAmountUnits ?? 0));
-      }
-    });
-
-    return {
-      ...balanceItem,
-      balance: balance,
-      inOrders: inOrders.toString(),
-    };
-  });
-  // console.log('balance', updatedBalances)
-
-  const tabToData = [vm.userOrders, vm.userOrdersHistory, updatedBalances];
+  const tabToData = [vm.userOrders, vm.userOrdersHistory, balancesInfoList];
   const data = tabToData[tabIndex];
   const handleChangePagination = (e: number) => {
     vm.setOffset(e);

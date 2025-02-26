@@ -85,7 +85,7 @@ const AssetsDashboard = observer(() => {
     }),
     orderColumnHelper.accessor("amount", {
       header: () => {
-        return <></>;
+        return;
       },
       id: "action",
       cell: (props) => {

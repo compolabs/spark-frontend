@@ -31,12 +31,10 @@ const sortDesc = (a: SpotMarketOrder, b: SpotMarketOrder) => b.timestamp.valueOf
 class SpotTableVM {
   private readonly rootStore: RootStore;
   private subscriptionToOpenOrders: Nullable<Subscription> = null;
-  private subscriptionToOpenAllOrders: Nullable<Subscription> = null;
   private subscriptionToHistoryOrders: Nullable<Subscription> = null;
   private subscriptionToOrdersStats: Nullable<Subscription> = null;
 
   userOrders: SpotMarketOrder[] = [];
-  userOrdersAll: SpotMarketOrder[] = [];
   userOrdersHistory: SpotMarketOrder[] = [];
   userOrdersStats: Nullable<UserInfo> = null;
 
@@ -167,28 +165,6 @@ class SpotTableVM {
       this.subscriptionToOpenOrders.unsubscribe();
     }
 
-    if (this.subscriptionToOpenAllOrders) {
-      this.subscriptionToOpenAllOrders.unsubscribe();
-    }
-
-    this.subscriptionToOpenAllOrders = bcNetwork
-      .subscribeSpotOrders(
-        {
-          ...this.tableFilters,
-          user: accountStore.address!,
-          status: ["Active"],
-        },
-        { timestamp: "desc" },
-      )
-      .subscribe({
-        next: ({ data }) => {
-          if (!data) return;
-
-          const sortedOrder = formatSpotMarketOrders(data.Order).sort(sortDesc);
-          this.setUserAllOrders(sortedOrder);
-        },
-      });
-
     this.subscriptionToOpenOrders = bcNetwork
       .subscribeSpotOrders(
         {
@@ -272,7 +248,6 @@ class SpotTableVM {
   };
 
   private setUserOrders = (orders: SpotMarketOrder[]) => (this.userOrders = orders);
-  private setUserAllOrders = (orders: SpotMarketOrder[]) => (this.userOrdersAll = orders);
 
   private setUserOrdersHistory = (orders: SpotMarketOrder[]) => (this.userOrdersHistory = orders);
 
