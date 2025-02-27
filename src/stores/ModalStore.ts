@@ -4,8 +4,9 @@ import { Nullable } from "tsdef";
 import RootStore from "./RootStore";
 
 export enum MODAL_TYPE {
-  DEPOSIT_WITHDRAW_MODAL,
-  CONNECT_MODAL,
+  DEPOSIT_WITHDRAW,
+  CONNECT,
+  SELECT_WALLET,
 }
 
 export class ModalStore {

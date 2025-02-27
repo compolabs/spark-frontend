@@ -139,7 +139,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             <SizedBoxStyled width={150}>
               <Text type="BUTTON">Connect wallet to see your assets and trade</Text>
             </SizedBoxStyled>
-            <Button green onClick={() => modalStore.open(MODAL_TYPE.CONNECT_MODAL)}>
+            <Button green onClick={() => modalStore.open(MODAL_TYPE.CONNECT)}>
               Connect wallet
             </Button>
           </>
