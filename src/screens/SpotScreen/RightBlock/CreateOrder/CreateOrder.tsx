@@ -58,9 +58,7 @@ const CreateOrder: React.FC = observer(() => {
   const { baseToken, quoteToken } = market;
 
   const handlePercentChange = (v: number) => {
-    const token = vm.isSell ? baseToken : quoteToken;
-
-    const totalBalance = balanceStore.getTotalBalance(token.assetId);
+    const totalBalance = vm.getTotalBalanceWithFee();
 
     if (totalBalance.isZero()) return;
 
@@ -299,7 +297,7 @@ const CreateOrder: React.FC = observer(() => {
 
   const getAvailableAmount = () => {
     const token = vm.isSell ? baseToken : quoteToken;
-    return balanceStore.getFormatTotalBalance(token.assetId, token.decimals);
+    return BN.formatUnits(vm.getTotalBalanceWithFee(), token.decimals).toSignificant(2);
   };
 
   const onSelectOrderType = ({ key }: { key: ORDER_TYPE }) => {
