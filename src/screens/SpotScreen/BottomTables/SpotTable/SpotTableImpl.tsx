@@ -4,8 +4,13 @@ import styled from "@emotion/styled";
 import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
+import Button from "@components/Button";
 import Chip from "@components/Chip";
+import { Column } from "@components/Flex";
 import { Pagination } from "@components/Pagination/Pagination";
+import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import BottomTablesSkeletonWrapper from "@components/Skeletons/BottomTablesSkeletonWrapper";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
@@ -25,6 +30,7 @@ import { useSpotTableVMProvider } from "./SpotTableVM";
 
 const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();
+const balanceColumnHelper = createColumnHelper<AssetBlockData>();
 
 const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: Theme) => [
   orderColumnHelper.accessor("timestamp", {
@@ -119,23 +125,127 @@ const HISTORY_COLUMNS = (theme: Theme) => [
   }),
 ];
 
+const BALANCE_COLUMNS = (
+  theme: Theme,
+  withdrawalBalance: (asset: AssetBlockData) => void,
+  isLoading: string | null,
+) => [
+  balanceColumnHelper.accessor("asset", {
+    header: "Token",
+    cell: (props) => {
+      return (
+        <IconContainer gap="4px">
+          <TokenIcon src={props.getValue().logo} />
+          <Text primary>{props.getValue().name}</Text>
+        </IconContainer>
+      );
+    },
+  }),
+  balanceColumnHelper.accessor("walletBalance", {
+    header: "Wallet",
+    cell: (props) => {
+      return (
+        <IconContainer gap="4px">
+          <Text primary>{props.getValue().toString()}</Text>
+        </IconContainer>
+      );
+    },
+  }),
+  balanceColumnHelper.accessor("orderBalance", {
+    header: "Open orders",
+    cell: (props) => {
+      return (
+        <IconContainer gap="4px">
+          <Text primary>{props.getValue().toString()}</Text>
+        </IconContainer>
+      );
+    },
+  }),
+  balanceColumnHelper.accessor("contractBalance", {
+    header: "Withdrawable",
+    cell: (props) => {
+      return (
+        <IconContainer gap="4px">
+          <Text primary>{props.getValue().toString()}</Text>
+        </IconContainer>
+      );
+    },
+  }),
+  balanceColumnHelper.accessor("balance", {
+    header: "Total amount",
+    cell: (props) => {
+      return (
+        <IconContainer gap="4px">
+          <Text primary>{props.getValue().toString()}</Text>
+        </IconContainer>
+      );
+    },
+  }),
+  balanceColumnHelper.accessor("contractBalance", {
+    header: () => {
+      return;
+    },
+    id: "action",
+    cell: (props) => {
+      const value = props.getValue();
+      const isDisable = !new BN(value).isGreaterThan(0);
+      return (
+        <SmartFlex justifyContent="flex-end">
+          <WithdrawalButton
+            data-order-id={props.row.original.assetId}
+            disabled={isDisable}
+            fitContent
+            onClick={() => {
+              withdrawalBalance(props.row.original);
+            }}
+          >
+            {!!isLoading && isLoading === props.row.original.assetId ? "Loading..." : "Withdraw"}
+          </WithdrawalButton>
+        </SmartFlex>
+      );
+    },
+  }),
+];
+
 const minNeedLengthPagination = 10;
 const startPage = 1;
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
-const SpotTableImpl: React.FC = observer(() => {
-  const { accountStore, settingsStore } = useStores();
+export interface SpotTableImplProps {
+  isShowBalance?: boolean;
+}
+const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = true }) => {
+  const { accountStore, settingsStore, balanceStore } = useStores();
+  const [isLoading, setLoading] = useState<string | null>(null);
   const vm = useSpotTableVMProvider();
   const theme = useTheme();
   const media = useMedia();
   const [tabIndex, setTabIndex] = useState(0);
-  const columns = [ORDER_COLUMNS(vm, theme), HISTORY_COLUMNS(theme)];
+  const withdrawalBalance = async (selectAsset: AssetBlockData) => {
+    if (isLoading) return;
+    setLoading(selectAsset.assetId);
+    await balanceStore.withdrawBalance(
+      selectAsset.asset.assetId,
+      BN.parseUnits(selectAsset.contractBalance, selectAsset.asset.decimals).toString(),
+    );
+    setLoading(null);
+  };
+  const columns = [
+    ORDER_COLUMNS(vm, theme),
+    HISTORY_COLUMNS(theme),
+    BALANCE_COLUMNS(theme, withdrawalBalance, isLoading),
+  ];
   const [page, setPage] = useState(startPage);
   const historyOrdersCount = (vm.userOrdersStats?.closed ?? 0) + (vm.userOrdersStats?.canceled ?? 0);
   const openOrdersCount = vm.userOrdersStats?.active ?? 0;
   const PAGINATION_LENGTH = [openOrdersCount, historyOrdersCount];
+  const balancesInfoList = balanceStore.formattedBalanceInfoList.filter((item) =>
+    new BN(item.balance).isGreaterThan(BN.ZERO),
+  );
+
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: openOrdersCount },
     { title: "HISTORY", disabled: false, rowCount: historyOrdersCount },
+    ...(isShowBalance ? [{ title: "BALANCES", disabled: false, rowCount: balancesInfoList.length }] : []),
   ];
 
   useEffect(() => {
@@ -233,7 +343,47 @@ const SpotTableImpl: React.FC = observer(() => {
       </MobileTableOrderRow>
     ));
 
-    const tabToData = [orderData, orderHistoryData];
+    const updatedBalancesData = balancesInfoList.map((el) => (
+      <BalanceContainer key={el.asset.assetId}>
+        <BalanceHeader>
+          <IconContainer gap="4px">
+            <TokenIcon src={el.asset.logo} />
+            <Text primary>{el.asset.name}</Text>
+          </IconContainer>
+          <WithdrawalButton
+            data-order-id={el.assetId}
+            disabled={!new BN(el.contractBalance).isGreaterThan(0)}
+            fitContent
+            onClick={() => {
+              withdrawalBalance(el);
+            }}
+          >
+            {!!isLoading && isLoading === el.assetId ? "Loading..." : "Withdraw"}
+          </WithdrawalButton>
+        </BalanceHeader>
+        <BalanceRow>
+          <BalanceColumn>
+            <Text>Wallet</Text>
+            <Text primary>{el.balance.toString()}</Text>
+          </BalanceColumn>
+          <BalanceColumn>
+            <Text>Open orders</Text>
+            <Text primary>{el.orderBalance.toString()}</Text>
+          </BalanceColumn>
+        </BalanceRow>
+        <BalanceRow>
+          <BalanceColumn>
+            <Text>Withdrawable</Text>
+            <Text primary>{el.contractBalance.toString()}</Text>
+          </BalanceColumn>
+          <BalanceColumn>
+            <Text>Total amount</Text>
+            <Text primary>{el.balance.toString()}</Text>
+          </BalanceColumn>
+        </BalanceRow>
+      </BalanceContainer>
+    ));
+    const tabToData = [orderData, orderHistoryData, updatedBalancesData];
 
     return (
       <SmartFlex width="100%" column>
@@ -242,7 +392,7 @@ const SpotTableImpl: React.FC = observer(() => {
     );
   };
 
-  const tabToData = [vm.userOrders, vm.userOrdersHistory];
+  const tabToData = [vm.userOrders, vm.userOrdersHistory, balancesInfoList];
   const data = tabToData[tabIndex];
   const handleChangePagination = (e: number) => {
     vm.setOffset(e);
@@ -260,7 +410,7 @@ const SpotTableImpl: React.FC = observer(() => {
       );
     }
 
-    if (!data.length) {
+    if (!data.length && tabIndex !== 3) {
       return (
         <TableContainer center column>
           <Text type="H" primary>
@@ -268,6 +418,14 @@ const SpotTableImpl: React.FC = observer(() => {
           </Text>
           <Text type="BODY" secondary>
             Begin trading to view updates on your portfolio
+          </Text>
+        </TableContainer>
+      );
+    } else if (!data.length && tabIndex === 3) {
+      return (
+        <TableContainer center column>
+          <Text type="H" primary>
+            You have no balance
           </Text>
         </TableContainer>
       );
@@ -358,4 +516,48 @@ const TokenBadge = styled(SmartFlex)`
   ${Text} {
     line-height: 10px;
   }
+`;
+
+const TokenIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+`;
+
+const IconContainer = styled(SmartFlex)`
+  align-items: center;
+`;
+
+const WithdrawalButton = styled(Button)`
+  cursor: pointer;
+  border-radius: 5px;
+  min-width: 92px;
+  height: 20px !important;
+  font-size: 12px;
+  padding: 0 4px !important;
+  border: 1px solid ${({ theme }) => theme.colors.borderPrimary} !important;
+`;
+
+const BalanceContainer = styled(SmartFlex)`
+  flex-direction: column;
+  padding: 12px;
+`;
+
+const BalanceHeader = styled(SmartFlex)`
+  width: 100%;
+  justify-content: space-between;
+  padding: 0px 0px 12px 0px;
+`;
+
+const BalanceRow = styled(SmartFlex)`
+  width: 100%;
+  padding: 4px 12px 12px 0px;
+
+  &:last-child {
+    border-bottom: 1px solid #9696963d;
+  }
+`;
+
+const BalanceColumn = styled(Column)`
+  width: 160px;
 `;

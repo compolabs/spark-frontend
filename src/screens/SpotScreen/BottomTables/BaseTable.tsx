@@ -85,6 +85,7 @@ const TabContainer = styled(Row)`
   align-items: center;
   padding: 2px 12px;
   position: relative;
+  overflow: auto;
 
   ${Tab} {
     margin: 0 16px;

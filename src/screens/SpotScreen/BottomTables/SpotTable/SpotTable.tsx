@@ -1,11 +1,11 @@
 import React from "react";
 
-import SpotTableImpl from "./SpotTableImpl";
+import SpotTableImpl, { SpotTableImplProps } from "./SpotTableImpl";
 import { SpotTableVMProvider } from "./SpotTableVM";
 
-const SpotTable: React.FC = () => (
+const SpotTable: React.FC<SpotTableImplProps> = ({ isShowBalance }) => (
   <SpotTableVMProvider>
-    <SpotTableImpl />
+    <SpotTableImpl isShowBalance={isShowBalance} />
   </SpotTableVMProvider>
 );
 

@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
-import Button from "@components/Button";
 import Chip from "@components/Chip";
 import { Column } from "@components/Flex";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
@@ -39,9 +38,6 @@ const AssetsDashboard = observer(() => {
       currentPrice: new BN(el.price).toSignificant(2),
     }))
     .filter((item) => new BN(item.value).isGreaterThan(BN.ZERO));
-  const allContractBalance = balancesInfoList.reduce((acc, el) => {
-    return acc.plus(el.contractBalance);
-  }, BN.ZERO);
   const hasPositiveBalance = balancesInfoList.some((item) => !new BN(item.contractBalance).isZero());
   const columns = [
     orderColumnHelper.accessor("asset", {
@@ -89,19 +85,7 @@ const AssetsDashboard = observer(() => {
     }),
     orderColumnHelper.accessor("amount", {
       header: () => {
-        return (
-          allContractBalance.isGreaterThan(BN.ZERO) && (
-            <ButtonConfirm
-              disabled={isLoading}
-              style={{
-                minWidth: "92px",
-              }}
-              onClick={handleWithdrawAll}
-            >
-              {isLoading ? "Loading..." : "Withdraw All"}
-            </ButtonConfirm>
-          )
-        );
+        return;
       },
       id: "action",
       cell: (props) => {
@@ -156,11 +140,6 @@ const AssetsDashboard = observer(() => {
     return (
       <SmartFlex gap="4px" padding="8px" width="100%" column>
         {orderData}
-        {allContractBalance.isGreaterThan(BN.ZERO) && (
-          <ButtonConfirm disabled={isLoading} fitContent onClick={handleWithdrawAll}>
-            {isLoading ? "Loading..." : "Withdraw All"}
-          </ButtonConfirm>
-        )}
       </SmartFlex>
     );
   };
@@ -171,12 +150,6 @@ const AssetsDashboard = observer(() => {
       selectAsset.asset.assetId,
       BN.parseUnits(selectAsset.contractBalance, selectAsset.asset.decimals).toString(),
     );
-    setLoading(false);
-  };
-
-  const handleWithdrawAll = async () => {
-    setLoading(true);
-    await balanceStore.withdrawBalanceAll();
     setLoading(false);
   };
 
@@ -304,11 +277,6 @@ const MobileTableRowColumn = styled(SmartFlex)`
 const RightText = styled(Text)`
   width: 100%;
   text-align: right;
-`;
-
-const ButtonConfirm = styled(Button)`
-  width: 100%;
-  min-width: 90px;
 `;
 
 const TextTitle = styled(Text)`

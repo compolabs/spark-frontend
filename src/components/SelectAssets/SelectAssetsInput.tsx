@@ -20,6 +20,7 @@ export interface AssetBlockData {
   asset: Token;
   walletBalance: string;
   contractBalance: string;
+  orderBalance: string;
   balance: string;
   assetId: string;
   price?: string;
