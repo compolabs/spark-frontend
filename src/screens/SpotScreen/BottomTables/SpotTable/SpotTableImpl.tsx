@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 
 import Chip from "@components/Chip";
 import { Pagination } from "@components/Pagination/Pagination";
+import BottomTablesSkeletonWrapper from "@components/Skeletons/BottomTablesSkeletonWrapper";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
 import Text from "@components/Text";
@@ -18,7 +19,6 @@ import { toCurrency } from "@utils/toCurrency";
 
 import { SpotMarketOrder } from "@entity";
 
-import BottomTablesSkeletonWrapper from "../../../../components/Skeletons/BottomTablesSkeletonWrapper";
 import { BaseTable } from "../BaseTable";
 
 import { useSpotTableVMProvider } from "./SpotTableVM";
