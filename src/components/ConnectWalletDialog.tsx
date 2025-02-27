@@ -12,9 +12,9 @@ import ArrowIcon from "@assets/icons/arrowUpNew.svg?react";
 import CloseIcon from "@assets/icons/close.svg?react";
 
 import { useMedia } from "@hooks/useMedia";
-import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
+import { MODAL_TYPE } from "@stores/ModalStore";
 
 import { ButtonNew } from "./ButtonNew";
 import { Checkbox } from "./Checkbox";
@@ -40,8 +40,7 @@ const dropdownVariants = {
 };
 
 const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) => {
-  const { settingsStore, mixPanelStore } = useStores();
-  const { connect } = useWallet();
+  const { settingsStore, mixPanelStore, modalStore } = useStores();
   const theme = useTheme();
   const media = useMedia();
 
@@ -53,8 +52,8 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
   const userCanProceed = !(isUserAcknowledge && isUserAcknowledge);
 
   const openWalletConnectUI = () => {
-    connect();
     onClose();
+    modalStore.open(MODAL_TYPE.SELECT_WALLET);
   };
 
   const saveUserAgreement = () => {
@@ -69,7 +68,7 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
       <Text color={theme.colors.textIconPrimary} type="CP_Header_18_Medium" uppercase>
         Terms of use
       </Text>
-      <CloseIconStyled />
+      <CloseIconStyled onClick={onClose} />
     </HeaderContainer>
   );
 
@@ -120,8 +119,8 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
   );
 
   const renderAcknowledge = () => (
-    <ItemContainer>
-      <Checkbox checked={isUserAcknowledge} onChange={() => setIsUserAcknowledge((v) => !v)}>
+    <ItemContainer onClick={() => setIsUserAcknowledge((v) => !v)}>
+      <Checkbox checked={isUserAcknowledge}>
         <Text color={theme.colors.textIconPrimary} type="CP_Body_16_Medium">
           I acknowledge that I am trading with real money
         </Text>
@@ -156,6 +155,7 @@ const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) =>
   if (media.mobile) {
     return (
       <Sheet isOpen={visible} onClose={onClose}>
+        {renderHeader()}
         {renderContent()}
       </Sheet>
     );
@@ -212,6 +212,12 @@ const DropdownContainer = styled(SmartFlex)`
   padding: 16px 24px;
   justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.colors.strokePrimary};
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.fillAccentSecondary};
+  }
 `;
 
 const DropdownContent = styled(motion.div)`
@@ -229,4 +235,10 @@ const DropdownContentWrapper = styled(SmartFlex)`
 const ItemContainer = styled(SmartFlex)`
   padding: 16px 24px;
   justify-content: space-between;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.fillAccentSecondary};
+  }
 `;

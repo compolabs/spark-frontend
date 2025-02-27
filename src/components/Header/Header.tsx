@@ -46,7 +46,7 @@ const Header: React.FC = observer(() => {
     }
   };
 
-  const openConnectModal = () => modalStore.open(MODAL_TYPE.CONNECT_MODAL);
+  const openConnectModal = () => modalStore.open(MODAL_TYPE.CONNECT);
 
   const renderWallet = () => {
     const dataOnboardingConnectKey = `connect-${media.mobile ? "mobile" : "desktop"}`;

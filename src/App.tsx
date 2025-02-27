@@ -11,6 +11,7 @@ import Header from "@components/Header";
 import { MobileAppStoreSheet } from "@components/Modal/MobileAppStoreSheet";
 import { Onboarding } from "@components/Onboarding";
 import { HeaderPoints } from "@components/Points/HeaderPoints";
+import WalletConnectors from "@components/WalletConnectors";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
 import { useMedia } from "@hooks/useMedia";
@@ -61,9 +62,8 @@ const App: React.FC = observer(() => {
                 <Route element={<Stats />} path={ROUTES.STATS} />
               </Routes>
               <SideManageAssets />
-              {/*<PWAModal />*/}
-              {/*<SplashScreen />*/}
-              <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
+              <WalletConnectors visible={modalStore.isOpen(MODAL_TYPE.SELECT_WALLET)} onClose={modalStore.close} />
+              <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT)} onClose={modalStore.close} />
               <MobileAppStoreSheet isOpen={isAppStoreSheetVisible} onClose={() => setIsAppStoreSheetVisible(false)} />
               <Onboarding />
             </Root>
