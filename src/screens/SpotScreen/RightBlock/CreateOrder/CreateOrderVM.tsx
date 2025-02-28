@@ -350,6 +350,7 @@ class CreateOrderVM {
       let hash: Undefinable<string> = "";
 
       if (timeInForce === LimitType.GTC || timeInForce === LimitType.MKT) {
+        console.log("12", timeInForce);
         hash = await this.createGTCOrder(type, deposit, compactMarkets, timeInForce);
       } else {
         hash = await this.createMarketOrLimitOrder(type, market, deposit, compactMarkets);
@@ -386,6 +387,11 @@ class CreateOrderVM {
     this.isLoading = false;
   };
 
+  applySlippage = (price: number, slippagePercent: number, isPositive = true) => {
+    const factor = 1 + (isPositive ? slippagePercent / 100 : -slippagePercent / 100);
+    return (price * factor).toString();
+  };
+
   // Extracted function for creating GTC orders with deposits
   private createGTCOrder = async (
     type: OrderType,
@@ -394,11 +400,14 @@ class CreateOrderVM {
     timeInForce: LimitType,
   ): Promise<string> => {
     const bcNetwork = FuelNetwork.getInstance();
-
+    let price = this.inputPrice.toString();
+    if (timeInForce === LimitType.MKT) {
+      price = this.applySlippage(this.inputPrice.toNumber(), 25, type === "Buy");
+    }
     const order: CreateOrderWithDepositParams = {
       type,
       amount: this.inputAmount.toString(),
-      price: this.inputPrice.toString(),
+      price: price,
       ...deposit,
     };
     const data = await bcNetwork.createSpotOrderWithDeposit(order, markets, timeInForce);
