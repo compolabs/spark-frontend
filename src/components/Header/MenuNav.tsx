@@ -195,6 +195,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
 
   const renderChildMenuItem = ({ title, link, icon: Icon, desc, trackEvent, onClick }: MenuChildItem) => {
     const isActive = location.pathname.includes(link);
+    const externalProps = isExternalLink(link) ? { rel: "noopener noreferrer", target: "_blank" } : {};
 
     const handleChildClick = () => {
       handleMenuItemClick();
@@ -204,7 +205,7 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
     };
 
     return (
-      <NavLink key={title} to={link} onClick={handleChildClick}>
+      <NavLink key={title} to={link} onClick={handleChildClick} {...externalProps}>
         <DropdownMenu isActive={isActive} onClick={onClick}>
           <IconContainer>{Icon && <Icon height={24} width={24} />}</IconContainer>
           <DropdownMenuContent>
