@@ -3,7 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react";
-import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
+import { IDialogPropTypes as DialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
 import { Dialog } from "@components/Dialog";
 import Text from "@components/Text";
@@ -21,7 +21,7 @@ import { Checkbox } from "./Checkbox";
 import Sheet from "./Sheet";
 import { SmartFlex } from "./SmartFlex";
 
-type IProps = Omit<IDialogPropTypes, "onClose"> & {
+type ConnectWalletDialogProps = Omit<DialogPropTypes, "onClose"> & {
   onClose: () => void;
   visible: boolean;
 };
@@ -39,7 +39,7 @@ const dropdownVariants = {
   },
 };
 
-const ConnectWalletDialog: React.FC<IProps> = observer(({ onClose, visible }) => {
+const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onClose, visible }) => {
   const { settingsStore, mixPanelStore, modalStore } = useStores();
   const theme = useTheme();
   const media = useMedia();

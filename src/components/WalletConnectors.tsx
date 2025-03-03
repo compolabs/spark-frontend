@@ -34,8 +34,6 @@ const WalletConnectors: React.FC<IProps> = observer(({ onClose, visible }) => {
     dialog: { connect },
   } = useConnectUI();
 
-  console.log("shit", connectors);
-
   useEffect(() => {
     if (isConnected) {
       onClose();
