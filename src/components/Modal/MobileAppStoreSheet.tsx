@@ -7,10 +7,10 @@ import Text from "@components/Text";
 
 import ArrowRightIcon from "@assets/icons/arrowRightNew.svg?react";
 import CloseIcon from "@assets/icons/close.svg?react";
-import appStoreImg from "@assets/onboarding/app-store.png";
-import fueletImg from "@assets/onboarding/fuelet.png";
-import googlePlayImg from "@assets/onboarding/google-play.png";
-import onboardingEcosystemImg from "@assets/onboarding/onboarding-ecosystem.png";
+import appStoreImg from "@assets/onboarding/app-store.webp";
+import fueletImg from "@assets/onboarding/fuelet.webp";
+import googlePlayImg from "@assets/onboarding/google-play.webp";
+import onboardingEcosystemImg from "@assets/onboarding/onboarding-ecosystem.webp";
 
 import Sheet from "../Sheet";
 
