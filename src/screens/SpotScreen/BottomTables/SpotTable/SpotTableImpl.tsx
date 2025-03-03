@@ -11,9 +11,10 @@ import Chip from "@components/Chip";
 import { Column } from "@components/Flex";
 import { Pagination } from "@components/Pagination/Pagination";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
+import BottomTablesSkeletonWrapper from "@components/Skeletons/BottomTablesSkeletonWrapper";
 import { SmartFlex } from "@components/SmartFlex";
 import Table from "@components/Table";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useMedia } from "@hooks/useMedia";
@@ -23,7 +24,6 @@ import { toCurrency } from "@utils/toCurrency";
 
 import { SpotMarketOrder } from "@entity";
 
-import BottomTablesSkeletonWrapper from "../../../../components/Skeletons/BottomTablesSkeletonWrapper";
 import { BaseTable } from "../BaseTable";
 
 import { useSpotTableVMProvider } from "./SpotTableVM";
@@ -262,11 +262,11 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
     const orderData = vm.userOrders.map((ord, i) => (
       <MobileTableOrderRow key={i + "mobile-row"}>
         <MobileTableRowColumn>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
+          <Text color={theme.colors.textPrimary} type="BUTTON_SECONDARY">
             {ord.marketSymbol}
           </Text>
           <SmartFlex gap="2px" column>
-            <Text type={TEXT_TYPES.SUPPORTING}>Amount</Text>
+            <Text type="SUPPORTING">Amount</Text>
             <SmartFlex center="y" gap="4px">
               <Text color={theme.colors.textPrimary}>{ord.formatInitialAmount}</Text>
               <TokenBadge>
@@ -279,7 +279,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
           <Text color={theme.colors.textPrimary}>Active</Text>
           <SmartFlex gap="2px" column>
             <SmartFlex center="y" gap="4px">
-              <Text type={TEXT_TYPES.SUPPORTING}>Side:</Text>
+              <Text type="SUPPORTING">Side:</Text>
               <TableText color={ord.orderType === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
                 {ord.orderType}
               </TableText>
@@ -291,7 +291,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
             {vm.cancelingOrderId === ord.id ? "Loading..." : "Cancel"}
           </CancelButton>
           <SmartFlex alignItems="flex-end" gap="2px" column>
-            <Text type={TEXT_TYPES.SUPPORTING}>Price:</Text>
+            <Text type="SUPPORTING">Price:</Text>
             <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice, ord.quoteToken.symbol)}</Text>
           </SmartFlex>
         </MobileTableRowColumn>
@@ -301,11 +301,11 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
     const orderHistoryData = vm.userOrdersHistory.map((ord, i) => (
       <MobileTableOrderRow key={i + "mobile-history-row"}>
         <MobileTableRowColumn>
-          <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON_SECONDARY}>
+          <Text color={theme.colors.textPrimary} type="BUTTON_SECONDARY">
             {ord.marketSymbol}
           </Text>
           <SmartFlex gap="2px" column>
-            <Text type={TEXT_TYPES.SUPPORTING}>Amount</Text>
+            <Text type="SUPPORTING">Amount</Text>
             <SmartFlex center="y" gap="4px">
               <Text color={theme.colors.textPrimary}>{ord.formatInitialAmount}</Text>
               <TokenBadge>
@@ -318,13 +318,13 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
           <Text color={theme.colors.textPrimary}>Complete</Text>
           <SmartFlex gap="2px" column>
             <SmartFlex center="y" gap="4px">
-              <Text type={TEXT_TYPES.SUPPORTING}>Side:</Text>
+              <Text type="SUPPORTING">Side:</Text>
               <TableText color={ord.orderType === "Sell" ? theme.colors.redLight : theme.colors.greenLight}>
                 {ord.orderType}
               </TableText>
             </SmartFlex>
             <SmartFlex center="y" gap="4px">
-              <Text type={TEXT_TYPES.SUPPORTING}>Filled:</Text>
+              <Text type="SUPPORTING">Filled:</Text>
               <SmartFlex center="y" gap="4px">
                 <Text color={theme.colors.textPrimary}>{ord.formatCurrentAmount}</Text>
                 <TokenBadge>
@@ -336,7 +336,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
         </MobileTableRowColumn>
         <MobileTableRowColumn>
           <SmartFlex alignItems="flex-end" gap="2px" column>
-            <Text type={TEXT_TYPES.SUPPORTING}>Price:</Text>
+            <Text type="SUPPORTING">Price:</Text>
             <Text color={theme.colors.textPrimary}>{toCurrency(ord.formatPrice, ord.quoteToken.symbol)}</Text>
           </SmartFlex>
         </MobileTableRowColumn>
@@ -403,7 +403,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
     if (!accountStore.isConnected) {
       return (
         <TableContainer center column>
-          <Text type={TEXT_TYPES.H} primary>
+          <Text type="H" primary>
             Connect your wallet to see your open orders
           </Text>
         </TableContainer>
@@ -413,10 +413,10 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
     if (!data.length && tabIndex !== 3) {
       return (
         <TableContainer center column>
-          <Text type={TEXT_TYPES.H} primary>
+          <Text type="H" primary>
             You have no open orders
           </Text>
-          <Text type={TEXT_TYPES.BODY} secondary>
+          <Text type="BODY" secondary>
             Begin trading to view updates on your portfolio
           </Text>
         </TableContainer>
@@ -424,7 +424,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
     } else if (!data.length && tabIndex === 3) {
       return (
         <TableContainer center column>
-          <Text type={TEXT_TYPES.H} primary>
+          <Text type="H" primary>
             You have no balance
           </Text>
         </TableContainer>

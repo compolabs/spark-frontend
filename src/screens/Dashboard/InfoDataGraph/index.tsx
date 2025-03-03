@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import Button from "@components/Button";
 import { ConnectWalletButton } from "@components/ConnectWalletButton";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
@@ -46,10 +46,10 @@ const NoDataTrading = observer(() => {
   return (
     <NoDataTradingContainer>
       <TextContainer>
-        <Text type={TEXT_TYPES.H} primary>
+        <Text type="H" primary>
           No data to show
         </Text>
-        <Text type={TEXT_TYPES.BODY} secondary>
+        <Text type="BODY" secondary>
           Begin trading to view updates on your portfolio
         </Text>
         <ConnectWalletButton targetKey="header_connect_btn" fitContent>

@@ -13,6 +13,8 @@ import { RootStore, storesContext } from "@stores";
 import { CONFIG } from "@utils/getConfig";
 import { loadState } from "@utils/localStorage";
 
+import "@themes/fonts";
+
 import GlobalStyles from "./themes/GlobalStyles";
 import App from "./App";
 import { FUEL_CONFIG } from "./constants";

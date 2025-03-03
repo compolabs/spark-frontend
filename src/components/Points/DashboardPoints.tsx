@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 
 import { CountdownTimer } from "@components/CountdownTimer";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
 
@@ -24,7 +24,7 @@ export const DashboardPoints: React.FC = observer(() => {
 
   return (
     <SmartFlex gap="20px" margin="40px 0 0 0" width="100%" column>
-      <Text type={TEXT_TYPES.H} primary>
+      <Text type="H" primary>
         Boost Rewards
       </Text>
       <PointsContainer>
@@ -33,7 +33,7 @@ export const DashboardPoints: React.FC = observer(() => {
             <Tooltip
               content={
                 <SmartFlex gap="4px" padding="8px" width="300px" column>
-                  <Text type={TEXT_TYPES.BODY} primary>
+                  <Text type="BODY" primary>
                     These are the total Fuel tokens earned that will be distributed at the end of the season. The exact
                     dollar amount will change based on Fuel&apos;s current price. The exact token amount might change.
                   </Text>
@@ -41,22 +41,22 @@ export const DashboardPoints: React.FC = observer(() => {
               }
             >
               <SmartFlex center="y" gap="4px">
-                <Text type={TEXT_TYPES.BODY} primary>
+                <Text type="BODY" primary>
                   You earned
                 </Text>
                 <InfoIconStyled />
               </SmartFlex>
             </Tooltip>
             <SmartFlex gap="8px">
-              <Text type={TEXT_TYPES.H} primary>
+              <Text type="H" primary>
                 ${usdAmount.toSignificant(2)}
               </Text>
-              <Text type={TEXT_TYPES.H} secondary>
+              <Text type="H" secondary>
                 |
               </Text>
               <SmartFlex gap="4px">
                 <img height="16px" src={TOKEN_LOGOS.FUEL} width="16px" />
-                <Text type={TEXT_TYPES.H} secondary>
+                <Text type="H" secondary>
                   {fuelAmount.toSignificant(3)} FUEL
                 </Text>
               </SmartFlex>
@@ -66,14 +66,14 @@ export const DashboardPoints: React.FC = observer(() => {
             <Tooltip
               content={
                 <SmartFlex gap="4px" padding="8px" width="300px" column>
-                  <Text type={TEXT_TYPES.BODY} primary>
+                  <Text type="BODY" primary>
                     Current season lasts for 45 days total. All rewards will be distributed at the end of the season.
                   </Text>
                 </SmartFlex>
               }
             >
               <SmartFlex center="y" gap="4px">
-                <Text type={TEXT_TYPES.BODY} primary>
+                <Text type="BODY" primary>
                   Season duration
                 </Text>
                 <InfoIconStyled />
@@ -84,7 +84,7 @@ export const DashboardPoints: React.FC = observer(() => {
         </SmartFlex>
         <Divider />
         <InfoContainer>
-          <Text type={TEXT_TYPES.BODY} secondary>
+          <Text type="BODY" secondary>
             Rewards are estimates and final rewards can be slightly different
           </Text>
           <ExternalLink href={POINTS_LINK} rel="noreferrer noopener" target="_blank">
@@ -140,7 +140,7 @@ const InfoContainer = styled(SmartFlex)`
 `;
 
 const ExternalLink = styled.a`
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
 
   color: ${({ theme }) => theme.colors.greenStrong};
 

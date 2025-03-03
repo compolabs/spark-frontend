@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 export const enum ACTION_MESSAGE_TYPE {
   MINTING_TEST_TOKENS,
@@ -50,124 +50,124 @@ type ActionMessage = {
 
 const MESSAGE_TEMPLATES: ActionMessage = {
   [ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS]: (amount, symbol) => (
-    <TextContainer type={TEXT_TYPES.BUTTON} greenLight>
+    <TextContainer type="BUTTON" greenLight>
       Test tokens minted&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amount} {symbol}
       </Text>
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS_FAILED]: () => (
-    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+    <TextContainer type="BUTTON" attention>
       Minting failed
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS]: (amount, symbol) => (
-    <TextContainer type={TEXT_TYPES.BUTTON} greenLight>
+    <TextContainer type="BUTTON" greenLight>
       Deposited&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amount} {symbol}
       </Text>
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS_FAILED]: (amount, symbol) => (
-    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+    <TextContainer type="BUTTON" attention>
       Deposit of&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amount} {symbol}
       </Text>
       &nbsp; failed
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS]: () => (
-    <TextContainer type={TEXT_TYPES.BUTTON} greenLight>
+    <TextContainer type="BUTTON" greenLight>
       Withdrawn all successfully
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS]: (amount, symbol) => (
-    <TextContainer type={TEXT_TYPES.BUTTON} greenLight>
+    <TextContainer type="BUTTON" greenLight>
       Withdrawn&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amount} {symbol}
       </Text>
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS_FAILED]: () => (
-    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+    <TextContainer type="BUTTON" attention>
       Withdrawal failed
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS_FAILED]: (amount, symbol) => (
-    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+    <TextContainer type="BUTTON" attention>
       Withdrawal of&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amount} {symbol}
       </Text>
       &nbsp; failed
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.CREATING_ORDER]: (amount, symbol, price, type) => (
-    <TextContainer type={TEXT_TYPES.BUTTON} secondary>
-      <Text type={TEXT_TYPES.BUTTON} greenLight>
+    <TextContainer type="BUTTON" secondary>
+      <Text type="BUTTON" greenLight>
         Order created
       </Text>
       &nbsp;to {type}&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amount} {symbol}
       </Text>
       &nbsp;at&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         ${price}
       </Text>
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED]: () => (
-    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+    <TextContainer type="BUTTON" attention>
       Order creation failed
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.CREATING_ORDER_FAILED_INSTRUCTION]: () => (
-    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+    <TextContainer type="BUTTON" attention>
       The order cannot be executed, please check the correctness of the order data entered.
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.CREATING_SWAP]: (amountFrom, symbolFrom, amountTo, symbolTo) => (
-    <TextContainer type={TEXT_TYPES.BUTTON} secondary>
-      <Text type={TEXT_TYPES.BUTTON} greenLight>
+    <TextContainer type="BUTTON" secondary>
+      <Text type="BUTTON" greenLight>
         Swap successful
       </Text>
       &nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amountFrom} {symbolFrom}
       </Text>
       &nbsp;&gt;&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amountTo} {symbolTo}
       </Text>
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.CREATING_SWAP_FAILED]: (amountFrom, symbolFrom, amountTo, symbolTo) => (
-    <TextContainer type={TEXT_TYPES.BUTTON} secondary>
-      <Text type={TEXT_TYPES.BUTTON} attention>
+    <TextContainer type="BUTTON" secondary>
+      <Text type="BUTTON" attention>
         Swap failed
       </Text>
       &nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amountFrom} {symbolFrom}
       </Text>
       &nbsp;&gt;&nbsp;
-      <Text type={TEXT_TYPES.BUTTON} primary>
+      <Text type="BUTTON" primary>
         {amountTo} {symbolTo}
       </Text>
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.CANCELING_ORDER]: () => (
-    <TextContainer type={TEXT_TYPES.BUTTON} greenLight>
+    <TextContainer type="BUTTON" greenLight>
       Order is closed
     </TextContainer>
   ),
   [ACTION_MESSAGE_TYPE.CANCELING_ORDER_FAILED]: () => (
-    <TextContainer type={TEXT_TYPES.BUTTON} attention>
+    <TextContainer type="BUTTON" attention>
       Order closing failed
     </TextContainer>
   ),

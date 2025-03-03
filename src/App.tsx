@@ -1,21 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 import Competitions from "src/screens/Competitions";
 import Leaderboard from "src/screens/Leaderboard";
 
+import ConnectWalletDialog from "@components/ConnectWalletDialog";
 import { Column } from "@components/Flex";
 import Header from "@components/Header";
+import { MobileAppStoreSheet } from "@components/Modal/MobileAppStoreSheet";
+import { Onboarding } from "@components/Onboarding";
 import { HeaderPoints } from "@components/Points/HeaderPoints";
+import WalletConnectors from "@components/WalletConnectors";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
-import { usePrivateKeyAsAuth } from "@hooks/usePrivateKeyAsAuth";
+import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { MODAL_TYPE } from "@stores/ModalStore";
 
 import SideManageAssets from "@screens/Assets/SideManageAssets/SideManageAssets";
-import ConnectWalletDialog from "@screens/ConnectWallet";
 import Dashboard from "@screens/Dashboard";
 import Faucet from "@screens/Faucet";
 import SpotScreen from "@screens/SpotScreen";
@@ -29,12 +32,15 @@ import { DiscordProvider } from "@src/providers/DiscordProvider";
 
 const App: React.FC = observer(() => {
   const { modalStore, tradeStore } = useStores();
+  const media = useMedia();
+
+  const [isAppStoreSheetVisible, setIsAppStoreSheetVisible] = useState(() => media.mobile);
 
   // This hooks is used to clear unnecessary URL parameters,
   // specifically "tx_id", after returning from the faucet
   useClearUrlParam("tx_id");
 
-  usePrivateKeyAsAuth();
+  // usePrivateKeyAsAuth();
 
   return (
     <IntercomProvider>
@@ -56,9 +62,10 @@ const App: React.FC = observer(() => {
                 <Route element={<Stats />} path={ROUTES.STATS} />
               </Routes>
               <SideManageAssets />
-              {/*<PWAModal />*/}
-              {/*<SplashScreen />*/}
-              <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT_MODAL)} onClose={modalStore.close} />
+              <WalletConnectors visible={modalStore.isOpen(MODAL_TYPE.SELECT_WALLET)} onClose={modalStore.close} />
+              <ConnectWalletDialog visible={modalStore.isOpen(MODAL_TYPE.CONNECT)} onClose={modalStore.close} />
+              <MobileAppStoreSheet isOpen={isAppStoreSheetVisible} onClose={() => setIsAppStoreSheetVisible(false)} />
+              <Onboarding />
             </Root>
           </UnderConstructionProvider>
         </FeatureToggleProvider>

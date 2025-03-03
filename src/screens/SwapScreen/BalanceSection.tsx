@@ -3,7 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import WalletIcon from "@assets/icons/wallet.svg?react";
 
@@ -19,10 +19,10 @@ export const BalanceSection = observer(({ isLoaded, balance, balanceUSD, handleM
 
   return (
     <Root>
-      <Text type={TEXT_TYPES.BODY}>${balanceUSD.toFixed(2)}</Text>
+      <Text type="BODY">${balanceUSD.toFixed(2)}</Text>
       {isLoaded ? (
         <Balance onClick={handleMaxAmount}>
-          <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+          <Text color={theme.colors.greenLight} type="BODY">
             {balance}
           </Text>
           <WalletIcon />

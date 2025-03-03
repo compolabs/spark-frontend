@@ -24,7 +24,7 @@ import { CONFIG } from "@utils/getConfig";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
+import Text, { TEXT_TYPES_MAP } from "../Text";
 
 type MenuChildItem = {
   title: string;
@@ -208,8 +208,8 @@ export const MenuNav: React.FC<Props> = observer(({ isMobile, onMenuClick }) => 
         <DropdownMenu isActive={isActive} onClick={onClick}>
           <IconContainer>{Icon && <Icon height={24} width={24} />}</IconContainer>
           <DropdownMenuContent>
-            <DropdownMenuTitle type={TEXT_TYPES.BUTTON_SECONDARY}>{title}</DropdownMenuTitle>
-            {desc && <Text type={TEXT_TYPES.BODY}>{desc}</Text>}
+            <DropdownMenuTitle type="BUTTON_SECONDARY">{title}</DropdownMenuTitle>
+            {desc && <Text type="BODY">{desc}</Text>}
           </DropdownMenuContent>
         </DropdownMenu>
       </NavLink>
@@ -309,7 +309,7 @@ const ArrowIconStyled = styled(ArrowIcon)<{ open: boolean }>`
 `;
 
 const Tab = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean; isAccent?: boolean }>`
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]}
+  ${TEXT_TYPES_MAP.BUTTON_SECONDARY}
 
   display: flex;
   align-items: center;
@@ -338,7 +338,7 @@ const Tab = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean; isAcce
 `;
 
 const Row = styled(SmartFlex)<{ isActive?: boolean; isDropdown?: boolean; isAccent?: boolean }>`
-  ${TEXT_TYPES_MAP[TEXT_TYPES.TEXT_BIG]}
+  ${TEXT_TYPES_MAP.TEXT_BIG}
   color: ${({ theme, isActive, isAccent }) => {
     if (isAccent) return theme.colors.greenStrong;
     return isActive ? theme.colors.textPrimary : theme.colors.textSecondary;

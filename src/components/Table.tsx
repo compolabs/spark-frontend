@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { ColumnDef, flexRender, getCoreRowModel, Header, useReactTable } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 
 import { SmartFlex } from "./SmartFlex";
 import Tooltip from "./Tooltip";
@@ -107,7 +107,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
     }
 
     th {
-      ${TEXT_TYPES_MAP[TEXT_TYPES.SUPPORTING]};
+      ${TEXT_TYPES_MAP.SUPPORTING};
       padding: 11px 12px;
       text-align: left;
       color: ${({ theme }) => `${theme.colors.textSecondary}`};
@@ -117,7 +117,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
 
     td {
       height: 42px;
-      ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]};
+      ${TEXT_TYPES_MAP.BODY};
       color: ${({ theme }) => `${theme.colors.textPrimary}`};
       padding: 11px 12px;
 

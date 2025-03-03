@@ -17,7 +17,7 @@ import { FuelNetwork } from "@blockchain";
 import Divider from "../Divider";
 import Sheet from "../Sheet";
 import { SmartFlex } from "../SmartFlex";
-import Text, { TEXT_TYPES } from "../Text";
+import Text from "../Text";
 
 interface Props {
   isOpen: boolean;
@@ -67,7 +67,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
         active && (
           <ActionItem key={title} center="y" onClick={action}>
             <Icon alt="ETH" src={icon} />
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+            <Text type="BUTTON_SECONDARY" primary>
               {title}
             </Text>
           </ActionItem>
@@ -76,11 +76,11 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Sheet isOpen={isOpen} onClose={onClose}>
+    <Sheet isOpen={isOpen} header onClose={onClose}>
       <SmartFlex column>
         <TokenContainer center="y" gap="8px">
           <Icon alt="ETH" src={bcNetwork?.getTokenBySymbol("ETH").logo} />
-          <Text type={TEXT_TYPES.H} primary>{`${ethBalance} ETH`}</Text>
+          <Text type="H" primary>{`${ethBalance} ETH`}</Text>
         </TokenContainer>
         <Divider />
         <SmartFlex center="y" column>
@@ -90,7 +90,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
         <FooterContainer>
           <ActionItem center="y" onClick={handleDisconnect}>
             <Icon alt="ETH" src={logoutIcon} />
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+            <Text type="BUTTON_SECONDARY" primary>
               Disconnect
             </Text>
           </ActionItem>

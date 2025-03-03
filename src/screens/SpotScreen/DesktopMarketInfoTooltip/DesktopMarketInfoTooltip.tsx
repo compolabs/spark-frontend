@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { Column } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
 
 export interface MarketInfoItem {
@@ -34,11 +34,11 @@ const DesktopMarketInfoTooltip: React.FC<DesktopMarketInfoTooltipProps> = observ
       <SmartFlex key={marketData.title}>
         <SizedBox height={30} style={{ background: theme.colors.bgPrimary, margin: "0 8px" }} width={1} />
         <Column>
-          <Text type={TEXT_TYPES.SUPPORTING}>{marketData.title}</Text>
+          <Text type="SUPPORTING">{marketData.title}</Text>
           <SizedBox height={4} />
           <SmartFlex>
             <SmartFlexStyled>
-              <Text type={TEXT_TYPES.BODY} primary>
+              <Text type="BODY" primary>
                 {marketData.value}
               </Text>
               {marketData?.icon}

@@ -17,7 +17,7 @@ export const ConnectWalletButton: React.FC<Props> = observer(
     const { accountStore, modalStore, mixPanelStore } = useStores();
 
     const handleConnectClick = () => {
-      modalStore.open(MODAL_TYPE.CONNECT_MODAL);
+      modalStore.open(MODAL_TYPE.CONNECT);
       mixPanelStore.connectButtonUsed = props.targetKey;
     };
 

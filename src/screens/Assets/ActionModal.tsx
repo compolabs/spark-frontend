@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import CheckCircle from "@assets/icons/check-circle.svg?react";
@@ -56,7 +56,7 @@ export const ActionModal: React.FC<ActionModalProps> = ({ hash, onClose, transac
           <SmartFlex alignItems="center" gap="2px" justifyContent="center" column>
             Assets deposited
             <a href={link} rel="noreferrer noopener" target="_blank">
-              <Text color={theme.colors.greenLight} type={TEXT_TYPES.BODY}>
+              <Text color={theme.colors.greenLight} type="BODY">
                 See in Explorer
               </Text>
             </a>
@@ -91,19 +91,19 @@ export const ActionModal: React.FC<ActionModalProps> = ({ hash, onClose, transac
             </Actions>
             {iconTitle(typeModal)}
             <Description>
-              <ModalTitle color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+              <ModalTitle color={theme.colors.textPrimary} type="BUTTON">
                 {descriptionAction(typeModal, link, transactionInfo.type)}
               </ModalTitle>
             </Description>
           </ActionBlock>
 
           <SmartFlex alignItems="center" gap="20px" justifyContent="center">
-            <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BUTTON}>
+            <Text color={theme.colors.textPrimary} type="BUTTON">
               {type}
             </Text>
             <SmartFlex alignItems="center" gap="5px" justifyContent="center">
               <img alt={token.asset.symbol} src={TOKEN_LOGOS[token.asset.symbol]} width="16px" />
-              <Text color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+              <Text color={theme.colors.textPrimary} type="BODY">
                 {amount} {token.asset.symbol}
               </Text>
             </SmartFlex>

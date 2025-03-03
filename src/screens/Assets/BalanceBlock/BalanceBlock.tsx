@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import { useStores } from "@stores";
 
@@ -27,13 +27,13 @@ export const BalanceBlock: React.FC<IBalanceBlock> = ({ icon, nameWallet, token,
     <SmartFlexBalance>
       <SmartFlex alignItems="center" gap="10px">
         {icon}
-        <Text type={TEXT_TYPES.BUTTON}>{nameWallet}</Text>
+        <Text type="BUTTON">{nameWallet}</Text>
       </SmartFlex>
       <SmartFlex column>
-        <Text style={{ textAlign: "right" }} type={TEXT_TYPES.TEXT} primary>
+        <Text style={{ textAlign: "right" }} type="TEXT" primary>
           {new BN(token[showBalance]).toSignificant(token.asset.decimals)}
         </Text>
-        <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type={TEXT_TYPES.BODY}>
+        <Text color={theme.colors.greenLight} style={{ textAlign: "right" }} type="BODY">
           ${price.multipliedBy(token[showBalance]).toSignificant(2)}
         </Text>
       </SmartFlex>

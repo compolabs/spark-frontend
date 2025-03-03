@@ -38,6 +38,19 @@ const colors = {
   fillBackground: "#000000",
 
   blueVioletMedium: "#1A6FF9",
+
+  textIconPrimary: "#FFFFFF",
+  textIconSecondary: "#969696",
+
+  strokeAccent: "#EDF3FF",
+  strokePrimary: "#2E2E2E",
+
+  fillSurface: "#0E100F",
+  textIconTertiary: "#595959",
+
+  blueVioletStrong: "#AFD5FF",
+
+  fillAccentSecondary: "#303632",
 };
 
 export default colors;

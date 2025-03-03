@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 
 import Loader from "@components/Loader";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
 
@@ -60,7 +60,7 @@ export const StatsTable = observer(() => {
       {media.desktop && (
         <HeaderTable>
           {header.map((el) => (
-            <HeaderItem key={el.name} flex={1} isActive={!!el?.onClick} type={TEXT_TYPES.BUTTON} onClick={el?.onClick}>
+            <HeaderItem key={el.name} flex={1} isActive={!!el?.onClick} type="BUTTON" onClick={el?.onClick}>
               {el.name} {generateFilterIcon(el.field)}
             </HeaderItem>
           ))}
@@ -80,7 +80,7 @@ export const StatsTable = observer(() => {
           ),
         )
       ) : (
-        <NoData type={TEXT_TYPES.TEXT}>No Data</NoData>
+        <NoData type="TEXT">No Data</NoData>
       )}
     </StatsTableContainer>
   );

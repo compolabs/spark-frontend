@@ -8,7 +8,7 @@ import { Column, Row } from "@components/Flex";
 import { SpotOrderSettingsSheet } from "@components/Modal";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
 
@@ -113,7 +113,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
             </SmartFlex>
           }
         >
-          <Text type={TEXT_TYPES.BODY} primary>
+          <Text type="BODY" primary>
             {indexPrice}
           </Text>
         </Tooltip>
@@ -128,7 +128,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
             </SmartFlex>
           }
         >
-          <Text type={TEXT_TYPES.BODY} secondary>
+          <Text type="BODY" secondary>
             {price}
           </Text>
         </Tooltip>
@@ -144,7 +144,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
 
     return (
       <SpreadContainer>
-        <Text type={TEXT_TYPES.SUPPORTING}>Spread</Text>
+        <Text type="SUPPORTING">Spread</Text>
         <Text color={theme.colors.greenLight}>{`${percent}% `}</Text>
       </SpreadContainer>
     );
@@ -190,7 +190,7 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
   if (isOrderBookEmpty) {
     return (
       <Root center column>
-        <Text type={TEXT_TYPES.SUPPORTING}>No orders yet</Text>
+        <Text type="SUPPORTING">No orders yet</Text>
       </Root>
     );
   }
@@ -212,9 +212,9 @@ export const SpotOrderBook: React.FC<IProps> = observer(() => {
         </SettingsContainer>
         <OrderbookContainer>
           <OrderBookHeader>
-            <Text type={TEXT_TYPES.SUPPORTING}>{`Price  ${market?.quoteToken.symbol}`}</Text>
-            <TextRightAlign type={TEXT_TYPES.SUPPORTING}>{`Amount ${market?.baseToken.symbol}`}</TextRightAlign>
-            <TextRightAlign type={TEXT_TYPES.SUPPORTING}>Total</TextRightAlign>
+            <Text type="SUPPORTING">{`Price  ${market?.quoteToken.symbol}`}</Text>
+            <TextRightAlign type="SUPPORTING">{`Amount ${market?.baseToken.symbol}`}</TextRightAlign>
+            <TextRightAlign type="SUPPORTING">Total</TextRightAlign>
           </OrderBookHeader>
           <Container
             fitContent={

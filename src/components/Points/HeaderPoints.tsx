@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import CloseIcon from "@assets/icons/close.svg?react";
@@ -34,7 +34,7 @@ export const HeaderPoints: React.FC = observer(() => {
 
   return (
     <PointsContainer>
-      <Text color="#000000" type={TEXT_TYPES.BODY}>
+      <Text color="#000000" type="BODY">
         Introducing <BoostRewardsText to={ROUTES.DASHBOARD}>Boost Rewards</BoostRewardsText>. Trade to earn $FUEL
         rewards.{" "}
         <ExternalLink href={POINTS_LINK} rel="noreferrer noopener" target="_blank">
@@ -71,7 +71,7 @@ const PointsContainer = styled(SmartFlex)`
 `;
 
 const BoostRewardsText = styled(Link)`
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
 
   color: ${({ theme }) => theme.colors.fillBackground};
 
@@ -90,7 +90,7 @@ const CloseIconStyled = styled(CloseIcon)`
 `;
 
 const ExternalLink = styled.a`
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
 
   color: ${({ theme }) => theme.colors.blueVioletMedium};
 

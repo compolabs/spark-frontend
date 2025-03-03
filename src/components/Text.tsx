@@ -3,41 +3,14 @@ import styled from "@emotion/styled";
 
 /*
     Fonts:
-
     JetBrains Mono 500  = assets/fonts/JetBrainsMono-Medium.ttf
     JetBrains Mono 400  = assets/fonts/JetBrainsMono-Regular.ttf
     Space Grotesk  500  = assets/fonts/SpaceGrotesk-Medium.ttf
     Space Grotesk  400  = assets/fonts/SpaceGrotesk-Regular.ttf
 */
 
-export enum TEXT_TYPES {
-  H = 2,
-  BODY = 3,
-  BUTTON = 4,
-  BUTTON_SECONDARY = 5,
-  SUPPORTING = 6,
-  SUPPORTING_NUMBERS = 7,
-  H_NUMBERS = 8,
-  H_TEXT = 9,
-  BUTTON_BIG = 10,
-  TEXT_BIG = 11,
-  TEXT = 12,
-}
-
-interface IProps {
-  type?: TEXT_TYPES;
-  primary?: boolean;
-  secondary?: boolean;
-  disabled?: boolean;
-  color?: string;
-  nowrap?: boolean;
-  pointer?: boolean;
-  greenLight?: boolean;
-  attention?: boolean;
-}
-
 // Desktop (base)
-export const h = `
+const H = `
   font-family: "JetBrains Mono";
   font-size: 18px;
   font-style: normal;
@@ -45,7 +18,7 @@ export const h = `
   line-height: 18px;
 `;
 
-export const body = `
+const BODY = `
   font-family: "JetBrains Mono";
   font-size: 12px;
   font-style: normal;
@@ -54,7 +27,7 @@ export const body = `
   letter-spacing: 0.24px;
 `;
 
-export const button = `
+const BUTTON = `
   font-family: "Space Grotesk";
   font-size: 14px;
   font-style: normal;
@@ -62,7 +35,7 @@ export const button = `
   line-height: 16px;
 `;
 
-export const buttonSecondary = `
+const BUTTON_SECONDARY = `
   font-family: "Space Grotesk";
   font-size: 12px;
   font-style: normal;
@@ -71,7 +44,7 @@ export const buttonSecondary = `
   text-transform: uppercase;
 `;
 
-export const supportingText = `
+const SUPPORTING = `
   font-family: "Space Grotesk";
   font-size: 12px;
   font-style: normal;
@@ -80,7 +53,7 @@ export const supportingText = `
   letter-spacing: 0.24px;
 `;
 
-export const supportingNumbers = `
+const SUPPORTING_NUMBERS = `
   font-family: "JetBrains Mono";
   font-size: 11px;
   font-style: normal;
@@ -90,7 +63,7 @@ export const supportingNumbers = `
 `;
 
 // Desktop (+added)
-export const hNumbers = `
+const H_NUMBERS = `
   font-family: "JetBrains Mono";
   font-size: 24px;
   font-style: normal;
@@ -99,7 +72,7 @@ export const hNumbers = `
   letter-spacing: 0.48px;
 `;
 
-export const hText = `
+const H_TEXT = `
   font-family: "Space Grotesk";
   font-size: 24px;
   font-style: normal;
@@ -107,7 +80,7 @@ export const hText = `
   line-height: 32px;
 `;
 
-export const buttonBig = `
+const BUTTON_BIG = `
   font-family: "Space Grotesk";
   font-size: 16px;
   font-style: normal;
@@ -115,7 +88,7 @@ export const buttonBig = `
   line-height: 24px;
 `;
 
-export const textBig = `
+const TEXT_BIG = `
   font-family: "Space Grotesk";
   font-size: 16px;
   font-style: normal;
@@ -123,7 +96,7 @@ export const textBig = `
   line-height: 24px;
 `;
 
-export const text = `
+const TEXT = `
   font-family: "Space Grotesk";
   font-size: 14px;
   font-style: normal;
@@ -131,19 +104,70 @@ export const text = `
   line-height: 16px;
 `;
 
+const CP_Header_18_Medium = `
+  font-family: Chakra Petch;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 3%;
+`;
+
+const CP_Button_14_Medium = `
+  font-family: Chakra Petch;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 2%;
+`;
+
+const CP_Body_16_Medium = `
+  font-family: Chakra Petch;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 2%;
+`;
+
+const CP_Support_10 = `
+  font-family: Chakra Petch;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 4%;
+`;
+
 export const TEXT_TYPES_MAP = {
-  [TEXT_TYPES.H]: h,
-  [TEXT_TYPES.BODY]: body,
-  [TEXT_TYPES.BUTTON]: button,
-  [TEXT_TYPES.BUTTON_SECONDARY]: buttonSecondary,
-  [TEXT_TYPES.SUPPORTING]: supportingText,
-  [TEXT_TYPES.SUPPORTING_NUMBERS]: supportingNumbers,
-  [TEXT_TYPES.H_NUMBERS]: hNumbers,
-  [TEXT_TYPES.H_TEXT]: hText,
-  [TEXT_TYPES.BUTTON_BIG]: buttonBig,
-  [TEXT_TYPES.TEXT_BIG]: textBig,
-  [TEXT_TYPES.TEXT]: text,
+  H,
+  BODY,
+  BUTTON,
+  BUTTON_SECONDARY,
+  SUPPORTING,
+  SUPPORTING_NUMBERS,
+  H_NUMBERS,
+  H_TEXT,
+  BUTTON_BIG,
+  TEXT_BIG,
+  TEXT,
+  CP_Header_18_Medium,
+  CP_Button_14_Medium,
+  CP_Body_16_Medium,
+  CP_Support_10,
 };
+
+type TEXT_TYPES = keyof typeof TEXT_TYPES_MAP;
+
+interface IProps {
+  type?: TEXT_TYPES;
+  uppercase?: boolean;
+  primary?: boolean;
+  secondary?: boolean;
+  disabled?: boolean;
+  color?: string;
+  nowrap?: boolean;
+  pointer?: boolean;
+  greenLight?: boolean;
+  attention?: boolean;
+}
 
 const Text = styled.div<IProps>`
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "normal")};
@@ -176,7 +200,8 @@ const Text = styled.div<IProps>`
           `;
       }
     })()}
-  ${({ type }) => (type ? TEXT_TYPES_MAP[type] : TEXT_TYPES_MAP[TEXT_TYPES.BODY])}
-	cursor: ${({ pointer }) => (pointer ? "pointer" : "inherit")}
+  ${({ type }) => (type ? TEXT_TYPES_MAP[type] : TEXT_TYPES_MAP.BODY)}
+  ${({ uppercase }) => uppercase && "text-transform: uppercase;"}
+  cursor: ${({ pointer }) => (pointer ? "pointer" : "inherit")}
 `;
 export default Text;

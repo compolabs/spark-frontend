@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 import { TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import copyIcon from "@assets/icons/copy.svg";
@@ -27,7 +27,7 @@ const generatePosition = (key: TraderVolumeResponse["id"]) => {
   if (key === 3) return <img alt="3st" height={40} src={three} width={40} />;
   return (
     <PositionBox>
-      <Text type={TEXT_TYPES.H} primary>
+      <Text type="H" primary>
         {key}
       </Text>
     </PositionBox>
@@ -52,7 +52,7 @@ const generatePnl = (wallet: string, leaderboardStore: LeaderboardStore, theme: 
       : undefined;
 
   return (
-    <TextStyled color={color} primary={bnPnl.eq(BN.ZERO)} type={TEXT_TYPES.BODY}>
+    <TextStyled color={color} primary={bnPnl.eq(BN.ZERO)} type="BODY">
       {`${sign}$${displayValue}`}
     </TextStyled>
   );
@@ -73,14 +73,14 @@ export const LeaderboardItem = observer(({ item }: { item: TraderVolumeResponse 
     <LeaderboardContainer gap="12px">
       <SmartFlex gap="12px">{generatePosition(item.id)}</SmartFlex>
       <SmartFlex center="y" gap="8px" style={{ flex: 1 }}>
-        <AddressText type={TEXT_TYPES.BODY} primary>
+        <AddressText type="BODY" primary>
           {shortAddress}
         </AddressText>
         <CopyIconStyled src={copyIcon} onClick={handleAddressCopy} />
         {item.isYour && <SnackStyled>You</SnackStyled>}
       </SmartFlex>
       <SmartFlex style={{ flex: 0.42 }}>{generatePnl(item.walletId, leaderboardStore, theme)}</SmartFlex>
-      <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
+      <TextStyled style={{ width: 90, textAlign: "right" }} type="BODY" primary>
         ${item.traderVolume.toFixed(2)}
       </TextStyled>
     </LeaderboardContainer>
@@ -104,21 +104,21 @@ export const LeaderboardItemMobile = observer(({ item }: { item: TraderVolumeRes
       <SmartFlex gap="12px">{generatePosition(item.id)}</SmartFlex>
       <SmartFlex center="y" gap="8px" style={{ flex: 1 }} column>
         <SmartFlex alignItems="center" gap="8px">
-          <AddressText type={TEXT_TYPES.BODY} primary>
+          <AddressText type="BODY" primary>
             {shortAddress}
           </AddressText>
           <CopyIconStyled src={copyIcon} onClick={handleAddressCopy} />
           {item.isYour && <SnackStyled>You</SnackStyled>}
         </SmartFlex>
         <SmartFlex justifyContent="space-between">
-          <AddressText type={TEXT_TYPES.BODY}>PnL (24h):</AddressText>
-          <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
+          <AddressText type="BODY">PnL (24h):</AddressText>
+          <TextStyled style={{ width: 90, textAlign: "right" }} type="BODY" primary>
             {generatePnl(item.walletId, leaderboardStore, theme)}
           </TextStyled>
         </SmartFlex>
         <SmartFlex justifyContent="space-between">
-          <AddressText type={TEXT_TYPES.BODY}>Volume (24h):</AddressText>{" "}
-          <TextStyled style={{ width: 90, textAlign: "right" }} type={TEXT_TYPES.BODY} primary>
+          <AddressText type="BODY">Volume (24h):</AddressText>{" "}
+          <TextStyled style={{ width: 90, textAlign: "right" }} type="BODY" primary>
             ${item.traderVolume.toFixed(2)}
           </TextStyled>
         </SmartFlex>
@@ -171,5 +171,5 @@ const SnackStyled = styled.span`
   background: black;
   display: flex;
   padding: 4px;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
 `;

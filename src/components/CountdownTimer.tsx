@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 interface CountdownTimerProps {
@@ -36,14 +36,14 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetTime }) =>
 
   if (!remainingTime.length) {
     return (
-      <TimerText type={TEXT_TYPES.H} primary>
+      <TimerText type="H" primary>
         -
       </TimerText>
     );
   }
 
   return (
-    <TimerText type={TEXT_TYPES.H} primary>
+    <TimerText type="H" primary>
       {remainingTime}
     </TimerText>
   );

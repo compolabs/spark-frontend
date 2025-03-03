@@ -2,7 +2,7 @@ import React from "react";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { TEXT_TYPES_MAP } from "@components/Text";
 
 import search from "@assets/icons/search.svg";
 
@@ -38,7 +38,7 @@ const Wrap = styled.div<{ variant: IProps["variant"] }>`
           }
 
           input {
-            ${TEXT_TYPES_MAP[TEXT_TYPES.TEXT]}
+            ${TEXT_TYPES_MAP.TEXT}
           }
         `;
       case "default":
@@ -51,7 +51,7 @@ const Wrap = styled.div<{ variant: IProps["variant"] }>`
           padding: 4px 8px;
 
           input {
-            ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+            ${TEXT_TYPES_MAP.BODY}
           }
         `;
     }

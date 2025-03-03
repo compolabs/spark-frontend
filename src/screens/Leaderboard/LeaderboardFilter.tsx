@@ -7,7 +7,7 @@ import { Column } from "@components/Flex";
 import SearchInput from "@components/SearchInput";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useMedia } from "@hooks/useMedia";
@@ -29,10 +29,10 @@ export const LeaderboardFilter = observer(() => {
     <DashboardTitleContainer>
       <DashboardFilterContainer>
         <SmartFlex gap="8px" column>
-          <TitleText type={TEXT_TYPES.H} primary>
+          <TitleText type="H" primary>
             Leaderboard
           </TitleText>
-          <TitleText type={TEXT_TYPES.TEXT} primary>
+          <TitleText type="TEXT" primary>
             Top 100 V12 traders by total volume (spot)
           </TitleText>
         </SmartFlex>

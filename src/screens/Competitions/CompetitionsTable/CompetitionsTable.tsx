@@ -7,7 +7,7 @@ import { Pagination } from "@components/Pagination/Pagination";
 import SearchInput from "@components/SearchInput";
 import Select from "@components/Select";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import ArrowFilterIcon from "@assets/icons/arrowFilter.svg?react";
 
@@ -62,7 +62,7 @@ export const CompetitionsTable = observer(({ live }: { live: string }) => {
   return (
     <>
       <CompetitionsTableHeader>
-        <TitleText type={TEXT_TYPES.H} primary>
+        <TitleText type="H" primary>
           Competition Leaderboard
         </TitleText>
         <SearchInput
@@ -95,7 +95,7 @@ export const CompetitionsTable = observer(({ live }: { live: string }) => {
             ),
           )
         ) : (
-          <NoData type={TEXT_TYPES.TEXT}>No Data</NoData>
+          <NoData type="TEXT">No Data</NoData>
         )}
         {maxTotalCount > 0 && (
           <FooterTable>
@@ -106,7 +106,7 @@ export const CompetitionsTable = observer(({ live }: { live: string }) => {
               onChange={leaderboardStore.setActivePage}
             />
             <SmartFlex alignItems="center">
-              <Text type={TEXT_TYPES.BUTTON}>SHOW:</Text>
+              <Text type="BUTTON">SHOW:</Text>
               <SelectStyled
                 options={PAGINATION_PER_PAGE}
                 selected={leaderboardStore.orderPerPage.key}

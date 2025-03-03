@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import CloseIcon from "@assets/icons/close.svg?react";
 import StartsIcon from "@assets/icons/starts.svg?react";
@@ -22,10 +22,10 @@ export const InfoBlockAssets = () => {
         <StartsIcon />
         <CloseIconAbsolute onClick={handleClose} />
       </div>
-      <TextTitle color="primary" type={TEXT_TYPES.TEXT_BIG}>
+      <TextTitle color="primary" type="TEXT_BIG">
         Why do I have to deposit anything?
       </TextTitle>
-      <TextInfo type={TEXT_TYPES.TEXT}>
+      <TextInfo type="TEXT">
         Deposited assets stores on-chain in a smart-contract for quick order execution. V12 doesn’t store anything. We
         are not a CEX.
       </TextInfo>

@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 
 import Button, { ButtonGroup } from "@components/Button";
 import SizedBox from "@components/SizedBox";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import { useStores } from "@stores";
 
@@ -22,12 +22,12 @@ const OrderbookAndTradesInterface: React.FC = observer(() => {
       <Root>
         <ButtonGroup style={{ padding: "0 12px" }}>
           <Button active={isOrderbook} onClick={() => setIsOrderbook(true)}>
-            <Text primary={isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
+            <Text primary={isOrderbook} type="BUTTON_SECONDARY">
               orderbook
             </Text>
           </Button>
           <Button active={!isOrderbook} onClick={() => setIsOrderbook(false)}>
-            <Text primary={!isOrderbook} type={TEXT_TYPES.BUTTON_SECONDARY}>
+            <Text primary={!isOrderbook} type="BUTTON_SECONDARY">
               trades
             </Text>
           </Button>
