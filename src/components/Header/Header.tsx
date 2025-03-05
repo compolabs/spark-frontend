@@ -46,7 +46,7 @@ const Header: React.FC = observer(() => {
     }
   };
 
-  const openConnectModal = () => modalStore.open(MODAL_TYPE.CONNECT_MODAL);
+  const openConnectModal = () => modalStore.open(MODAL_TYPE.CONNECT);
 
   const renderWallet = () => {
     const dataOnboardingConnectKey = `connect-${media.mobile ? "mobile" : "desktop"}`;
@@ -55,7 +55,7 @@ const Header: React.FC = observer(() => {
 
     return (
       <WalletContainer data-onboarding={dataOnboardingConnectKey} isVisible={!isMobileMenuOpen}>
-        <ConnectWalletButton targetKey="header_connect_btn" fitContent>
+        <ConnectWalletButton targetKey="header_connect_btn" data-connect-button fitContent>
           {walletButtonContent}
         </ConnectWalletButton>
       </WalletContainer>

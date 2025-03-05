@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import ArrowLongIcon from "@assets/icons/arrowLong.svg?react";
@@ -21,17 +21,17 @@ export const MarketAttribute: React.FC<MarketAttributeProps> = observer(
       <AttributeWrapper isSelect={isSelect} onClick={onClick}>
         <AttributeContent column>
           <AttributeHeader>
-            <Text type={TEXT_TYPES.BODY} secondary>
+            <Text type="BODY" secondary>
               {title}
             </Text>
             {/*{isShowDetails && <TooltipInfoMarket value={value} />}*/}
             {!isMobile && (
-              <Text type={TEXT_TYPES.BODY} disabled>
+              <Text type="BODY" disabled>
                 {period}
               </Text>
             )}
           </AttributeHeader>
-          <Text type={TEXT_TYPES.H} primary>
+          <Text type="H" primary>
             {value}
           </Text>
           <ChangeContainer>

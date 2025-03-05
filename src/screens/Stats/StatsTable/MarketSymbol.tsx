@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import { SpotMarket } from "@entity";
 
@@ -18,7 +18,7 @@ export const MarketSymbol = ({ market, iconSize = 16 }: IProps) => {
         <MainIcon alt="logo" size={iconSize} src={market.baseToken?.logo} />
         <StyleIcon alt="logo" size={iconSize} src={market.quoteToken?.logo} />
       </SmartFlex>
-      <StyledText color="primary" type={TEXT_TYPES.BUTTON}>
+      <StyledText color="primary" type="BUTTON">
         {market.symbol}
       </StyledText>
     </MarketTitleContainer>

@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import BN from "@utils/BN";
 
 import { SmartFlex } from "./SmartFlex";
-import Text, { TEXT_TYPES } from "./Text";
+import Text from "./Text";
 import Tooltip from "./Tooltip";
 
 interface FormatUnit {
@@ -112,7 +112,7 @@ const TinyTooltip: React.FC<TinyTooltipProps> = ({ tooltipValue, children }) => 
       containerStyles={{ width: "fit-content" }}
       content={
         <SmartFlex padding="4px">
-          <Text type={TEXT_TYPES.SUPPORTING_NUMBERS}>{tooltipValue}</Text>
+          <Text type="SUPPORTING_NUMBERS">{tooltipValue}</Text>
         </SmartFlex>
       }
     >

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 
 import { Column, DesktopRow, Row } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
 
@@ -82,7 +82,7 @@ const MarketStatistics: React.FC = observer(() => {
   const renderMobile = () => {
     return (
       <MobileRoot>
-        <Text color={theme.colors.greenLight} type={TEXT_TYPES.H}>
+        <Text color={theme.colors.greenLight} type="H">
           {indexPrice}
         </Text>
         <MobileStatsContent gap="12px" justifySelf="flex-end">
@@ -116,7 +116,7 @@ const MarketStatistics: React.FC = observer(() => {
                 </TooltipContainer>
               }
             >
-              <Text type={TEXT_TYPES.H} primary>
+              <Text type="H" primary>
                 {indexPrice}
               </Text>
             </Tooltip>

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import RCSlider, { SliderProps } from "rc-slider";
 
 import { Row } from "@components/Flex";
-import { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import "rc-slider/assets/index.css";
@@ -151,7 +151,7 @@ const StyledSlider = styled(RCSlider)<IProps>`
       top: 6px;
       right: 4px;
       white-space: nowrap;
-      ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]};
+      ${TEXT_TYPES_MAP.BODY};
 
       ${media.mobile} {
         height: 20px;

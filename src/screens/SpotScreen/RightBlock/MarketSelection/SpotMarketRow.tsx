@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import outlineStarIcon from "@assets/icons/star.svg";
 import filledStarIcon from "@assets/icons/yellowStar.svg";
@@ -56,7 +56,7 @@ const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
         <MarketTitle market={market} />
       </SmartFlex>
       <SmartFlexSize alignSelf="flex-end" justifyContent="flex-end">
-        <Text color="primary" type={TEXT_TYPES.BODY} nowrap>
+        <Text color="primary" type="BODY" nowrap>
           ${spotOrderBookStore.marketPriceByContractId(market.contractAddress)}
         </Text>
       </SmartFlexSize>

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
 import Chip from "@components/Chip";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import BN from "@utils/BN";
@@ -125,7 +125,7 @@ const InputContainer = styled.div<{
 
   input {
     cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
-    ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+    ${TEXT_TYPES_MAP.BODY}
   }
 
   background: ${({ theme }) => theme.colors.bgPrimary};

@@ -16,7 +16,7 @@ import { getDeviceInfo } from "@utils/getDeviceInfo";
 import { Dialog } from "./Dialog";
 import SizedBox from "./SizedBox";
 import { SmartFlex } from "./SmartFlex";
-import Text, { TEXT_TYPES } from "./Text";
+import Text from "./Text";
 
 export const PWAModal: React.FC = () => {
   const theme = useTheme();
@@ -38,15 +38,15 @@ export const PWAModal: React.FC = () => {
   return (
     <DialogStyled visible={isVisible}>
       <PWAContainer>
-        <Text color={theme.colors.greenLight} type={TEXT_TYPES.SUPPORTING}>
+        <Text color={theme.colors.greenLight} type="SUPPORTING">
           One more thing :)
         </Text>
         <SkipText onClick={handleClose}>SKIP</SkipText>
-        <TitleText color={theme.colors.textPrimary} type={TEXT_TYPES.H}>
+        <TitleText color={theme.colors.textPrimary} type="H">
           Add Sprk.fi app to Homescreen for faster trading
         </TitleText>
         <SizedBox height={64} />
-        <DescriptionText color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+        <DescriptionText color={theme.colors.textPrimary} type="BODY">
           Tap the “Share” button at the bottom of the screen.
         </DescriptionText>
         <SizedBox height={12} />
@@ -55,7 +55,7 @@ export const PWAModal: React.FC = () => {
           <CircleIconStyled />
         </ImageContainer>
         <SizedBox height={24} />
-        <DescriptionText color={theme.colors.textPrimary} type={TEXT_TYPES.BODY}>
+        <DescriptionText color={theme.colors.textPrimary} type="BODY">
           Select “Add to Home Screen”
         </DescriptionText>
         <SizedBox height={12} />

@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import Chip from "@components/Chip";
 import { SmartFlex } from "@components/SmartFlex";
 import { TableText } from "@components/Table";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 
 import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
@@ -42,13 +42,13 @@ const TokensFaucetTable: React.FC = observer(() => {
         <TableBody>
           {faucetStore.faucetTokens.map((token) => (
             <TableRow key={token.assetId}>
-              <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+              <TableText type="BUTTON_SECONDARY" primary>
                 {token.name}
               </TableText>
-              <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+              <TableText type="BUTTON_SECONDARY" primary>
                 {token.mintAmount.toSignificant(3)} &nbsp;<Chip>{token.symbol}</Chip>
               </TableText>
-              <TableText type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+              <TableText type="BUTTON_SECONDARY" primary>
                 {token.formatBalance?.toSignificant(3)} &nbsp;<Chip>{token.symbol}</Chip>
               </TableText>
               <MintButtons assetId={token.assetId} disabled={shouldButtonBeDisabled(token.assetId)} />
@@ -65,25 +65,25 @@ const TokensFaucetTable: React.FC = observer(() => {
         {faucetStore.faucetTokens.map((token) => (
           <MintItemContainer key={token.assetId}>
             <SmartFlex justifyContent="space-between">
-              <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+              <Text type="BUTTON_SECONDARY" primary>
                 {token.name}
               </Text>
               <MintButtons assetId={token.assetId} disabled={shouldButtonBeDisabled(token.assetId)} />
             </SmartFlex>
             <SmartFlex gap="64px">
               <SmartFlex gap="8px" column>
-                <Text type={TEXT_TYPES.SUPPORTING}>Mint amount</Text>
+                <Text type="SUPPORTING">Mint amount</Text>
                 <SmartFlex center="y" gap="4px">
-                  <Text type={TEXT_TYPES.BODY} primary>
+                  <Text type="BODY" primary>
                     {token.mintAmount.toSignificant(3)}
                   </Text>
                   <Text>{token.symbol}</Text>
                 </SmartFlex>
               </SmartFlex>
               <SmartFlex gap="8px" column>
-                <Text type={TEXT_TYPES.SUPPORTING}>My balance</Text>
+                <Text type="SUPPORTING">My balance</Text>
                 <SmartFlex center="y" gap="4px">
-                  <Text type={TEXT_TYPES.BODY} primary>
+                  <Text type="BODY" primary>
                     {token.formatBalance.toSignificant(3)}
                   </Text>
                   <Text>{token.symbol}</Text>
@@ -139,7 +139,7 @@ const TableRow = styled(SmartFlex)`
 const TableTitle = styled(Text)`
   flex: 1;
   white-space: nowrap;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.SUPPORTING]}
+  ${TEXT_TYPES_MAP.SUPPORTING}
 `;
 
 const TableBody = styled(SmartFlex)`

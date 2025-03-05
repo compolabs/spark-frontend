@@ -10,7 +10,7 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 import { getShortString } from "@utils/getShortString";
 
 import { SmartFlex } from "../SmartFlex";
-import { TEXT_TYPES, TEXT_TYPES_MAP } from "../Text";
+import { TEXT_TYPES_MAP } from "../Text";
 
 interface Props {
   isFocused?: boolean;
@@ -51,7 +51,7 @@ const Root = styled(SmartFlex)<{
   padding: 4px 8px;
   height: 40px;
   color: ${({ theme }) => theme.colors.textPrimary};
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]};
+  ${TEXT_TYPES_MAP.BODY};
   border: 1px solid ${({ theme }) => theme.colors.borderPrimary};
   border-radius: 32px;
 

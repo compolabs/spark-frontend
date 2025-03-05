@@ -268,8 +268,8 @@ class LeaderboardStore {
     try {
       const response = await bcNetwork.fetchUserPoints({
         userAddress: accountStore.address!,
-        fromTimestamp: 1736899200,
-        toTimestamp: 1739491200,
+        fromTimestamp: 1739577601,
+        toTimestamp: 1740787200,
         excluded,
       });
       const points = new BN(response.result.rows[0].points);

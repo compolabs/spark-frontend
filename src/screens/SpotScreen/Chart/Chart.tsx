@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { Row } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Tab from "@components/Tab";
-import { TEXT_TYPES } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
@@ -56,7 +55,7 @@ const Chart: React.FC = observer(() => {
                 key={title + index}
                 active={activeChart === index}
                 disabled={isSymbolDisabled && isSimple}
-                type={TEXT_TYPES.BUTTON_SECONDARY}
+                type="BUTTON_SECONDARY"
                 onClick={() => handleTabClick(index)}
               >
                 {title}

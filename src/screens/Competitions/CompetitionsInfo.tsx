@@ -12,7 +12,7 @@ import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { CountdownTimer } from "@components/CountdownTimer";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import ArrowRightIcon from "@assets/icons/arrowRight.svg?react";
@@ -33,14 +33,14 @@ const LiveBox = ({ live }: { live: string }) => {
 
   return (
     <SmartFlex alignItems="center" gap="8px">
-      <TitleText type={TEXT_TYPES.H} primary>
+      <TitleText type="H" primary>
         {dayjs(setting.startDate).format("MMM D")}
       </TitleText>
       <ArrowRightIcon />
-      <TitleText type={TEXT_TYPES.H} primary>
+      <TitleText type="H" primary>
         {dayjs(setting.endDate).format("MMM D")}
       </TitleText>
-      <TitleText type={TEXT_TYPES.H} secondary>
+      <TitleText type="H" secondary>
         {dayjs(setting.endDate).format("h:mm A")}
       </TitleText>
       <LiveLight colorLive={colorLive}>
@@ -60,7 +60,7 @@ export const CompetitionsInfo = observer(({ live }: { live: string }) => {
   return (
     <CompetitionsInfoContainer>
       <CompetitionsInfoHeader>
-        <TitleText type={TEXT_TYPES.H} primary>
+        <TitleText type="H" primary>
           TRADING COMPETITION
         </TitleText>
         <LiveBox live={live} />
@@ -69,20 +69,20 @@ export const CompetitionsInfo = observer(({ live }: { live: string }) => {
         <CompetitionsTitle>
           <SmartFlex gap="8px" column>
             <SmartFlex center="y" gap="4px">
-              <Text type={TEXT_TYPES.BODY} secondary>
+              <Text type="BODY" secondary>
                 Prize Pool
               </Text>
             </SmartFlex>
             <SmartFlex gap="8px">
-              <Text type={TEXT_TYPES.H} primary>
+              <Text type="H" primary>
                 ${prizeToUsdc}
               </Text>
-              <Text type={TEXT_TYPES.H} secondary>
+              <Text type="H" secondary>
                 |
               </Text>
               <SmartFlex gap="4px">
                 <img height="16px" src={TOKEN_LOGOS.FUEL} width="16px" />
-                <Text type={TEXT_TYPES.H} primary>
+                <Text type="H" primary>
                   {new BN(setting.prizePoolFuel).toSignificant(2)} FUEL
                 </Text>
               </SmartFlex>
@@ -90,7 +90,7 @@ export const CompetitionsInfo = observer(({ live }: { live: string }) => {
           </SmartFlex>
           <SmartFlex gap="8px" column>
             <SmartFlex center="y" gap="4px">
-              <Text type={TEXT_TYPES.BODY} secondary>
+              <Text type="BODY" secondary>
                 {live === "Pending" && "Competition starts in"}
                 {live === "Live" && "Competition ends in"}
               </Text>

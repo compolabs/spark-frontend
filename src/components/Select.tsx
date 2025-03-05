@@ -7,7 +7,7 @@ import { media } from "@themes/breakpoints";
 import arrowIcon from "@assets/icons/arrowUp.svg";
 
 import { Column } from "./Flex";
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "./Text";
+import Text, { TEXT_TYPES_MAP } from "./Text";
 import Tooltip from "./Tooltip";
 
 interface IOption<T = string> {
@@ -88,7 +88,7 @@ const Root = styled.div<{
   border-radius: 4px;
   background: ${({ theme }) => theme.colors.bgPrimary};
   border: 1px solid ${({ focused, theme }) => (focused ? theme.colors.borderAccent : theme.colors.borderSecondary)};
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BODY]}
+  ${TEXT_TYPES_MAP.BODY}
   color: ${({ theme, disabled }) => (!disabled ? theme.colors.textPrimary : theme.colors.textDisabled)};
   cursor: ${({ disabled }) => (!disabled ? "pointer" : "not-allowed")};
   align-items: center;
@@ -125,7 +125,7 @@ export const Option = styled.div<{
     background: ${({ theme, disabled }) => (!disabled ? theme.colors.borderPrimary : "transparent")};
   }
 
-  ${TEXT_TYPES_MAP[TEXT_TYPES.BUTTON_SECONDARY]};
+  ${TEXT_TYPES_MAP.BUTTON_SECONDARY};
 `;
 
 const Wrap = styled.div<{

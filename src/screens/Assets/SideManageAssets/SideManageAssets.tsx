@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react";
 
-import ModalSheet from "@components/ModalSheet";
+import Sheet from "@components/Sheet";
 import SideBar from "@components/SideBar";
 
 import { useMedia } from "@hooks/useMedia";
@@ -20,18 +20,14 @@ interface ResolverDevice {
 const ResolverDevice = ({ children, handleClose, isVisible }: ResolverDevice) => {
   const media = useMedia();
 
-  return (
-    <>
-      {media.mobile ? (
-        <ModalSheet isVisible={isVisible} onClose={handleClose}>
-          {children}
-        </ModalSheet>
-      ) : (
-        <SideBar isVisible={isVisible} onClose={handleClose}>
-          {children}
-        </SideBar>
-      )}
-    </>
+  return media.mobile ? (
+    <Sheet isOpen={isVisible} onClose={handleClose}>
+      {children}
+    </Sheet>
+  ) : (
+    <SideBar isVisible={isVisible} onClose={handleClose}>
+      {children}
+    </SideBar>
   );
 };
 

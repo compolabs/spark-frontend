@@ -7,7 +7,7 @@ import Button from "@components/Button";
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import arrowLeftShort from "@assets/icons/arrowLeftShort.svg";
 import closeThin from "@assets/icons/closeThin.svg";
@@ -80,7 +80,7 @@ const DepositAssets: React.FC<DepositAssetsProps> = observer(({ setStep }) => {
       <SmartFlex alignItems="center" justifyContent="space-between">
         <SmartFlex alignItems="center" gap="10px">
           <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
-          <TextTitle type={TEXT_TYPES.TEXT_BIG} primary>
+          <TextTitle type="TEXT_BIG" primary>
             Deposit
           </TextTitle>
         </SmartFlex>
@@ -114,7 +114,7 @@ const DepositAssets: React.FC<DepositAssetsProps> = observer(({ setStep }) => {
         ) : (
           <DepositedAssets alignItems="center" gap="20px" justifyContent="center" column>
             <ErrorWallet />
-            <TextTitleDeposit type={TEXT_TYPES.TEXT}>
+            <TextTitleDeposit type="TEXT">
               You wallet is empty.
               <br /> To get test tokens use{" "}
               <LinkStyled

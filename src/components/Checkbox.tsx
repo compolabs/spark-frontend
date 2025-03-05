@@ -7,10 +7,10 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Checkbox: React.FC<Props> = ({ checked, children, ...props }) => {
   return (
-    <Root>
+    <Root data-checkbox="true">
       <HiddenCheckbox checked={checked} type="checkbox" {...props} />
       <StyledCheckbox checked={checked}>
-        <CheckedIcon height="7" viewBox="0 0 8 7" width="8" xmlns="http://www.w3.org/2000/svg">
+        <CheckedIcon height="10" viewBox="0 0 8 7" width="12" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M1.18626 2.32915L0 2.90673L2.69078 7H4.16637L8 0.577578L6.78481 -2.55301e-07L3.42857 5.83229L1.18626 2.32915Z"
             fill="currentColor"
@@ -44,13 +44,12 @@ const StyledCheckbox = styled.div<{ checked: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 12px;
-  height: 12px;
-  border-radius: 4px;
-  border: 1px solid ${({ checked, theme }) => (checked ? theme.colors.greenLight : theme.colors.iconSecondary)};
-  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid ${({ theme }) => theme.colors.strokeAccent};
+  margin-right: 8px;
 
-  background-color: ${({ checked, theme }) => (checked ? theme.colors.greenLight : "unset")};
+  background-color: ${({ checked, theme }) => (checked ? theme.colors.strokeAccent : "unset")};
 
   ${CheckedIcon} {
     visibility: ${({ checked }) => (checked ? "visible" : "hidden")};

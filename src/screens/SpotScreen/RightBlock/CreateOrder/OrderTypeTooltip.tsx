@@ -5,7 +5,7 @@ import { RadioButton } from "@components/RadioButton";
 import Sheet from "@components/Sheet";
 import { SmartFlex } from "@components/SmartFlex";
 import Tab from "@components/Tab";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
 
 import InfoIcon from "@assets/icons/info.svg?react";
@@ -72,7 +72,7 @@ const OrderType: React.FC = () => {
       <SmartFlex width="360px" center column>
         {renderRadioButtons()}
         <StyledImg src={img} />
-        <Desc type={TEXT_TYPES.BODY}>{text}</Desc>
+        <Desc type="BODY">{text}</Desc>
       </SmartFlex>
     );
   };
@@ -114,7 +114,7 @@ export const OrderTypeTooltipIcon: React.FC<{ text: string; onClick?: () => void
   return (
     <SmartFlex center="y" gap="2px" onClick={onClick}>
       <InfoIconStyled />
-      <Text type={TEXT_TYPES.SUPPORTING} disabled>
+      <Text type="SUPPORTING" disabled>
         {text}
       </Text>
     </SmartFlex>
@@ -141,7 +141,7 @@ export const OrderTypeTooltip: React.FC = () => {
 
 export const OrderTypeSheet: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   return (
-    <Sheet isOpen={isOpen} onClose={onClose}>
+    <Sheet isOpen={isOpen} header onClose={onClose}>
       <SmartFlex margin="0 0 32px" center>
         <OrderType />
       </SmartFlex>

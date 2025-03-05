@@ -6,7 +6,7 @@ import Button from "@components/Button";
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 
 import arrowLeftShort from "@assets/icons/arrowLeftShort.svg";
 import closeThin from "@assets/icons/closeThin.svg";
@@ -78,7 +78,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
       <SmartFlex alignItems="center" justifyContent="space-between">
         <SmartFlex alignItems="center" gap="10px">
           <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
-          <TextTitle type={TEXT_TYPES.TEXT_BIG} primary>
+          <TextTitle type="TEXT_BIG" primary>
             Withdraw
           </TextTitle>
         </SmartFlex>

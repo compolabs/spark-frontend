@@ -5,9 +5,10 @@ import { observer } from "mobx-react-lite";
 
 import { OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 
+import { CheckboxOld } from "@components/CheckboxOld";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
 import { media } from "@themes/breakpoints";
 
@@ -16,8 +17,6 @@ import TableSizeSelectorIcon from "@assets/icons/tablesSizeSelector.svg?react";
 
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
-
-import { Checkbox } from "@src/components/Checkbox";
 
 import { useSpotTableVMProvider } from "./SpotTable/SpotTableVM";
 import { RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "./constants";
@@ -52,7 +51,7 @@ export const TableActionButtons: React.FC = observer(() => {
           <TableSize key={title} active={settingsStore.tradeTableSize === size} onClick={() => handleTableSize(size)}>
             <img alt={title} src={icon} />
             <SizedBox width={4} />
-            <Text type={TEXT_TYPES.BUTTON} nowrap>
+            <Text type="BUTTON" nowrap>
               {title.toUpperCase()}
             </Text>
           </TableSize>
@@ -65,34 +64,40 @@ export const TableActionButtons: React.FC = observer(() => {
     return (
       <SettingsTooltipContainer>
         {/* <SmartFlex alignItems="flex-start" gap="12px" column>
-          <Text type={TEXT_TYPES.BODY} secondary>
+          <Text type="BODY" secondary>
             Type
           </Text>
           <Checkbox checked>
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+            <Text type="BUTTON_SECONDARY" primary>
               MARKET
             </Text>
           </Checkbox>
           <Checkbox checked>
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+            <Text type="BUTTON_SECONDARY" primary>
               LIMIT
             </Text>
           </Checkbox>
         </SmartFlex> */}
         <SmartFlex alignItems="flex-start" gap="12px" column>
-          <Text type={TEXT_TYPES.BODY} secondary>
+          <Text type="BODY" secondary>
             Side
           </Text>
-          <Checkbox checked={vm.filterIsBuyOrderTypeEnabled} onChange={() => vm.toggleFilterOrderType(OrderType.Buy)}>
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+          <CheckboxOld
+            checked={vm.filterIsBuyOrderTypeEnabled}
+            onChange={() => vm.toggleFilterOrderType(OrderType.Buy)}
+          >
+            <Text type="BUTTON_SECONDARY" primary>
               BUY
             </Text>
-          </Checkbox>
-          <Checkbox checked={vm.filterIsSellOrderTypeEnabled} onChange={() => vm.toggleFilterOrderType(OrderType.Sell)}>
-            <Text type={TEXT_TYPES.BUTTON_SECONDARY} primary>
+          </CheckboxOld>
+          <CheckboxOld
+            checked={vm.filterIsSellOrderTypeEnabled}
+            onChange={() => vm.toggleFilterOrderType(OrderType.Sell)}
+          >
+            <Text type="BUTTON_SECONDARY" primary>
               SELL
             </Text>
-          </Checkbox>
+          </CheckboxOld>
         </SmartFlex>
       </SettingsTooltipContainer>
     );

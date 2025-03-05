@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { Row } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Tab from "@components/Tab";
-import Text, { TEXT_TYPES } from "@components/Text";
+import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { useStores } from "@stores";
@@ -35,13 +35,13 @@ export const BaseTable: React.FC<Props> = observer(({ tabs, activeTab, onTabClic
                 key={title + index}
                 active={activeTab === index}
                 disabled={disabled}
-                type={TEXT_TYPES.BUTTON_SECONDARY}
+                type="BUTTON_SECONDARY"
                 onClick={() => !disabled && onTabClick(index)}
               >
                 {title}
                 {rowCount > 0 && (
                   <Badge>
-                    <Text type={TEXT_TYPES.SUPPORTING} primary>
+                    <Text type="SUPPORTING" primary>
                       {rowCount}
                     </Text>
                   </Badge>
@@ -85,6 +85,7 @@ const TabContainer = styled(Row)`
   align-items: center;
   padding: 2px 12px;
   position: relative;
+  overflow: auto;
 
   ${Tab} {
     margin: 0 16px;

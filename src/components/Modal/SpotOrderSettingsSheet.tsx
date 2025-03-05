@@ -63,7 +63,7 @@ const SpotOrderSettingsSheet: React.FC<Props> = ({
   };
 
   return (
-    <Sheet isOpen={isOpen} onClose={onClose}>
+    <Sheet isOpen={isOpen} header onClose={onClose}>
       <SmartFlex margin="0 0 40px 0" column>
         <FilterContainer center="y">{renderButtons()}</FilterContainer>
         <DecimalsContainer center="y" column>

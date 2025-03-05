@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-import Text, { TEXT_TYPES, TEXT_TYPES_MAP } from "@components/Text";
+import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 const Chip = styled(Text)`
@@ -16,7 +16,7 @@ const Chip = styled(Text)`
   padding: 0 4px;
   max-width: fit-content;
   box-sizing: border-box;
-  ${TEXT_TYPES_MAP[TEXT_TYPES.SUPPORTING]};
+  ${TEXT_TYPES_MAP.SUPPORTING};
 
   ${media.mobile} {
     height: 18px;
