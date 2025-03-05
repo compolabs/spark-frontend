@@ -33,11 +33,7 @@ import { ACTIVE_INPUT, ORDER_MODE, ORDER_TYPE, useCreateOrderVM } from "./Create
 import { OrderTypeSheet, OrderTypeTooltip, OrderTypeTooltipIcon } from "./OrderTypeTooltip";
 
 export const ORDER_OPTIONS = [
-<<<<<<< HEAD
   { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.MKT },
-=======
-  // { title: "Market", key: ORDER_TYPE.Market, timeInForce: LimitType.FOK },
->>>>>>> main
   { title: "Limit", key: ORDER_TYPE.Limit, timeInForce: LimitType.GTC },
   // { title: "Limit (IOC)", key: ORDER_TYPE.LimitIOC, timeInForce: LimitType.IOC },
   // { title: "Limit (FOK)", key: ORDER_TYPE.LimitFOK, timeInForce: LimitType.FOK },
