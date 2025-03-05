@@ -7,7 +7,6 @@ import { DashboardPoints } from "@components/Points/DashboardPoints";
 import { SmartFlex } from "@components/SmartFlex";
 import { media } from "@themes/breakpoints";
 
-import AssetsDashboard from "@screens/Dashboard/AssetsDashboard";
 import InfoDataGraph from "@screens/Dashboard/InfoDataGraph";
 import BottomTables from "@screens/SpotScreen/BottomTables";
 import StatusBar from "@screens/SpotScreen/StatusBar";
@@ -25,9 +24,9 @@ const Dashboard = observer(() => {
           <MarketDataSection />
           <InfoDataGraph />
         </UserInfoData>
-        <BottomTables isShowBalance={false} />
+        <BottomTables />
       </DashboardColumn>
-      <AssetsDashboard />
+      {/*<AssetsDashboard />*/}
       <StatusBarStyled />
       <StatusBar />
     </DashboardContainer>
