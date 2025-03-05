@@ -23,7 +23,7 @@ const marketData = [
     value: "$0",
     period: "24h",
     change: {
-      value: "+0",
+      value: "none",
       percentage: "0",
       direction: "up",
     },
@@ -47,20 +47,24 @@ export const MarketDataSection: React.FC = observer(() => {
   const { dashboardStore } = useStores();
   const portfolioVolume = dashboardStore.getChartDataPortfolio();
   const tradingVolume = dashboardStore.getChartDataTrading();
+  const totalBalancePnl = dashboardStore.totalPnl;
   useEffect(() => {
     if (dashboardStore.rowSnapshots.length === 0) {
       setUserStats(structuredClone(marketData));
       return;
     }
+    console.log("totalBalancePnl", totalBalancePnl);
 
     const sumStatsUser = portfolioVolume[portfolioVolume.length - 1];
     const sumStatsTrading = tradingVolume.reduce((sum, item) => sum + item.value, 0);
     const updatedStats = structuredClone(marketData);
     updatedStats[0].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
     updatedStats[1].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
+    updatedStats[2].period = dashboardStore.activeFilter.description ?? dashboardStore.activeFilter.title;
 
     updatedStats[0].value = `$${sumStatsUser?.value?.toFixed(2)}`;
-    updatedStats[1].value = `$${sumStatsTrading?.toFixed(2) ?? "0.00"}`;
+    updatedStats[1].value = `$${Number(totalBalancePnl?.pnl)?.toFixed(2) ?? "0.00"}`;
+    updatedStats[2].value = `$${sumStatsTrading?.toFixed(2) ?? "0.00"}`;
     const calculateChange = (data: DataPoint[]) => {
       if (data.length === 0) {
         return {
@@ -81,7 +85,12 @@ export const MarketDataSection: React.FC = observer(() => {
       };
     };
     updatedStats[0].change = calculateChange(portfolioVolume);
-    updatedStats[1].change = calculateChange(tradingVolume);
+    updatedStats[1].change = {
+      value: "hide",
+      percentage: Number(totalBalancePnl?.pnlInPercent).toFixed(2) + "%",
+      direction: Number(totalBalancePnl?.pnlInPercent) > 0 ? "up" : "down",
+    };
+    updatedStats[2].change = calculateChange(tradingVolume);
     setUserStats(updatedStats);
   }, [dashboardStore.rowSnapshots, dashboardStore.activeFilter, dashboardStore.tradeEvents]);
 
