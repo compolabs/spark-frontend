@@ -130,8 +130,8 @@ export class SpotMarketOrder {
   };
 
   private getQuoteAmount = (amount: BN, price: BN) => {
-    const decimalsDiffPrice = Math.abs(DEFAULT_DECIMALS - this.baseToken.decimals);
-    const decimalsDiffTokens = 2 * DEFAULT_DECIMALS - this.quoteToken.decimals;
+    const decimalsDiffPrice = Math.abs(DEFAULT_DECIMALS - this.baseToken?.decimals);
+    const decimalsDiffTokens = 2 * DEFAULT_DECIMALS - this.quoteToken?.decimals;
 
     const result = amount
       .multipliedBy(price)
