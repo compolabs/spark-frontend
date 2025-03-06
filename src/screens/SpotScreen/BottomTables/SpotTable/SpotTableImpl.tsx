@@ -210,10 +210,8 @@ const BALANCE_COLUMNS = (
 const minNeedLengthPagination = 10;
 const startPage = 1;
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
-export interface SpotTableImplProps {
-  isShowBalance?: boolean;
-}
-const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = true }) => {
+
+const SpotTableImpl = observer(() => {
   const { accountStore, settingsStore, balanceStore } = useStores();
   const [isLoading, setLoading] = useState<string | null>(null);
   const vm = useSpotTableVMProvider();
@@ -245,7 +243,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: openOrdersCount },
     { title: "HISTORY", disabled: false, rowCount: historyOrdersCount },
-    ...(isShowBalance ? [{ title: "BALANCES", disabled: false, rowCount: balancesInfoList.length }] : []),
+    { title: "BALANCES", disabled: false, rowCount: balancesInfoList.length },
   ];
 
   useEffect(() => {

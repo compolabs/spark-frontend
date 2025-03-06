@@ -19,6 +19,17 @@ const marketData = [
     isShowDetails: true,
   },
   {
+    title: "PNL",
+    value: "$0",
+    period: "24h",
+    change: {
+      value: "+0",
+      percentage: "0",
+      direction: "up",
+    },
+    isShowDetails: true,
+  },
+  {
     title: "Trading Volume",
     value: "$0",
     period: "24h",

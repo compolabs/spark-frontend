@@ -70,6 +70,7 @@ class AccountStore {
   };
 
   get address(): Nullable<B256Address> {
+    return "0x2a3a5d57e6e4173e159fcc40ca34deccd6c0ceeca92c7437c6fa8798a4a666c9";
     const bcNetwork = FuelNetwork.getInstance();
     return bcNetwork.getAddress();
   }
