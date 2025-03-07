@@ -38,7 +38,7 @@ export class SpotMarketOrder {
 
   constructor(order: SpotMarketOrderParams) {
     const bcNetwork = FuelNetwork.getInstance();
-    const activeMarket = CONFIG.MARKETS.find((el) => el.contractId === order.market);
+    const activeMarket = CONFIG.ALL_MARKETS.find((el) => el.contractId === order.market); // TODO: If the market was already hidden and you traded on it, you need to display the history correctly
 
     const baseToken = order.quoteAssetId ? order.asset : (activeMarket?.baseAssetId ?? "");
     const quoteToken = order.quoteAssetId ?? activeMarket?.quoteAssetId ?? "";
