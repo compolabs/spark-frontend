@@ -415,9 +415,6 @@ class CreateOrderVM {
         : amountToSpend.toString();
     }
 
-    console.log("price", this.inputPrice.toString(), price);
-    console.log("amount", this.inputAmount.toString(), amount);
-
     const order: CreateOrderWithDepositParams = {
       type,
       price,
