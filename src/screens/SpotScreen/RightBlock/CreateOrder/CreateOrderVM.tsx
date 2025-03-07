@@ -310,11 +310,11 @@ class CreateOrderVM {
     const fee = getRealFee(market, tradeStore.matcherFee, tradeStore.exchangeFee, !isBuy);
 
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
-    const depositAmountWithFee = fee.exchangeFee.plus(fee.matcherFee);
+    const feeAmount = fee.exchangeFee.plus(fee.matcherFee);
 
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
-      amountFee: depositAmountWithFee.toString(),
+      amountFee: feeAmount.toString(),
       depositAssetId: isBuy ? market.quoteToken.assetId : market.baseToken.assetId,
       feeAssetId: market.quoteToken.assetId,
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
@@ -386,9 +386,10 @@ class CreateOrderVM {
     this.isLoading = false;
   };
 
-  applySlippage = (price: number, slippagePercent: number, isPositive = true) => {
-    const factor = 1 + (isPositive ? slippagePercent / 100 : -slippagePercent / 100);
-    return (price * factor).toString();
+  applySlippage = (value: BN, slippagePercent: BN, isPositive = true) => {
+    const factor = new BN(1).plus(isPositive ? slippagePercent.div(100) : slippagePercent.div(100).negated());
+
+    return value.multipliedBy(factor).decimalPlaces(0).toString();
   };
 
   // Extracted function for creating GTC orders with deposits
@@ -399,16 +400,32 @@ class CreateOrderVM {
     timeInForce: LimitType,
   ): Promise<string> => {
     const bcNetwork = FuelNetwork.getInstance();
+
     let price = this.inputPrice.toString();
+    const amount = this.inputAmount.toString();
+
+    let amountToSpend = deposit.amountToSpend;
+
     if (timeInForce === LimitType.MKT) {
-      price = this.applySlippage(this.inputPrice.toNumber(), 25, type === "Buy");
+      const isBuy = type === OrderType.Buy;
+      price = this.applySlippage(this.inputPrice, this.slippage, isBuy);
+
+      amountToSpend = isBuy
+        ? this.applySlippage(new BN(amountToSpend), this.slippage.plus(1), isBuy)
+        : amountToSpend.toString();
     }
+
+    console.log("price", this.inputPrice.toString(), price);
+    console.log("amount", this.inputAmount.toString(), amount);
+
     const order: CreateOrderWithDepositParams = {
       type,
-      amount: this.inputAmount.toString(),
-      price: price,
+      price,
+      amount,
       ...deposit,
+      amountToSpend,
     };
+
     const data = await bcNetwork.createSpotOrderWithDeposit(order, markets, timeInForce);
     return data.transactionId;
   };
