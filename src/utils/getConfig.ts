@@ -51,6 +51,7 @@ function createConfig() {
   return {
     APP: configJSON,
     MARKETS: markets,
+    ALL_MARKETS: configJSON.markets,
     TOKENS: tokens,
     TOKENS_BY_SYMBOL: tokensBySymbol,
     TOKENS_BY_ASSET_ID: tokensByAssetId,

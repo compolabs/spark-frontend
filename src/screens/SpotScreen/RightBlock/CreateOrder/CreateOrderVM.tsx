@@ -350,7 +350,6 @@ class CreateOrderVM {
       let hash: Undefinable<string> = "";
 
       if (timeInForce === LimitType.GTC || timeInForce === LimitType.MKT) {
-        console.log("12", timeInForce);
         hash = await this.createGTCOrder(type, deposit, compactMarkets, timeInForce);
       } else {
         hash = await this.createMarketOrLimitOrder(type, market, deposit, compactMarkets);

@@ -246,7 +246,7 @@
       "precision": 0
     },
     {
-      "isOpen": true,
+      "isOpen": false,
       "marketName": "tETHtUSDC",
       "owner": "0x1ef9ec55122609502d923f8a7831f50ac05e02bdd640522a2ef18fd0f26d5fc7",
       "baseAssetId": "0xf169e13e98ae8908199148380684894458b7916f074b85ebad2aaad489ce0d54",
