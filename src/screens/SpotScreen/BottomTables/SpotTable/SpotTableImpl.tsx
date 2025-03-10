@@ -32,6 +32,30 @@ const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();
 const balanceColumnHelper = createColumnHelper<AssetBlockData>();
 
+const generatePnl = (pnl: string, theme: Theme, isCoin: boolean = true) => {
+  const bnPnl = new BN(pnl ?? 0).decimalPlaces(2, BN.ROUND_UP);
+  const isPositive = bnPnl.isGreaterThan(0);
+  const isNegative = bnPnl.isLessThan(0);
+  const sign = isPositive ? "+" : isNegative ? "-" : "";
+  const displayValue = bnPnl.abs().toString();
+
+  const color = bnPnl.isGreaterThan(0)
+    ? theme.colors.greenLight
+    : bnPnl.isLessThan(0)
+      ? theme.colors.redLight
+      : undefined;
+
+  return isCoin ? (
+    <Text color={color} primary={bnPnl.eq(BN.ZERO)} type="BODY">
+      {`${sign}$${displayValue}`}
+    </Text>
+  ) : (
+    <Text color={color} primary={bnPnl.eq(BN.ZERO)} type="BODY">
+      {`(${sign}${displayValue}%)`}
+    </Text>
+  );
+};
+
 const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: Theme) => [
   orderColumnHelper.accessor("timestamp", {
     header: "Date",
@@ -178,6 +202,20 @@ const BALANCE_COLUMNS = (
         <IconContainer gap="4px">
           <Text primary>{props.getValue().toString()}</Text>
         </IconContainer>
+      );
+    },
+  }),
+  balanceColumnHelper.accessor("pnl", {
+    header: "Total amount",
+    cell: (props) => {
+      const pnlPrecent = props.row.original.pnlPrecent;
+      // const one = props.getValue().toString();
+      // console.log('props.getValue()', props.getValue())
+      return (
+        <SmartFlex gap="6px">
+          {generatePnl(props.getValue(), theme) ?? 0}
+          {generatePnl(pnlPrecent, theme, false)}
+        </SmartFlex>
       );
     },
   }),

@@ -310,11 +310,11 @@ class CreateOrderVM {
     const fee = getRealFee(market, tradeStore.matcherFee, tradeStore.exchangeFee, !isBuy);
 
     const depositAmount = isBuy ? this.inputTotal : this.inputAmount;
-    const depositAmountWithFee = fee.exchangeFee.plus(fee.matcherFee);
+    const feeAmount = fee.exchangeFee.plus(fee.matcherFee);
 
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
-      amountFee: depositAmountWithFee.toString(),
+      amountFee: feeAmount.toString(),
       depositAssetId: isBuy ? market.quoteToken.assetId : market.baseToken.assetId,
       feeAssetId: market.quoteToken.assetId,
       assetType: isBuy ? AssetType.Quote : AssetType.Base,
@@ -349,8 +349,8 @@ class CreateOrderVM {
     try {
       let hash: Undefinable<string> = "";
 
-      if (timeInForce === LimitType.GTC) {
-        hash = await this.createGTCOrder(type, deposit, compactMarkets);
+      if (timeInForce === LimitType.GTC || timeInForce === LimitType.MKT) {
+        hash = await this.createGTCOrder(type, deposit, compactMarkets, timeInForce);
       } else {
         hash = await this.createMarketOrLimitOrder(type, market, deposit, compactMarkets);
       }
@@ -386,22 +386,44 @@ class CreateOrderVM {
     this.isLoading = false;
   };
 
+  applySlippage = (value: BN, slippagePercent: BN, isPositive = true) => {
+    const factor = new BN(1).plus(isPositive ? slippagePercent.div(100) : slippagePercent.div(100).negated());
+
+    return value.multipliedBy(factor).decimalPlaces(0).toString();
+  };
+
   // Extracted function for creating GTC orders with deposits
   private createGTCOrder = async (
     type: OrderType,
     deposit: DepositInfo,
     markets: CompactMarketInfo[],
+    timeInForce: LimitType,
   ): Promise<string> => {
     const bcNetwork = FuelNetwork.getInstance();
 
+    let price = this.inputPrice.toString();
+    const amount = this.inputAmount.toString();
+
+    let amountToSpend = deposit.amountToSpend;
+
+    if (timeInForce === LimitType.MKT) {
+      const isBuy = type === OrderType.Buy;
+      price = this.applySlippage(this.inputPrice, this.slippage, isBuy);
+
+      amountToSpend = isBuy
+        ? this.applySlippage(new BN(amountToSpend), this.slippage.plus(1), isBuy)
+        : amountToSpend.toString();
+    }
+
     const order: CreateOrderWithDepositParams = {
       type,
-      amount: this.inputAmount.toString(),
-      price: this.inputPrice.toString(),
+      price,
+      amount,
       ...deposit,
+      amountToSpend,
     };
 
-    const data = await bcNetwork.createSpotOrderWithDeposit(order, markets);
+    const data = await bcNetwork.createSpotOrderWithDeposit(order, markets, timeInForce);
     return data.transactionId;
   };
 

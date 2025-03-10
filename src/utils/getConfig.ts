@@ -21,7 +21,7 @@ export interface Market {
 }
 
 function createConfig() {
-  const CURRENT_CONFIG_VER = "1.8.0";
+  const CURRENT_CONFIG_VER = "1.8.1";
   const configJSON = configProdJSON;
   assert(configJSON.version === CURRENT_CONFIG_VER, "Version mismatch");
 
@@ -51,6 +51,7 @@ function createConfig() {
   return {
     APP: configJSON,
     MARKETS: markets,
+    ALL_MARKETS: configJSON.markets,
     TOKENS: tokens,
     TOKENS_BY_SYMBOL: tokensBySymbol,
     TOKENS_BY_ASSET_ID: tokensByAssetId,
