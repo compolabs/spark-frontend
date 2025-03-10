@@ -209,8 +209,6 @@ const BALANCE_COLUMNS = (
     header: "Total amount",
     cell: (props) => {
       const pnlPrecent = props.row.original.pnlPrecent;
-      // const one = props.getValue().toString();
-      // console.log('props.getValue()', props.getValue())
       return (
         <SmartFlex gap="6px">
           {generatePnl(props.getValue(), theme) ?? 0}
