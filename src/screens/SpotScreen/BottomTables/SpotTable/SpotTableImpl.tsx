@@ -206,7 +206,7 @@ const BALANCE_COLUMNS = (
     },
   }),
   balanceColumnHelper.accessor("pnl", {
-    header: "Total amount",
+    header: "PnL",
     cell: (props) => {
       const pnlPrecent = props.row.original.pnlPrecent;
       return (
