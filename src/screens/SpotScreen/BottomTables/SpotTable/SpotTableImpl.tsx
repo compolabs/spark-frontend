@@ -119,7 +119,7 @@ const HISTORY_COLUMNS = (theme: Theme) => [
       </SmartFlex>
     ),
   }),
-  tradeColumnHelper.accessor("formatPrice", {
+  tradeColumnHelper.accessor("formatAvgPrice", {
     header: "Price",
     cell: (props) => toCurrency(props.getValue(), props.row.original.quoteToken.symbol),
   }),

@@ -20,7 +20,6 @@ export const groupOrders = (
   orders.forEach((order) => {
     const roundedPrice = roundPrice(order.price, DEFAULT_DECIMALS - decimals, rm);
     const price = roundedPrice.toString();
-
     if (!groupedOrders[price]) {
       groupedOrders[price] = new SpotMarketOrder({
         id: order.id,
@@ -29,6 +28,7 @@ export const groupOrders = (
         price,
         amount: BN.ZERO.toString(),
         initialAmount: BN.ZERO.toString(),
+        avrPrice: "",
         orderType: order.orderType,
         asset: order.baseToken.assetId,
         quoteAssetId: order.quoteToken.assetId,

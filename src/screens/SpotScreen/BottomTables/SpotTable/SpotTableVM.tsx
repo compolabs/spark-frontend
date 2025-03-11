@@ -208,7 +208,6 @@ class SpotTableVM {
       .subscribe({
         next: ({ data }) => {
           if (!data) return;
-
           const sortedOrdersHistory = formatSpotMarketOrders(data.Order).sort(sortDesc);
           this.setUserOrdersHistory(sortedOrdersHistory);
 

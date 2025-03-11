@@ -15,6 +15,7 @@ export type SpotMarketOrderParams = {
 } & Order;
 
 export class SpotMarketOrder {
+  readonly avrPrice: Order["avrPrice"];
   readonly id: Order["id"];
   readonly user: Order["user"];
   readonly orderType: Order["orderType"];
@@ -43,6 +44,7 @@ export class SpotMarketOrder {
     const baseToken = order.quoteAssetId ? order.asset : (activeMarket?.baseAssetId ?? "");
     const quoteToken = order.quoteAssetId ?? activeMarket?.quoteAssetId ?? "";
 
+    this.avrPrice = order.avrPrice;
     this.id = order.id;
     this.user = order.user;
     this.status = order.status;
@@ -75,6 +77,10 @@ export class SpotMarketOrder {
     return BN.formatUnits(this.price, DEFAULT_DECIMALS);
   }
 
+  get priceAvgUnits(): BN {
+    return BN.formatUnits(this.avrPrice, DEFAULT_DECIMALS);
+  }
+
   get initialAmountUnits(): BN {
     return BN.formatUnits(this.initialAmount, this.baseToken.decimals);
   }
@@ -101,6 +107,10 @@ export class SpotMarketOrder {
 
   get formatPrice() {
     return this.priceUnits.toSignificant(2);
+  }
+
+  get formatAvgPrice() {
+    return this.priceAvgUnits.toSignificant(2);
   }
 
   get formatInitialAmount() {
