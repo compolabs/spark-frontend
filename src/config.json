@@ -319,5 +319,5 @@
   },
   "networkUrl": "https://mainnet.fuel.network/v1/graphql",
   "explorerUrl": "https://app.fuel.network",
-  "sentioUrl": "https://app.sentio.xyz/api/v1/analytics/zhpv96/spark-processor/sql/execute"
+  "sentioUrl": "https://app.sentio.xyz/api/v1/analytics/anton/spark-processor/sql/execute"
 }
