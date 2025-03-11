@@ -3,7 +3,7 @@ replicaCount: 1
 fullnameOverride: spark-frontend
 
 image:
-  repository: harbor.infra.sprk.fi/sprk/spark-frontend
+  repository: harbor.infra.v12.trade/sprk/spark-frontend
   pullPolicy: IfNotPresent
 
 service:
