@@ -1,14 +1,14 @@
 ingress:
   enabled: true
   hosts:
-    - host: app.staging.sprk.fi
+    - host: app.staging.v12.trade
       paths:
         - path: /
           pathType: Prefix
   tls:
     - secretName: spark-frontend-tls
       hosts:
-        - app.staging.sprk.fi
+        - app.staging.v12.trade
 
 vault:
   mount: staging

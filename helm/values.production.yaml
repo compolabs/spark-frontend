@@ -1,14 +1,15 @@
 ingress:
   enabled: true
+  className: nginx
   hosts:
-    - host: app.production.sprk.fi
+    - host: app.production.v12.trade
       paths:
         - path: /
           pathType: Prefix
   tls:
     - secretName: spark-frontend-tls
       hosts:
-        - app.production.sprk.fi
+        - app.production.v12.trade
 
 vault:
   mount: production
