@@ -28,7 +28,7 @@ export const groupOrders = (
         price,
         amount: BN.ZERO.toString(),
         initialAmount: BN.ZERO.toString(),
-        avrPrice: "",
+        avrPrice: order.avrPrice,
         orderType: order.orderType,
         asset: order.baseToken.assetId,
         quoteAssetId: order.quoteToken.assetId,
