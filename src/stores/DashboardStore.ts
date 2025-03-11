@@ -155,7 +155,7 @@ class DashboardStore {
     };
     const config = {
       url: CONFIG.APP.sentioUrl,
-      apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
+      apiKey: "9mp9ZQtdiQifjttQ6xy8ZmUcMfh6TNlz7",
     };
     bcNetwork.setSentioConfig(config);
     const data = await bcNetwork.getUserScoreSnapshot(params);
@@ -173,7 +173,7 @@ class DashboardStore {
     };
     const config = {
       url: CONFIG.APP.sentioUrl,
-      apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
+      apiKey: "9mp9ZQtdiQifjttQ6xy8ZmUcMfh6TNlz7",
     };
     bcNetwork.setSentioConfig(config);
     const data = await bcNetwork.getTradeEvent(params);

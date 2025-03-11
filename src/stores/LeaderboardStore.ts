@@ -25,7 +25,7 @@ import RootStore from "./RootStore";
 
 const config = {
   url: CONFIG.APP.sentioUrl,
-  apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
+  apiKey: "9mp9ZQtdiQifjttQ6xy8ZmUcMfh6TNlz7",
 };
 
 export interface PaginationProps {
