@@ -1,5 +1,6 @@
 ingress:
   enabled: true
+  className: nginx
   hosts:
     - host: app.production.v12.trade
       paths:
