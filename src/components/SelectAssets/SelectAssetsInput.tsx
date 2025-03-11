@@ -24,6 +24,8 @@ export interface AssetBlockData {
   balance: string;
   assetId: string;
   price?: string;
+  pnl: string;
+  pnlPrecent: string;
 }
 
 interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {

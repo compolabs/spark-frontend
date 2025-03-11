@@ -37,7 +37,7 @@ export const MarketAttribute: React.FC<MarketAttributeProps> = observer(
           <ChangeContainer>
             {isHaveRange && (
               <>
-                <Text primary>{change.value}</Text>
+                {change.value !== "hide" && <Text primary>{change.value}</Text>}
                 <MetricsPercentage>
                   <DirectionIcon direction={change.direction} />
                   <TextPercentage direction={change.direction}>{change.percentage}</TextPercentage>

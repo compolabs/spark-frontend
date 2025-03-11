@@ -62,9 +62,18 @@ const NoDataTrading = observer(() => {
 
 const InfoDataGraph: React.FC = observer(() => {
   const { dashboardStore } = useStores();
-  const data = dashboardStore.activeUserStat
-    ? generateTradingData(dashboardStore.getChartDataTrading())
-    : generateTradingData(dashboardStore.getChartDataPortfolio());
+  const data = (() => {
+    switch (dashboardStore.activeUserStat) {
+      case 0:
+        return generateTradingData(dashboardStore.getChartDataTrading());
+      case 1:
+        return [];
+      case 2:
+        return generateTradingData(dashboardStore.getChartDataPortfolio());
+      default:
+        throw new Error(`Unexpected activeUserStat: ${dashboardStore.activeUserStat}`);
+    }
+  })();
   return data.length > 0 ? <TradingViewScoreboardWidget data={data} /> : <NoDataTrading />;
 });
 

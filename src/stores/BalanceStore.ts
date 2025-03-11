@@ -17,6 +17,11 @@ import RootStore from "./RootStore";
 
 const UPDATE_INTERVAL = 5 * 1000;
 
+interface PnlFormatted {
+  pnl: BN;
+  pnlPrecent: BN;
+}
+
 export class BalanceStore {
   public balances: Map<string, BN> = new Map();
   public contractBalances: Map<string, BN> = new Map();
@@ -57,10 +62,27 @@ export class BalanceStore {
   };
 
   get formattedBalanceInfoList() {
-    const { oracleStore } = this.rootStore;
+    const { oracleStore, dashboardStore } = this.rootStore;
 
     const bcNetwork = FuelNetwork.getInstance();
     const tokens = bcNetwork.getTokenList();
+    const pnls = dashboardStore.balancePnlByUser;
+    const pnlsFormatted: Record<string, PnlFormatted> = pnls.reduce(
+      (acc, el) => {
+        const asset = CONFIG.ALL_MARKETS.find((item) => item.contractId === el.market)?.baseAssetId;
+        if (!asset) return acc;
+
+        if (!acc[asset]) {
+          acc[asset] = { pnl: new BN(0), pnlPrecent: new BN(0) };
+        }
+
+        acc[asset].pnl = acc[asset].pnl.plus(el.pnlAllTime);
+        acc[asset].pnlPrecent = acc[asset].pnlPrecent.plus(el.pnlInPersentAllTime);
+
+        return acc;
+      },
+      {} as Record<string, PnlFormatted>,
+    );
 
     return tokens.map((token) => {
       const balance = this.getWalletBalance(token.assetId);
@@ -68,6 +90,8 @@ export class BalanceStore {
       const orderBalance = this.getOrderBalances(token.assetId);
       const totalBalance = balance.plus(contractBalance);
       return {
+        pnl: pnlsFormatted[token.assetId]?.pnl.toFixed(2),
+        pnlPrecent: pnlsFormatted[token.assetId]?.pnlPrecent.toFixed(2),
         assetId: token.assetId,
         asset: token,
         walletBalance: BN.formatUnits(balance, token.decimals).toString(),

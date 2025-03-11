@@ -32,6 +32,30 @@ const orderColumnHelper = createColumnHelper<SpotMarketOrder>();
 const tradeColumnHelper = createColumnHelper<SpotMarketOrder>();
 const balanceColumnHelper = createColumnHelper<AssetBlockData>();
 
+const generatePnl = (pnl: string, theme: Theme, isCoin: boolean = true) => {
+  const bnPnl = new BN(pnl ?? 0).decimalPlaces(2, BN.ROUND_UP);
+  const isPositive = bnPnl.isGreaterThan(0);
+  const isNegative = bnPnl.isLessThan(0);
+  const sign = isPositive ? "+" : isNegative ? "-" : "";
+  const displayValue = bnPnl.abs().toString();
+
+  const color = bnPnl.isGreaterThan(0)
+    ? theme.colors.greenLight
+    : bnPnl.isLessThan(0)
+      ? theme.colors.redLight
+      : undefined;
+
+  return isCoin ? (
+    <Text color={color} primary={bnPnl.eq(BN.ZERO)} type="BODY">
+      {`${sign}$${displayValue}`}
+    </Text>
+  ) : (
+    <Text color={color} primary={bnPnl.eq(BN.ZERO)} type="BODY">
+      {`(${sign}${displayValue}%)`}
+    </Text>
+  );
+};
+
 const ORDER_COLUMNS = (vm: ReturnType<typeof useSpotTableVMProvider>, theme: Theme) => [
   orderColumnHelper.accessor("timestamp", {
     header: "Date",
@@ -181,6 +205,18 @@ const BALANCE_COLUMNS = (
       );
     },
   }),
+  balanceColumnHelper.accessor("pnl", {
+    header: "PnL",
+    cell: (props) => {
+      const pnlPrecent = props.row.original.pnlPrecent;
+      return (
+        <SmartFlex gap="6px">
+          {generatePnl(props.getValue(), theme) ?? 0}
+          {generatePnl(pnlPrecent, theme, false)}
+        </SmartFlex>
+      );
+    },
+  }),
   balanceColumnHelper.accessor("contractBalance", {
     header: () => {
       return;
@@ -210,10 +246,8 @@ const BALANCE_COLUMNS = (
 const minNeedLengthPagination = 10;
 const startPage = 1;
 // todo: Упростить логику разделить формирование данных и рендер для декстопа и мобилок
-export interface SpotTableImplProps {
-  isShowBalance?: boolean;
-}
-const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = true }) => {
+
+const SpotTableImpl = observer(() => {
   const { accountStore, settingsStore, balanceStore } = useStores();
   const [isLoading, setLoading] = useState<string | null>(null);
   const vm = useSpotTableVMProvider();
@@ -245,7 +279,7 @@ const SpotTableImpl: React.FC<SpotTableImplProps> = observer(({ isShowBalance = 
   const TABS = [
     { title: "ORDERS", disabled: false, rowCount: openOrdersCount },
     { title: "HISTORY", disabled: false, rowCount: historyOrdersCount },
-    ...(isShowBalance ? [{ title: "BALANCES", disabled: false, rowCount: balancesInfoList.length }] : []),
+    { title: "BALANCES", disabled: false, rowCount: balancesInfoList.length },
   ];
 
   useEffect(() => {

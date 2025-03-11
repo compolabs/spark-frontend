@@ -1,6 +1,6 @@
 import { makeAutoObservable, reaction } from "mobx";
 
-import { RowSnapshot, RowTradeEvent } from "@compolabs/spark-orderbook-ts-sdk";
+import { BalancePnlByUserResponse, RowSnapshot, RowTradeEvent } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { filters } from "@screens/Dashboard/const";
 import { TradeEvent } from "@screens/Dashboard/InfoDataGraph";
@@ -19,6 +19,10 @@ interface IRecord {
   timestamp: number;
 }
 
+type SummedBalancePnl = {
+  [key: string]: string;
+};
+
 export interface FiltersProps {
   title: string;
   value: number;
@@ -35,6 +39,7 @@ class DashboardStore {
   initialized = false;
   rowSnapshots: RowSnapshot[] = [];
   tradeEvents: RowTradeEvent[] = [];
+  balancePnlByUser: BalancePnlByUserResponse[] = [];
   activeUserStat = 0;
   activeTime = 0;
   activeFilter = filters[0];
@@ -71,6 +76,7 @@ class DashboardStore {
     this.activeTime = this.calculateTime(date, 24);
     await this.fetchUserScoreSnapshot();
     await this.fetchTradeEvent();
+    await this.fetchBalancePnl();
   };
 
   disconnect = () => {
@@ -84,7 +90,37 @@ class DashboardStore {
   private syncDashboardData = async () => {
     await this.fetchUserScoreSnapshot();
     await this.fetchTradeEvent();
+    await this.fetchBalancePnl();
   };
+
+  getPnlValues = (pnlData: SummedBalancePnl) => {
+    switch (this.activeFilter.title) {
+      case "24h":
+        return { pnl: pnlData.pnl1, pnlInPercent: pnlData.pnlInPersent1 };
+      case "7d":
+        return { pnl: pnlData.pnl7, pnlInPercent: pnlData.pnlInPersent7 };
+      case "30d":
+        return { pnl: pnlData.pnl31, pnlInPercent: pnlData.pnlInPersent31 };
+      case "All Time":
+        return { pnl: pnlData.pnlAllTime, pnlInPercent: pnlData.pnlInPersentAllTime };
+      default:
+        return null;
+    }
+  };
+  get totalPnl() {
+    const summedValues: SummedBalancePnl | any = {};
+    this.balancePnlByUser.forEach((entry) => {
+      Object.keys(entry).forEach((key) => {
+        if (key !== "market") {
+          const currentValue = summedValues[key] || "0";
+          const newValue = entry[key as keyof BalancePnlByUserResponse] as string;
+          summedValues[key] = Number(currentValue) + Number(newValue);
+        }
+      });
+    });
+
+    return this.getPnlValues(summedValues);
+  }
 
   getChartDataPortfolio = () => {
     const result: TradeEvent[] = [];
@@ -178,6 +214,22 @@ class DashboardStore {
     bcNetwork.setSentioConfig(config);
     const data = await bcNetwork.getTradeEvent(params);
     this.tradeEvents = data?.result?.rows ?? [];
+  };
+
+  private fetchBalancePnl = async () => {
+    const bcNetwork = FuelNetwork.getInstance();
+    const { accountStore } = this.rootStore;
+    if (!accountStore?.address) return;
+    const params = {
+      user: accountStore.address,
+    };
+    const config = {
+      url: CONFIG.APP.sentioUrl,
+      apiKey: "TLjw41s3DYbWALbwmvwLDM9vbVEDrD9BP",
+    };
+    bcNetwork.setSentioConfig(config);
+    const data = await bcNetwork.fetchBalancePnl(params);
+    this.balancePnlByUser = data?.result?.rows ?? [];
   };
 }
 

@@ -269,4 +269,8 @@ export class FuelNetwork {
   getCompetition = async (...params: Parameters<typeof this.orderbookSdk.getCompetition>) => {
     return await this.orderbookSdk.getCompetition(...params);
   };
+
+  fetchBalancePnl = async (...params: Parameters<typeof this.orderbookSdk.getBalancePnlByUser>) => {
+    return await this.orderbookSdk.getBalancePnlByUser(...params);
+  };
 }
