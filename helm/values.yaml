@@ -25,6 +25,8 @@ ingress:
   className: cilium
   annotations:
     kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; frame-src 'self'; media-src 'self'; manifest-src 'self'; worker-src 'self'; prefetch-src 'self'; child-src 'self'; block-all-mixed-content; upgrade-insecure-requests; reflected-xss block; referrer no-referrer; feature-policy 'none';";
 
 resources:
   requests:
