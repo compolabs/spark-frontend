@@ -14,7 +14,6 @@ export interface ISerializedSettingStore {
   isCompleteOnboardingProcess?: boolean;
   isInfoDashboardPerHours?: boolean;
   tradeTableSize?: number;
-  orderType?: ORDER_TYPE;
 }
 
 export enum TRADE_TABLE_SIZE {
@@ -37,7 +36,6 @@ class SettingsStore {
       this.setIsCompletedOnboardingProcess(initState.isCompleteOnboardingProcess ?? false);
       this.setIsInfoDashboardPerHours(initState.isInfoDashboardPerHours ?? false);
       this.setTradeTableSize(initState.tradeTableSize ?? TRADE_TABLE_SIZE.S);
-      this.setOrderType(initState.orderType ?? ORDER_TYPE.Limit);
       this.setIsShowDepositInfo(initState.isShowDepositInfo ?? []);
     }
   }
@@ -60,7 +58,7 @@ class SettingsStore {
   tradeTableSize: TRADE_TABLE_SIZE = TRADE_TABLE_SIZE.S;
   setTradeTableSize = (v: TRADE_TABLE_SIZE) => (this.tradeTableSize = v);
 
-  orderType: ORDER_TYPE = ORDER_TYPE.Limit;
+  orderType: ORDER_TYPE = ORDER_TYPE.Market;
   setOrderType = (v: ORDER_TYPE) => (this.orderType = v);
 
   timeInForce: LimitType = LimitType.MKT;
@@ -72,7 +70,6 @@ class SettingsStore {
     isInfoDashboardPerHours: this.isInfoDashboardPerHours,
     isShowDepositInfo: this.isShowDepositInfo,
     tradeTableSize: this.tradeTableSize,
-    orderType: this.orderType,
   });
 }
 
