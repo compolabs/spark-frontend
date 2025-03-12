@@ -5,6 +5,7 @@ import { Undefinable } from "tsdef";
 
 import {
   AssetType,
+  BN,
   CompactMarketInfo,
   CreateOrderWithDepositParams,
   FulfillOrderManyWithDepositParams,
@@ -19,7 +20,6 @@ import { RootStore, useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { CONFIG } from "@utils/getConfig";
 import { getRealFee } from "@utils/getRealFee";

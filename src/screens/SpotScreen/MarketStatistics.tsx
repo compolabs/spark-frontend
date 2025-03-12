@@ -3,6 +3,8 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { Column, DesktopRow, Row } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
@@ -18,7 +20,6 @@ import DesktopMarketInfoTooltip from "@screens/SpotScreen/DesktopMarketInfoToolt
 import { MarketInfoItem } from "@screens/SpotScreen/DesktopMarketInfoTooltip/DesktopMarketInfoTooltip";
 
 import { DEFAULT_DECIMALS, PYTH_LINK } from "@constants";
-import BN from "@utils/BN";
 import { toCurrency } from "@utils/toCurrency";
 
 const MarketStatistics: React.FC = observer(() => {

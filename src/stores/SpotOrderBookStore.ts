@@ -2,7 +2,7 @@ import { HistogramData } from "lightweight-charts";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
 import { GetOrdersParams } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { RootStore } from "@stores";
@@ -10,7 +10,6 @@ import { RootStore } from "@stores";
 import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { CONFIG, Market } from "@utils/getConfig";
 import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";

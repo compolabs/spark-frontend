@@ -2,6 +2,8 @@ import React from "react";
 import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import copyIcon from "@assets/icons/copy.svg";
 import linkIcon from "@assets/icons/link.svg";
 import logoutIcon from "@assets/icons/logout.svg";
@@ -9,7 +11,6 @@ import logoutIcon from "@assets/icons/logout.svg";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 
-import BN from "@utils/BN";
 import { getExplorerLinkByAddress } from "@utils/getExplorerLink";
 
 import { FuelNetwork } from "@blockchain";

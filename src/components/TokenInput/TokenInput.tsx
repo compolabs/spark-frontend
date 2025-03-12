@@ -2,11 +2,11 @@ import React, { CSSProperties, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import Chip from "@components/Chip";
 import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
-
-import BN from "@utils/BN";
 
 import { FuelNetwork } from "@blockchain";
 

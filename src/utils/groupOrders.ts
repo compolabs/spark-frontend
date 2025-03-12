@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { DEFAULT_DECIMALS } from "@constants";
 
 import { SpotMarketOrder } from "@entity";
-
-import BN from "./BN";
 
 const roundPrice = (price: BN, decimals: number, rm: BigNumber.RoundingMode): BN => {
   const factor = new BN(10).pow(decimals);
