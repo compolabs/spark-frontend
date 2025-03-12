@@ -71,7 +71,6 @@ class SettingsStore {
     isInfoDashboardPerHours: this.isInfoDashboardPerHours,
     isShowDepositInfo: this.isShowDepositInfo,
     tradeTableSize: this.tradeTableSize,
-    orderType: this.orderType,
   });
 }
 
