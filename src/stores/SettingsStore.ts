@@ -14,7 +14,6 @@ export interface ISerializedSettingStore {
   isCompleteOnboardingProcess?: boolean;
   isInfoDashboardPerHours?: boolean;
   tradeTableSize?: number;
-  orderType?: ORDER_TYPE;
 }
 
 export enum TRADE_TABLE_SIZE {
@@ -71,7 +70,6 @@ class SettingsStore {
     isInfoDashboardPerHours: this.isInfoDashboardPerHours,
     isShowDepositInfo: this.isShowDepositInfo,
     tradeTableSize: this.tradeTableSize,
-    orderType: this.orderType,
   });
 }
 
