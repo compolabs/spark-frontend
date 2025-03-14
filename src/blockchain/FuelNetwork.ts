@@ -99,12 +99,6 @@ export class FuelNetwork {
     await this.walletManager.addAsset(assetId);
   };
 
-  createSpotOrder = async (
-    ...params: Parameters<typeof this.orderbookSdk.createOrder>
-  ): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.createOrder(...params);
-  };
-
   createSpotOrderWithDeposit = async (
     ...params: Parameters<typeof this.orderbookSdk.createOrderWithDeposit>
   ): Promise<WriteTransactionResponse> => {

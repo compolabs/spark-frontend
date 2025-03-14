@@ -4,7 +4,6 @@ import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
 
 import {
-  AssetType,
   BN,
   CompactMarketInfo,
   CreateOrderWithDepositParams,
@@ -66,9 +65,6 @@ export enum ORDER_TYPE {
 interface DepositInfo {
   amountToSpend: string;
   amountFee: string;
-  depositAssetId: string;
-  feeAssetId: string;
-  assetType: AssetType;
 }
 
 class CreateOrderVM {
@@ -315,28 +311,9 @@ class CreateOrderVM {
     const deposit: DepositInfo = {
       amountToSpend: depositAmount.toString(),
       amountFee: feeAmount.toString(),
-      depositAssetId: isBuy ? market.quoteToken.assetId : market.baseToken.assetId,
-      feeAssetId: market.quoteToken.assetId,
-      assetType: isBuy ? AssetType.Quote : AssetType.Base,
     };
 
-    const availableMarkets = CONFIG.MARKETS.filter((m) => {
-      // For a buy operation, we look for markets where either the quote or base asset matches our QUOTE token.
-      if (isBuy) {
-        return (
-          m.quoteAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase() ||
-          m.baseAssetId.toLowerCase() === deposit.feeAssetId.toLowerCase()
-        );
-      }
-
-      // For a sell operation, we look for markets where either the quote or base asset matches our BASE token.
-      return (
-        m.quoteAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase() ||
-        m.baseAssetId.toLowerCase() === deposit.depositAssetId.toLowerCase()
-      );
-    });
-
-    const compactMarkets: CompactMarketInfo[] = availableMarkets.map((m) => ({
+    const compactMarkets: CompactMarketInfo[] = CONFIG.MARKETS.map((m) => ({
       contractId: m.contractId,
       quoteAssetId: m.quoteAssetId,
       baseAssetId: m.baseAssetId,
