@@ -1,6 +1,6 @@
-import { SpotMarket } from "@entity";
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
-import BN from "./BN";
+import { SpotMarket } from "@entity";
 
 //TODO: Delete this file and make refactor in perp branch
 export const getRealFee = (market: SpotMarket | undefined, matcherFee: BN, exchangeFee: BN, isSell: boolean) => {

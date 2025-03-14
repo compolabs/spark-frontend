@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import Button from "@components/Button";
 import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
@@ -20,7 +22,6 @@ import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
 import { ModalEnums, TypeTransaction } from "@screens/Assets/enums/actionEnums";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 
 interface WithdrawAssets {
   setStep: (value: number) => void;

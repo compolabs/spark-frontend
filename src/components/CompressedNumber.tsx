@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import BN from "@utils/BN";
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { SmartFlex } from "./SmartFlex";
 import Text from "./Text";

@@ -1,4 +1,4 @@
-import BN from "@utils/BN";
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
 export type FetchTradesParams = {
   limit: number;

@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
-import { TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, TraderVolumeResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES_MAP } from "@components/Text";
@@ -18,8 +18,6 @@ import three from "@assets/images/3st.png";
 import { LeaderboardStore, useStores } from "@stores";
 
 import { pnlTimeline } from "@screens/Dashboard/const";
-
-import BN from "@utils/BN";
 
 const generatePosition = (key: TraderVolumeResponse["id"]) => {
   if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;

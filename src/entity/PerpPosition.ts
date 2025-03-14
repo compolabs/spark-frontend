@@ -1,8 +1,8 @@
 import { makeAutoObservable } from "mobx";
 
-import { FuelNetwork } from "@blockchain";
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
-import BN from "../utils/BN";
+import { FuelNetwork } from "@blockchain";
 
 import { Token } from "./Token";
 

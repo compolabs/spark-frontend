@@ -1,7 +1,8 @@
 import { makeAutoObservable } from "mobx";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 import { Market } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";

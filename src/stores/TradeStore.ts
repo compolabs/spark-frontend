@@ -3,10 +3,11 @@ import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import RootStore from "@stores/RootStore";
 
 import { DEFAULT_DECIMALS, DEFAULT_MARKET } from "@constants";
-import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 

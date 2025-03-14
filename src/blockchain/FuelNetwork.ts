@@ -2,9 +2,8 @@ import { Account, B256Address } from "fuels";
 import { makeObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import SparkOrderBookSdk, { OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import SparkOrderBookSdk, { BN, OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
-import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 
 import { Token } from "@entity";
@@ -98,12 +97,6 @@ export class FuelNetwork {
 
   addAssetToWallet = async (assetId: string): Promise<void> => {
     await this.walletManager.addAsset(assetId);
-  };
-
-  createSpotOrder = async (
-    ...params: Parameters<typeof this.orderbookSdk.createOrder>
-  ): Promise<WriteTransactionResponse> => {
-    return this.orderbookSdk.createOrder(...params);
   };
 
   createSpotOrderWithDeposit = async (

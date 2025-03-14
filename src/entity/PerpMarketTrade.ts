@@ -2,8 +2,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { Address, isBech32 } from "fuels";
 import { Nullable } from "tsdef";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 
 import { FuelNetwork } from "@blockchain";
 

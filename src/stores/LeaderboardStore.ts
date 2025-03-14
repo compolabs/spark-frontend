@@ -2,6 +2,7 @@ import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 
 import {
+  BN,
   GetCompetitionResponse,
   GetSortedLeaderboardQueryParams,
   GetTotalStatsTableData,
@@ -14,7 +15,6 @@ import { FiltersProps } from "@stores/DashboardStore";
 import { filters, pnlTimeline } from "@screens/Dashboard/const";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";
