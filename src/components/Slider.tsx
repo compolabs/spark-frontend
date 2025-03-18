@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import RCSlider, { SliderProps } from "rc-slider";
+import RCSlider, { SliderProps as RcSliderProps } from "rc-slider";
 
 import { Row } from "@components/Flex";
 import { TEXT_TYPES_MAP } from "@components/Text";
@@ -14,7 +14,7 @@ interface SliderProps {
   fixSize?: number;
 }
 
-const Slider: React.FC<SliderProps & SliderProps> = (props) => (
+const Slider: React.FC<SliderProps & RcSliderProps> = (props) => (
   <Root>
     <DotsContainer>
       {Array.from({ length: 10 }, (_, i) => (

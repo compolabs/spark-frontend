@@ -7,7 +7,7 @@ export interface Media extends MediaBreakpoints {
   currentMedia: BreakPointTypes;
 }
 
-export const useMedia = (): IMedia => {
+export const useMedia = (): Media => {
   const { width } = useWindowSize();
   const media: MediaBreakpoints = {
     mobile: width <= breakpoints.mobile,
