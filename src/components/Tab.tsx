@@ -2,12 +2,12 @@ import styled from "@emotion/styled";
 
 import Text from "@components/Text";
 
-interface IProps {
+interface TabProps {
   active?: boolean;
   disabled?: boolean;
 }
 
-const Tab = styled(Text)<IProps>`
+const Tab = styled(Text)<TabProps>`
   display: flex;
   height: 34px;
   align-items: center;

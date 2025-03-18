@@ -13,7 +13,7 @@ import { FuelNetwork } from "@blockchain";
 import AmountInput from "./AmountInput";
 import { BigNumberInput } from "./BigNumberInput";
 
-interface IProps {
+interface TokenInputProps {
   assetId?: string;
   decimals: number;
   displayDecimals?: number;
@@ -32,7 +32,7 @@ interface IProps {
   isShowMax?: boolean;
 }
 
-const TokenInput: React.FC<IProps> = observer((props) => {
+const TokenInput: React.FC<TokenInputProps> = observer((props) => {
   const bcNetwork = FuelNetwork.getInstance();
 
   const [focused, setFocused] = useState(false);

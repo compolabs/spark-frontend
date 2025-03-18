@@ -8,14 +8,14 @@ import search from "@assets/icons/search.svg";
 
 import Input from "./Input";
 
-interface IProps {
+interface WrapProps {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   variant?: "default" | "transparent";
 }
 
-const Wrap = styled.div<{ variant: IProps["variant"] }>`
+const Wrap = styled.div<{ variant: WrapProps["variant"] }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -58,7 +58,7 @@ const Wrap = styled.div<{ variant: IProps["variant"] }>`
   }}
 `;
 
-const SearchInput: React.FC<IProps> = ({ value, onChange, placeholder, variant = "default" }) => {
+const SearchInput: React.FC<WrapProps> = ({ value, onChange, placeholder, variant = "default" }) => {
   return (
     <Wrap variant={variant}>
       <img alt="search" src={search} width={24} />

@@ -11,14 +11,14 @@ import { useStores } from "@stores";
 import { DEFAULT_DECIMALS } from "@constants";
 import BN from "@utils/BN";
 
-interface IBalanceBlock {
+interface BalanceBlockProps {
   icon: React.ReactElement;
   nameWallet: string;
   token: AssetBlockData;
   showBalance: "balance" | "walletBalance" | "contractBalance";
 }
 
-export const BalanceBlock: React.FC<IBalanceBlock> = ({ icon, nameWallet, token, showBalance }) => {
+export const BalanceBlock: React.FC<BalanceBlockProps> = ({ icon, nameWallet, token, showBalance }) => {
   const { oracleStore } = useStores();
   const theme = useTheme();
   const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.asset.priceFeed), DEFAULT_DECIMALS);

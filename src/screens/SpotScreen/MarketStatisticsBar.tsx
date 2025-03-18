@@ -17,14 +17,14 @@ import MarketStatisticsBarSkeletonWrapper from "../../components/Skeletons/Marke
 
 import MarketStatistics from "./MarketStatistics";
 
-interface IProps {
+interface MarketStatisticsBarProps {
   isChartOpen?: boolean;
   onSwitchClick?: () => void;
 }
 
 export const MARKET_SELECTOR_ID = "market-selector";
 
-const MarketStatisticsBar: React.FC<IProps> = observer(({ isChartOpen, onSwitchClick }) => {
+const MarketStatisticsBar: React.FC<MarketStatisticsBarProps> = observer(({ isChartOpen, onSwitchClick }) => {
   const { tradeStore } = useStores();
   const media = useMedia();
 

@@ -14,7 +14,7 @@ import { FuelNetwork } from "@blockchain";
 import { SpotMarketVolume } from "@blockchain/types";
 import { PerpMarket, SpotMarket } from "@entity";
 
-export interface ISerializedTradeStore {
+export interface SerializedTradeStore {
   favMarkets: Nullable<string>;
 }
 
@@ -52,7 +52,7 @@ class TradeStore {
   private marketInfoUpdater: IntervalUpdater;
   private marketPricesUpdater: IntervalUpdater;
 
-  constructor(rootStore: RootStore, initState?: ISerializedTradeStore) {
+  constructor(rootStore: RootStore, initState?: SerializedTradeStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
@@ -239,7 +239,7 @@ class TradeStore {
 
   fetchTradeFeeDebounce = _.debounce(this.fetchTradeFee, 250);
 
-  serialize = (): ISerializedTradeStore => ({
+  serialize = (): SerializedTradeStore => ({
     favMarkets: this.favMarkets.join(","),
   });
 

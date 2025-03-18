@@ -1,15 +1,15 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-type TProps = React.InputHTMLAttributes<HTMLInputElement> & {
+type AmountInputProps = {
   small?: boolean;
   onWheel?: React.WheelEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   onFocus?: React.FocusEventHandler<HTMLInputElement>;
   inputRef?: React.RefObject<HTMLInputElement>;
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
-const AmountInput: React.FC<TProps> = ({ onWheel, inputRef, ...props }) => (
+const AmountInput: React.FC<AmountInputProps> = ({ onWheel, inputRef, ...props }) => (
   <Root
     {...props}
     ref={inputRef}

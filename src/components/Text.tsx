@@ -156,7 +156,7 @@ export const TEXT_TYPES_MAP = {
 
 type TEXT_TYPES = keyof typeof TEXT_TYPES_MAP;
 
-interface IProps {
+interface TextProps {
   type?: TEXT_TYPES;
   uppercase?: boolean;
   primary?: boolean;
@@ -169,7 +169,7 @@ interface IProps {
   attention?: boolean;
 }
 
-const Text = styled.div<IProps>`
+const Text = styled.div<TextProps>`
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "normal")};
   ${({ attention, primary, secondary, greenLight, disabled, theme, color }) =>
     (() => {

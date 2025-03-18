@@ -18,11 +18,11 @@ import { SpotMarket } from "@entity";
 
 import { MarketTitle } from "./MarketTitle";
 
-interface IProps {
+interface SpotMarketRowProps {
   market: SpotMarket;
 }
 
-const SpotMarketRow: React.FC<IProps> = observer(({ market }) => {
+const SpotMarketRow: React.FC<SpotMarketRowProps> = observer(({ market }) => {
   const { tradeStore, mixPanelStore, accountStore, spotOrderBookStore } = useStores();
   const navigate = useNavigate();
 

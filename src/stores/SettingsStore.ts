@@ -8,7 +8,7 @@ import RootStore from "@stores/RootStore";
 
 import { ORDER_TYPE } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
 
-export interface ISerializedSettingStore {
+export interface SerializedSettingStore {
   isUserAgreedWithTerms?: boolean;
   isShowDepositInfo?: string[];
   isCompleteOnboardingProcess?: boolean;
@@ -28,7 +28,7 @@ class SettingsStore {
   private readonly rootStore: RootStore;
   selectedTheme: THEME_TYPE = THEME_TYPE.DARK_THEME;
 
-  constructor(rootStore: RootStore, initState?: ISerializedSettingStore) {
+  constructor(rootStore: RootStore, initState?: SerializedSettingStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     if (initState) {
@@ -64,7 +64,7 @@ class SettingsStore {
   timeInForce: LimitType = LimitType.MKT;
   setTimeInForce = (v: LimitType) => (this.timeInForce = v);
 
-  serialize = (): ISerializedSettingStore => ({
+  serialize = (): SerializedSettingStore => ({
     isUserAgreedWithTerms: this.isUserAgreedWithTerms,
     isCompleteOnboardingProcess: this.isCompleteOnboardingProcess,
     isInfoDashboardPerHours: this.isInfoDashboardPerHours,

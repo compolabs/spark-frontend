@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import RCSlider, { SliderProps } from "rc-slider";
+import RCSlider, { SliderProps as RcSliderProps } from "rc-slider";
 
 import { Row } from "@components/Flex";
 import { TEXT_TYPES_MAP } from "@components/Text";
@@ -8,13 +8,13 @@ import { media } from "@themes/breakpoints";
 
 import "rc-slider/assets/index.css";
 
-interface IProps {
+interface SliderProps {
   percent?: number;
   symbol?: string;
   fixSize?: number;
 }
 
-const Slider: React.FC<SliderProps & IProps> = (props) => (
+const Slider: React.FC<SliderProps & RcSliderProps> = (props) => (
   <Root>
     <DotsContainer>
       {Array.from({ length: 10 }, (_, i) => (
@@ -69,7 +69,7 @@ const Root = styled.div`
   }
 `;
 
-const StyledSlider = styled(RCSlider)<IProps>`
+const StyledSlider = styled(RCSlider)<SliderProps>`
   padding: 0;
 
   .rc-slider-rail {
