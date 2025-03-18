@@ -1,6 +1,6 @@
-import { ISerializedRootStore } from "@stores/RootStore";
+import { SerializedRootStore } from "@stores/RootStore";
 
-export const loadState = (): ISerializedRootStore | undefined => {
+export const loadState = (): SerializedRootStore | undefined => {
   try {
     const raw = localStorage.getItem("spark-store") ?? localStorage.getItem("spark-store");
     const state = JSON.parse(raw as string);
@@ -10,6 +10,6 @@ export const loadState = (): ISerializedRootStore | undefined => {
     return undefined;
   }
 };
-export const saveState = (state: ISerializedRootStore): void => {
+export const saveState = (state: SerializedRootStore): void => {
   localStorage.setItem("spark-store", JSON.stringify(state));
 };

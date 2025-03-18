@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
 import Button from "@components/Button";
-import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
+import { AssetBlockProps } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
@@ -29,7 +29,7 @@ interface WithdrawAssets {
 export interface ShowAction {
   hash: string;
   transactionInfo: {
-    token: IAssetBlock["token"];
+    token: AssetBlockProps["token"];
     type: TypeTransaction;
     amount: string;
   };
@@ -38,7 +38,7 @@ export interface ShowAction {
 const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   const { quickAssetsStore, balanceStore } = useStores();
 
-  const [activeAsset, setActiveAsset] = useState<IAssetBlock["token"]>();
+  const [activeAsset, setActiveAsset] = useState<AssetBlockProps["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
   const [isLoading, setIsLoading] = useState(false);
 

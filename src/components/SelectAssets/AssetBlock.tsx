@@ -13,7 +13,7 @@ import BN from "@utils/BN";
 
 import { AssetBlockData } from "./SelectAssetsInput";
 
-export interface IAssetBlock {
+export interface AssetBlockProps {
   options: {
     showBalance?: "balance" | "walletBalance" | "contractBalance";
     showNullBalance?: boolean;
@@ -24,7 +24,7 @@ export interface IAssetBlock {
   type?: "rounded" | "square";
 }
 
-const AssetBlock: React.FC<IAssetBlock> = observer(
+const AssetBlock: React.FC<AssetBlockProps> = observer(
   ({
     styleToken,
     options: { showBalance = "balance", showNullBalance = true, isShowBalance = true },

@@ -15,9 +15,9 @@ import TokensFaucetTable from "@screens/Faucet/TokensFaucetTable";
 
 import { ROUTES } from "@constants";
 
-interface IProps {}
+interface FaucetProps {}
 
-const Faucet: React.FC<IProps> = observer(() => {
+const Faucet: React.FC<FaucetProps> = observer(() => {
   const { faucetStore, mixPanelStore, accountStore } = useStores();
 
   useEffect(() => {

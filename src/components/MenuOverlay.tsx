@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 
 import { SmartFlex } from "./SmartFlex";
 
-interface IProps {
+interface MenuOverlayProps {
   isOpen: boolean;
   top?: number;
   offsetTop?: number;
@@ -11,7 +11,7 @@ interface IProps {
   children?: React.ReactNode;
 }
 
-const MenuOverlay: React.FC<IProps> = ({ isOpen, children, top = 0, offsetTop = 0, zIndex = 200 }) => {
+const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, children, top = 0, offsetTop = 0, zIndex = 200 }) => {
   const fullOffset = top + offsetTop;
 
   useLayoutEffect(() => {

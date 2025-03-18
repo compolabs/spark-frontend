@@ -10,24 +10,24 @@ import { Column } from "./Flex";
 import Text, { TEXT_TYPES_MAP } from "./Text";
 import Tooltip from "./Tooltip";
 
-interface IOption<T = string> {
+interface SelectOption<T = string> {
   key: T;
   title: string | JSX.Element;
   value?: string | number;
   disabled?: boolean;
 }
 
-interface IProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
-  options: IOption<T>[];
+interface SelectProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
+  options: SelectOption<T>[];
   selected?: T;
-  onSelect: (option: IOption<T>, index: number) => void;
+  onSelect: (option: SelectOption<T>, index: number) => void;
   label?: string;
 }
 
-const Select = <T,>({ options, selected, onSelect, label, ...rest }: IProps<T>) => {
+const Select = <T,>({ options, selected, onSelect, label, ...rest }: SelectProps<T>) => {
   const [isVisible, setIsVisible] = useState(false);
   const selectedOption = options.find(({ key }) => selected === key);
-  const handleSelectClick = (v: IOption<T>, index: number) => {
+  const handleSelectClick = (v: SelectOption<T>, index: number) => {
     onSelect(v, index);
     setIsVisible(false);
   };

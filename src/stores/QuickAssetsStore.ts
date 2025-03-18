@@ -2,14 +2,14 @@ import { makeAutoObservable } from "mobx";
 
 import RootStore from "@stores/RootStore";
 
-interface ISerializedQuickAssetsStore {
+interface SerializedQuickAssetsStore {
   quickAssets?: boolean;
 }
 
 class QuickAssetsStore {
   private readonly rootStore: RootStore;
 
-  constructor(rootStore: RootStore, initState?: ISerializedQuickAssetsStore) {
+  constructor(rootStore: RootStore, initState?: SerializedQuickAssetsStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     if (initState) {
@@ -23,7 +23,7 @@ class QuickAssetsStore {
   currentStep: number = 0;
   setCurrentStep = (v: number) => (this.currentStep = v);
 
-  serialize = (): ISerializedQuickAssetsStore => ({
+  serialize = (): SerializedQuickAssetsStore => ({
     quickAssets: this.openQuickAssets,
   });
 }

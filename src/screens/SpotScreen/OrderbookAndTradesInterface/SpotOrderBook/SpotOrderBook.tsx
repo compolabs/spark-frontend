@@ -29,7 +29,7 @@ import { SpotMarketOrder } from "@entity";
 import OrderbookAndTradesSkeletonWrapper from "../../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";
 import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {}
+interface SpotOrderBookProps extends HTMLAttributes<HTMLDivElement> {}
 
 export enum SPOT_ORDER_FILTER {
   SELL_AND_BUY = 0,
@@ -49,7 +49,7 @@ const SPOT_SETTINGS_ICONS = {
   [SPOT_ORDER_FILTER.BUY]: buyIcon,
 };
 
-export const SpotOrderBook: React.FC<IProps> = observer(() => {
+export const SpotOrderBook: React.FC<SpotOrderBookProps> = observer(() => {
   const { spotOrderBookStore } = useStores();
   const orderSpotVm = useCreateOrderVM();
   const media = useMedia();

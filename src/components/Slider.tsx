@@ -8,13 +8,13 @@ import { media } from "@themes/breakpoints";
 
 import "rc-slider/assets/index.css";
 
-interface IProps {
+interface SliderProps {
   percent?: number;
   symbol?: string;
   fixSize?: number;
 }
 
-const Slider: React.FC<SliderProps & IProps> = (props) => (
+const Slider: React.FC<SliderProps & SliderProps> = (props) => (
   <Root>
     <DotsContainer>
       {Array.from({ length: 10 }, (_, i) => (
@@ -69,7 +69,7 @@ const Root = styled.div`
   }
 `;
 
-const StyledSlider = styled(RCSlider)<IProps>`
+const StyledSlider = styled(RCSlider)<SliderProps>`
   padding: 0;
 
   .rc-slider-rail {

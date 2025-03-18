@@ -3,7 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 
-import { IAssetBlock } from "@components/SelectAssets/AssetBlock";
+import { AssetBlockProps } from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
@@ -21,7 +21,7 @@ import { getExplorerLinkByHash } from "@utils/getExplorerLink";
 export type ActionModal = {
   hash: string;
   transactionInfo: {
-    token: IAssetBlock["token"];
+    token: AssetBlockProps["token"];
     type: TypeTransaction;
     amount: string;
   };
