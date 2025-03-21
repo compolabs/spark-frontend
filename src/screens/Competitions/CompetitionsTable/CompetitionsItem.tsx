@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
-import { GetCompetitionResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, GetCompetitionResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
@@ -17,7 +17,6 @@ import three from "@assets/images/3st.png";
 
 import { useStores } from "@stores";
 
-import BN from "@utils/BN";
 import { toCurrency } from "@utils/toCurrency.ts";
 
 const generatePosition = (key: number) => {

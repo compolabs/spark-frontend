@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-import BN from "@utils/BN";
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
 import Sheet from "../Sheet";
 import { SmartFlex } from "../SmartFlex";

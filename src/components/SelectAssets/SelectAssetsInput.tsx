@@ -2,6 +2,8 @@ import React, { HTMLAttributes, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import Button from "@components/Button";
 import { AssetBlockProps } from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
@@ -10,7 +12,6 @@ import { BigNumberInput } from "@components/TokenInput/BigNumberInput";
 import { TokenSelect } from "@screens/SwapScreen/TokenSelect";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 
 import { Token } from "@entity";
 
