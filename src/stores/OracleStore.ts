@@ -1,9 +1,10 @@
 import { HermesClient } from "@pythnetwork/hermes-client";
 import { makeAutoObservable } from "mobx";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import RootStore from "@stores/RootStore";
 
-import BN from "@utils/BN";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
 import { FuelNetwork } from "@blockchain";

@@ -12,14 +12,14 @@ import { SmartFlex } from "../SmartFlex";
 import { MenuNav } from "./MenuNav";
 import WalletAddressButton from "./WalletAddressButton";
 
-interface IProps {
+interface MobileMenuProps {
   isOpen: boolean;
   onAccountClick: () => void;
   onWalletConnect: () => void;
   onClose: () => void;
 }
 
-const MobileMenu: React.FC<IProps> = observer(({ isOpen, onAccountClick, onWalletConnect, onClose }) => {
+const MobileMenu: React.FC<MobileMenuProps> = observer(({ isOpen, onAccountClick, onWalletConnect, onClose }) => {
   const { accountStore } = useStores();
 
   const handleAccountClick = () => {

@@ -1,9 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
 
-import { Order } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, Order } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 
 import { FuelNetwork } from "@blockchain";

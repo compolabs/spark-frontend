@@ -8,7 +8,7 @@ import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { SmartFlex } from "./SmartFlex";
 import Tooltip from "./Tooltip";
 
-interface IProps {
+interface TableProps {
   columns: ColumnDef<any, any>[];
   data: any[];
   fitContent?: boolean;
@@ -16,7 +16,7 @@ interface IProps {
   loading?: boolean;
 }
 
-const Table: React.FC<IProps> = observer(({ columns, data, fitContent, withHover, loading, ...rest }) => {
+const Table: React.FC<TableProps> = observer(({ columns, data, fitContent, withHover, loading, ...rest }) => {
   const table = useReactTable({
     columns,
     data,

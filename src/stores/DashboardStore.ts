@@ -12,7 +12,7 @@ import { FuelNetwork } from "@blockchain";
 
 import RootStore from "./RootStore";
 
-interface IRecord {
+interface UserRecord {
   user: string;
   market: string;
   tvl: number;
@@ -94,7 +94,7 @@ class DashboardStore {
       const { hour, records_in_hour } = hourData;
       const currentHourValues: { [market: string]: { tvl: number; timestamp: number } } = {};
       records_in_hour.forEach((record) => {
-        const { market, tvl, timestamp }: IRecord = JSON.parse(record);
+        const { market, tvl, timestamp }: UserRecord = JSON.parse(record);
         if (!currentHourValues[market] || currentHourValues[market].timestamp < timestamp) {
           currentHourValues[market] = { tvl, timestamp };
         }

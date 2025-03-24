@@ -6,7 +6,7 @@ import { FuelNetwork } from "@blockchain";
 
 import RootStore from "./RootStore";
 
-export interface ISerializedAccountStore {
+export interface SerializedAccountStore {
   privateKey: Nullable<string>;
 }
 
@@ -15,7 +15,7 @@ class AccountStore {
 
   constructor(
     private rootStore: RootStore,
-    initState?: ISerializedAccountStore,
+    initState?: SerializedAccountStore,
   ) {
     makeAutoObservable(this);
     if (initState) {
@@ -80,7 +80,7 @@ class AccountStore {
     return !!bcNetwork.getAddress();
   }
 
-  serialize = (): ISerializedAccountStore => {
+  serialize = (): SerializedAccountStore => {
     const bcNetwork = FuelNetwork.getInstance();
     return {
       privateKey: bcNetwork.getPrivateKey() ?? null,

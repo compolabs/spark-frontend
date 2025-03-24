@@ -3,10 +3,11 @@ import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import RootStore from "@stores/RootStore";
 
 import { DEFAULT_DECIMALS, DEFAULT_MARKET } from "@constants";
-import BN from "@utils/BN";
 import { CONFIG } from "@utils/getConfig";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
@@ -14,7 +15,7 @@ import { FuelNetwork } from "@blockchain";
 import { SpotMarketVolume } from "@blockchain/types";
 import { PerpMarket, SpotMarket } from "@entity";
 
-export interface ISerializedTradeStore {
+export interface SerializedTradeStore {
   favMarkets: Nullable<string>;
 }
 
@@ -52,7 +53,7 @@ class TradeStore {
   private marketInfoUpdater: IntervalUpdater;
   private marketPricesUpdater: IntervalUpdater;
 
-  constructor(rootStore: RootStore, initState?: ISerializedTradeStore) {
+  constructor(rootStore: RootStore, initState?: SerializedTradeStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
@@ -239,7 +240,7 @@ class TradeStore {
 
   fetchTradeFeeDebounce = _.debounce(this.fetchTradeFee, 250);
 
-  serialize = (): ISerializedTradeStore => ({
+  serialize = (): SerializedTradeStore => ({
     favMarkets: this.favMarkets.join(","),
   });
 

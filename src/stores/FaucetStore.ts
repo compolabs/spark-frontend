@@ -1,10 +1,11 @@
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import RootStore from "@stores/RootStore";
 
 import { FUEL_FAUCET } from "@constants";
-import BN from "@utils/BN";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 

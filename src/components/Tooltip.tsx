@@ -4,7 +4,7 @@ import { usePopperTooltip } from "react-popper-tooltip";
 import { Config } from "react-popper-tooltip/dist/types";
 import styled from "@emotion/styled";
 
-interface IProps {
+interface TooltipProps {
   content: string | JSX.Element;
   config?: Config;
   fixed?: boolean;
@@ -13,7 +13,7 @@ interface IProps {
   children: React.ReactNode;
 }
 
-const Tooltip: React.FC<IProps> = ({ containerStyles, rootStyles, children, content, config }) => {
+const Tooltip: React.FC<TooltipProps> = ({ containerStyles, rootStyles, children, content, config }) => {
   const { getTooltipProps, setTooltipRef, setTriggerRef, triggerRef, visible } = usePopperTooltip({
     ...config,
   });

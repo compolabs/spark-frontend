@@ -2,6 +2,8 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
@@ -9,16 +11,15 @@ import Text from "@components/Text";
 import { useStores } from "@stores";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 
-interface IBalanceBlock {
+interface BalanceBlockProps {
   icon: React.ReactElement;
   nameWallet: string;
   token: AssetBlockData;
   showBalance: "balance" | "walletBalance" | "contractBalance";
 }
 
-export const BalanceBlock: React.FC<IBalanceBlock> = ({ icon, nameWallet, token, showBalance }) => {
+export const BalanceBlock: React.FC<BalanceBlockProps> = ({ icon, nameWallet, token, showBalance }) => {
   const { oracleStore } = useStores();
   const theme = useTheme();
   const price = BN.formatUnits(oracleStore.getTokenIndexPrice(token.asset.priceFeed), DEFAULT_DECIMALS);

@@ -1,14 +1,14 @@
 import { autorun, makeAutoObservable } from "mobx";
 
-import AccountStore, { ISerializedAccountStore } from "@stores/AccountStore";
+import AccountStore, { SerializedAccountStore } from "@stores/AccountStore";
 import DashboardStore from "@stores/DashboardStore";
 import FaucetStore from "@stores/FaucetStore";
 import LeaderboardStore from "@stores/LeaderboardStore";
 import MixPanelStore from "@stores/MixPanelStore";
 import NotificationStore from "@stores/NotificationStore";
 import QuickAssetsStore from "@stores/QuickAssetsStore";
-import SettingsStore, { ISerializedSettingStore } from "@stores/SettingsStore";
-import TradeStore, { ISerializedTradeStore } from "@stores/TradeStore";
+import SettingsStore, { SerializedSettingStore } from "@stores/SettingsStore";
+import TradeStore, { SerializedTradeStore } from "@stores/TradeStore";
 
 import { saveState } from "@utils/localStorage";
 
@@ -18,10 +18,10 @@ import OracleStore from "./OracleStore";
 import SpotOrderBookStore from "./SpotOrderBookStore";
 import SwapStore from "./SwapStore";
 
-export interface ISerializedRootStore {
-  accountStore?: ISerializedAccountStore;
-  tradeStore?: ISerializedTradeStore;
-  settingStore?: ISerializedSettingStore;
+export interface SerializedRootStore {
+  accountStore?: SerializedAccountStore;
+  tradeStore?: SerializedTradeStore;
+  settingStore?: SerializedSettingStore;
 }
 
 export default class RootStore {
@@ -41,7 +41,7 @@ export default class RootStore {
   dashboardStore: DashboardStore;
   leaderboardStore: LeaderboardStore;
 
-  private constructor(initState?: ISerializedRootStore) {
+  private constructor(initState?: SerializedRootStore) {
     this.notificationStore = new NotificationStore(this);
     this.accountStore = new AccountStore(this, initState?.accountStore);
     this.oracleStore = new OracleStore(this);
@@ -67,7 +67,7 @@ export default class RootStore {
     );
   }
 
-  static create = (initState?: ISerializedRootStore) => {
+  static create = (initState?: SerializedRootStore) => {
     if (!RootStore.instance) {
       RootStore.instance = new RootStore(initState);
     }
@@ -79,7 +79,7 @@ export default class RootStore {
     return this.accountStore.initialized && this.tradeStore.initialized;
   }
 
-  serialize = (): ISerializedRootStore => ({
+  serialize = (): SerializedRootStore => ({
     accountStore: this.accountStore.serialize(),
     tradeStore: this.tradeStore.serialize(),
     settingStore: this.settingsStore.serialize(),

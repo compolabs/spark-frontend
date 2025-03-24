@@ -3,6 +3,8 @@ import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import Divider from "@components/Divider";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
@@ -15,7 +17,6 @@ import logoutIcon from "@assets/icons/logout.svg";
 import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 
-import BN from "@utils/BN";
 import { getExplorerLinkByAddress } from "@utils/getExplorerLink";
 
 import { FuelNetwork } from "@blockchain";

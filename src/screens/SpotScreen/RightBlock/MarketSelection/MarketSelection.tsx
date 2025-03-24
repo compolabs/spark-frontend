@@ -19,13 +19,13 @@ import SpotMarketRow from "@screens/SpotScreen/RightBlock/MarketSelection/SpotMa
 
 import { PerpMarket, SpotMarket } from "@entity";
 
-interface IProps {}
+interface MarketSelectionProps {}
 
 const useFilteredMarkets = <T extends SpotMarket | PerpMarket>(markets: T[], searchValue: string) => {
   return markets.filter((market) => market.symbol.includes(searchValue));
 };
 
-const MarketSelection: React.FC<IProps> = observer(() => {
+const MarketSelection: React.FC<MarketSelectionProps> = observer(() => {
   const { tradeStore } = useStores();
   const media = useMedia();
   const [searchValue, setSearchValue] = useState("");

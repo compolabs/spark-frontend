@@ -5,12 +5,12 @@ import Button from "@components/Button";
 
 import { useStores } from "@stores";
 
-interface IProps {
+interface MintButtonsProps {
   assetId: string;
   disabled?: boolean;
 }
 
-const MintButtons: React.FC<IProps> = observer(({ assetId, disabled }) => {
+const MintButtons: React.FC<MintButtonsProps> = observer(({ assetId, disabled }) => {
   const { faucetStore } = useStores();
 
   if (!faucetStore.initialized) {

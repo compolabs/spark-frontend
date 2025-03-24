@@ -2,14 +2,14 @@ import { breakpoints, BreakPointTypes } from "@themes/breakpoints";
 
 import { useWindowSize } from "./useWindowSize";
 
-type TMediaBreakpoints = Record<BreakPointTypes, boolean>;
-export interface IMedia extends TMediaBreakpoints {
+type MediaBreakpoints = Record<BreakPointTypes, boolean>;
+export interface Media extends MediaBreakpoints {
   currentMedia: BreakPointTypes;
 }
 
-export const useMedia = (): IMedia => {
+export const useMedia = (): Media => {
   const { width } = useWindowSize();
-  const media: TMediaBreakpoints = {
+  const media: MediaBreakpoints = {
     mobile: width <= breakpoints.mobile,
     desktop: width > breakpoints.mobile,
   };

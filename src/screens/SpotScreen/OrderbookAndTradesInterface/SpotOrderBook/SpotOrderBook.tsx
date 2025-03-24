@@ -3,6 +3,8 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+
 import { CompressedNumber } from "@components/CompressedNumber";
 import { Column, Row } from "@components/Flex";
 import { SpotOrderSettingsSheet } from "@components/Modal";
@@ -21,7 +23,6 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
 import { DEFAULT_DECIMALS } from "@constants";
-import BN from "@utils/BN";
 import { hexToRgba } from "@utils/hexToRgb";
 
 import { SpotMarketOrder } from "@entity";
@@ -29,7 +30,7 @@ import { SpotMarketOrder } from "@entity";
 import OrderbookAndTradesSkeletonWrapper from "../../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";
 import { ORDER_MODE, useCreateOrderVM } from "../../RightBlock/CreateOrder/CreateOrderVM";
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {}
+interface SpotOrderBookProps extends HTMLAttributes<HTMLDivElement> {}
 
 export enum SPOT_ORDER_FILTER {
   SELL_AND_BUY = 0,
@@ -49,7 +50,7 @@ const SPOT_SETTINGS_ICONS = {
   [SPOT_ORDER_FILTER.BUY]: buyIcon,
 };
 
-export const SpotOrderBook: React.FC<IProps> = observer(() => {
+export const SpotOrderBook: React.FC<SpotOrderBookProps> = observer(() => {
   const { spotOrderBookStore } = useStores();
   const orderSpotVm = useCreateOrderVM();
   const media = useMedia();

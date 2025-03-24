@@ -6,12 +6,12 @@ import Text from "@components/Text";
 
 import { SpotMarket } from "@entity";
 
-interface IProps {
+interface MarketSymbolProps {
   market: SpotMarket;
   iconSize?: 16 | 24;
 }
 
-export const MarketSymbol = ({ market, iconSize = 16 }: IProps) => {
+export const MarketSymbol = ({ market, iconSize = 16 }: MarketSymbolProps) => {
   return (
     <MarketTitleContainer size={iconSize * 2}>
       <SmartFlex width="fit-content">
