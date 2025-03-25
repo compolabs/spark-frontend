@@ -1,0 +1,9 @@
+{{- if .Values.ingress.headers -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-nginx-custom-headers
+  labels:
+    {{- include "helm-chart.labels" . | nindent 4 }}
+data: {{ .Values.ingress.headers | nindent 2 }}
+{{- end }}
