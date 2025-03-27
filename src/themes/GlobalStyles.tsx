@@ -60,17 +60,8 @@ const globalModalStyles = (theme: Theme) => css`
 
   .rc-dialog-close {
     opacity: 1;
-    top: 8px;
-    right: 8px;
-    width: 40px;
-    height: 40px;
-    display: none;
-  }
-
-  @media (min-width: 400px) {
-    .rc-dialog-close {
-      right: 0;
-    }
+    top: 24px;
+    right: 18px;
   }
   // END rc-dialog
 

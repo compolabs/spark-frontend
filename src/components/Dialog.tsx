@@ -1,6 +1,9 @@
 import React, { useCallback, useRef } from "react";
+import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import RcDialog, { DialogProps } from "rc-dialog";
+
+import CloseIcon from "@assets/icons/close.svg?react";
 
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 
@@ -14,8 +17,19 @@ export const Dialog: React.FC<DialogProps> = observer(({ children, ...rest }) =>
   useOnClickOutside(dialogRef, handleCloseDialog);
 
   return (
-    <RcDialog animation="zoom" maskAnimation="fade" {...rest}>
+    <RcDialog animation="zoom" closeIcon={<CloseIconStyled />} maskAnimation="fade" {...rest}>
       <div ref={dialogRef}>{children}</div>
     </RcDialog>
   );
 });
+
+const CloseIconStyled = styled(CloseIcon)`
+  width: 14px;
+  height: 14px;
+
+  path {
+    fill: ${({ theme }) => theme.colors.textIconPrimary};
+  }
+
+  //cursor: pointer;
+`;

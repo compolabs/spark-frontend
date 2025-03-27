@@ -69,7 +69,7 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
       <Text color={theme.colors.textIconPrimary} data-testid="terms.title" type="CP_Header_18_Medium" uppercase>
         Terms of use
       </Text>
-      <CloseIconStyled onClick={onClose} />
+      {media.mobile && <CloseIconStyled onClick={onClose} />}
     </HeaderContainer>
   );
 

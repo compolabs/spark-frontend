@@ -9,7 +9,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 export const Checkbox: React.FC<Props> = ({ checked, "data-testid": testId, children, ...props }) => {
   return (
     <Root data-checkbox="true" data-testid={testId}>
-      <HiddenCheckbox checked={checked} type="checkbox" {...props} />
+      <HiddenCheckbox checked={checked} type="checkbox" readOnly {...props} />
       <StyledCheckbox checked={checked}>
         <CheckedIcon height="10" viewBox="0 0 8 7" width="12" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -35,12 +35,6 @@ const CheckedIcon = styled.svg`
   fill: none;
 `;
 
-const HiddenCheckbox = styled.input`
-  appearance: none;
-  width: 0;
-  height: 0;
-`;
-
 const StyledCheckbox = styled.div<{ checked: boolean }>`
   display: flex;
   align-items: center;
@@ -55,5 +49,18 @@ const StyledCheckbox = styled.div<{ checked: boolean }>`
   ${CheckedIcon} {
     visibility: ${({ checked }) => (checked ? "visible" : "hidden")};
     color: ${({ theme }) => theme.colors.bgSecondary};
+  }
+`;
+
+const HiddenCheckbox = styled.input`
+  appearance: none;
+  width: 0;
+  height: 0;
+
+  &:focus-visible + ${StyledCheckbox} {
+    outline: none;
+    box-shadow:
+      0 0 0 2px #0052cc,
+      0 0 0 3px #fff;
   }
 `;

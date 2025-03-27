@@ -149,6 +149,13 @@ const Button = styled.button<ButtonProps>`
             align-items: center;
             justify-content: center;
             cursor: pointer;
+
+            &:focus-visible {
+              box-shadow:
+                0 0 0 2px #0052cc,
+                0 0 0 3px #fff;
+              border-radius: 4px;
+            }
           `;
         default:
           return css`
