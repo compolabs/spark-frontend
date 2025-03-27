@@ -30,3 +30,8 @@ src/charting_library/
 
 package-lock.json
 .npmrc
+
+# Playwright test artifacts
+e2e/artifacts/
+test-results/
+playwright-report/

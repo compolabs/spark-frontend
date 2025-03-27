@@ -3,11 +3,12 @@ import styled from "@emotion/styled";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   checked: boolean;
+  "data-testid": "terms.checkbox.accept" | "terms.checkbox.acknowledge";
 }
 
-export const Checkbox: React.FC<Props> = ({ checked, children, ...props }) => {
+export const Checkbox: React.FC<Props> = ({ checked, "data-testid": testId, children, ...props }) => {
   return (
-    <Root data-checkbox="true">
+    <Root data-checkbox="true" data-testid={testId}>
       <HiddenCheckbox checked={checked} type="checkbox" {...props} />
       <StyledCheckbox checked={checked}>
         <CheckedIcon height="10" viewBox="0 0 8 7" width="12" xmlns="http://www.w3.org/2000/svg">

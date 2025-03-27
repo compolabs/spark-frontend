@@ -12,6 +12,7 @@ export interface ButtonProps {
   grey?: boolean;
   fitContent?: boolean;
   active?: boolean;
+  bare?: boolean;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -22,8 +23,8 @@ const Button = styled.button<ButtonProps>`
   align-items: center;
   box-sizing: border-box;
   ${TEXT_TYPES_MAP.BUTTON}
-  height: 40px;
-  padding: 0 16px;
+  //height: 40px;
+  //padding: 0 16px;
   border-radius: 32px;
   cursor: pointer;
   background: transparent;
@@ -31,12 +32,19 @@ const Button = styled.button<ButtonProps>`
   width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   color: ${({ theme }) => theme.colors.textPrimary};
 
-  ${media.desktop} {
-    padding: 0 12px;
-    height: 40px;
-  }
+  ${({ bare }) =>
+    !bare &&
+    css`
+      height: 40px;
+      padding: 0 16px;
 
-  ${({ green, red, black, text, theme, active, grey }) =>
+      ${media.desktop} {
+        padding: 0 12px;
+        height: 40px;
+      }
+    `}
+
+  ${({ green, red, black, text, theme, active, grey, bare }) =>
     (() => {
       switch (true) {
         case green:
@@ -131,6 +139,16 @@ const Button = styled.button<ButtonProps>`
               background: ${theme.colors.borderSecondary};
               color: ${theme.colors.textDisabled};
             }
+          `;
+        case bare:
+          return css`
+            all: unset;
+            padding: 0;
+            height: fit-content;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
           `;
         default:
           return css`

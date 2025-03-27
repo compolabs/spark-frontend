@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react";
 import { IDialogPropTypes as DialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
+import ButtonWrapper from "@components/ButtonWrapper.tsx";
 import { Dialog } from "@components/Dialog";
 import Text from "@components/Text";
 
@@ -49,7 +50,7 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
 
   const [isUserAgrementDropdownOpen, setIsUserAgrementDropdownOpen] = useState(false);
 
-  const userCanProceed = !(isUserAcknowledge && isUserAcknowledge);
+  const userCanProceed = !(isUserAgreedWithTerms && isUserAcknowledge);
 
   const openWalletConnectUI = () => {
     onClose();
@@ -65,7 +66,7 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
 
   const renderHeader = () => (
     <HeaderContainer>
-      <Text color={theme.colors.textIconPrimary} type="CP_Header_18_Medium" uppercase>
+      <Text color={theme.colors.textIconPrimary} data-testid="terms.title" type="CP_Header_18_Medium" uppercase>
         Terms of use
       </Text>
       <CloseIconStyled onClick={onClose} />
@@ -83,19 +84,36 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
     setIsUserAgreedWithTerms((v) => !v);
   };
 
+  const handleIsUserAcknowledge = () => {
+    setIsUserAcknowledge((v) => !v);
+  };
+
   const renderDropdown = () => (
     <SmartFlex column>
-      <DropdownContainer onClick={handleOpenUserAgrementDropdown}>
-        <Checkbox checked={isUserAgreedWithTerms} onClick={handleIsUserAgreedWithTerms}>
+      <DropdownContainer>
+        <Checkbox
+          checked={isUserAgreedWithTerms}
+          data-testid="terms.checkbox.accept"
+          onClick={handleIsUserAgreedWithTerms}
+        >
           <Text color={theme.colors.textIconPrimary} type="CP_Body_16_Medium">
             I accept the Terms of Use
           </Text>
         </Checkbox>
-        <ArrowIconStyled open={isUserAgrementDropdownOpen} />
+        <ButtonWrapper data-testid="terms.dropdown.trigger" bare>
+          <ArrowIconStyled open={isUserAgrementDropdownOpen} onClick={handleOpenUserAgrementDropdown} />
+        </ButtonWrapper>
       </DropdownContainer>
       <AnimatePresence>
         {isUserAgrementDropdownOpen && (
-          <DropdownContent key="dropdown" animate="open" exit="closed" initial="closed" variants={dropdownVariants}>
+          <DropdownContent
+            key="dropdown"
+            animate="open"
+            data-testid="terms.dropdown.content"
+            exit="closed"
+            initial="closed"
+            variants={dropdownVariants}
+          >
             <DropdownContentWrapper>
               <Text color={theme.colors.textIconSecondary} type="CP_Support_10">
                 This website-hosted user interface (this &ldquo;Interface&rdquo;) is an open source frontend software
@@ -119,8 +137,8 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
   );
 
   const renderAcknowledge = () => (
-    <ItemContainer onClick={() => setIsUserAcknowledge((v) => !v)}>
-      <Checkbox checked={isUserAcknowledge}>
+    <ItemContainer>
+      <Checkbox checked={isUserAcknowledge} data-testid="terms.checkbox.acknowledge" onClick={handleIsUserAcknowledge}>
         <Text color={theme.colors.textIconPrimary} type="CP_Body_16_Medium">
           I acknowledge that I am trading with real money
         </Text>
@@ -133,7 +151,7 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
       {renderDropdown()}
       {renderAcknowledge()}
       <FooterContainer>
-        <ButtonNew disabled={userCanProceed} onClick={saveUserAgreement}>
+        <ButtonNew data-testid="terms.button.confirm" disabled={userCanProceed} onClick={saveUserAgreement}>
           <Text color="inherit" type="CP_Button_14_Medium" uppercase>
             Agree and Continue
           </Text>
@@ -162,7 +180,7 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
   }
 
   return (
-    <Dialog title={renderHeader()} visible={visible} onClose={onClose}>
+    <Dialog title={renderHeader()} visible={visible} wrapProps={{ "data-testid": "terms.dialog" }} onClose={onClose}>
       {renderContent()}
     </Dialog>
   );
