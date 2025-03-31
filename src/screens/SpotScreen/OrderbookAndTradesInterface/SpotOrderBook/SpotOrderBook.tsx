@@ -3,7 +3,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import { CompressedNumber } from "@components/CompressedNumber";
 import { Column, Row } from "@components/Flex";

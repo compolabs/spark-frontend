@@ -4,7 +4,8 @@ import { HashRouter as Router } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { FuelProvider } from "@fuels/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { CHAIN_IDS, Network } from "fuels";
+
+import { CHAIN_IDS, Network } from "@blockchain/fuel/types/fuels";
 
 import ThemeWrapper from "@themes/ThemeProvider";
 

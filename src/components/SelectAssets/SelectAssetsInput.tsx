@@ -2,7 +2,7 @@ import React, { HTMLAttributes, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import Button from "@components/Button";
 import { AssetBlockProps } from "@components/SelectAssets/AssetBlock";

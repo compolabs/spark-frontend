@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
 import { SmartFlex } from "@components/SmartFlex";

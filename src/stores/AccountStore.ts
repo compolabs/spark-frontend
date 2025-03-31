@@ -1,8 +1,8 @@
-import { Account, B256Address } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { Account, B256Address } from "@blockchain/fuel/types/fuels";
 
 import RootStore from "./RootStore";
 
@@ -33,10 +33,10 @@ class AccountStore {
 
   connect = async (wallet: Account) => {
     const { notificationStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     try {
-      await bcNetwork?.connect(wallet);
+      await bcNetwork.sdk.connect(wallet);
     } catch (error: any) {
       notificationStore.error({
         text: "Unexpected error. Please try again.",
@@ -47,10 +47,10 @@ class AccountStore {
   connectWalletByPrivateKey = async (privateKey: string) => {
     // TODO: set address
     const { notificationStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     try {
-      await bcNetwork?.connectWalletByPrivateKey(privateKey);
+      await bcNetwork.sdk.connectWalletByPrivateKey(privateKey);
     } catch (error: any) {
       notificationStore.error({
         text: "Unexpected error. Please try again.",
@@ -59,32 +59,32 @@ class AccountStore {
   };
 
   addAsset = async (assetId: string) => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    await bcNetwork!.addAssetToWallet(assetId);
+    await bcNetwork.sdk.addAssetToWallet(assetId);
   };
 
   disconnect = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
-    await bcNetwork?.disconnectWallet();
+    const bcNetwork = Blockchain.getInstance();
+    await bcNetwork.sdk.disconnectWallet();
   };
 
   get address(): Nullable<B256Address> {
-    const bcNetwork = FuelNetwork.getInstance();
-    return bcNetwork.getAddress();
+    const bcNetwork = Blockchain.getInstance();
+    return bcNetwork.sdk.getAddress();
   }
 
   get isConnected() {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    return !!bcNetwork.getAddress();
+    return !!bcNetwork.sdk.getAddress();
   }
 
   serialize = (): SerializedAccountStore => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     return {
-      privateKey: bcNetwork.getPrivateKey() ?? null,
-      // address: bcNetwork.getAddress() ?? null,
+      privateKey: bcNetwork.sdk.getPrivateKey() ?? null,
+      // address: bcNetwork.sdk.getAddress() ?? null,
     };
   };
 }

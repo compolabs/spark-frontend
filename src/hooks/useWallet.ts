@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useConnectUI, useFuel } from "@fuels/react";
-import { Account } from "fuels";
+
+import { Account } from "@blockchain/fuel/types/fuels";
 
 import { useStores } from "@stores";
 

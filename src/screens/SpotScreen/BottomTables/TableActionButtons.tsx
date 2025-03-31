@@ -3,7 +3,7 @@ import { Config } from "react-popper-tooltip";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import { OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { OrderType } from "@blockchain/fuel/types";
 
 import { CheckboxOld } from "@components/CheckboxOld";
 import SizedBox from "@components/SizedBox";

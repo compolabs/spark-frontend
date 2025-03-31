@@ -1,4 +1,4 @@
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import { SpotMarket } from "@entity";
 

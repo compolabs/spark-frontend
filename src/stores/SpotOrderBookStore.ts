@@ -2,8 +2,8 @@ import { HistogramData } from "lightweight-charts";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { BN, GetActiveOrdersParams, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
-import { GetOrdersParams } from "@compolabs/spark-orderbook-ts-sdk";
+import { Blockchain } from "@blockchain";
+import { BN, GetActiveOrdersParams, GetOrdersParams, OrderType } from "@blockchain/fuel/types";
 
 import { RootStore } from "@stores";
 
@@ -16,7 +16,6 @@ import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
-import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
@@ -115,7 +114,7 @@ class SpotOrderBookStore {
   }
 
   private async fetchOrderBook(market: Market) {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     // TODO: Когда спред будет нормальный, попросят этот расчет маркетного ордера (best ask + best bid) / 2
     //   const params: GetActiveOrdersParams = {
     //     limit: 1,
@@ -123,7 +122,7 @@ class SpotOrderBookStore {
     //     asset: market.baseAssetId ?? "",
     //     orderType: orderType,
     //   };
-    //   const activeOrders = await bcNetwork.fetchSpotActiveOrders(params);
+    //   const activeOrders = await bcNetwork.sdk.fetchSpotActiveOrders(params);
     //   if ("ActiveSellOrder" in activeOrders.data) {
     //     return new SpotMarketOrder({
     //       ...activeOrders.data.ActiveSellOrder[0],
@@ -139,7 +138,7 @@ class SpotOrderBookStore {
       limit: 1,
       market: [market.contractId],
     };
-    return await bcNetwork.fetchLastTrade(params);
+    return await bcNetwork.sdk.fetchLastTrade(params);
   }
 
   get buyOrders(): SpotMarketOrder[] {
@@ -178,7 +177,7 @@ class SpotOrderBookStore {
 
     if (!this.rootStore.initialized || !market) return;
 
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     const params: Omit<GetActiveOrdersParams, "orderType"> = {
       limit: 150,
@@ -194,7 +193,7 @@ class SpotOrderBookStore {
     orderType: OrderType,
     subscription: Subscription | null,
     updateOrders: (orders: SpotMarketOrder[]) => void,
-    bcNetwork: FuelNetwork,
+    bcNetwork: Blockchain,
     params: Omit<GetActiveOrdersParams, "orderType">,
   ) {
     if (subscription) {
@@ -204,7 +203,7 @@ class SpotOrderBookStore {
     const { tradeStore } = this.rootStore;
     const market = tradeStore.market;
 
-    const newSubscription = bcNetwork
+    const newSubscription = bcNetwork.sdk
       .subscribeSpotActiveOrders(
         { ...params, orderType },
         {
@@ -237,7 +236,7 @@ class SpotOrderBookStore {
     }
   }
 
-  private subscribeToBuyOrders(bcNetwork: FuelNetwork, params: Omit<GetActiveOrdersParams, "orderType">) {
+  private subscribeToBuyOrders(bcNetwork: Blockchain, params: Omit<GetActiveOrdersParams, "orderType">) {
     this.subscribeToOrders(
       OrderType.Buy,
       this.buySubscription,
@@ -247,7 +246,7 @@ class SpotOrderBookStore {
     );
   }
 
-  private subscribeToSellOrders(bcNetwork: FuelNetwork, params: Omit<GetActiveOrdersParams, "orderType">) {
+  private subscribeToSellOrders(bcNetwork: Blockchain, params: Omit<GetActiveOrdersParams, "orderType">) {
     this.subscribeToOrders(
       OrderType.Sell,
       this.sellSubscription,
@@ -306,13 +305,13 @@ class SpotOrderBookStore {
     const { tradeStore } = this.rootStore;
     const market = tradeStore.market;
 
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     if (this.subscriptionToTradeOrderEvents) {
       this.subscriptionToTradeOrderEvents.unsubscribe();
     }
     try {
-      this.subscriptionToTradeOrderEvents = bcNetwork
+      this.subscriptionToTradeOrderEvents = bcNetwork.sdk
         .subscribeSpotTradeOrderEvents({
           limit: 500,
           market: [market!.contractAddress],

@@ -60,12 +60,13 @@ module.exports = {
           // Packages. `react` related packages come first.
           ["^react", "^@?\\w"],
           ["^@compolabs"],
+          ["^(@blockchain)(/.*|$)"],
           ["^(@themes|@components)(/.*|$)"],
           ["^(@assets)(/.*|$)"],
           ["^(@stores|@hooks)(/.*|$)"],
           ["^(@screens)(/.*|$)"],
           ["^(@utils|@constants)(/.*|$)"],
-          ["^(@blockchain|@entity)(/.*|$)"],
+          ["^(@entity)(/.*|$)"],
           ["^(@src)(/.*|$)"],
           ["^\\u0000"],
           // Parent imports. Put `..` last.

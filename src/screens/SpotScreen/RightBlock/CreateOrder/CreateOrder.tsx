@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react-lite";
 
-import { BN, LimitType } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, LimitType } from "@blockchain/fuel/types";
 
 import AccordionItem from "@components/AccordionItem";
 import Button, { ButtonGroup } from "@components/Button";

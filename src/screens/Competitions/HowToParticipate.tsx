@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";

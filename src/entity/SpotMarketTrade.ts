@@ -1,10 +1,9 @@
 import dayjs, { Dayjs } from "dayjs";
 
-import { BN, TradeOrderEvent } from "@compolabs/spark-orderbook-ts-sdk";
+import { Blockchain } from "@blockchain";
+import { BN, TradeOrderEvent } from "@blockchain/fuel/types";
 
 import { DEFAULT_DECIMALS } from "@constants";
-
-import { FuelNetwork } from "@blockchain";
 
 import { Token } from "./Token";
 
@@ -26,12 +25,12 @@ export class SpotMarketTrade {
   readonly timestamp: Dayjs;
 
   constructor(params: SpotMarketTradeParams) {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     this.id = params.id;
 
-    this.baseToken = bcNetwork.getTokenByAssetId(params.baseAssetId);
-    this.quoteToken = bcNetwork.getTokenByAssetId(params.quoteAssetId);
+    this.baseToken = bcNetwork.sdk.getTokenByAssetId(params.baseAssetId);
+    this.quoteToken = bcNetwork.sdk.getTokenByAssetId(params.quoteAssetId);
 
     this.tradeSize = params.tradeSize;
     this.tradePrice = params.tradePrice;

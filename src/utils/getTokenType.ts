@@ -1,6 +1,6 @@
 import { Undefinable } from "tsdef";
 
-import { AssetType } from "@compolabs/spark-orderbook-ts-sdk";
+import { AssetType } from "@blockchain/fuel/types";
 
 import { Market } from "./getConfig";
 

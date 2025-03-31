@@ -5,12 +5,13 @@ import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
 
+import { Blockchain } from "@blockchain";
+
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { ROUTES } from "@constants";
 
-import { FuelNetwork } from "@blockchain";
 import { Token } from "@entity";
 // @ts-ignore
 import("@compolabs/tradingview-chart/dist/bundle").then((module) => {
@@ -60,7 +61,7 @@ const TradingViewChartAdvanced = observer(() => {
 
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
   const { tradeStore, mixPanelStore, accountStore } = useStores();
-  const bcNetwork = FuelNetwork.getInstance();
+  const bcNetwork = Blockchain.getInstance();
   const navigate = useNavigate();
   const defaultProps: Omit<ChartContainerProps, "container"> = {
     symbol: tradeStore.market?.symbol.replace("-", ""),
@@ -111,7 +112,7 @@ const TradingViewChartAdvanced = observer(() => {
       const chart = tvWidget.activeChart();
       if (chart) {
         chart.onSymbolChanged().subscribe(null, () => {
-          const tokenList = bcNetwork!.getTokenList();
+          const tokenList = bcNetwork.sdk.getTokenList();
           const { baseToken, quoteToken } = splitPairAndGetTokens(tokenList, chart.symbol());
           mixPanelStore.trackEvent(MIXPANEL_EVENTS.CLICK_CURRENCY_PAIR, {
             user_address: accountStore.address,

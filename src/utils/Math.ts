@@ -1,4 +1,4 @@
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 class Math {
   static adjustDecimals(value: BN, currentDecimals: number, targetDecimals: number): BN {

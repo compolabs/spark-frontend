@@ -2,6 +2,8 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
+import { Blockchain } from "@blockchain";
+
 import Chip from "@components/Chip";
 import { SmartFlex } from "@components/SmartFlex";
 import { TableText } from "@components/Table";
@@ -12,8 +14,6 @@ import { useStores } from "@stores";
 
 import { MINIMAL_ETH_REQUIRED } from "@constants";
 
-import { FuelNetwork } from "@blockchain";
-
 import MintButtons from "./MintButtons";
 
 const TokensFaucetTable: React.FC = observer(() => {
@@ -21,10 +21,10 @@ const TokensFaucetTable: React.FC = observer(() => {
 
   const media = useMedia();
 
-  const bcNetwork = FuelNetwork.getInstance();
+  const bcNetwork = Blockchain.getInstance();
 
   const isEnoughGas = balanceStore.getWalletNativeBalance().gt(MINIMAL_ETH_REQUIRED);
-  const ETH = bcNetwork.getTokenBySymbol("ETH");
+  const ETH = bcNetwork.sdk.getTokenBySymbol("ETH");
 
   const shouldButtonBeDisabled = (tokenAddress: string) => {
     return !isEnoughGas && ETH.assetId !== tokenAddress;
