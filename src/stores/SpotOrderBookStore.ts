@@ -2,6 +2,9 @@ import { HistogramData } from "lightweight-charts";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
+import { Blockchain } from "@blockchain";
+import { BN, GetActiveOrdersParams, GetOrdersParams, OrderType } from "@blockchain/fuel/types";
+
 import { RootStore } from "@stores";
 
 import { SPOT_ORDER_FILTER } from "@screens/SpotScreen/OrderbookAndTradesInterface/SpotOrderBook/SpotOrderBook";
@@ -13,8 +16,6 @@ import { getOhlcvData, OhlcvData } from "@utils/getOhlcvData";
 import { groupOrders } from "@utils/groupOrders";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
-import { Blockchain } from "@blockchain";
-import { BN, GetActiveOrdersParams, GetOrdersParams, OrderType } from "@blockchain/fuel/types";
 import { SpotMarketOrder, SpotMarketTrade } from "@entity";
 
 import { Subscription } from "@src/typings/utils";

@@ -1,6 +1,6 @@
-import { NotificationStore } from "@stores";
-
 import { getHumanReadableError } from "@blockchain/fuel/types";
+
+import { NotificationStore } from "@stores";
 
 export const handleWalletErrors = (
   notificationStore: NotificationStore,

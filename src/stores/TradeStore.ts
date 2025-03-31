@@ -2,16 +2,17 @@ import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
+import { Blockchain } from "@blockchain";
+import { FuelNetwork } from "@blockchain/fuel/FuelNetwork";
+import { BN, SpotMarketVolume } from "@blockchain/fuel/types";
+import { toBech32 } from "@blockchain/fuel/types/fuels";
+
 import RootStore from "@stores/RootStore";
 
 import { DEFAULT_DECIMALS, DEFAULT_MARKET } from "@constants";
 import { CONFIG } from "@utils/getConfig";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
-import { Blockchain } from "@blockchain";
-import { FuelNetwork } from "@blockchain/fuel/FuelNetwork";
-import { BN, SpotMarketVolume } from "@blockchain/fuel/types";
-import { toBech32 } from "@blockchain/fuel/types/fuels";
 import { PerpMarket, SpotMarket } from "@entity";
 
 export interface SerializedTradeStore {

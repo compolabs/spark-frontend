@@ -2,6 +2,9 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
+import { Blockchain } from "@blockchain";
+import { OrderType, UserInfo } from "@blockchain/fuel/types";
+
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
 
@@ -9,8 +12,6 @@ import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
-import { Blockchain } from "@blockchain";
-import { OrderType, UserInfo } from "@blockchain/fuel/types";
 import { SpotMarketOrder } from "@entity";
 
 import { Subscription } from "@src/typings/utils";

@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 
+import { BN } from "@blockchain/fuel/types";
+
 import { DEFAULT_DECIMALS } from "@constants";
 
-import { BN } from "@blockchain/fuel/types";
 import { SpotMarketOrder } from "@entity";
 
 const roundPrice = (price: BN, decimals: number, rm: BigNumber.RoundingMode): BN => {

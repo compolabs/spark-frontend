@@ -1,13 +1,13 @@
 import { makeAutoObservable, reaction } from "mobx";
 
+import { Blockchain } from "@blockchain";
+import { RowSnapshot, RowTradeEvent } from "@blockchain/fuel/types";
+
 import { filters } from "@screens/Dashboard/const";
 import { TradeEvent } from "@screens/Dashboard/InfoDataGraph";
 
 import { CONFIG } from "@utils/getConfig";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
-
-import { Blockchain } from "@blockchain";
-import { RowSnapshot, RowTradeEvent } from "@blockchain/fuel/types";
 
 import RootStore from "./RootStore";
 

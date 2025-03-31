@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { Nullable } from "tsdef";
 
-import { DEFAULT_DECIMALS } from "@constants";
-
 import { BN } from "@blockchain/fuel/types";
+
+import { DEFAULT_DECIMALS } from "@constants";
 
 type HTMLInputProps = React.ClassAttributes<HTMLInputElement> & React.InputHTMLAttributes<HTMLInputElement>;
 

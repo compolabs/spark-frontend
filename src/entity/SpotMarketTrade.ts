@@ -1,9 +1,9 @@
 import dayjs, { Dayjs } from "dayjs";
 
-import { DEFAULT_DECIMALS } from "@constants";
-
 import { Blockchain } from "@blockchain";
 import { BN, TradeOrderEvent } from "@blockchain/fuel/types";
+
+import { DEFAULT_DECIMALS } from "@constants";
 
 import { Token } from "./Token";
 

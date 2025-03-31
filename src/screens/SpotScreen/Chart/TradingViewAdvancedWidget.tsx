@@ -5,12 +5,13 @@ import { observer } from "mobx-react";
 
 import { ChartingLibraryWidgetOptions, LanguageCode, ResolutionString, widget } from "@compolabs/tradingview-chart";
 
+import { Blockchain } from "@blockchain";
+
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { ROUTES } from "@constants";
 
-import { Blockchain } from "@blockchain";
 import { Token } from "@entity";
 // @ts-ignore
 import("@compolabs/tradingview-chart/dist/bundle").then((module) => {

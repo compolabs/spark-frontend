@@ -2,6 +2,8 @@ import React, { HTMLAttributes, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { BN } from "@blockchain/fuel/types";
+
 import Button from "@components/Button";
 import { AssetBlockProps } from "@components/SelectAssets/AssetBlock";
 import { SmartFlex } from "@components/SmartFlex";
@@ -11,7 +13,6 @@ import { TokenSelect } from "@screens/SwapScreen/TokenSelect";
 
 import { DEFAULT_DECIMALS } from "@constants";
 
-import { BN } from "@blockchain/fuel/types";
 import { Token } from "@entity";
 
 import Text, { TEXT_TYPES_MAP } from "../Text";

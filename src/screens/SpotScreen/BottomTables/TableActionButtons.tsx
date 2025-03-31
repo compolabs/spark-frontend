@@ -3,6 +3,8 @@ import { Config } from "react-popper-tooltip";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
+import { OrderType } from "@blockchain/fuel/types";
+
 import { CheckboxOld } from "@components/CheckboxOld";
 import SizedBox from "@components/SizedBox";
 import { SmartFlex } from "@components/SmartFlex";
@@ -15,8 +17,6 @@ import TableSizeSelectorIcon from "@assets/icons/tablesSizeSelector.svg?react";
 
 import { useStores } from "@stores";
 import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
-
-import { OrderType } from "@blockchain/fuel/types";
 
 import { useSpotTableVMProvider } from "./SpotTable/SpotTableVM";
 import { RESIZE_TOOLTIP_CONFIG, TABLE_SIZES_CONFIG } from "./constants";

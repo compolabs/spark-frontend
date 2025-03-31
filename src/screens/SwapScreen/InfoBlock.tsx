@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import { BN } from "@blockchain/fuel/types";
+
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
@@ -11,8 +13,6 @@ import SettingsIcon from "@assets/icons/gear.svg?react";
 import LightningIcon from "@assets/icons/lightning.svg?react";
 
 import { useStores } from "@stores";
-
-import { BN } from "@blockchain/fuel/types";
 
 import { SlippageSettings } from "./SlippageSettings";
 

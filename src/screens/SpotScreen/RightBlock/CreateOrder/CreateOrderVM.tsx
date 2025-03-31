@@ -3,17 +3,6 @@ import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
 
-import useVM from "@hooks/useVM";
-import { RootStore, useStores } from "@stores";
-import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
-
-import { DEFAULT_DECIMALS } from "@constants";
-import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
-import { CONFIG } from "@utils/getConfig";
-import { getRealFee } from "@utils/getRealFee";
-import { handleWalletErrors } from "@utils/handleWalletErrors";
-import Math from "@utils/Math";
-
 import { Blockchain } from "@blockchain";
 import {
   BN,
@@ -25,6 +14,18 @@ import {
   Order,
   OrderType,
 } from "@blockchain/fuel/types";
+
+import useVM from "@hooks/useVM";
+import { RootStore, useStores } from "@stores";
+import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
+import { CONFIG } from "@utils/getConfig";
+import { getRealFee } from "@utils/getRealFee";
+import { handleWalletErrors } from "@utils/handleWalletErrors";
+import Math from "@utils/Math";
+
 import { SpotMarket, SpotMarketOrder } from "@entity";
 
 const ctx = React.createContext<CreateOrderVM | null>(null);

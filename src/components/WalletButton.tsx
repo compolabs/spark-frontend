@@ -3,6 +3,9 @@ import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
+
 import Divider from "@components/Divider";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
@@ -16,9 +19,6 @@ import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 
 import { getExplorerLinkByAddress } from "@utils/getExplorerLink";
-
-import { Blockchain } from "@blockchain";
-import { BN } from "@blockchain/fuel/types";
 
 import WalletAddressButton from "./Header/WalletAddressButton";
 

@@ -1,12 +1,12 @@
 import { makeAutoObservable } from "mobx";
 
+import { LimitType } from "@blockchain/fuel/types";
+
 import { THEME_TYPE } from "@themes/ThemeProvider";
 
 import RootStore from "@stores/RootStore";
 
 import { ORDER_TYPE } from "@screens/SpotScreen/RightBlock/CreateOrder/CreateOrderVM";
-
-import { LimitType } from "@blockchain/fuel/types";
 
 export interface SerializedSettingStore {
   isUserAgreedWithTerms?: boolean;

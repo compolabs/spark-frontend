@@ -1,11 +1,11 @@
 import dayjs, { Dayjs } from "dayjs";
 import { Nullable } from "tsdef";
 
-import { DEFAULT_DECIMALS } from "@constants";
-
 import { Blockchain } from "@blockchain";
 import { BN } from "@blockchain/fuel/types";
 import { Address, isBech32 } from "@blockchain/fuel/types/fuels";
+
+import { DEFAULT_DECIMALS } from "@constants";
 
 import { Token } from "./Token";
 

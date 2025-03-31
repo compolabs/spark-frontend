@@ -1,10 +1,10 @@
 import { makeAutoObservable } from "mobx";
 
-import { DEFAULT_DECIMALS } from "@constants";
-import { toCurrency } from "@utils/toCurrency";
-
 import { Blockchain } from "@blockchain";
 import { BN } from "@blockchain/fuel/types";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import { toCurrency } from "@utils/toCurrency";
 
 import { Token } from "./Token";
 

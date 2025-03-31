@@ -1,13 +1,14 @@
 import { autorun, makeAutoObservable, reaction } from "mobx";
 
+import { Blockchain } from "@blockchain";
+import { AssetType, BN, GetActiveOrdersParams, LimitType, Order, OrderType } from "@blockchain/fuel/types";
+
 import { DEFAULT_DECIMALS } from "@constants";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { CONFIG } from "@utils/getConfig";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import { parseNumberWithCommas } from "@utils/swapUtils";
 
-import { Blockchain } from "@blockchain";
-import { AssetType, BN, GetActiveOrdersParams, LimitType, Order, OrderType } from "@blockchain/fuel/types";
 import { SpotMarketOrder, Token } from "@entity";
 
 import RootStore from "./RootStore";

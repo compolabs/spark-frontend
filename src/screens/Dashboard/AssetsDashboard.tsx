@@ -4,6 +4,8 @@ import styled from "@emotion/styled";
 import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
+import { BN } from "@blockchain/fuel/types";
+
 import Chip from "@components/Chip";
 import { Column } from "@components/Flex";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
@@ -20,8 +22,6 @@ import { TRADE_TABLE_SIZE } from "@stores/SettingsStore";
 import { BaseTable } from "@screens/SpotScreen/BottomTables/BaseTable";
 
 import { BRIDGE_LINK } from "@constants";
-
-import { BN } from "@blockchain/fuel/types";
 
 const orderColumnHelper = createColumnHelper<any>();
 

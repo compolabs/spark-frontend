@@ -2,6 +2,9 @@ import React from "react";
 import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
+
 import copyIcon from "@assets/icons/copy.svg";
 import linkIcon from "@assets/icons/link.svg";
 import logoutIcon from "@assets/icons/logout.svg";
@@ -10,9 +13,6 @@ import { useWallet } from "@hooks/useWallet";
 import { useStores } from "@stores";
 
 import { getExplorerLinkByAddress } from "@utils/getExplorerLink";
-
-import { Blockchain } from "@blockchain";
-import { BN } from "@blockchain/fuel/types";
 
 import Divider from "../Divider";
 import Sheet from "../Sheet";

@@ -1,14 +1,14 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
+import { Blockchain } from "@blockchain";
+import { Balances, BN, UserMarketBalance } from "@blockchain/fuel/types";
+import { Address } from "@blockchain/fuel/types/fuels";
+
 import { DEFAULT_DECIMALS } from "@constants";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { CONFIG } from "@utils/getConfig";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
-
-import { Blockchain } from "@blockchain";
-import { Balances, BN, UserMarketBalance } from "@blockchain/fuel/types";
-import { Address } from "@blockchain/fuel/types/fuels";
 
 import RootStore from "./RootStore";
 

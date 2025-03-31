@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN } from "@blockchain/fuel/types";
+
 import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
 import { toCurrency } from "@utils/toCurrency.ts";
-
-import { BN } from "@blockchain/fuel/types";
 
 import setting from "./setting.json";
 

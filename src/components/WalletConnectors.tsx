@@ -5,6 +5,8 @@ import { useConnectUI } from "@fuels/react";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 
+import { FuelConnector } from "@blockchain/fuel/types/fuels";
+
 import { Dialog } from "@components/Dialog";
 import Text from "@components/Text";
 
@@ -14,8 +16,6 @@ import CloseIcon from "@assets/icons/close.svg?react";
 import { useMedia } from "@hooks/useMedia";
 
 import { FUELET_APP_LINK } from "@constants";
-
-import { FuelConnector } from "@blockchain/fuel/types/fuels";
 
 import Sheet from "./Sheet";
 import { SmartFlex } from "./SmartFlex";

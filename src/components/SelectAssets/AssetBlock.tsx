@@ -3,14 +3,14 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN } from "@blockchain/fuel/types";
+
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
 
 import { useStores } from "@stores";
 
 import { DEFAULT_DECIMALS } from "@constants";
-
-import { BN } from "@blockchain/fuel/types";
 
 import { AssetBlockData } from "./SelectAssetsInput";
 

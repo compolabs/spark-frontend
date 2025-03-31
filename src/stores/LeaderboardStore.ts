@@ -1,13 +1,6 @@
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 
-import { FiltersProps } from "@stores/DashboardStore";
-
-import { filters, pnlTimeline } from "@screens/Dashboard/const";
-
-import { DEFAULT_DECIMALS } from "@constants";
-import { CONFIG } from "@utils/getConfig";
-
 import { Blockchain } from "@blockchain";
 import {
   BN,
@@ -17,6 +10,13 @@ import {
   LeaderboardPnlResponse,
   TraderVolumeResponse,
 } from "@blockchain/fuel/types";
+
+import { FiltersProps } from "@stores/DashboardStore";
+
+import { filters, pnlTimeline } from "@screens/Dashboard/const";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import { CONFIG } from "@utils/getConfig";
 
 import setting from "../screens/Competitions/setting.json";
 

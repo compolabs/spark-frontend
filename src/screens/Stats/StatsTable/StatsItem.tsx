@@ -3,6 +3,8 @@ import { Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN, GetTotalStatsTableData } from "@blockchain/fuel/types";
+
 import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
@@ -13,7 +15,6 @@ import { MarketSymbol } from "@screens/Stats/StatsTable/MarketSymbol";
 import { CONFIG } from "@utils/getConfig";
 import { toCurrency } from "@utils/toCurrency";
 
-import { BN, GetTotalStatsTableData } from "@blockchain/fuel/types";
 import { SpotMarket } from "@entity";
 
 const generatePnl = (value: string, theme: Theme) => {

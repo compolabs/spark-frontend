@@ -2,6 +2,8 @@ import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
+import { Blockchain } from "@blockchain";
+
 import Chip from "@components/Chip";
 import { SmartFlex } from "@components/SmartFlex";
 import { TableText } from "@components/Table";
@@ -11,8 +13,6 @@ import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 
 import { MINIMAL_ETH_REQUIRED } from "@constants";
-
-import { Blockchain } from "@blockchain";
 
 import MintButtons from "./MintButtons";
 

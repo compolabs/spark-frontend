@@ -3,9 +3,10 @@ import { Nullable } from "tsdef";
 
 import SparkOrderBookSdk, { BN, OrderType, WriteTransactionResponse } from "@compolabs/spark-orderbook-ts-sdk";
 
+import { Account, B256Address } from "@blockchain/fuel/types/fuels";
+
 import { CONFIG } from "@utils/getConfig";
 
-import { Account, B256Address } from "@blockchain/fuel/types/fuels";
 import { Token } from "@entity";
 
 import { Balances, SpotMarketVolume } from "./types";

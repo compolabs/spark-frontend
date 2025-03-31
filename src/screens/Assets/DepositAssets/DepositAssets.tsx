@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN } from "@blockchain/fuel/types";
+
 import Button from "@components/Button";
 import { AssetBlockProps } from "@components/SelectAssets/AssetBlock";
 import SelectAssetsInput from "@components/SelectAssets/SelectAssetsInput";
@@ -20,8 +22,6 @@ import { useStores } from "@stores";
 import { BalanceBlock } from "@screens/Assets/BalanceBlock/BalanceBlock";
 
 import { DEFAULT_DECIMALS } from "@constants";
-
-import { BN } from "@blockchain/fuel/types";
 
 interface DepositAssetsProps {
   setStep: (value: number) => void;

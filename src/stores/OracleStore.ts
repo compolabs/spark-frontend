@@ -1,12 +1,12 @@
 import { HermesClient } from "@pythnetwork/hermes-client";
 import { makeAutoObservable } from "mobx";
 
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
+
 import RootStore from "@stores/RootStore";
 
 import { IntervalUpdater } from "@utils/IntervalUpdater";
-
-import { Blockchain } from "@blockchain";
-import { BN } from "@blockchain/fuel/types";
 
 const PYTH_URL = "https://hermes.pyth.network";
 

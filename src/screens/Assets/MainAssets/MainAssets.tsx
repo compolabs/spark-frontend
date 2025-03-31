@@ -4,6 +4,8 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
+import { BN } from "@blockchain/fuel/types";
+
 import Button from "@components/Button";
 import { Column } from "@components/Flex";
 import AssetBlock from "@components/SelectAssets/AssetBlock";
@@ -21,8 +23,6 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 import { MODAL_TYPE } from "@stores/ModalStore";
 
 import { BRIDGE_LINK } from "@constants";
-
-import { BN } from "@blockchain/fuel/types";
 
 interface MainAssetsProps {
   setStep: (value: number) => void;

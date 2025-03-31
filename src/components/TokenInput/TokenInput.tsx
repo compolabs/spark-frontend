@@ -2,12 +2,12 @@ import React, { CSSProperties, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
+
 import Chip from "@components/Chip";
 import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
-
-import { Blockchain } from "@blockchain";
-import { BN } from "@blockchain/fuel/types";
 
 import AmountInput from "./AmountInput";
 import { BigNumberInput } from "./BigNumberInput";

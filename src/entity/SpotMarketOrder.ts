@@ -1,10 +1,10 @@
 import dayjs, { Dayjs } from "dayjs";
 
-import { DEFAULT_DECIMALS } from "@constants";
-import { CONFIG } from "@utils/getConfig";
-
 import { Blockchain } from "@blockchain";
 import { BN, Order } from "@blockchain/fuel/types";
+
+import { DEFAULT_DECIMALS } from "@constants";
+import { CONFIG } from "@utils/getConfig";
 
 import { Token } from "./Token";
 
