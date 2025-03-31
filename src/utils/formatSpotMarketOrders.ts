@@ -1,5 +1,4 @@
-import { Order } from "@compolabs/spark-orderbook-ts-sdk";
-
+import { Order } from "@blockchain/fuel/types";
 import { SpotMarketOrder } from "@entity";
 
 export const formatSpotMarketOrders = (orders: Order[], quoteAssetId?: string) => {

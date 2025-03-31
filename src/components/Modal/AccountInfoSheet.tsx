@@ -2,8 +2,6 @@ import React from "react";
 import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import copyIcon from "@assets/icons/copy.svg";
 import linkIcon from "@assets/icons/link.svg";
 import logoutIcon from "@assets/icons/logout.svg";
@@ -13,7 +11,8 @@ import { useStores } from "@stores";
 
 import { getExplorerLinkByAddress } from "@utils/getExplorerLink";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 import Divider from "../Divider";
 import Sheet from "../Sheet";
@@ -29,11 +28,11 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
   const { disconnect } = useWallet();
   const { accountStore, notificationStore, balanceStore } = useStores();
 
-  const bcNetwork = FuelNetwork.getInstance();
+  const bcNetwork = Blockchain.getInstance();
 
   const ethBalance = BN.formatUnits(
-    balanceStore.getWalletBalance(bcNetwork!.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
-    bcNetwork?.getTokenBySymbol("ETH").decimals,
+    balanceStore.getWalletBalance(bcNetwork.sdk.getTokenBySymbol("ETH").assetId) ?? BN.ZERO,
+    bcNetwork.sdk.getTokenBySymbol("ETH").decimals,
   )?.toFormat(4);
 
   const handleAddressCopy = () => {
@@ -80,7 +79,7 @@ const AccountInfoSheet: React.FC<Props> = ({ isOpen, onClose }) => {
     <Sheet isOpen={isOpen} header onClose={onClose}>
       <SmartFlex column>
         <TokenContainer center="y" gap="8px">
-          <Icon alt="ETH" src={bcNetwork?.getTokenBySymbol("ETH").logo} />
+          <Icon alt="ETH" src={bcNetwork.sdk.getTokenBySymbol("ETH").logo} />
           <Text type="H" primary>{`${ethBalance} ETH`}</Text>
         </TokenContainer>
         <Divider />

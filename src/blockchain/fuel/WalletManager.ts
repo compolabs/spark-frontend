@@ -1,11 +1,21 @@
-import { Account, B256Address, Fuel, Provider, Wallet, WalletLocked, WalletUnlocked } from "fuels";
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
 import { FUEL_CONFIG } from "@constants";
 import { CONFIG } from "@utils/getConfig";
 
-import { NETWORK_ERROR, NetworkError } from "./NetworkError";
+import {
+  Account,
+  B256Address,
+  Fuel,
+  Provider,
+  Wallet,
+  WalletLocked,
+  WalletUnlocked,
+} from "@blockchain/fuel/types/fuels";
+
+import { NETWORK_ERROR, NetworkError } from "../NetworkError";
+
 import { Balances } from "./types";
 
 export class WalletManager {

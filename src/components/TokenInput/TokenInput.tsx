@@ -2,13 +2,12 @@ import React, { CSSProperties, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import Chip from "@components/Chip";
 import Text, { TEXT_TYPES_MAP } from "@components/Text";
 import { media } from "@themes/breakpoints";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 import AmountInput from "./AmountInput";
 import { BigNumberInput } from "./BigNumberInput";
@@ -33,7 +32,7 @@ interface TokenInputProps {
 }
 
 const TokenInput: React.FC<TokenInputProps> = observer((props) => {
-  const bcNetwork = FuelNetwork.getInstance();
+  const bcNetwork = Blockchain.getInstance();
 
   const [focused, setFocused] = useState(false);
   const [amount, setAmount] = useState<BN>(props.amount);
@@ -86,7 +85,7 @@ const TokenInput: React.FC<TokenInputProps> = observer((props) => {
           value={amount}
           onChange={handleChangeAmount}
         />
-        {props.assetId && <Chip>{bcNetwork?.getTokenByAssetId(props.assetId).symbol}</Chip>}
+        {props.assetId && <Chip>{bcNetwork.sdk.getTokenByAssetId(props.assetId).symbol}</Chip>}
         {props.isShowMax && <Chip onClick={props.handleMaxBalance}>MAX</Chip>}
       </InputContainer>
       {props.error && props.errorMessage && <ErrorText attention>{props.errorMessage}</ErrorText>}

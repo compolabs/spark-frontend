@@ -2,8 +2,6 @@ import React, { PropsWithChildren, useMemo } from "react";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { OrderType, UserInfo } from "@compolabs/spark-orderbook-ts-sdk";
-
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
 
@@ -11,7 +9,8 @@ import { formatSpotMarketOrders } from "@utils/formatSpotMarketOrders";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { OrderType, UserInfo } from "@blockchain/fuel/types";
 import { SpotMarketOrder } from "@entity";
 
 import { Subscription } from "@src/typings/utils";
@@ -116,20 +115,20 @@ class SpotTableVM {
 
   cancelOrder = async (order: SpotMarketOrder) => {
     const { notificationStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     if (!this.rootStore.tradeStore.market) return;
 
     this.isOrderCancelling = true;
     this.cancelingOrderId = order.id;
-    if (bcNetwork?.getIsExternalWallet()) {
+    if (bcNetwork.sdk.getIsExternalWallet()) {
       notificationStore.info({
         text: "Please, confirm operation in your wallet",
       });
     }
 
     try {
-      const bcNetworkCopy = await bcNetwork.chain();
+      const bcNetworkCopy = await bcNetwork.sdk.chain();
       const tx = await bcNetworkCopy.writeWithMarket(order.market).cancelOrder(order.id);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CANCELING_ORDER)(),
@@ -159,13 +158,13 @@ class SpotTableVM {
 
   private subscribeToOpenOrders = () => {
     const { accountStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     if (this.subscriptionToOpenOrders) {
       this.subscriptionToOpenOrders.unsubscribe();
     }
 
-    this.subscriptionToOpenOrders = bcNetwork
+    this.subscriptionToOpenOrders = bcNetwork.sdk
       .subscribeSpotOrders(
         {
           ...this.tableFilters,
@@ -190,13 +189,13 @@ class SpotTableVM {
 
   private subscribeToHistoryOrders = () => {
     const { accountStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     if (this.subscriptionToHistoryOrders) {
       this.subscriptionToHistoryOrders.unsubscribe();
     }
 
-    this.subscriptionToHistoryOrders = bcNetwork
+    this.subscriptionToHistoryOrders = bcNetwork.sdk
       .subscribeSpotOrders(
         {
           ...this.tableFilters,
@@ -226,14 +225,14 @@ class SpotTableVM {
   };
 
   private subscribeUserInfo = () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     const { accountStore } = this.rootStore;
 
     if (this.subscriptionToOrdersStats) {
       this.subscriptionToOrdersStats.unsubscribe();
     }
 
-    this.subscriptionToOrdersStats = bcNetwork
+    this.subscriptionToOrdersStats = bcNetwork.sdk
       .subscribeUserInfo({
         id: accountStore.address!,
       })

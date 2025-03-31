@@ -1,7 +1,4 @@
-import { Address } from "fuels";
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-
-import { BN, UserMarketBalance } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
@@ -9,8 +6,9 @@ import { CONFIG } from "@utils/getConfig";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
-import { FuelNetwork } from "@blockchain";
-import { Balances } from "@blockchain/types";
+import { Blockchain } from "@blockchain";
+import { Balances, BN, UserMarketBalance } from "@blockchain/fuel/types";
+import { Address } from "@blockchain/fuel/types/fuels";
 
 import RootStore from "./RootStore";
 
@@ -58,8 +56,8 @@ export class BalanceStore {
   get formattedBalanceInfoList() {
     const { oracleStore } = this.rootStore;
 
-    const bcNetwork = FuelNetwork.getInstance();
-    const tokens = bcNetwork.getTokenList();
+    const bcNetwork = Blockchain.getInstance();
+    const tokens = bcNetwork.sdk.getTokenList();
 
     return tokens.map((token) => {
       const balance = this.getWalletBalance(token.assetId);
@@ -86,8 +84,8 @@ export class BalanceStore {
 
   update = async () => {
     const { accountStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
-    const wallet = bcNetwork.getWallet();
+    const bcNetwork = Blockchain.getInstance();
+    const wallet = bcNetwork.sdk.getWallet();
 
     if (!accountStore.address || !wallet) return;
 
@@ -100,7 +98,7 @@ export class BalanceStore {
 
     try {
       for (const [tokenAddress, balance] of Object.entries(balances)) {
-        const isTokenExist = !!bcNetwork.getTokenByAssetId(tokenAddress);
+        const isTokenExist = !!bcNetwork.sdk.getTokenByAssetId(tokenAddress);
 
         if (!isTokenExist) continue;
 
@@ -195,17 +193,17 @@ export class BalanceStore {
 
   depositBalance = async (assetId: string, amount: string) => {
     const { notificationStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    if (bcNetwork?.getIsExternalWallet()) {
+    if (bcNetwork.sdk.getIsExternalWallet()) {
       notificationStore.info({
         text: "Please, confirm operation in your wallet",
       });
     }
-    const token = bcNetwork.getTokenByAssetId(assetId);
+    const token = bcNetwork.sdk.getTokenByAssetId(assetId);
     const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
     try {
-      const tx = await bcNetwork?.depositSpotBalance(token, amount);
+      const tx = await bcNetwork.sdk.depositSpotBalance(token, amount);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.DEPOSITING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
@@ -225,20 +223,20 @@ export class BalanceStore {
     const { notificationStore } = this.rootStore;
     const markets = CONFIG.MARKETS.filter((el) => el.baseAssetId === assetId || el.quoteAssetId === assetId);
 
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    const token = bcNetwork.getTokenByAssetId(assetId);
+    const token = bcNetwork.sdk.getTokenByAssetId(assetId);
 
     const amountFormatted = BN.formatUnits(amount, token.decimals).toSignificant(2);
 
-    if (bcNetwork?.getIsExternalWallet()) {
+    if (bcNetwork.sdk.getIsExternalWallet()) {
       notificationStore.info({
         text: "Please, confirm operation in your wallet",
       });
     }
 
     try {
-      const tx = await bcNetwork?.withdrawSpotAssets(assetId, markets, amount);
+      const tx = await bcNetwork.sdk.withdrawSpotAssets(assetId, markets, amount);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_TOKENS)(amountFormatted, token.symbol),
         hash: tx.transactionId,
@@ -256,14 +254,14 @@ export class BalanceStore {
 
   withdrawBalanceAll = async () => {
     const { notificationStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    if (bcNetwork?.getIsExternalWallet()) {
+    if (bcNetwork.sdk.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
     try {
-      await bcNetwork?.withdrawSpotAllAssets(CONFIG.MARKETS);
+      await bcNetwork.sdk.withdrawSpotAllAssets(CONFIG.MARKETS);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.WITHDRAWING_ALL_TOKENS)(),
         hash: "",
@@ -280,15 +278,15 @@ export class BalanceStore {
   };
 
   private fetchUserBalances = async (): Promise<Balances> => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    return bcNetwork.getBalances();
+    return bcNetwork.sdk.getBalances();
   };
 
   private fetchUserContractBalances = async (address: Address): Promise<UserMarketBalance[]> => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    return bcNetwork.fetchUserMarketBalanceByContracts(
+    return bcNetwork.sdk.fetchUserMarketBalanceByContracts(
       address.bech32Address,
       CONFIG.MARKETS.map((m) => m.contractId),
     );

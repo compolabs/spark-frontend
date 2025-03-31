@@ -1,11 +1,10 @@
 import dayjs, { Dayjs } from "dayjs";
 
-import { BN, Order } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { DEFAULT_DECIMALS } from "@constants";
 import { CONFIG } from "@utils/getConfig";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN, Order } from "@blockchain/fuel/types";
 
 import { Token } from "./Token";
 
@@ -37,7 +36,7 @@ export class SpotMarketOrder {
   filledQuoteAmount: BN;
 
   constructor(order: SpotMarketOrderParams) {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     const activeMarket = CONFIG.ALL_MARKETS.find((el) => el.contractId === order.market); // TODO: If the market was already hidden and you traded on it, you need to display the history correctly
 
     const baseToken = order.quoteAssetId ? order.asset : (activeMarket?.baseAssetId ?? "");
@@ -47,8 +46,8 @@ export class SpotMarketOrder {
     this.id = order.id;
     this.user = order.user;
     this.status = order.status;
-    this.baseToken = bcNetwork.getTokenByAssetId(baseToken);
-    this.quoteToken = bcNetwork.getTokenByAssetId(quoteToken);
+    this.baseToken = bcNetwork.sdk.getTokenByAssetId(baseToken);
+    this.quoteToken = bcNetwork.sdk.getTokenByAssetId(quoteToken);
 
     this.orderType = order.orderType;
 

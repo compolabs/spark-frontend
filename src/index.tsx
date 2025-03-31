@@ -4,7 +4,6 @@ import { HashRouter as Router } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { FuelProvider } from "@fuels/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { CHAIN_IDS, Network } from "fuels";
 
 import ThemeWrapper from "@themes/ThemeProvider";
 
@@ -12,6 +11,8 @@ import { RootStore, storesContext } from "@stores";
 
 import { CONFIG } from "@utils/getConfig";
 import { loadState } from "@utils/localStorage";
+
+import { CHAIN_IDS, Network } from "@blockchain/fuel/types/fuels";
 
 import "@themes/fonts";
 

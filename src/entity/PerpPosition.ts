@@ -1,8 +1,7 @@
 import { makeAutoObservable } from "mobx";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 import { Token } from "./Token";
 
@@ -30,10 +29,10 @@ export class PerpPosition {
   setPendingFundingPayment = (payment: BN) => (this._pendingFundingPayment = payment);
 
   constructor(params: PerpPositionParams) {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
-    this.quoteToken = bcNetwork.getTokenBySymbol("USDC");
+    this.baseToken = bcNetwork.sdk.getTokenByAssetId(params.baseTokenAddress);
+    this.quoteToken = bcNetwork.sdk.getTokenBySymbol("USDC");
 
     this.lastTwPremiumGrowthGlobal = params.lastTwPremiumGrowthGlobal;
     this.takerOpenNational = BN.formatUnits(params.takerOpenNational, this.baseToken.decimals);

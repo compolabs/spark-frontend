@@ -1,8 +1,7 @@
 import { makeAutoObservable } from "mobx";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 import { DEFAULT_DECIMALS } from "../constants";
 
@@ -36,10 +35,10 @@ export class PerpMarket {
   setPrice = (price: BN) => (this.price = price);
 
   constructor(params: PerpMarketParams) {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
-    this.quoteToken = bcNetwork.getTokenByAssetId(params.quoteTokenAddress);
+    this.baseToken = bcNetwork.sdk.getTokenByAssetId(params.baseTokenAddress);
+    this.quoteToken = bcNetwork.sdk.getTokenByAssetId(params.quoteTokenAddress);
 
     this.imRatio = params.imRatio;
     this.mmRatio = params.mmRatio;

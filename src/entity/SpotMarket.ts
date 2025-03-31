@@ -1,11 +1,10 @@
 import { makeAutoObservable } from "mobx";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { DEFAULT_DECIMALS } from "@constants";
 import { Market } from "@utils/getConfig";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 import { Token } from "./Token";
 
@@ -19,10 +18,10 @@ export class SpotMarket {
   setPrice = (price: BN) => (this.price = price);
 
   constructor(market: Market) {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    this.baseToken = bcNetwork.getTokenByAssetId(market.baseAssetId);
-    this.quoteToken = bcNetwork.getTokenByAssetId(market.quoteAssetId);
+    this.baseToken = bcNetwork.sdk.getTokenByAssetId(market.baseAssetId);
+    this.quoteToken = bcNetwork.sdk.getTokenByAssetId(market.quoteAssetId);
     this.contractAddress = market.contractId;
     this.precision = market.precision;
 

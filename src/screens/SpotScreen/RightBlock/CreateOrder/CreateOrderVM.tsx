@@ -3,17 +3,6 @@ import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Undefinable } from "tsdef";
 
-import {
-  BN,
-  CompactMarketInfo,
-  CreateOrderWithDepositParams,
-  FulfillOrderManyWithDepositParams,
-  GetActiveOrdersParams,
-  LimitType,
-  Order,
-  OrderType,
-} from "@compolabs/spark-orderbook-ts-sdk";
-
 import useVM from "@hooks/useVM";
 import { RootStore, useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
@@ -25,7 +14,17 @@ import { getRealFee } from "@utils/getRealFee";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import Math from "@utils/Math";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import {
+  BN,
+  CompactMarketInfo,
+  CreateOrderWithDepositParams,
+  FulfillOrderManyWithDepositParams,
+  GetActiveOrdersParams,
+  LimitType,
+  Order,
+  OrderType,
+} from "@blockchain/fuel/types";
 import { SpotMarket, SpotMarketOrder } from "@entity";
 
 const ctx = React.createContext<CreateOrderVM | null>(null);
@@ -295,7 +294,7 @@ class CreateOrderVM {
 
     const { market } = tradeStore;
     const { timeInForce } = settingsStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     if (!market) return;
     this.isLoading = true;
@@ -319,7 +318,7 @@ class CreateOrderVM {
       baseAssetId: m.baseAssetId,
     }));
 
-    if (bcNetwork.getIsExternalWallet()) {
+    if (bcNetwork.sdk.getIsExternalWallet()) {
       notificationStore.info({ text: "Please, confirm operation in your wallet" });
     }
 
@@ -376,7 +375,7 @@ class CreateOrderVM {
     markets: CompactMarketInfo[],
     timeInForce: LimitType,
   ): Promise<string> => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     let price = this.inputPrice.toString();
     const amount = this.inputAmount.toString();
@@ -400,7 +399,7 @@ class CreateOrderVM {
       amountToSpend,
     };
 
-    const data = await bcNetwork.createSpotOrderWithDeposit(order, markets, timeInForce);
+    const data = await bcNetwork.sdk.createSpotOrderWithDeposit(order, markets, timeInForce);
     return data.transactionId;
   };
 
@@ -411,7 +410,7 @@ class CreateOrderVM {
     markets: CompactMarketInfo[],
   ): Promise<string> => {
     const { settingsStore, tradeStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     const isBuy = type === OrderType.Buy;
 
@@ -422,7 +421,7 @@ class CreateOrderVM {
       orderType: isBuy ? OrderType.Sell : OrderType.Buy,
     };
 
-    const activeOrders = await bcNetwork.fetchSpotActiveOrders(params, {
+    const activeOrders = await bcNetwork.sdk.fetchSpotActiveOrders(params, {
       orderType: isBuy ? "desc" : "asc",
     });
 
@@ -484,7 +483,7 @@ class CreateOrderVM {
       orders: orderList.map((el) => el.id),
       slippage: slippage,
     };
-    const data = await bcNetwork.fulfillOrderManyWithDeposit(order, markets);
+    const data = await bcNetwork.sdk.fulfillOrderManyWithDeposit(order, markets);
     return data.transactionId;
   };
 

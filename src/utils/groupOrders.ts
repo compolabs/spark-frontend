@@ -1,9 +1,8 @@
 import BigNumber from "bignumber.js";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { DEFAULT_DECIMALS } from "@constants";
 
+import { BN } from "@blockchain/fuel/types";
 import { SpotMarketOrder } from "@entity";
 
 const roundPrice = (price: BN, decimals: number, rm: BigNumber.RoundingMode): BN => {

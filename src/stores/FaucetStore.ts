@@ -1,15 +1,14 @@
 import { makeAutoObservable } from "mobx";
 import { Nullable } from "tsdef";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import RootStore from "@stores/RootStore";
 
 import { FUEL_FAUCET } from "@constants";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 export const FAUCET_AMOUNTS: Record<string, number> = {
   ETH: 0.002,
@@ -33,14 +32,14 @@ class FaucetStore {
 
   get faucetTokens() {
     const { balanceStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    return bcNetwork!.getTokenList().map((v) => {
+    return bcNetwork.sdk.getTokenList().map((v) => {
       const balance = balanceStore.getWalletBalance(v.assetId);
       const mintAmount = new BN(FAUCET_AMOUNTS[v.symbol] ?? 0);
       const formatBalance = BN.formatUnits(balance ?? BN.ZERO, v.decimals);
       return {
-        ...bcNetwork!.getTokenByAssetId(v.assetId),
+        ...bcNetwork.sdk.getTokenByAssetId(v.assetId),
         ...balance,
         formatBalance,
         mintAmount,
@@ -53,13 +52,13 @@ class FaucetStore {
 
   private mint = async (assetId: string) => {
     const { accountStore, balanceStore, notificationStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
-    const token = bcNetwork.getTokenByAssetId(assetId);
+    const bcNetwork = Blockchain.getInstance();
+    const token = bcNetwork.sdk.getTokenByAssetId(assetId);
 
     if (!token || !accountStore.address) return;
 
     try {
-      await bcNetwork!.addAssetToWallet(assetId);
+      await bcNetwork.sdk.addAssetToWallet(assetId);
     } catch (error: any) {
       console.error(error);
     }
@@ -67,7 +66,7 @@ class FaucetStore {
     this.setActionTokenAssetId(assetId);
     this.setLoading(true);
 
-    if (bcNetwork?.getIsExternalWallet()) {
+    if (bcNetwork.sdk.getIsExternalWallet()) {
       notificationStore.info({
         text: "Please, confirm operation in your wallet",
       });
@@ -76,7 +75,7 @@ class FaucetStore {
     try {
       const amount = FAUCET_AMOUNTS[token.symbol].toString();
 
-      const tx = await bcNetwork?.mintToken(token, amount);
+      const tx = await bcNetwork.sdk.mintToken(token, amount);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.MINTING_TEST_TOKENS)(amount, token.symbol),
         hash: tx.transactionId,
@@ -91,8 +90,8 @@ class FaucetStore {
 
   mintByAssetId = (assetId: string) => {
     const { accountStore, notificationStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
-    const token = bcNetwork?.getTokenByAssetId(assetId);
+    const bcNetwork = Blockchain.getInstance();
+    const token = bcNetwork.sdk.getTokenByAssetId(assetId);
 
     if (!token || !accountStore.address) {
       handleWalletErrors(notificationStore, {}, "Please, connect wallet first");
@@ -109,9 +108,9 @@ class FaucetStore {
 
   isDisabled = (assetId: string) => {
     const { accountStore, faucetStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    const token = bcNetwork?.getTokenByAssetId(assetId);
+    const token = bcNetwork.sdk.getTokenByAssetId(assetId);
     return (
       faucetStore.loading ||
       !faucetStore.initialized ||

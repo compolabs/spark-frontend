@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useConnectUI, useFuel } from "@fuels/react";
-import { Account } from "fuels";
 
 import { useStores } from "@stores";
+
+import { Account } from "@blockchain/fuel/types/fuels";
 
 export const useWallet = () => {
   const { fuel } = useFuel();

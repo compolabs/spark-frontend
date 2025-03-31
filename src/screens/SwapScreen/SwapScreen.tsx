@@ -3,8 +3,6 @@ import { keyframes, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import Button from "@components/Button";
 import { ConnectWalletButton } from "@components/ConnectWalletButton";
 import { AssetBlockData } from "@components/SelectAssets/SelectAssetsInput";
@@ -23,6 +21,7 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED, ROUTES } from "@constants";
 import { isValidAmountInput, parseNumberWithCommas, replaceComma } from "@utils/swapUtils";
 
+import { BN } from "@blockchain/fuel/types";
 import { Token } from "@entity";
 
 import SwapButtonSkeletonWrapper from "../../components/Skeletons/SwapButtonSkeletonWrapper";

@@ -1,11 +1,10 @@
 import { makeAutoObservable } from "mobx";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { DEFAULT_DECIMALS } from "@constants";
 import { toCurrency } from "@utils/toCurrency";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 import { Token } from "./Token";
 
@@ -25,9 +24,9 @@ export class PerpOrder {
   readonly trader: string;
 
   constructor(params: PerpOrderParams) {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    this.baseToken = bcNetwork.getTokenByAssetId(params.baseTokenAddress);
+    this.baseToken = bcNetwork.sdk.getTokenByAssetId(params.baseTokenAddress);
 
     this.id = params.id;
     this.baseSize = params.baseSize;

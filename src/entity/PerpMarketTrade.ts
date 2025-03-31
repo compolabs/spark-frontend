@@ -1,12 +1,11 @@
 import dayjs, { Dayjs } from "dayjs";
-import { Address, isBech32 } from "fuels";
 import { Nullable } from "tsdef";
-
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
 import { DEFAULT_DECIMALS } from "@constants";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
+import { Address, isBech32 } from "@blockchain/fuel/types/fuels";
 
 import { Token } from "./Token";
 
@@ -47,8 +46,8 @@ export class PerpMarketTrade {
   readonly type: Nullable<"SELL" | "BUY"> = null;
 
   constructor(params: PerpMarketTradeParams) {
-    const bcNetwork = FuelNetwork.getInstance();
-    const baseToken = bcNetwork.getTokenByAssetId(params.baseToken);
+    const bcNetwork = Blockchain.getInstance();
+    const baseToken = bcNetwork.sdk.getTokenByAssetId(params.baseToken);
 
     this.id = params.id;
     this.baseToken = baseToken;

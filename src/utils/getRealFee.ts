@@ -1,5 +1,4 @@
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
+import { BN } from "@blockchain/fuel/types";
 import { SpotMarket } from "@entity";
 
 //TODO: Delete this file and make refactor in perp branch

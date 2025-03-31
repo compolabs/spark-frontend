@@ -8,8 +8,6 @@ dayjs.locale("en");
 import { useTheme } from "@emotion/react";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { CountdownTimer } from "@components/CountdownTimer";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
@@ -23,6 +21,8 @@ import { HowToParticipate } from "@screens/Competitions/HowToParticipate";
 
 import TOKEN_LOGOS from "@constants/tokenLogos";
 import { CONFIG } from "@utils/getConfig";
+
+import { BN } from "@blockchain/fuel/types";
 
 import setting from "./setting.json";
 

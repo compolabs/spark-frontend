@@ -3,8 +3,6 @@ import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import Divider from "@components/Divider";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
@@ -19,7 +17,8 @@ import { useStores } from "@stores";
 
 import { getExplorerLinkByAddress } from "@utils/getExplorerLink";
 
-import { FuelNetwork } from "@blockchain";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 import WalletAddressButton from "./Header/WalletAddressButton";
 
@@ -29,11 +28,11 @@ const WalletButton: React.FC = observer(() => {
 
   const [isFocused, setIsFocused] = useState(false);
 
-  const bcNetwork = FuelNetwork.getInstance();
+  const bcNetwork = Blockchain.getInstance();
 
   const ethBalance = BN.formatUnits(
     balanceStore.getWalletNativeBalance(),
-    bcNetwork!.getTokenBySymbol("ETH").decimals,
+    bcNetwork.sdk.getTokenBySymbol("ETH").decimals,
   )?.toFormat(4);
 
   const handleAddressCopy = () => {
@@ -86,7 +85,7 @@ const WalletButton: React.FC = observer(() => {
       content={
         <Column crossAxisSize="max">
           <ActionRow>
-            <Icon alt="ETH" src={bcNetwork?.getTokenBySymbol("ETH").logo} />
+            <Icon alt="ETH" src={bcNetwork.sdk.getTokenBySymbol("ETH").logo} />
             <Text type="H" primary>{`${ethBalance} ETH`}</Text>
           </ActionRow>
           <Divider />

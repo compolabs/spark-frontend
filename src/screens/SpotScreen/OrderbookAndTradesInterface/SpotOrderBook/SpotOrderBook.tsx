@@ -3,8 +3,6 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { CompressedNumber } from "@components/CompressedNumber";
 import { Column, Row } from "@components/Flex";
 import { SpotOrderSettingsSheet } from "@components/Modal";
@@ -25,6 +23,7 @@ import { useStores } from "@stores";
 import { DEFAULT_DECIMALS } from "@constants";
 import { hexToRgba } from "@utils/hexToRgb";
 
+import { BN } from "@blockchain/fuel/types";
 import { SpotMarketOrder } from "@entity";
 
 import OrderbookAndTradesSkeletonWrapper from "../../../../components/Skeletons/OrderbookAndTradesSkeletonWrapper";

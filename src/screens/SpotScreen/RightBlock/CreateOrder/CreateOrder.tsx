@@ -3,8 +3,6 @@ import styled from "@emotion/styled";
 import { Accordion } from "@szhsin/react-accordion";
 import { observer } from "mobx-react-lite";
 
-import { BN, LimitType } from "@compolabs/spark-orderbook-ts-sdk";
-
 import AccordionItem from "@components/AccordionItem";
 import Button, { ButtonGroup } from "@components/Button";
 import { ConnectWalletButton } from "@components/ConnectWalletButton";
@@ -26,6 +24,8 @@ import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
 import { DEFAULT_DECIMALS, MINIMAL_ETH_REQUIRED } from "@constants";
 import { getRealFee } from "@utils/getRealFee";
+
+import { BN, LimitType } from "@blockchain/fuel/types";
 
 import CreateOrderSkeletonWrapper from "../../../../components/Skeletons/CreateOrderSkeletonWrapper";
 

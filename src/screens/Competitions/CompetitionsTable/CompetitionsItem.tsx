@@ -4,8 +4,6 @@ import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
-import { BN, GetCompetitionResponse } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
@@ -18,6 +16,8 @@ import three from "@assets/images/3st.png";
 import { useStores } from "@stores";
 
 import { toCurrency } from "@utils/toCurrency.ts";
+
+import { BN, GetCompetitionResponse } from "@blockchain/fuel/types";
 
 const generatePosition = (key: number) => {
   if (key === 1) return <img alt="1st" height={40} src={oneSt} width={40} />;

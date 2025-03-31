@@ -3,8 +3,6 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import { Column, DesktopRow, Row } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
@@ -21,6 +19,8 @@ import { MarketInfoItem } from "@screens/SpotScreen/DesktopMarketInfoTooltip/Des
 
 import { DEFAULT_DECIMALS, PYTH_LINK } from "@constants";
 import { toCurrency } from "@utils/toCurrency";
+
+import { BN } from "@blockchain/fuel/types";
 
 const MarketStatistics: React.FC = observer(() => {
   const { tradeStore, spotOrderBookStore } = useStores();

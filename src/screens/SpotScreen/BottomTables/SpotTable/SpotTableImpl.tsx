@@ -4,8 +4,6 @@ import styled from "@emotion/styled";
 import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
-
 import Button from "@components/Button";
 import Chip from "@components/Chip";
 import { Column } from "@components/Flex";
@@ -22,6 +20,7 @@ import { useStores } from "@stores";
 
 import { toCurrency } from "@utils/toCurrency";
 
+import { BN } from "@blockchain/fuel/types";
 import { SpotMarketOrder } from "@entity";
 
 import { BaseTable } from "../BaseTable";
