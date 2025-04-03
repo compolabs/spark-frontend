@@ -5,12 +5,12 @@ export class TermsOfUseDialog {
 
   private readonly selectors = {
     dialog: '[data-testid="terms.dialog"]',
-    accept: '[data-testid="terms.checkbox.accept"]',
-    acknowledge: '[data-testid="terms.checkbox.acknowledge"]',
-    confirm: '[data-testid="terms.button.confirm"]',
-    title: '[data-testid="terms.title"]',
-    trigger: '[data-testid="terms.dropdown.trigger"]',
-    content: '[data-testid="terms.dropdown.content"]',
+    accept: '[data-testid="terms.dialog.checkbox.accept"]',
+    acknowledge: '[data-testid="terms.dialog.checkbox.acknowledge"]',
+    confirm: '[data-testid="terms.dialog.button.confirm"]',
+    title: '[data-testid="terms.dialog.title"]',
+    trigger: '[data-testid="terms.dialog.dropdown.trigger"]',
+    content: '[data-testid="terms.dialog.dropdown.content"]',
     close: 'button[aria-label="Close"]',
     connectWallet: 'button[data-connect-button="true"]',
   };

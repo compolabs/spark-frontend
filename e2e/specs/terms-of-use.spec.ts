@@ -87,7 +87,7 @@ test.describe('Dialog "Terms of Use" during the first wallet connection', () => 
   test("should trap focus inside the modal", async ({ page }) => {
     await terms.dialog.focus();
 
-    const expectedFocusMarkers = ["Close", "checkbox", "terms.dropdown.trigger", "terms.button.confirm"];
+    const expectedFocusMarkers = ["Close", "checkbox", "terms.dialog.dropdown.trigger", "terms.dialog.button.confirm"];
     const seen = new Set<string>();
 
     for (let i = 0; i < 20; i++) {

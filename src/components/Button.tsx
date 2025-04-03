@@ -151,10 +151,8 @@ const Button = styled.button<ButtonProps>`
             cursor: pointer;
 
             &:focus-visible {
-              box-shadow:
-                0 0 0 2px #0052cc,
-                0 0 0 3px #fff;
-              border-radius: 4px;
+              outline: 2px auto -webkit-focus-ring-color;
+              outline-offset: 2px;
             }
           `;
         default:

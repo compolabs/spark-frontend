@@ -66,7 +66,7 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
 
   const renderHeader = () => (
     <HeaderContainer>
-      <Text color={theme.colors.textIconPrimary} data-testid="terms.title" type="CP_Header_18_Medium" uppercase>
+      <Text color={theme.colors.textIconPrimary} data-testid="terms.dialog.title" type="CP_Header_18_Medium" uppercase>
         Terms of use
       </Text>
       {media.mobile && <CloseIconStyled onClick={onClose} />}
@@ -93,14 +93,14 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
       <DropdownContainer>
         <Checkbox
           checked={isUserAgreedWithTerms}
-          data-testid="terms.checkbox.accept"
+          data-testid="terms.dialog.checkbox.accept"
           onClick={handleIsUserAgreedWithTerms}
         >
           <Text color={theme.colors.textIconPrimary} type="CP_Body_16_Medium">
             I accept the Terms of Use
           </Text>
         </Checkbox>
-        <ButtonWrapper data-testid="terms.dropdown.trigger" bare>
+        <ButtonWrapper data-testid="terms.dialog.dropdown.trigger" bare>
           <ArrowIconStyled open={isUserAgrementDropdownOpen} onClick={handleOpenUserAgrementDropdown} />
         </ButtonWrapper>
       </DropdownContainer>
@@ -109,7 +109,7 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
           <DropdownContent
             key="dropdown"
             animate="open"
-            data-testid="terms.dropdown.content"
+            data-testid="terms.dialog.dropdown.content"
             exit="closed"
             initial="closed"
             variants={dropdownVariants}
@@ -138,7 +138,11 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
 
   const renderAcknowledge = () => (
     <ItemContainer>
-      <Checkbox checked={isUserAcknowledge} data-testid="terms.checkbox.acknowledge" onClick={handleIsUserAcknowledge}>
+      <Checkbox
+        checked={isUserAcknowledge}
+        data-testid="terms.dialog.checkbox.acknowledge"
+        onClick={handleIsUserAcknowledge}
+      >
         <Text color={theme.colors.textIconPrimary} type="CP_Body_16_Medium">
           I acknowledge that I am trading with real money
         </Text>
@@ -151,7 +155,7 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = observer(({ onCl
       {renderDropdown()}
       {renderAcknowledge()}
       <FooterContainer>
-        <ButtonNew data-testid="terms.button.confirm" disabled={userCanProceed} onClick={saveUserAgreement}>
+        <ButtonNew data-testid="terms.dialog.button.confirm" disabled={userCanProceed} onClick={saveUserAgreement}>
           <Text color="inherit" type="CP_Button_14_Medium" uppercase>
             Agree and Continue
           </Text>

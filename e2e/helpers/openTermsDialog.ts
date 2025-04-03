@@ -9,7 +9,6 @@ export async function openTermsDialog(page: Page) {
 
   if (await overlay.isVisible()) {
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(300);
     if (await overlay.isVisible()) await page.mouse.click(0, 0);
     if (await overlay.isVisible()) await overlay.evaluate((el) => el.remove());
     await expect(overlay).not.toBeVisible();

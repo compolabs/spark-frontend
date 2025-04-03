@@ -3,7 +3,7 @@ import React from "react";
 import Button, { ButtonProps } from "@components/Button.tsx";
 
 export interface ButtonWrapperProps extends ButtonProps, React.ButtonHTMLAttributes<HTMLButtonElement> {
-  "data-testid"?: "terms.dropdown.trigger";
+  "data-testid"?: "terms.dialog.dropdown.trigger";
 }
 
 const ButtonWrapper: React.FC<ButtonWrapperProps & { children?: React.ReactNode }> = ({

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   checked: boolean;
-  "data-testid": "terms.checkbox.accept" | "terms.checkbox.acknowledge";
+  "data-testid": "terms.dialog.checkbox.accept" | "terms.dialog.checkbox.acknowledge";
 }
 
 export const Checkbox: React.FC<Props> = ({ checked, "data-testid": testId, children, ...props }) => {
@@ -58,9 +58,7 @@ const HiddenCheckbox = styled.input`
   height: 0;
 
   &:focus-visible + ${StyledCheckbox} {
-    outline: none;
-    box-shadow:
-      0 0 0 2px #0052cc,
-      0 0 0 3px #fff;
+    outline: 2px auto -webkit-focus-ring-color;
+    outline-offset: 2px;
   }
 `;
