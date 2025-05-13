@@ -3,7 +3,7 @@ import { Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
 
-import { BN, GetTotalStatsTableData } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, GetTotalStatsTableData } from "@blockchain/fuel/types";
 
 import { Column } from "@components/Flex";
 import { SmartFlex } from "@components/SmartFlex";

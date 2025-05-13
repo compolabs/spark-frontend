@@ -1,9 +1,11 @@
-import { toBech32 } from "fuels";
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 import { Nullable } from "tsdef";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { Blockchain } from "@blockchain";
+import { FuelNetwork } from "@blockchain/fuel/FuelNetwork";
+import { BN, SpotMarketVolume } from "@blockchain/fuel/types";
+import { toBech32 } from "@blockchain/fuel/types/fuels";
 
 import RootStore from "@stores/RootStore";
 
@@ -11,8 +13,6 @@ import { DEFAULT_DECIMALS, DEFAULT_MARKET } from "@constants";
 import { CONFIG } from "@utils/getConfig";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
 
-import { FuelNetwork } from "@blockchain";
-import { SpotMarketVolume } from "@blockchain/types";
 import { PerpMarket, SpotMarket } from "@entity";
 
 export interface SerializedTradeStore {
@@ -134,8 +134,8 @@ class TradeStore {
   }
 
   getMinimalOrder = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
-    const [order, price] = await Promise.all([bcNetwork.fetchMinOrderSize(), bcNetwork.fetchMinOrderPrice()]);
+    const bcNetwork = Blockchain.getInstance();
+    const [order, price] = await Promise.all([bcNetwork.sdk.fetchMinOrderSize(), bcNetwork.sdk.fetchMinOrderPrice()]);
     this.minimalOrder = {
       minPrice: new BN(price),
       minOrder: new BN(order),
@@ -145,7 +145,7 @@ class TradeStore {
   setMarketSymbol = (v: string) => (this.marketSymbol = v);
 
   selectActiveMarket = (marketId?: string) => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     if (!marketId || marketId === this.marketSymbol) return;
 
@@ -157,7 +157,7 @@ class TradeStore {
     if (!spotMarket) return;
 
     const indexerInfo = CONFIG.APP.indexers[spotMarket.contractAddress as keyof typeof CONFIG.APP.indexers];
-    bcNetwork.setActiveMarket(spotMarket.contractAddress, indexerInfo);
+    bcNetwork.sdk.setActiveMarket(spotMarket.contractAddress, indexerInfo);
 
     this.setMarketSymbol(marketId!);
   };
@@ -207,12 +207,12 @@ class TradeStore {
   };
 
   fetchMatcherFee = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     if (!this.market) return;
 
     this.isMatcherFeeLoading = true;
-    const matcherFee = await bcNetwork.fetchSpotMatcherFee();
+    const matcherFee = await bcNetwork.sdk.fetchSpotMatcherFee();
 
     this.matcherFee = new BN(matcherFee);
     this.isMatcherFeeLoading = false;
@@ -225,14 +225,14 @@ class TradeStore {
     }
 
     const { accountStore } = this.rootStore;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     if (!accountStore.address || !this.market) return;
 
     this.isTradeFeeLoading = true;
     const address = toBech32(accountStore.address!);
 
-    const { makerFee, takerFee } = await bcNetwork.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
+    const { makerFee, takerFee } = await bcNetwork.sdk.fetchSpotProtocolFeeAmountForUser(quoteAmount, address);
 
     this.tradeFee = { makerFee: new BN(makerFee), takerFee: new BN(takerFee) };
     this.isTradeFeeLoading = false;
@@ -250,14 +250,14 @@ class TradeStore {
   };
 
   private initSpotMarket = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     try {
       const markets = CONFIG.MARKETS.map((market) => new SpotMarket(market));
 
       const market = markets[0];
       const indexerInfo = CONFIG.APP.indexers[market.contractAddress as keyof typeof CONFIG.APP.indexers];
-      bcNetwork.setActiveMarket(market.contractAddress, indexerInfo);
+      bcNetwork.sdk.setActiveMarket(market.contractAddress, indexerInfo);
       this.setMarketSymbol(market.symbol);
 
       this.setSpotMarkets(markets);

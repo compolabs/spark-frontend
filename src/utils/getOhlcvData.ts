@@ -1,6 +1,6 @@
 import { HistogramData, UTCTimestamp } from "lightweight-charts";
 
-import { TradeOrderEvent } from "@compolabs/spark-orderbook-ts-sdk";
+import { TradeOrderEvent } from "@blockchain/fuel/types";
 
 export interface OhlcvData {
   time: UTCTimestamp;

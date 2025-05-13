@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { makeAutoObservable, reaction } from "mobx";
 
+import { Blockchain } from "@blockchain";
 import {
   BN,
   GetCompetitionResponse,
@@ -8,7 +9,7 @@ import {
   GetTotalStatsTableData,
   LeaderboardPnlResponse,
   TraderVolumeResponse,
-} from "@compolabs/spark-orderbook-ts-sdk";
+} from "@blockchain/fuel/types";
 
 import { FiltersProps } from "@stores/DashboardStore";
 
@@ -16,8 +17,6 @@ import { filters, pnlTimeline } from "@screens/Dashboard/const";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import { CONFIG } from "@utils/getConfig";
-
-import { FuelNetwork } from "@blockchain";
 
 import setting from "../screens/Competitions/setting.json";
 
@@ -113,22 +112,22 @@ class LeaderboardStore {
   };
 
   private fetchTotalState = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
-    const data = await bcNetwork.fetchTotalState();
+    const bcNetwork = Blockchain.getInstance();
+    const data = await bcNetwork.sdk.fetchTotalState();
     this.allTimeStats = data.result.rows[0];
   };
 
   private fetchTotalStatsTableData = async () => {
     this.isLoading = true;
-    const bcNetwork = FuelNetwork.getInstance();
-    const data = await bcNetwork.fetchTotalStatsTableData({ side: this.sortStats.side });
+    const bcNetwork = Blockchain.getInstance();
+    const data = await bcNetwork.sdk.fetchTotalStatsTableData({ side: this.sortStats.side });
     this.totalStatsTableData = data.result.rows;
     this.isLoading = false;
   };
 
   private fetchLeaderboard = async (wallets: string[]) => {
     return wallets;
-    // const bcNetwork = FuelNetwork.getInstance();
+    // const bcNetwork = Blockchain.getInstance();
     // const params = {
     //   limit: this.orderPerPage.key,
     //   page: this.page - 1,
@@ -138,32 +137,32 @@ class LeaderboardStore {
     //   side: this.sortLeaderboard.side,
     //   wallets: wallets,
     // };
-    // const t = await bcNetwork.getLeaderboard(params);
+    // const t = await bcNetwork.sdk.getLeaderboard(params);
     // TODO: Сортировка по pnl
   };
 
   private fetchSortedPnlLeaderboard = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     const params = {
       limit: this.orderPerPage.key,
       page: this.page - 1,
       side: this.sortLeaderboard.side,
       timeline: pnlTimeline[this.activeFilter.title as keyof typeof pnlTimeline],
     };
-    const data = await bcNetwork.fetchSortedLeaderboardPnl(params);
+    const data = await bcNetwork.sdk.fetchSortedLeaderboardPnl(params);
     const wallets = data?.result?.rows.map((el) => el.user);
     this.fetchLeaderboard(wallets);
   };
 
   private fetchPnlLeaderboard = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     const wallets = this.leaderboard.map((el) => el.walletId);
-    const data = await bcNetwork.fetchLeaderBoardPnl({ wallets });
+    const data = await bcNetwork.sdk.fetchLeaderBoardPnl({ wallets });
     this.leaderboardPnl = data?.result?.rows ?? [];
   };
 
   private fetchSortedLeaderboard = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     const params = {
       limit: this.orderPerPage.key,
       page: this.page - 1,
@@ -172,9 +171,9 @@ class LeaderboardStore {
       interval: this.activeFilter.value * 3600,
       side: this.sortLeaderboard.side,
     };
-    bcNetwork.setSentioConfig(config);
+    bcNetwork.sdk.setSentioConfig(config);
 
-    const data = await bcNetwork.getSortedLeaderboard(params);
+    const data = await bcNetwork.sdk.getSortedLeaderboard(params);
     const mainData = data?.result?.rows ?? [];
 
     let finalData = mainData;
@@ -193,10 +192,10 @@ class LeaderboardStore {
   private fetchMeLeaderboard = async (params: GetSortedLeaderboardQueryParams) => {
     const { accountStore } = this.rootStore;
     if (!accountStore.address) return [];
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     params.page = this.page - 1;
     params.search = accountStore.address;
-    const data = await bcNetwork.getSortedLeaderboard(params);
+    const data = await bcNetwork.sdk.getSortedLeaderboard(params);
     let meData = data?.result?.rows[0] ?? null;
     const meDataMock: TraderVolumeResponse = {
       walletId: accountStore.address,
@@ -216,8 +215,8 @@ class LeaderboardStore {
 
   private fetchCompetition = async () => {
     this.isLoading = true;
-    const bcNetwork = FuelNetwork.getInstance();
-    const data = await bcNetwork.getCompetition({
+    const bcNetwork = Blockchain.getInstance();
+    const data = await bcNetwork.sdk.getCompetition({
       side: this.sortCompetitions.side,
       limit: 10,
       page: this.page - 1,
@@ -235,7 +234,7 @@ class LeaderboardStore {
 
     if (!accountStore.address) return BN.ZERO;
 
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
     const fuelToken = CONFIG.TOKENS_BY_SYMBOL["FUEL"];
     const fuelPrice = BN.formatUnits(oracleStore.getTokenIndexPrice(fuelToken.priceFeed), DEFAULT_DECIMALS);
@@ -266,7 +265,7 @@ class LeaderboardStore {
     ];
 
     try {
-      const response = await bcNetwork.fetchUserPoints({
+      const response = await bcNetwork.sdk.fetchUserPoints({
         userAddress: accountStore.address!,
         fromTimestamp: 1739577601,
         toTimestamp: 1740787200,

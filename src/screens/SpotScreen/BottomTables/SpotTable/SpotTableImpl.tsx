@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { createColumnHelper } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import Button from "@components/Button";
 import Chip from "@components/Chip";

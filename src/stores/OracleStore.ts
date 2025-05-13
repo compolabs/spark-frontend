@@ -1,13 +1,12 @@
 import { HermesClient } from "@pythnetwork/hermes-client";
 import { makeAutoObservable } from "mobx";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { Blockchain } from "@blockchain";
+import { BN } from "@blockchain/fuel/types";
 
 import RootStore from "@stores/RootStore";
 
 import { IntervalUpdater } from "@utils/IntervalUpdater";
-
-import { FuelNetwork } from "@blockchain";
 
 const PYTH_URL = "https://hermes.pyth.network";
 
@@ -47,9 +46,9 @@ class OracleStore {
   private initAndGetPythPrices = async () => {
     // You can find the ids of prices at https://pyth.network/developers/price-feed-ids
 
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    const priceIds = bcNetwork!
+    const priceIds = bcNetwork.sdk
       .getTokenList()
       .filter((t) => t.priceFeed.toLowerCase() !== zeroFeedId.toLowerCase())
       .map((t) => t.priceFeed);

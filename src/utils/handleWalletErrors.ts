@@ -1,4 +1,4 @@
-import { getHumanReadableError } from "@compolabs/spark-orderbook-ts-sdk";
+import { getHumanReadableError } from "@blockchain/fuel/types";
 
 import { NotificationStore } from "@stores";
 

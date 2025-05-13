@@ -1,14 +1,13 @@
 import { makeAutoObservable, reaction } from "mobx";
 
-import { RowSnapshot, RowTradeEvent } from "@compolabs/spark-orderbook-ts-sdk";
+import { Blockchain } from "@blockchain";
+import { RowSnapshot, RowTradeEvent } from "@blockchain/fuel/types";
 
 import { filters } from "@screens/Dashboard/const";
 import { TradeEvent } from "@screens/Dashboard/InfoDataGraph";
 
 import { CONFIG } from "@utils/getConfig";
 import { IntervalUpdater } from "@utils/IntervalUpdater";
-
-import { FuelNetwork } from "@blockchain";
 
 import RootStore from "./RootStore";
 
@@ -145,7 +144,7 @@ class DashboardStore {
   };
 
   private fetchUserScoreSnapshot = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     const { accountStore } = this.rootStore;
     if (!accountStore?.address) return;
     const params = {
@@ -157,13 +156,13 @@ class DashboardStore {
       url: CONFIG.APP.sentioUrl,
       apiKey: "9mp9ZQtdiQifjttQ6xy8ZmUcMfh6TNlz7",
     };
-    bcNetwork.setSentioConfig(config);
-    const data = await bcNetwork.getUserScoreSnapshot(params);
+    bcNetwork.sdk.setSentioConfig(config);
+    const data = await bcNetwork.sdk.getUserScoreSnapshot(params);
     this.rowSnapshots = data?.result?.rows ?? [];
   };
 
   private fetchTradeEvent = async () => {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     const { accountStore } = this.rootStore;
     if (!accountStore?.address) return;
     const params = {
@@ -175,8 +174,8 @@ class DashboardStore {
       url: CONFIG.APP.sentioUrl,
       apiKey: "9mp9ZQtdiQifjttQ6xy8ZmUcMfh6TNlz7",
     };
-    bcNetwork.setSentioConfig(config);
-    const data = await bcNetwork.getTradeEvent(params);
+    bcNetwork.sdk.setSentioConfig(config);
+    const data = await bcNetwork.sdk.getTradeEvent(params);
     this.tradeEvents = data?.result?.rows ?? [];
   };
 }

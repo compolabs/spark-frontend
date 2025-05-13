@@ -1,5 +1,7 @@
 import { BN } from "@compolabs/spark-orderbook-ts-sdk";
 
+export * from "@compolabs/spark-orderbook-ts-sdk";
+
 export type FetchTradesParams = {
   limit: number;
   asset?: string;

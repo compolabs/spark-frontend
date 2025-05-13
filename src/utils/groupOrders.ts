@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import { DEFAULT_DECIMALS } from "@constants";
 

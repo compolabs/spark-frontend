@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import copy from "copy-to-clipboard";
 import { observer } from "mobx-react";
 
-import { BN, GetCompetitionResponse } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN, GetCompetitionResponse } from "@blockchain/fuel/types";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";

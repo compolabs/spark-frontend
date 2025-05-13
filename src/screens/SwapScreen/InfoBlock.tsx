@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import { SmartFlex } from "@components/SmartFlex";
 import Text, { TEXT_TYPES_MAP } from "@components/Text";

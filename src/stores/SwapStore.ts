@@ -1,6 +1,7 @@
 import { autorun, makeAutoObservable, reaction } from "mobx";
 
-import { AssetType, BN, GetActiveOrdersParams, LimitType, Order, OrderType } from "@compolabs/spark-orderbook-ts-sdk";
+import { Blockchain } from "@blockchain";
+import { AssetType, BN, GetActiveOrdersParams, LimitType, Order, OrderType } from "@blockchain/fuel/types";
 
 import { DEFAULT_DECIMALS } from "@constants";
 import { ACTION_MESSAGE_TYPE, getActionMessage } from "@utils/getActionMessage";
@@ -8,7 +9,6 @@ import { CONFIG } from "@utils/getConfig";
 import { handleWalletErrors } from "@utils/handleWalletErrors";
 import { parseNumberWithCommas } from "@utils/swapUtils";
 
-import { FuelNetwork } from "@blockchain";
 import { SpotMarketOrder, Token } from "@entity";
 
 import RootStore from "./RootStore";
@@ -104,10 +104,10 @@ class SwapStore {
   }
 
   fetchNewTokens(): Token[] {
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
 
-    return bcNetwork!.getTokenList().map((v) => {
-      const token = bcNetwork!.getTokenByAssetId(v.assetId);
+    return bcNetwork.sdk.getTokenList().map((v) => {
+      const token = bcNetwork.sdk.getTokenByAssetId(v.assetId);
       return {
         name: token.name,
         symbol: token.symbol,
@@ -126,7 +126,7 @@ class SwapStore {
 
     const { baseToken, quoteToken } = tradeStore.market;
     const isBuy = baseToken?.assetId === this.buyToken.assetId;
-    const bcNetwork = FuelNetwork.getInstance();
+    const bcNetwork = Blockchain.getInstance();
     const params: GetActiveOrdersParams = {
       limit: 50, // or more if needed
       market: [tradeStore.market.contractAddress],
@@ -134,7 +134,7 @@ class SwapStore {
       orderType: !isBuy ? OrderType.Buy : OrderType.Sell,
     };
 
-    const activeOrders = await bcNetwork!.fetchSpotActiveOrders(params);
+    const activeOrders = await bcNetwork.sdk.fetchSpotActiveOrders(params);
 
     let orders: SpotMarketOrder[] = [];
 
@@ -202,7 +202,7 @@ class SwapStore {
         baseAssetId: m.baseAssetId,
       }));
 
-      const tx = await bcNetwork.fulfillOrderManyWithDeposit(order, markets);
+      const tx = await bcNetwork.sdk.fulfillOrderManyWithDeposit(order, markets);
       notificationStore.success({
         text: getActionMessage(ACTION_MESSAGE_TYPE.CREATING_SWAP)(
           amountFormatted,

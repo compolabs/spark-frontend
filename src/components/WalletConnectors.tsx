@@ -2,9 +2,10 @@ import React, { useEffect } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useConnectUI } from "@fuels/react";
-import { FuelConnector } from "fuels";
 import { observer } from "mobx-react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
+
+import { FuelConnector } from "@blockchain/fuel/types/fuels";
 
 import { Dialog } from "@components/Dialog";
 import Text from "@components/Text";

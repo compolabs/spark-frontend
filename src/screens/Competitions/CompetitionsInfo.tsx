@@ -8,7 +8,7 @@ dayjs.locale("en");
 import { useTheme } from "@emotion/react";
 import { observer } from "mobx-react";
 
-import { BN } from "@compolabs/spark-orderbook-ts-sdk";
+import { BN } from "@blockchain/fuel/types";
 
 import { CountdownTimer } from "@components/CountdownTimer";
 import { SmartFlex } from "@components/SmartFlex";

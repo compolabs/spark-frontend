@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 
-import { LimitType } from "@compolabs/spark-orderbook-ts-sdk";
+import { LimitType } from "@blockchain/fuel/types";
 
 import { THEME_TYPE } from "@themes/ThemeProvider";
 
