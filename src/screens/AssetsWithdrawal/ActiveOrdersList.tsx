@@ -7,6 +7,7 @@ import Text from "@components/Text";
 
 import Spinner from "@assets/icons/spinner.svg?react";
 
+import { CONFIG } from "@utils/getConfig";
 import { getDeviceInfo } from "@utils/getDeviceInfo";
 
 import { useOrders } from "./useOrders";
@@ -25,7 +26,9 @@ export const ActiveOrdersList: React.FC = observer(() => {
       {hasOrders ? (
         Object.entries(activeOrders).map(([marketId, orderIds]) => (
           <SmartFlex key={marketId} justifyContent="space-between" width="100%">
-            <Text>{marketId}</Text>
+            <Text type="CP_Button_14_Medium" primary>
+              {CONFIG.MARKETS.find((m) => m.contractId === marketId)?.marketName}
+            </Text>
             <Text>{orderIds.length} orders</Text>
           </SmartFlex>
         ))
