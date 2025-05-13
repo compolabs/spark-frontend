@@ -23,7 +23,7 @@ import MobileMenu from "./MobileMenu";
 import WalletAddressButton from "./WalletAddressButton";
 
 const Header: React.FC = observer(() => {
-  const { modalStore, quickAssetsStore } = useStores();
+  const { modalStore } = useStores();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
@@ -144,11 +144,11 @@ const Root = styled(SmartFlex)`
   }
 `;
 
-const ButtonStyled = styled(Button)`
-  padding: 5px;
-  width: 34px;
-  height: 34px;
-`;
+// const ButtonStyled = styled(Button)`
+//   padding: 5px;
+//   width: 34px;
+//   height: 34px;
+// `;
 
 const Divider = styled.div`
   margin: 0 16px;

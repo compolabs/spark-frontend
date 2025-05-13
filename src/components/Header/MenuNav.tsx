@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { Nullable } from "tsdef";
 
-import { breakpoints, breakpointsHeight, media } from "@themes/breakpoints";
+import { media } from "@themes/breakpoints";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
 
@@ -40,10 +40,10 @@ type MenuItem = {
   icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | null;
 };
 
-const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
+// const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
 
 const MENU_ITEMS: Array<MenuItem> = [
-  { title: "ASSETS", link: ROUTES.ROOT },
+  { title: "V12 Withdrawal Portal", link: ROUTES.ROOT },
   // { title: "DASHBOARD", link: ROUTES.DASHBOARD, trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
   // {
   //   title: "TRADE",

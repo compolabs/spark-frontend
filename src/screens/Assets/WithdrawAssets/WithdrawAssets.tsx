@@ -36,7 +36,7 @@ export interface ShowAction {
   typeModal: ModalEnums;
 }
 const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
-  const { quickAssetsStore, balanceStore } = useStores();
+  const { balanceStore } = useStores();
 
   const [activeAsset, setActiveAsset] = useState<AssetBlockProps["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
@@ -50,10 +50,10 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
 
   const balanceList = balanceStore.formattedBalanceInfoList;
 
-  const closeAssets = () => {
-    quickAssetsStore.setCurrentStep(0);
-    quickAssetsStore.setQuickAssets(false);
-  };
+  // const closeAssets = () => {
+  //   quickAssetsStore.setCurrentStep(0);
+  //   quickAssetsStore.setQuickAssets(false);
+  // };
 
   const handleClick = async () => {
     if (!activeAsset || !amount) return;
@@ -141,16 +141,16 @@ const BackButton = styled.img`
   }
 `;
 
-const CloseButton = styled.img`
-  width: 30px;
-  height: 30px;
-  background: ${({ theme }) => theme.colors.bgIcon};
-  padding: 8px;
-  border-radius: 100px;
-  &:hover {
-    cursor: pointer;
-  }
-`;
+// const CloseButton = styled.img`
+//   width: 30px;
+//   height: 30px;
+//   background: ${({ theme }) => theme.colors.bgIcon};
+//   padding: 8px;
+//   border-radius: 100px;
+//   &:hover {
+//     cursor: pointer;
+//   }
+// `;
 
 const SmartFlexContainer = styled(SmartFlex)`
   width: 100%;

@@ -55,10 +55,10 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
   //   setIsLoading(false);
   // };
 
-  const closeAssets = () => {
-    quickAssetsStore.setCurrentStep(0);
-    quickAssetsStore.setQuickAssets(false);
-  };
+  // const closeAssets = () => {
+  //   quickAssetsStore.setCurrentStep(0);
+  //   quickAssetsStore.setQuickAssets(false);
+  // };
 
   const renderOverallContent = ({ isConnected, balance }: { isConnected: boolean; balance: BN }) => {
     return (
@@ -231,16 +231,16 @@ const DepositedAssets = styled(SmartFlex)`
   width: 100%;
 `;
 
-const CloseButton = styled.img`
-  width: 30px;
-  height: 30px;
-  background: ${({ theme }) => theme.colors.bgIcon};
-  padding: 8px;
-  border-radius: 100px;
-  &:hover {
-    cursor: pointer;
-  }
-`;
+// const CloseButton = styled.img`
+//   width: 30px;
+//   height: 30px;
+//   background: ${({ theme }) => theme.colors.bgIcon};
+//   padding: 8px;
+//   border-radius: 100px;
+//   &:hover {
+//     cursor: pointer;
+//   }
+// `;
 
 const LinkStyled = styled(Link)`
   color: ${({ theme }) => theme.colors.greenLight};

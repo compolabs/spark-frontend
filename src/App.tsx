@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react";
@@ -9,7 +9,6 @@ import Header from "@components/Header";
 import WalletConnectors from "@components/WalletConnectors";
 
 import { useClearUrlParam } from "@hooks/useClearUrlParam";
-import { useMedia } from "@hooks/useMedia";
 import { useStores } from "@stores";
 import { MODAL_TYPE } from "@stores/ModalStore";
 
@@ -19,10 +18,7 @@ import { AssetsWithdrawal } from "@screens/AssetsWithdrawal/AssetsWithdrawal";
 import { ROUTES } from "@constants";
 
 const App: React.FC = observer(() => {
-  const { modalStore, tradeStore } = useStores();
-  const media = useMedia();
-
-  const [isAppStoreSheetVisible, setIsAppStoreSheetVisible] = useState(() => media.mobile);
+  const { modalStore } = useStores();
 
   // This hooks is used to clear unnecessary URL parameters,
   // specifically "tx_id", after returning from the faucet
