@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { show } from "@intercom/messenger-js-sdk";
 import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { Nullable } from "tsdef";
@@ -10,17 +9,13 @@ import { Nullable } from "tsdef";
 import { breakpoints, breakpointsHeight, media } from "@themes/breakpoints";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
-import DocsIcon from "@assets/icons/docs.svg?react";
-import GithubIcon from "@assets/social/github.svg?react";
-import XIcon from "@assets/social/x.svg?react";
 
 import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, SWAP_LINK, TWITTER_LINK } from "@constants";
-import { CONFIG } from "@utils/getConfig";
+import { ROUTES } from "@constants";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";

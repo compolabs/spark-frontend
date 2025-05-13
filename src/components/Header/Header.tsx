@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import Button from "@components/Button";
 import { media } from "@themes/breakpoints";
 
-import DataBase from "@assets/icons/dataBase.svg?react";
 import Logo from "@assets/icons/logo.svg?react";
 import Menu from "@assets/icons/menu.svg?react";
 

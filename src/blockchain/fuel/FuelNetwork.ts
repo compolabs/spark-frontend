@@ -118,10 +118,22 @@ export class FuelNetwork {
     return this.orderbookSdk.fulfillOrderManyWithDeposit(...params);
   };
 
+  fetchOrderIdsByAddress = async (
+    ...params: Parameters<typeof this.orderbookSdk.fetchOrderIdsByAddress>
+  ): Promise<string[]> => {
+    return this.orderbookSdk.fetchOrderIdsByAddress(...params);
+  };
+
   cancelSpotOrder = async (
     ...params: Parameters<typeof this.orderbookSdk.cancelOrder>
   ): Promise<WriteTransactionResponse> => {
     return this.orderbookSdk.cancelOrder(...params);
+  };
+
+  cancelSpotOrderMutli = async (
+    ...params: Parameters<typeof this.orderbookSdk.cancelOrderMulticall>
+  ): Promise<WriteTransactionResponse> => {
+    return this.orderbookSdk.cancelOrderMulticall(...params);
   };
 
   mintToken = async (...params: Parameters<typeof this.orderbookSdk.mintToken>): Promise<WriteTransactionResponse> => {

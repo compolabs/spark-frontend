@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@compolabs/spark-orderbook-ts-sdk':
-        specifier: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.16.5.tgz
-        version: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.16.5.tgz(@types/react@18.3.18)(fuels@0.97.2(vitest@2.0.5(@types/node@22.13.4)))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.16.7.tgz
+        version: 1.16.7(@types/react@18.3.18)(fuels@0.97.2(vitest@2.0.5(@types/node@22.13.4)))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@compolabs/tradingview-chart':
         specifier: ^1.0.21
         version: 1.0.21
@@ -916,9 +916,8 @@ packages:
   '@coinbase/wallet-sdk@4.3.0':
     resolution: {integrity: sha512-T3+SNmiCw4HzDm4we9wCHCxlP0pqCiwKe4sOwPH3YAK2KSKjxPRydKu6UQJrdONFVLG7ujXvbd/6ZqmvJb8rkw==}
 
-  '@compolabs/spark-orderbook-ts-sdk@https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.16.5.tgz':
-    resolution: {tarball: https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.16.5.tgz}
-    version: 1.16.5
+  '@compolabs/spark-orderbook-ts-sdk@1.16.7':
+    resolution: {integrity: sha512-C737DqweHTHYmI8wph9OKjSXVjlLsRUuw9kKCcVyfPY15fDMHOBdoiQRSX0kpXYVih/bpPnoQ6ypKxJcaWhUrQ==}
     engines: {node: '>=18'}
     peerDependencies:
       fuels: '>=0.97.1'
@@ -1656,6 +1655,7 @@ packages:
 
   '@paulmillr/qr@0.2.1':
     resolution: {integrity: sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==}
+    deprecated: 'The package is now available as "qr": npm install qr'
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -7264,7 +7264,7 @@ snapshots:
       eventemitter3: 5.0.1
       preact: 10.26.0
 
-  '@compolabs/spark-orderbook-ts-sdk@https://registry.npmjs.org/@compolabs/spark-orderbook-ts-sdk/-/spark-orderbook-ts-sdk-1.16.5.tgz(@types/react@18.3.18)(fuels@0.97.2(vitest@2.0.5(@types/node@22.13.4)))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@compolabs/spark-orderbook-ts-sdk@1.16.7(@types/react@18.3.18)(fuels@0.97.2(vitest@2.0.5(@types/node@22.13.4)))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@apollo/client': 3.13.4(@types/react@18.3.18)(graphql-ws@5.16.2(graphql@16.10.0))(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios: 1.7.9

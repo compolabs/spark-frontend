@@ -14,7 +14,6 @@ import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
 import { media } from "@themes/breakpoints";
 
-import closeThin from "@assets/icons/closeThin.svg";
 import DepositAssets from "@assets/icons/depositAssets.svg?react";
 
 import { useWallet } from "@hooks/useWallet";
@@ -205,7 +204,7 @@ const TextTitleDeposit = styled(TextTitle)`
 
 const AssetsContainer = styled(SmartFlex)`
   height: 100%;
-  padding: 10px
+  padding: 10px;
 `;
 
 const BoxShadow = styled(SmartFlex)`
