@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import Button from "@components/Button";
 import { media } from "@themes/breakpoints";
 
-import DataBase from "@assets/icons/dataBase.svg?react";
 import Logo from "@assets/icons/logo.svg?react";
 import Menu from "@assets/icons/menu.svg?react";
 
@@ -24,7 +23,7 @@ import MobileMenu from "./MobileMenu";
 import WalletAddressButton from "./WalletAddressButton";
 
 const Header: React.FC = observer(() => {
-  const { modalStore, quickAssetsStore } = useStores();
+  const { modalStore } = useStores();
   const media = useMedia();
 
   const [isMobileMenuOpen, openMobileMenu, closeMobileMenu] = useFlag();
@@ -72,7 +71,7 @@ const Header: React.FC = observer(() => {
         </SmartFlex>
         <SmartFlex center="y" gap="8px">
           {renderWallet()}
-          <ButtonStyled
+          {/* <ButtonStyled
             data-onboarding="assets-mobile"
             fitContent
             onClick={() => quickAssetsStore.setQuickAssets(true)}
@@ -80,7 +79,7 @@ const Header: React.FC = observer(() => {
             <SmartFlex>
               <DataBase />
             </SmartFlex>
-          </ButtonStyled>
+          </ButtonStyled> */}
           <MenuContainer data-onboarding="menu-mobile" onClick={toggleMenu}>
             <Menu />
           </MenuContainer>
@@ -102,12 +101,12 @@ const Header: React.FC = observer(() => {
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
-          <Button data-onboarding="assets-desktop" fitContent onClick={() => quickAssetsStore.setQuickAssets(true)}>
+          {/* <Button data-onboarding="assets-desktop" fitContent onClick={() => quickAssetsStore.setQuickAssets(true)}>
             <SmartFlex center="y" gap="8px">
               <DataBase />
               Assets
             </SmartFlex>
-          </Button>
+          </Button> */}
           {renderWallet()}
         </SmartFlex>
       </>
@@ -145,11 +144,11 @@ const Root = styled(SmartFlex)`
   }
 `;
 
-const ButtonStyled = styled(Button)`
-  padding: 5px;
-  width: 34px;
-  height: 34px;
-`;
+// const ButtonStyled = styled(Button)`
+//   padding: 5px;
+//   width: 34px;
+//   height: 34px;
+// `;
 
 const Divider = styled.div`
   margin: 0 16px;

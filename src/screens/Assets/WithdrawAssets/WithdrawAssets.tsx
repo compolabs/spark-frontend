@@ -11,7 +11,6 @@ import { SmartFlex } from "@components/SmartFlex";
 import Text from "@components/Text";
 
 import arrowLeftShort from "@assets/icons/arrowLeftShort.svg";
-import closeThin from "@assets/icons/closeThin.svg";
 import DataBase from "@assets/icons/dataBase.svg?react";
 import Spinner from "@assets/icons/spinner.svg?react";
 import WalletIcon from "@assets/icons/wallet.svg?react";
@@ -37,7 +36,7 @@ export interface ShowAction {
   typeModal: ModalEnums;
 }
 const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
-  const { quickAssetsStore, balanceStore } = useStores();
+  const { balanceStore } = useStores();
 
   const [activeAsset, setActiveAsset] = useState<AssetBlockProps["token"]>();
   const [amount, setAmount] = useState(BN.ZERO);
@@ -51,10 +50,10 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
 
   const balanceList = balanceStore.formattedBalanceInfoList;
 
-  const closeAssets = () => {
-    quickAssetsStore.setCurrentStep(0);
-    quickAssetsStore.setQuickAssets(false);
-  };
+  // const closeAssets = () => {
+  //   quickAssetsStore.setCurrentStep(0);
+  //   quickAssetsStore.setQuickAssets(false);
+  // };
 
   const handleClick = async () => {
     if (!activeAsset || !amount) return;
@@ -75,7 +74,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
   }, []);
 
   return (
-    <>
+    <ContainerWithdraw>
       <SmartFlex alignItems="center" justifyContent="space-between">
         <SmartFlex alignItems="center" gap="10px">
           <BackButton alt="arrow left" src={arrowLeftShort} onClick={() => setStep(0)} />
@@ -83,7 +82,7 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
             Withdraw
           </TextTitle>
         </SmartFlex>
-        <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} />
+        {/* <CloseButton alt="icon close" src={closeThin} onClick={closeAssets} /> */}
       </SmartFlex>
       <SmartFlexContainer column>
         <SmartFlex gap="20px" column>
@@ -117,11 +116,16 @@ const WithdrawAssets = observer(({ setStep }: WithdrawAssets) => {
           {isLoading ? <Spinner height={14} /> : "Confirm"}
         </ButtonConfirm>
       </SmartFlexContainer>
-    </>
+    </ContainerWithdraw>
   );
 });
 
 export default WithdrawAssets;
+
+const ContainerWithdraw = styled.div`
+  padding: 10px;
+  height: 100%;
+`;
 
 const ButtonConfirm = styled(Button)`
   width: 100%;
@@ -137,16 +141,16 @@ const BackButton = styled.img`
   }
 `;
 
-const CloseButton = styled.img`
-  width: 30px;
-  height: 30px;
-  background: ${({ theme }) => theme.colors.bgIcon};
-  padding: 8px;
-  border-radius: 100px;
-  &:hover {
-    cursor: pointer;
-  }
-`;
+// const CloseButton = styled.img`
+//   width: 30px;
+//   height: 30px;
+//   background: ${({ theme }) => theme.colors.bgIcon};
+//   padding: 8px;
+//   border-radius: 100px;
+//   &:hover {
+//     cursor: pointer;
+//   }
+// `;
 
 const SmartFlexContainer = styled(SmartFlex)`
   width: 100%;

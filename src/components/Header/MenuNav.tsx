@@ -2,25 +2,20 @@ import React, { useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { show } from "@intercom/messenger-js-sdk";
 import { AnimatePresence, motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import { Nullable } from "tsdef";
 
-import { breakpoints, breakpointsHeight, media } from "@themes/breakpoints";
+import { media } from "@themes/breakpoints";
 
 import ArrowIcon from "@assets/icons/arrowUp.svg?react";
-import DocsIcon from "@assets/icons/docs.svg?react";
-import GithubIcon from "@assets/social/github.svg?react";
-import XIcon from "@assets/social/x.svg?react";
 
 import { useMedia } from "@hooks/useMedia";
 import { useOnClickOutside } from "@hooks/useOnClickOutside";
 import { useStores } from "@stores";
 import { MIXPANEL_EVENTS } from "@stores/MixPanelStore";
 
-import { BRIDGE_LINK, DOCS_LINK, GITHUB_LINK, POINTS_LINK, ROUTES, SWAP_LINK, TWITTER_LINK } from "@constants";
-import { CONFIG } from "@utils/getConfig";
+import { ROUTES } from "@constants";
 import { isExternalLink } from "@utils/isExternalLink";
 
 import { SmartFlex } from "../SmartFlex";
@@ -45,104 +40,105 @@ type MenuItem = {
   icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | null;
 };
 
-const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
+// const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
 
 const MENU_ITEMS: Array<MenuItem> = [
-  { title: "DASHBOARD", link: ROUTES.DASHBOARD, trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
-  {
-    title: "TRADE",
-    link: ROUTES.SPOT,
-    trackEvent: MIXPANEL_EVENTS.CLICK_SPOT,
-    // children: [],
-    // {
-    //   title: "SPOT",
-    //   desc: "Advanced trading with order book and limit orders.",
-    //   link: ROUTES.SPOT,
-    //   icon: TradeIcon,
-    // },
-    // {
-    //   title: "SWAP",
-    //   desc: "Simple token exchange with instant trades.",
-    //   link: ROUTES.SWAP,
-    //   icon: SwapIcon,
-    // },
-    // ],
-  },
-  ...(CONFIG.APP.isMainnet
-    ? [
-        { title: "POINTS", accent: true, link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
-        {
-          title: "LEADERBOARD",
-          link: ROUTES.LEADERBOARD,
-        },
-        {
-          title: "🏆 COMPETITIONS",
-          link: ROUTES.COMPETITIONS,
-          // icon: CupIcon,
-        },
-        {
-          title: "STATS",
-          link: ROUTES.STATS,
-        },
-        {
-          title: "BRIDGE",
-          trackEvent: MIXPANEL_EVENTS.CLICK_MORE_FUEL,
-          children: [
-            {
-              title: "FUEL BRIDGE",
-              link: BRIDGE_LINK,
-              icon: null,
-              trackEvent: MIXPANEL_EVENTS.CLICK_BRIDGE,
-            },
-            {
-              title: "LAYERSWAP",
-              link: SWAP_LINK,
-              icon: null,
-              trackEvent: MIXPANEL_EVENTS.CLICK_LAYER_SWAP,
-            },
-          ],
-        },
-      ]
-    : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: MIXPANEL_EVENTS.CLICK_FAUCET }]),
-  {
-    title: "MORE",
-    trackEvent: MIXPANEL_EVENTS.CLICK_MORE,
-    children: [
-      {
-        title: "DOCS",
-        link: DOCS_LINK,
-        icon: DocsIcon,
-        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_DOCS,
-      },
-      {
-        title: "GITHUB",
-        link: GITHUB_LINK,
-        icon: GithubIcon,
-        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_GITHUB,
-      },
-      {
-        title: "X",
-        link: TWITTER_LINK,
-        icon: XIcon,
-        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_X,
-      },
-    ],
-  },
-  ...(isShowSupport
-    ? [
-        {
-          title: "SUPPORT",
-          children: [
-            {
-              title: "INTERCOM",
-              link: "#",
-              onClick: () => show(),
-              icon: null,
-            },
-          ],
-        },
-      ]
-    : []),
+  { title: "V12 Withdrawal Portal", link: ROUTES.ROOT },
+  // { title: "DASHBOARD", link: ROUTES.DASHBOARD, trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
+  // {
+  //   title: "TRADE",
+  //   link: ROUTES.SPOT,
+  //   trackEvent: MIXPANEL_EVENTS.CLICK_SPOT,
+  //   // children: [],
+  //   // {
+  //   //   title: "SPOT",
+  //   //   desc: "Advanced trading with order book and limit orders.",
+  //   //   link: ROUTES.SPOT,
+  //   //   icon: TradeIcon,
+  //   // },
+  //   // {
+  //   //   title: "SWAP",
+  //   //   desc: "Simple token exchange with instant trades.",
+  //   //   link: ROUTES.SWAP,
+  //   //   icon: SwapIcon,
+  //   // },
+  //   // ],
+  // },
+  // ...(CONFIG.APP.isMainnet
+  //   ? [
+  //       { title: "POINTS", accent: true, link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
+  //       {
+  //         title: "LEADERBOARD",
+  //         link: ROUTES.LEADERBOARD,
+  //       },
+  //       {
+  //         title: "🏆 COMPETITIONS",
+  //         link: ROUTES.COMPETITIONS,
+  //         // icon: CupIcon,
+  //       },
+  //       {
+  //         title: "STATS",
+  //         link: ROUTES.STATS,
+  //       },
+  //       {
+  //         title: "BRIDGE",
+  //         trackEvent: MIXPANEL_EVENTS.CLICK_MORE_FUEL,
+  //         children: [
+  //           {
+  //             title: "FUEL BRIDGE",
+  //             link: BRIDGE_LINK,
+  //             icon: null,
+  //             trackEvent: MIXPANEL_EVENTS.CLICK_BRIDGE,
+  //           },
+  //           {
+  //             title: "LAYERSWAP",
+  //             link: SWAP_LINK,
+  //             icon: null,
+  //             trackEvent: MIXPANEL_EVENTS.CLICK_LAYER_SWAP,
+  //           },
+  //         ],
+  //       },
+  //     ]
+  //   : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: MIXPANEL_EVENTS.CLICK_FAUCET }]),
+  // {
+  //   title: "MORE",
+  //   trackEvent: MIXPANEL_EVENTS.CLICK_MORE,
+  //   children: [
+  //     {
+  //       title: "DOCS",
+  //       link: DOCS_LINK,
+  //       icon: DocsIcon,
+  //       trackEvent: MIXPANEL_EVENTS.CLICK_MORE_DOCS,
+  //     },
+  //     {
+  //       title: "GITHUB",
+  //       link: GITHUB_LINK,
+  //       icon: GithubIcon,
+  //       trackEvent: MIXPANEL_EVENTS.CLICK_MORE_GITHUB,
+  //     },
+  //     {
+  //       title: "X",
+  //       link: TWITTER_LINK,
+  //       icon: XIcon,
+  //       trackEvent: MIXPANEL_EVENTS.CLICK_MORE_X,
+  //     },
+  //   ],
+  // },
+  // ...(isShowSupport
+  //   ? [
+  //       {
+  //         title: "SUPPORT",
+  //         children: [
+  //           {
+  //             title: "INTERCOM",
+  //             link: "#",
+  //             onClick: () => show(),
+  //             icon: null,
+  //           },
+  //         ],
+  //       },
+  //     ]
+  //   : []),
 ];
 
 const DROPDOWN_VARIANTS = {
