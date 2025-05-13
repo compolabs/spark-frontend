@@ -48,101 +48,102 @@ type MenuItem = {
 const isShowSupport = breakpoints.mobile > window.innerWidth || breakpointsHeight.mobile > window.innerHeight;
 
 const MENU_ITEMS: Array<MenuItem> = [
-  { title: "DASHBOARD", link: ROUTES.DASHBOARD, trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
-  {
-    title: "TRADE",
-    link: ROUTES.SPOT,
-    trackEvent: MIXPANEL_EVENTS.CLICK_SPOT,
-    // children: [],
-    // {
-    //   title: "SPOT",
-    //   desc: "Advanced trading with order book and limit orders.",
-    //   link: ROUTES.SPOT,
-    //   icon: TradeIcon,
-    // },
-    // {
-    //   title: "SWAP",
-    //   desc: "Simple token exchange with instant trades.",
-    //   link: ROUTES.SWAP,
-    //   icon: SwapIcon,
-    // },
-    // ],
-  },
-  ...(CONFIG.APP.isMainnet
-    ? [
-        { title: "POINTS", accent: true, link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
-        {
-          title: "LEADERBOARD",
-          link: ROUTES.LEADERBOARD,
-        },
-        {
-          title: "🏆 COMPETITIONS",
-          link: ROUTES.COMPETITIONS,
-          // icon: CupIcon,
-        },
-        {
-          title: "STATS",
-          link: ROUTES.STATS,
-        },
-        {
-          title: "BRIDGE",
-          trackEvent: MIXPANEL_EVENTS.CLICK_MORE_FUEL,
-          children: [
-            {
-              title: "FUEL BRIDGE",
-              link: BRIDGE_LINK,
-              icon: null,
-              trackEvent: MIXPANEL_EVENTS.CLICK_BRIDGE,
-            },
-            {
-              title: "LAYERSWAP",
-              link: SWAP_LINK,
-              icon: null,
-              trackEvent: MIXPANEL_EVENTS.CLICK_LAYER_SWAP,
-            },
-          ],
-        },
-      ]
-    : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: MIXPANEL_EVENTS.CLICK_FAUCET }]),
-  {
-    title: "MORE",
-    trackEvent: MIXPANEL_EVENTS.CLICK_MORE,
-    children: [
-      {
-        title: "DOCS",
-        link: DOCS_LINK,
-        icon: DocsIcon,
-        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_DOCS,
-      },
-      {
-        title: "GITHUB",
-        link: GITHUB_LINK,
-        icon: GithubIcon,
-        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_GITHUB,
-      },
-      {
-        title: "X",
-        link: TWITTER_LINK,
-        icon: XIcon,
-        trackEvent: MIXPANEL_EVENTS.CLICK_MORE_X,
-      },
-    ],
-  },
-  ...(isShowSupport
-    ? [
-        {
-          title: "SUPPORT",
-          children: [
-            {
-              title: "INTERCOM",
-              link: "#",
-              onClick: () => show(),
-              icon: null,
-            },
-          ],
-        },
-      ]
-    : []),
+  { title: "ASSETS", link: ROUTES.ROOT },
+  // { title: "DASHBOARD", link: ROUTES.DASHBOARD, trackEvent: MIXPANEL_EVENTS.CLICK_DASHBOARD },
+  // {
+  //   title: "TRADE",
+  //   link: ROUTES.SPOT,
+  //   trackEvent: MIXPANEL_EVENTS.CLICK_SPOT,
+  //   // children: [],
+  //   // {
+  //   //   title: "SPOT",
+  //   //   desc: "Advanced trading with order book and limit orders.",
+  //   //   link: ROUTES.SPOT,
+  //   //   icon: TradeIcon,
+  //   // },
+  //   // {
+  //   //   title: "SWAP",
+  //   //   desc: "Simple token exchange with instant trades.",
+  //   //   link: ROUTES.SWAP,
+  //   //   icon: SwapIcon,
+  //   // },
+  //   // ],
+  // },
+  // ...(CONFIG.APP.isMainnet
+  //   ? [
+  //       { title: "POINTS", accent: true, link: POINTS_LINK, trackEvent: MIXPANEL_EVENTS.CLICK_POINTS },
+  //       {
+  //         title: "LEADERBOARD",
+  //         link: ROUTES.LEADERBOARD,
+  //       },
+  //       {
+  //         title: "🏆 COMPETITIONS",
+  //         link: ROUTES.COMPETITIONS,
+  //         // icon: CupIcon,
+  //       },
+  //       {
+  //         title: "STATS",
+  //         link: ROUTES.STATS,
+  //       },
+  //       {
+  //         title: "BRIDGE",
+  //         trackEvent: MIXPANEL_EVENTS.CLICK_MORE_FUEL,
+  //         children: [
+  //           {
+  //             title: "FUEL BRIDGE",
+  //             link: BRIDGE_LINK,
+  //             icon: null,
+  //             trackEvent: MIXPANEL_EVENTS.CLICK_BRIDGE,
+  //           },
+  //           {
+  //             title: "LAYERSWAP",
+  //             link: SWAP_LINK,
+  //             icon: null,
+  //             trackEvent: MIXPANEL_EVENTS.CLICK_LAYER_SWAP,
+  //           },
+  //         ],
+  //       },
+  //     ]
+  //   : [{ title: "FAUCET", link: ROUTES.FAUCET, dataOnboardingKey: "mint", trackEvent: MIXPANEL_EVENTS.CLICK_FAUCET }]),
+  // {
+  //   title: "MORE",
+  //   trackEvent: MIXPANEL_EVENTS.CLICK_MORE,
+  //   children: [
+  //     {
+  //       title: "DOCS",
+  //       link: DOCS_LINK,
+  //       icon: DocsIcon,
+  //       trackEvent: MIXPANEL_EVENTS.CLICK_MORE_DOCS,
+  //     },
+  //     {
+  //       title: "GITHUB",
+  //       link: GITHUB_LINK,
+  //       icon: GithubIcon,
+  //       trackEvent: MIXPANEL_EVENTS.CLICK_MORE_GITHUB,
+  //     },
+  //     {
+  //       title: "X",
+  //       link: TWITTER_LINK,
+  //       icon: XIcon,
+  //       trackEvent: MIXPANEL_EVENTS.CLICK_MORE_X,
+  //     },
+  //   ],
+  // },
+  // ...(isShowSupport
+  //   ? [
+  //       {
+  //         title: "SUPPORT",
+  //         children: [
+  //           {
+  //             title: "INTERCOM",
+  //             link: "#",
+  //             onClick: () => show(),
+  //             icon: null,
+  //           },
+  //         ],
+  //       },
+  //     ]
+  //   : []),
 ];
 
 const DROPDOWN_VARIANTS = {

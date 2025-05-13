@@ -72,7 +72,7 @@ const Header: React.FC = observer(() => {
         </SmartFlex>
         <SmartFlex center="y" gap="8px">
           {renderWallet()}
-          <ButtonStyled
+          {/* <ButtonStyled
             data-onboarding="assets-mobile"
             fitContent
             onClick={() => quickAssetsStore.setQuickAssets(true)}
@@ -80,7 +80,7 @@ const Header: React.FC = observer(() => {
             <SmartFlex>
               <DataBase />
             </SmartFlex>
-          </ButtonStyled>
+          </ButtonStyled> */}
           <MenuContainer data-onboarding="menu-mobile" onClick={toggleMenu}>
             <Menu />
           </MenuContainer>
@@ -102,12 +102,12 @@ const Header: React.FC = observer(() => {
           </SmartFlex>
         </SmartFlex>
         <SmartFlex center="y" gap="16px">
-          <Button data-onboarding="assets-desktop" fitContent onClick={() => quickAssetsStore.setQuickAssets(true)}>
+          {/* <Button data-onboarding="assets-desktop" fitContent onClick={() => quickAssetsStore.setQuickAssets(true)}>
             <SmartFlex center="y" gap="8px">
               <DataBase />
               Assets
             </SmartFlex>
-          </Button>
+          </Button> */}
           {renderWallet()}
         </SmartFlex>
       </>

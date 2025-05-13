@@ -147,6 +147,7 @@ const PriceText = styled(Text)`
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
+  width: 100%;
 `;
 const TextPresent = styled(Text)``;
 

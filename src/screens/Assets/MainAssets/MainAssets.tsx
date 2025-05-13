@@ -83,7 +83,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
           >
             Assets in V12
           </TextTitle>
-          <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} />
+          {/* <CloseButton alt="Close Assets" src={closeThin} onClick={closeAssets} /> */}
         </HeaderBlock>
         <WalletBlock gap="8px" column>
           {isConnected ? (
@@ -145,7 +145,7 @@ const MainAssets: React.FC<MainAssetsProps> = observer(({ setStep }) => {
             </Button>
           </>
         )}
-        {accumulateBalance.contractBalance.isPositive() && (
+        {accumulateBalance.contractBalance.isPositive() && isConnected && (
           <SmartFlexBlock>
             <ButtonConfirm fitContent onClick={() => setStep(1)}>
               Withdraw
@@ -205,6 +205,7 @@ const TextTitleDeposit = styled(TextTitle)`
 
 const AssetsContainer = styled(SmartFlex)`
   height: 100%;
+  padding: 10px
 `;
 
 const BoxShadow = styled(SmartFlex)`
@@ -218,11 +219,11 @@ const BoxShadow = styled(SmartFlex)`
     width: 100%;
     position: absolute;
     top: 0px;
-    background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
+    // background: linear-gradient(to bottom, transparent 0px, rgba(34, 34, 34, 0) 10%, rgba(34, 34, 34, 1) 100%);
 
-    ${media.mobile} {
-      background: linear-gradient(to bottom, transparent 0px, rgba(0, 0, 0, 0) 10%, rgba(20, 20, 20, 1) 100%);
-    }
+    // ${media.mobile} {
+    //   background: linear-gradient(to bottom, transparent 0px, rgba(0, 0, 0, 0) 10%, rgba(20, 20, 20, 1) 100%);
+    // }
   }
 `;
 
